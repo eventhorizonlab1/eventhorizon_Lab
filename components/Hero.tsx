@@ -171,22 +171,22 @@ const Hero: React.FC = () => {
       {/* Content Container - Overlays the sticky background */}
       <div className="relative z-20 w-full -mt-[100vh]">
         
-        {/* Hero Intro (First Screen) */}
-        <div className="h-screen flex flex-col items-center justify-center px-4">
+        {/* Hero Intro (First Screen) - Added pt-20 to push content down away from header */}
+        <div className="h-screen flex flex-col items-center justify-center px-4 pt-24 md:pt-0">
            <motion.div 
               style={{ opacity: opacityText }}
-              className="text-center max-w-[90vw] md:max-w-7xl flex flex-col items-center"
+              className="text-center max-w-[95vw] md:max-w-7xl flex flex-col items-center"
            >
-              {/* Main Title Container */}
+              {/* Main Title Container - Reduced font size slightly on desktop (lg:text-8xl) to prevent header overlap */}
               <motion.h1 
                 style={{ y: yTitle }}
-                className="text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter leading-[1.1] mb-12 flex flex-col items-center w-full"
+                className="text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tighter leading-[1.0] md:leading-[0.9] mb-8 md:mb-12 flex flex-col items-center w-full"
               >
                 <div className="block w-full">
                   <AnimatedText text={t('hero_line1')} />
                 </div>
                 <div className="block w-full">
-                  <AnimatedText text={t('hero_line2')} className="md:mt-4" />
+                  <AnimatedText text={t('hero_line2')} className="md:mt-2 lg:mt-4" />
                 </div>
               </motion.h1>
 
@@ -212,7 +212,7 @@ const Hero: React.FC = () => {
                 <motion.div 
                   animate={{ y: [0, 10, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="mt-12 text-white/50 text-xs font-bold uppercase tracking-widest flex flex-col items-center gap-2"
+                  className="mt-8 md:mt-12 text-white/50 text-xs font-bold uppercase tracking-widest flex flex-col items-center gap-2"
                 >
                   <span>{t('hero_scroll')}</span>
                   <div className="w-px h-12 bg-gradient-to-b from-white/50 to-transparent"></div>
