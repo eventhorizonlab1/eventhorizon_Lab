@@ -14,7 +14,7 @@ import { useThemeLanguage } from '../context/ThemeLanguageContext';
 const DebrisVertexShader = `
     uniform float u_time;
     uniform float u_temperature;
-    uniform float u_mode; // 0.0 = Warm, 1.0 = Cool
+    uniform float u_mode; // 0.0 = Warm (Dark), 1.0 = Cool (Light)
     attribute float a_scale;
     attribute vec3 a_color;
     attribute float a_angular_velocity;
@@ -40,21 +40,30 @@ const DebrisVertexShader = `
         vec3 warmColor;
         vec3 coolColor;
         
+        // Warm Palette (Interstellar Orange - Dark Mode)
         if (radius < 20.0) {
-            warmColor = vec3(1.0, 1.0, 1.0);
-            coolColor = vec3(0.9, 0.95, 1.0);
+            warmColor = vec3(1.0, 1.0, 0.9); // White-Yellow core
         } else if (radius < 35.0) {
-            warmColor = vec3(1.0, 0.66, 0.0);
-            coolColor = vec3(0.2, 0.8, 1.0);
+            warmColor = vec3(1.0, 0.55, 0.1); // Orange mid
         } else {
-            warmColor = vec3(0.66, 0.13, 0.0);
-            coolColor = vec3(0.1, 0.2, 0.9);
+            warmColor = vec3(0.8, 0.15, 0.05); // Red outer
+        }
+
+        // Cool Palette (Cyber Blue - Light Mode)
+        if (radius < 20.0) {
+            coolColor = vec3(0.9, 1.0, 1.0); // White-Cyan core
+        } else if (radius < 35.0) {
+            coolColor = vec3(0.1, 0.5, 1.0); // Electric Blue mid
+        } else {
+            coolColor = vec3(0.05, 0.1, 0.8); // Deep Blue outer
         }
         
         v_color = mix(warmColor, coolColor, u_mode);
         
         // Brightness based on distance (closer = brighter)
-        v_brightness = 1000.0 / (radius * radius + 1.0);
+        // Boost brightness slightly in cool mode to cut through white backgrounds if needed
+        float brightnessMod = 1.0 + (u_mode * 0.2);
+        v_brightness = (1100.0 / (radius * radius + 10.0)) * brightnessMod;
 
         vec3 new_pos;
         new_pos.x = radius * cos(angle + position.x);
@@ -64,7 +73,7 @@ const DebrisVertexShader = `
         vec4 mv_position = modelViewMatrix * vec4(new_pos, 1.0);
         gl_Position = projectionMatrix * mv_position;
         
-        float size = a_scale * (300.0 / -mv_position.z);
+        float size = a_scale * (350.0 / -mv_position.z);
         gl_PointSize = max(1.0, size);
     }
 `;
@@ -158,18 +167,17 @@ const AccretionDiskFragmentShader = `
         streaks = pow(streaks, 1.5); // Sharpen contrast
 
         // Interstellar Palette
-        // Normalized radius for color mapping (0.0 at inner edge, 1.0 at outer)
         float r_norm = (radius - 0.28) / (1.0 - 0.28);
         
         // Warm Palette (Dark Mode)
-        vec3 col_inner_warm = vec3(1.0, 0.98, 0.95);
-        vec3 col_mid_warm = vec3(1.0, 0.65, 0.2);
-        vec3 col_outer_warm = vec3(0.6, 0.05, 0.01);
+        vec3 col_inner_warm = vec3(1.0, 0.95, 0.9);
+        vec3 col_mid_warm = vec3(1.0, 0.6, 0.1);
+        vec3 col_outer_warm = vec3(0.8, 0.1, 0.05);
 
         // Cool Palette (Light Mode)
-        vec3 col_inner_cool = vec3(0.95, 0.98, 1.0);
-        vec3 col_mid_cool = vec3(0.2, 0.7, 1.0);
-        vec3 col_outer_cool = vec3(0.1, 0.1, 0.8);
+        vec3 col_inner_cool = vec3(0.9, 0.95, 1.0);
+        vec3 col_mid_cool = vec3(0.1, 0.6, 1.0);
+        vec3 col_outer_cool = vec3(0.05, 0.1, 0.9);
 
         // Interpolate Palettes
         vec3 col_inner = mix(col_inner_warm, col_inner_cool, u_mode);
@@ -203,6 +211,9 @@ const AccretionDiskFragmentShader = `
 
         vec3 final_color = color * streaks * u_brightness * beaming;
         
+        // Boost intensity slightly in cool mode
+        final_color *= (1.0 + u_mode * 0.2);
+
         // Add a core glow ring
         float core_ring = 1.0 - smoothstep(0.28, 0.32, radius);
         final_color += vec3(1.0, 1.0, 1.0) * core_ring * 5.0;
@@ -237,6 +248,7 @@ const LensingFragmentShader = `
         
         float dist = length(uv_center);
         
+        // Event Horizon
         if (dist < SCHWARZSCHILD_RADIUS) {
             gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
             return;
@@ -244,7 +256,6 @@ const LensingFragmentShader = `
         
         float distortion = 0.0;
         if (dist < LENSING_RADIUS) {
-            float x = dist;
             float rs = SCHWARZSCHILD_RADIUS;
             float offset = (rs * rs) / dist; 
             distortion = offset * u_lensing_strength * 0.8;
@@ -263,14 +274,26 @@ const LensingFragmentShader = `
         } else {
             vec4 color = texture2D(t_background, sample_uv);
             
-            // Photon Sphere (Bright Ring)
-            float photon_ring = 1.0 - smoothstep(SCHWARZSCHILD_RADIUS, SCHWARZSCHILD_RADIUS + 0.005, dist);
+            // Photon Sphere (Bright Ring Effect)
+            float edge_dist = dist - SCHWARZSCHILD_RADIUS;
             
-            vec3 ring_warm = vec3(1.0, 0.9, 0.7);
-            vec3 ring_cool = vec3(0.7, 0.9, 1.0);
+            // Exponential decay for a sharp, intense ring
+            float glow_width = 0.012;
+            float photon_ring = exp(-edge_dist * (1.0/glow_width) * 10.0);
+            
+            vec3 ring_warm = vec3(1.0, 0.9, 0.6); // Amber/Gold
+            vec3 ring_cool = vec3(0.4, 0.8, 1.0);  // Electric Blue
             vec3 ring_col = mix(ring_warm, ring_cool, u_mode);
 
-            color += vec4(ring_col, 0.0) * photon_ring * 2.0;
+            // Intensity scales with lensing strength (more gravity = more light bending accumulation)
+            float intensity = 3.0 + (u_lensing_strength * 4.0);
+            
+            // Add warping brightness to background near the horizon
+            float background_warp = smoothstep(0.2, 0.0, edge_dist) * u_lensing_strength;
+            color.rgb += color.rgb * background_warp;
+
+            // Add the photon ring on top
+            color.rgb += ring_col * photon_ring * intensity;
 
             gl_FragColor = color;
         }
