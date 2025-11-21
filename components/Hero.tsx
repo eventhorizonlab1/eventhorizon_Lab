@@ -171,16 +171,16 @@ const Hero: React.FC = () => {
       {/* Content Container - Overlays the sticky background */}
       <div className="relative z-20 w-full -mt-[100vh]">
         
-        {/* Hero Intro (First Screen) - Added pt-20 to push content down away from header */}
-        <div className="h-screen flex flex-col items-center justify-center px-4 pt-24 md:pt-0">
+        {/* Hero Intro (First Screen) - Added pt-32 to push content down away from header */}
+        <div className="h-screen flex flex-col items-center justify-center px-4 pt-32 md:pt-0">
            <motion.div 
               style={{ opacity: opacityText }}
               className="text-center max-w-[95vw] md:max-w-7xl flex flex-col items-center"
            >
-              {/* Main Title Container - Reduced font size slightly on desktop (lg:text-8xl) to prevent header overlap */}
+              {/* Main Title Container - Reduced font size to lg:text-8xl to prevent header overlap */}
               <motion.h1 
                 style={{ y: yTitle }}
-                className="text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tighter leading-[1.0] md:leading-[0.9] mb-8 md:mb-12 flex flex-col items-center w-full"
+                className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.0] md:leading-[0.9] mb-8 md:mb-12 flex flex-col items-center w-full"
               >
                 <div className="block w-full">
                   <AnimatedText text={t('hero_line1')} />
