@@ -5,7 +5,6 @@ export const NAV_LINKS = [
   { label: 'Vidéos', href: '#videos' },
   { label: 'Articles', href: '#articles' },
   { label: 'Écosystème', href: '#ecosystem' },
-  { label: 'Studio', href: '#oracle' },
 ];
 
 export const FEATURED_VIDEO: Video = {

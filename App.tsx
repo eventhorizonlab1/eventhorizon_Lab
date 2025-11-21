@@ -4,7 +4,6 @@ import Hero from './components/Hero';
 import VideoSection from './components/VideoSection';
 import ArticleSection from './components/ArticleSection';
 import EcosystemSection from './components/EcosystemSection';
-import MissionControlSection from './components/MissionControlSection';
 import BlackHoleSection from './components/BlackHoleSection';
 import Footer from './components/Footer';
 
@@ -29,7 +28,6 @@ const App: React.FC = () => {
         <VideoSection />
         <ArticleSection />
         <EcosystemSection />
-        <MissionControlSection />
         <BlackHoleSection />
         <Footer />
       </div>
