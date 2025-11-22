@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -17,64 +18,96 @@ const DebrisVertexShader = `
     uniform float u_mode; // 0.0 = Warm (Dark), 1.0 = Cool (Light)
     attribute float a_scale;
     attribute vec3 a_color;
-    attribute float a_angular_velocity;
-    attribute float a_inward_velocity;
+    attribute float a_speed_modifier;
     attribute float a_start_radius;
+    attribute float a_initial_angle;
+    attribute float a_random_y;
+    attribute float a_clump_id; 
     varying vec3 v_color;
     varying float v_alpha;
     varying float v_brightness;
 
     void main() {
-        float angle = u_time * a_angular_velocity;
-        float radius = a_start_radius - u_time * a_inward_velocity;
+        // Physics Simulation: Chaotic Accretion
+        float time = u_time * 0.08; // Slow, majestic movement
         
-        // Event horizon cutoff
-        if (radius < 10.0) {
-            v_alpha = 0.0;
-            radius = 10.0;
-        } else {
-            v_alpha = min(1.0, (radius - 10.0) / 5.0);
+        // 1. Orbital Dynamics (Keplerian + Drag)
+        // Particles orbit faster closer to center
+        
+        // Calculate decay based on initial radius and speed modifier
+        // Simulate spiraling in over time
+        float decay_rate = (15.0 / a_start_radius) * a_speed_modifier * 0.8;
+        float radius_drift = mod(time * decay_rate * 5.0, 100.0);
+        
+        float current_radius = a_start_radius - radius_drift;
+        
+        // Seamless loop logic
+        if (current_radius < 10.0) {
+             current_radius = 110.0 - (10.0 - current_radius);
         }
+        
+        // Angular velocity - v ~ 1/sqrt(r) -> omega ~ 1/r^1.5
+        // Stronger gravity near the event horizon
+        float omega = 60.0 / pow(max(5.0, current_radius), 1.5);
+        
+        // Add some chaotic noise to the angle based on the clump ID to maintain some group coherence while moving
+        float clump_chaos = sin(time * 0.2 + a_clump_id) * 0.05;
+        float current_angle = a_initial_angle + time * omega + clump_chaos;
 
-        // Dynamic Color Palette based on Radius and Mode
+        // 2. Turbulence & Density Waves
+        // Create "standing waves" in the disk that particles pass through
+        float spiral_wave = sin(current_angle * 2.0 - current_radius * 0.15) * 1.5;
+        float turbulence = sin(current_angle * 6.0 + time * 1.5) * cos(current_radius * 0.4);
+        
+        current_radius += spiral_wave * 0.4;
+        current_radius += turbulence * 0.2 * a_speed_modifier;
+
+        // 3. Vertical Displacement (Accretion Disk Thickness)
+        // Flaring: Thicker at edges, very thin near center
+        float thickness = 0.025 * current_radius;
+        float bobbing = sin(time * 2.0 + current_radius * 0.6) * cos(current_angle * 3.0) * 0.4;
+        float current_y = a_random_y * thickness + bobbing;
+
+        // --- VISUALS ---
+        
+        // Soft fade at inner and outer edges
+        float edge_fade = smoothstep(10.0, 16.0, current_radius) * (1.0 - smoothstep(100.0, 110.0, current_radius));
+        v_alpha = edge_fade;
+
+        // Color Gradients - Cinematic Interstellar Palette
         vec3 warmColor;
         vec3 coolColor;
         
-        // Warm Palette (Interstellar Orange - Dark Mode)
-        if (radius < 20.0) {
-            warmColor = vec3(1.0, 1.0, 0.9); // White-Yellow core
-        } else if (radius < 35.0) {
-            warmColor = vec3(1.0, 0.55, 0.1); // Orange mid
-        } else {
-            warmColor = vec3(0.8, 0.15, 0.05); // Red outer
-        }
+        if (current_radius < 25.0) warmColor = vec3(1.0, 0.95, 0.8); // Hot/White Inner
+        else if (current_radius < 55.0) warmColor = vec3(1.0, 0.6, 0.2); // Orange Mid
+        else warmColor = vec3(0.6, 0.2, 0.1); // Red/Dark Outer
 
-        // Cool Palette (Cyber Blue - Light Mode)
-        if (radius < 20.0) {
-            coolColor = vec3(0.9, 1.0, 1.0); // White-Cyan core
-        } else if (radius < 35.0) {
-            coolColor = vec3(0.1, 0.5, 1.0); // Electric Blue mid
-        } else {
-            coolColor = vec3(0.05, 0.1, 0.8); // Deep Blue outer
-        }
+        if (current_radius < 25.0) coolColor = vec3(0.9, 0.95, 1.0);
+        else if (current_radius < 55.0) coolColor = vec3(0.4, 0.6, 0.9);
+        else coolColor = vec3(0.1, 0.15, 0.4);
         
         v_color = mix(warmColor, coolColor, u_mode);
         
-        // Brightness based on distance (closer = brighter)
-        // Boost brightness slightly in cool mode to cut through white backgrounds if needed
-        float brightnessMod = 1.0 + (u_mode * 0.2);
-        v_brightness = (1100.0 / (radius * radius + 10.0)) * brightnessMod;
+        // Brightness physics
+        // Inverse square law for intensity + relativistic beaming approximation
+        // Particles moving towards camera (left side usually) are brighter
+        float view_doppler = sin(current_angle + 1.6); 
+        float doppler_mult = smoothstep(-0.8, 1.0, view_doppler) * 1.5 + 0.5;
+        
+        v_brightness = (300.0 / (current_radius * current_radius * 0.25 + 30.0)) * u_temperature * doppler_mult;
 
-        vec3 new_pos;
-        new_pos.x = radius * cos(angle + position.x);
-        new_pos.y = position.y * (1.0 + sin(u_time * 0.1 + position.x) * 0.1) * 0.2; // Flattened disk
-        new_pos.z = radius * sin(angle + position.x);
+        // Position Calculation
+        vec3 pos;
+        pos.x = current_radius * cos(current_angle);
+        pos.z = current_radius * sin(current_angle);
+        pos.y = current_y;
 
-        vec4 mv_position = modelViewMatrix * vec4(new_pos, 1.0);
+        vec4 mv_position = modelViewMatrix * vec4(pos, 1.0);
         gl_Position = projectionMatrix * mv_position;
         
-        float size = a_scale * (350.0 / -mv_position.z);
-        gl_PointSize = max(1.0, size);
+        // Point size attenuation
+        float size_attenuation = (400.0 / -mv_position.z);
+        gl_PointSize = max(0.0, a_scale * size_attenuation);
     }
 `;
 
@@ -88,10 +121,20 @@ const DebrisFragmentShader = `
         float dist = length(coord);
         if (dist > 0.5) discard;
         
+        // Soft particle edge
         float glow = 1.0 - (dist * 2.0);
-        glow = pow(glow, 1.5);
+        glow = pow(glow, 2.0); // Sharper particles
         
-        vec3 final_color = v_color * v_brightness * 2.0;
+        // Color application
+        vec3 final_color = v_color;
+        
+        // Apply brightness
+        final_color *= v_brightness;
+        
+        // Add a white core for very bright/hot particles
+        float core = smoothstep(0.0, 0.1, 0.5 - dist) * smoothstep(1.0, 3.0, v_brightness);
+        final_color += vec3(core);
+
         gl_FragColor = vec4(final_color, v_alpha * glow);
     }
 `;
@@ -115,7 +158,6 @@ const AccretionDiskFragmentShader = `
     varying vec2 v_uv;
     varying vec3 v_worldPosition;
 
-    // Simplex 2D noise
     vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
     float snoise(vec2 v){
         const vec4 C = vec4(0.211324865405187, 0.366025403784439,
@@ -148,75 +190,65 @@ const AccretionDiskFragmentShader = `
         float radius = length(to_center) * 2.0;
         float angle = atan(to_center.y, to_center.x);
 
-        // Make the hole distinct (Event Horizon shadow)
-        // 0.0 - 0.3 is the hole
         if (radius < 0.28) discard;
         if (radius > 1.0) discard;
 
-        // Rotation speed increases closer to center (Keplerian)
-        float speed = 3.0 / (radius * radius + 0.1); 
+        // Varying speed across disk
+        float speed = 5.0 / (radius * radius + 0.1); 
         float rot_angle = angle + u_time * speed * 0.1;
 
-        // Complex noise for gas streaks
-        float n1 = snoise(vec2(rot_angle * 15.0, radius * 20.0));
-        float n2 = snoise(vec2(rot_angle * 8.0, radius * 8.0 - u_time * 0.5));
-        float n3 = snoise(vec2(rot_angle * 4.0, radius * 4.0));
+        // Multi-layered noise for structure
+        float n1 = snoise(vec2(rot_angle * 12.0, radius * 15.0));
+        float n2 = snoise(vec2(rot_angle * 6.0, radius * 5.0 - u_time * 0.2));
         
-        // Combine noise layers
-        float streaks = (n1 * 0.5 + 0.5) * 0.6 + (n2 * 0.5 + 0.5) * 0.3 + (n3 * 0.5 + 0.5) * 0.1;
-        streaks = pow(streaks, 1.5); // Sharpen contrast
+        float streaks = (n1 * 0.6 + 0.4) * (n2 * 0.5 + 0.5);
+        streaks = pow(streaks, 2.0); // High contrast streaks
 
-        // Interstellar Palette
         float r_norm = (radius - 0.28) / (1.0 - 0.28);
         
-        // Warm Palette (Dark Mode)
-        vec3 col_inner_warm = vec3(1.0, 0.95, 0.9);
-        vec3 col_mid_warm = vec3(1.0, 0.6, 0.1);
-        vec3 col_outer_warm = vec3(0.8, 0.1, 0.05);
+        // Cinematic Colors
+        vec3 col_inner_warm = vec3(1.0, 0.9, 0.7);
+        vec3 col_mid_warm = vec3(0.8, 0.4, 0.1);
+        vec3 col_outer_warm = vec3(0.3, 0.05, 0.02);
 
-        // Cool Palette (Light Mode)
         vec3 col_inner_cool = vec3(0.9, 0.95, 1.0);
-        vec3 col_mid_cool = vec3(0.1, 0.6, 1.0);
-        vec3 col_outer_cool = vec3(0.05, 0.1, 0.9);
+        vec3 col_mid_cool = vec3(0.2, 0.5, 0.9);
+        vec3 col_outer_cool = vec3(0.05, 0.1, 0.4);
 
-        // Interpolate Palettes
         vec3 col_inner = mix(col_inner_warm, col_inner_cool, u_mode);
         vec3 col_mid = mix(col_mid_warm, col_mid_cool, u_mode);
         vec3 col_outer = mix(col_outer_warm, col_outer_cool, u_mode);
         
         vec3 color;
-        if (r_norm < 0.2) {
-            color = mix(col_inner, col_mid, r_norm / 0.2);
+        if (r_norm < 0.25) {
+            color = mix(col_inner, col_mid, r_norm / 0.25);
         } else {
-            color = mix(col_mid, col_outer, (r_norm - 0.2) / 0.8);
+            color = mix(col_mid, col_outer, (r_norm - 0.25) / 0.75);
         }
 
-        // Apply temperature modifier
-        color = mix(color, vec3(1.0), (u_temperature - 1.0) * 0.5);
+        color = mix(color, vec3(1.0), (u_temperature - 1.0) * 0.3);
 
-        // Soft edges
-        float alpha = smoothstep(0.28, 0.32, radius) * (1.0 - smoothstep(0.9, 1.0, radius));
+        // Alpha taper
+        float alpha = smoothstep(0.28, 0.35, radius) * (1.0 - smoothstep(0.85, 1.0, radius));
         
-        // DOPPLER BEAMING SIMULATION
-        float doppler = sin(angle + 1.0); 
-        float beaming = 1.0 + doppler * 0.55;
+        // RELATIVISTIC BEAMING (Doppler)
+        float doppler = sin(angle + 1.6); 
+        float beaming = 1.0 + doppler * 0.7;
         
         if (doppler > 0.0) {
-            color = mix(color, vec3(1.0, 1.0, 1.0), doppler * 0.2); 
-            beaming *= 1.2;
+            color = mix(color, vec3(1.0, 0.95, 0.9), doppler * 0.4); // Blue-shift/Brighter
+            beaming = pow(beaming, 1.2);
         } else {
-            color *= vec3(1.0, 0.8, 0.7); 
-            beaming *= 0.6; 
+            color *= vec3(0.8, 0.5, 0.3); // Red-shift/Darker
+            beaming *= 0.3; 
         }
 
         vec3 final_color = color * streaks * u_brightness * beaming;
-        
-        // Boost intensity slightly in cool mode
         final_color *= (1.0 + u_mode * 0.2);
 
-        // Add a core glow ring
-        float core_ring = 1.0 - smoothstep(0.28, 0.32, radius);
-        final_color += vec3(1.0, 1.0, 1.0) * core_ring * 5.0;
+        // Inner ring glow (Photon ring proximity)
+        float inner_glow = exp(-(radius - 0.28) * 20.0);
+        final_color += vec3(1.0, 0.9, 0.8) * inner_glow * 2.0;
 
         gl_FragColor = vec4(final_color, alpha);
     }
@@ -237,8 +269,8 @@ const LensingFragmentShader = `
     uniform float u_mode; // 0.0 = Warm, 1.0 = Cool
     varying vec2 v_uv;
 
-    const float SCHWARZSCHILD_RADIUS = 0.12; 
-    const float LENSING_RADIUS = 0.55; 
+    const float SCHWARZSCHILD_RADIUS = 0.125; 
+    const float LENSING_RADIUS = 0.7; 
 
     void main() {
         vec2 uv = v_uv;
@@ -248,55 +280,62 @@ const LensingFragmentShader = `
         
         float dist = length(uv_center);
         
-        // Event Horizon
+        // EVENT HORIZON (Pure Black)
         if (dist < SCHWARZSCHILD_RADIUS) {
             gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
             return;
         }
         
-        float distortion = 0.0;
-        if (dist < LENSING_RADIUS) {
-            float rs = SCHWARZSCHILD_RADIUS;
-            float offset = (rs * rs) / dist; 
-            distortion = offset * u_lensing_strength * 0.8;
-            float falloff = smoothstep(LENSING_RADIUS, SCHWARZSCHILD_RADIUS, dist);
-            distortion *= falloff;
-        }
+        // GRAVITATIONAL DISTORTION
+        float rs = SCHWARZSCHILD_RADIUS;
+        float normalized_dist = dist / rs;
+        
+        // Strong lensing near horizon
+        // Non-linear response for more dramatic slider control
+        float strength_curve = pow(u_lensing_strength, 1.5);
+        float d_strength = 0.06 * strength_curve; 
+        
+        // Adjusted bending curve for Interstellar accuracy
+        float offset = d_strength / (pow(normalized_dist - 0.85, 2.0) + 0.005);
+        
+        offset *= smoothstep(LENSING_RADIUS, rs, dist);
         
         vec2 direction = normalize(uv_center);
-        vec2 sampling_offset = direction * distortion;
+        vec2 sampling_offset = direction * offset;
         sampling_offset.x /= (u_resolution.x / u_resolution.y); 
         
-        vec2 sample_uv = uv - sampling_offset;
+        // Chromatic Aberration scales with lensing strength
+        float ca = 0.02 * offset * (10.0 + strength_curve * 40.0); 
         
-        if (sample_uv.x < 0.0 || sample_uv.x > 1.0 || sample_uv.y < 0.0 || sample_uv.y > 1.0) {
-            gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-        } else {
-            vec4 color = texture2D(t_background, sample_uv);
-            
-            // Photon Sphere (Bright Ring Effect)
-            float edge_dist = dist - SCHWARZSCHILD_RADIUS;
-            
-            // Exponential decay for a sharp, intense ring
-            float glow_width = 0.012;
-            float photon_ring = exp(-edge_dist * (1.0/glow_width) * 10.0);
-            
-            vec3 ring_warm = vec3(1.0, 0.9, 0.6); // Amber/Gold
-            vec3 ring_cool = vec3(0.4, 0.8, 1.0);  // Electric Blue
-            vec3 ring_col = mix(ring_warm, ring_cool, u_mode);
+        vec2 uv_r = uv - sampling_offset * (1.0 + ca);
+        vec2 uv_g = uv - sampling_offset;
+        vec2 uv_b = uv - sampling_offset * (1.0 - ca);
+        
+        float r = texture2D(t_background, uv_r).r;
+        float g = texture2D(t_background, uv_g).g;
+        float b = texture2D(t_background, uv_b).b;
+        
+        vec3 color = vec3(r, g, b);
+        
+        // PHOTON RING (Razor thin, delicate)
+        float edge_dist = dist - SCHWARZSCHILD_RADIUS;
+        
+        // Extremely sharp internal ring
+        float ring_width = 0.0015;
+        float photon_ring = smoothstep(ring_width, 0.0, edge_dist);
+        
+        // Add slight bloom/haze around it
+        photon_ring += exp(-edge_dist * 200.0) * 0.3;
+        
+        vec3 ring_warm = vec3(1.0, 0.95, 0.85); 
+        vec3 ring_cool = vec3(0.8, 0.95, 1.0);  
+        vec3 ring_col = mix(ring_warm, ring_cool, u_mode);
 
-            // Intensity scales with lensing strength (more gravity = more light bending accumulation)
-            float intensity = 3.0 + (u_lensing_strength * 4.0);
-            
-            // Add warping brightness to background near the horizon
-            float background_warp = smoothstep(0.2, 0.0, edge_dist) * u_lensing_strength;
-            color.rgb += color.rgb * background_warp;
+        // Apply ring additively - drastically increase brightness with lensing strength
+        float ring_intensity = 1.5 + pow(u_lensing_strength, 2.0) * 4.0;
+        color += ring_col * photon_ring * ring_intensity;
 
-            // Add the photon ring on top
-            color.rgb += ring_col * photon_ring * intensity;
-
-            gl_FragColor = color;
-        }
+        gl_FragColor = vec4(color, 1.0);
     }
 `;
 
@@ -314,20 +353,18 @@ const StarfieldVertexShader = `
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
         gl_Position = projectionMatrix * mvPosition;
         
-        // Organic Twinkle Calculation
         float t = u_time * a_twinkle_speed;
         float wave1 = sin(t + a_twinkle_offset);
         float wave2 = sin(t * 0.64 + a_twinkle_offset * 2.3); 
-        float wave3 = sin(t * 0.37 + a_twinkle_offset * 4.1); 
         
-        float combinedTwinkle = (wave1 + wave2 + wave3) / 3.0;
+        float combinedTwinkle = (wave1 + wave2) / 2.0;
         float pulse = smoothstep(-1.0, 1.0, combinedTwinkle);
-        pulse = pow(pulse, 1.2);
+        pulse = pow(pulse, 1.5);
 
-        v_opacity = a_opacity * (0.55 + 0.45 * pulse); 
+        v_opacity = a_opacity * (0.6 + 0.4 * pulse); 
         v_color = a_color;
         
-        float sizeMod = 0.8 + 0.5 * pulse;
+        float sizeMod = 0.8 + 0.4 * pulse;
         gl_PointSize = a_size * sizeMod * (500.0 / -mvPosition.z);
     }
 `;
@@ -365,19 +402,16 @@ class BlackHoleSim {
     stars: THREE.Points;
     bloomPass: UnrealBloomPass;
     
-    currentMode: number = 0; // 0 for Warm (Dark Mode), 1 for Cool (Light Mode)
+    currentMode: number = 0; 
 
     constructor(container: HTMLElement) {
-        // Scenes
         this.backgroundScene = new THREE.Scene();
         this.scene = new THREE.Scene();
         this.lensingScene = new THREE.Scene();
 
-        // Camera - adjusted for container view
         this.camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 1000);
         this.camera.position.set(0, 15, 90); 
 
-        // Renderer
         this.renderer = new THREE.WebGLRenderer({ 
             antialias: false, 
             powerPreference: "high-performance",
@@ -388,12 +422,11 @@ class BlackHoleSim {
         this.renderer.setSize(container.clientWidth, container.clientHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        this.renderer.toneMappingExposure = 1.2;
+        this.renderer.toneMappingExposure = 0.9; 
         container.appendChild(this.renderer.domElement);
 
         this.clock = new THREE.Clock();
 
-        // Background Target
         this.backgroundRenderTarget = new THREE.WebGLRenderTarget(
             container.clientWidth * Math.min(window.devicePixelRatio, 2),
             container.clientHeight * Math.min(window.devicePixelRatio, 2),
@@ -405,7 +438,6 @@ class BlackHoleSim {
             }
         );
 
-        // Controls
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.05;
@@ -416,14 +448,10 @@ class BlackHoleSim {
         this.controls.enablePan = false;
         this.controls.enableZoom = true;
 
-        // Initialize Elements
         this.initLensing(container.clientWidth, container.clientHeight);
         this.initAccretionDisk();
-        
-        // Init stars BEFORE debris to help with layering
         this.initStarfield();
         this.initDebrisField();
-        
         this.initPostProcessing(container.clientWidth, container.clientHeight);
     }
 
@@ -449,7 +477,7 @@ class BlackHoleSim {
         this.accretionDiskMaterial = new THREE.ShaderMaterial({
             uniforms: {
                 u_time: { value: 0.0 },
-                u_brightness: { value: 1.5 },
+                u_brightness: { value: 1.0 },
                 u_temperature: { value: 1.0 },
                 u_mode: { value: 0.0 }
             },
@@ -466,34 +494,65 @@ class BlackHoleSim {
     }
 
     initDebrisField() {
-        const PARTICLE_COUNT = 10000; 
+        const PARTICLE_COUNT = 25000; 
         const positions = [], colors = [];
-        const angularVelocities = [], inwardVelocities = [], startRadii = [];
-        const scales = [];
+        const scales = [], startRadii = [], initialAngles = [], randomYs = [], speedModifiers = [];
+        const clumpIds = [];
 
         for (let i = 0; i < PARTICLE_COUNT; i++) {
-            const radius = THREE.MathUtils.randFloat(12, 120);
-            const angle = THREE.MathUtils.randFloat(0, Math.PI * 2);
+            // Advanced Spiral Generation for Clumpiness
+            const isStructure = Math.random() > 0.2; // 80% particles in spiral structures
             
-            positions.push(
-                radius * Math.cos(angle),
-                THREE.MathUtils.randFloatSpread(1),
-                radius * Math.sin(angle)
-            );
+            let radius, angle, clumpId;
 
-            scales.push(Math.random());
+            if (isStructure) {
+                // 2 Major Spiral Arms for that classic galaxy/accretion look
+                const armCount = 2;
+                const armIndex = i % armCount;
+                
+                const t = Math.random(); 
+                // Radius concentrated in mid-disk
+                radius = 15 + 95 * Math.pow(t, 0.8); 
+                
+                // Winding logarithmic spiral
+                const winding = 3.5; 
+                const armOffset = (Math.PI * 2 / armCount) * armIndex;
+                angle = t * Math.PI * 2 * winding + armOffset;
+                
+                // Micro-clumping
+                clumpId = Math.floor(Math.random() * 64); 
+                
+                // Spread
+                const spreadBase = 1.0 + t * 5.0;
+                const r_spread = THREE.MathUtils.randFloatSpread(spreadBase);
+                const a_spread = THREE.MathUtils.randFloatSpread(0.3 / (t + 0.1)); 
+                
+                radius += r_spread;
+                angle += a_spread;
+            } else {
+                // Diffuse background halo
+                radius = THREE.MathUtils.randFloat(12, 110);
+                angle = Math.random() * Math.PI * 2;
+                clumpId = 0;
+            }
 
-            // Initial colors still used for structure/banding/randomness
-            const color = new THREE.Color();
-            if (radius < 20) color.setHex(0xffffff);
-            else if (radius < 35) color.setHex(0xffaa00);
-            else color.setHex(0xaa2200);
+            // Disk Profile (Flared)
+            const thickness = 0.4 + (radius / 110.0) * 2.5; 
+            const u = Math.random();
+            const v = Math.random();
+            // Box-Muller transform for Gaussian vertical distribution
+            const z = Math.sqrt(-2.0 * Math.log(1.0 - u)) * Math.cos(2.0 * Math.PI * v);
+            const yVal = z * thickness * 0.6;
+
+            positions.push(0, 0, 0); // Position handled in shader
             
-            colors.push(color.r, color.g, color.b);
-
             startRadii.push(radius);
-            angularVelocities.push(3.0 / (radius * radius + 1.0));
-            inwardVelocities.push(0.5);
+            initialAngles.push(angle);
+            randomYs.push(yVal);
+            scales.push(Math.random() * 1.8 + 0.4);
+            colors.push(1,1,1); 
+            speedModifiers.push(Math.random() * 0.4 + 0.8); 
+            clumpIds.push(clumpId);
         }
 
         const geometry = new THREE.BufferGeometry();
@@ -501,8 +560,10 @@ class BlackHoleSim {
         geometry.setAttribute('a_scale', new THREE.Float32BufferAttribute(scales, 1));
         geometry.setAttribute('a_color', new THREE.Float32BufferAttribute(colors, 3));
         geometry.setAttribute('a_start_radius', new THREE.Float32BufferAttribute(startRadii, 1));
-        geometry.setAttribute('a_angular_velocity', new THREE.Float32BufferAttribute(angularVelocities, 1));
-        geometry.setAttribute('a_inward_velocity', new THREE.Float32BufferAttribute(inwardVelocities, 1));
+        geometry.setAttribute('a_initial_angle', new THREE.Float32BufferAttribute(initialAngles, 1));
+        geometry.setAttribute('a_random_y', new THREE.Float32BufferAttribute(randomYs, 1));
+        geometry.setAttribute('a_speed_modifier', new THREE.Float32BufferAttribute(speedModifiers, 1));
+        geometry.setAttribute('a_clump_id', new THREE.Float32BufferAttribute(clumpIds, 1));
 
         this.debrisMaterial = new THREE.ShaderMaterial({
             uniforms: {
@@ -532,7 +593,7 @@ class BlackHoleSim {
         const colors = [];
 
         for (let i = 0; i < count; i++) {
-            const r = THREE.MathUtils.randFloat(400, 800);
+            const r = THREE.MathUtils.randFloat(400, 900);
             const theta = THREE.MathUtils.randFloat(0, Math.PI * 2);
             const phi = THREE.MathUtils.randFloat(0, Math.PI);
 
@@ -542,10 +603,10 @@ class BlackHoleSim {
 
             positions.push(x, y, z);
             
-            sizes.push(THREE.MathUtils.randFloat(0.5, 3.0)); 
-            opacities.push(THREE.MathUtils.randFloat(0.1, 0.6)); 
+            sizes.push(THREE.MathUtils.randFloat(0.5, 2.5)); 
+            opacities.push(THREE.MathUtils.randFloat(0.1, 0.5)); 
             
-            twinkleSpeeds.push(THREE.MathUtils.randFloat(0.2, 1.5));
+            twinkleSpeeds.push(THREE.MathUtils.randFloat(0.2, 1.0));
             twinkleOffsets.push(THREE.MathUtils.randFloat(0, Math.PI * 2));
 
             const color = new THREE.Color();
@@ -597,7 +658,7 @@ class BlackHoleSim {
 
         this.bloomPass = new UnrealBloomPass(
             new THREE.Vector2(width, height),
-            2.5, 0.8, 0.6
+            1.5, 0.5, 0.85
         );
         this.composer.addPass(this.bloomPass);
 
@@ -620,11 +681,9 @@ class BlackHoleSim {
     }
 
     update(time: number, delta: number, params: any) {
-        // Smoothly interpolate mode
         const targetMode = params.isLightMode ? 1.0 : 0.0;
         this.currentMode += (targetMode - this.currentMode) * 0.05;
 
-        // Update Uniforms
         this.lensingMaterial.uniforms.u_mode.value = this.currentMode;
         this.accretionDiskMaterial.uniforms.u_mode.value = this.currentMode;
         this.debrisMaterial.uniforms.u_mode.value = this.currentMode;
@@ -638,8 +697,8 @@ class BlackHoleSim {
 
         const scaledTime = time * params.rotationSpeed;
         
-        this.debrisMaterial.uniforms.u_time.value = scaledTime * 0.1;
-        this.accretionDiskMaterial.uniforms.u_time.value = scaledTime * 0.4;
+        this.debrisMaterial.uniforms.u_time.value = scaledTime;
+        this.accretionDiskMaterial.uniforms.u_time.value = scaledTime;
 
         if (this.starfieldMaterial) {
             this.starfieldMaterial.uniforms.u_time.value = time;
@@ -670,11 +729,11 @@ const BlackHoleSection: React.FC = () => {
   const simRef = useRef<BlackHoleSim | null>(null);
   const { t, theme } = useThemeLanguage();
   
-  // Interstellar Default Settings
-  const [rotationSpeed, setRotationSpeed] = useState(0.8);
-  const [bloomIntensity, setBloomIntensity] = useState(2.0);
-  const [lensingStrength, setLensingStrength] = useState(1.0);
-  const [diskBrightness, setDiskBrightness] = useState(4.0);
+  // Optimized defaults for Interstellar look (Darker, higher contrast)
+  const [rotationSpeed, setRotationSpeed] = useState(0.3);
+  const [bloomIntensity, setBloomIntensity] = useState(0.5); 
+  const [lensingStrength, setLensingStrength] = useState(1.2);
+  const [diskBrightness, setDiskBrightness] = useState(1.2);
   const [temperature, setTemperature] = useState(1.0);
 
   useEffect(() => {
@@ -719,7 +778,6 @@ const BlackHoleSection: React.FC = () => {
     };
   }, []);
 
-  // Use ref to prevent stale closure in loop
   const paramsRef = useRef({ rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme });
   useEffect(() => {
       paramsRef.current = { rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme };
