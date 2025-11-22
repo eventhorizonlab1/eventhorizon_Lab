@@ -370,21 +370,19 @@ const Hero: React.FC = () => {
   const { t, theme } = useThemeLanguage();
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start start", "end start"]
+    offset: ["start start", "end start"] // Tracks the scroll of the hero section itself
   });
 
-  // --- CINEMATIC PARALLAX EFFECT ---
-  // Text zooms in, blurs, and fades out as user scrolls down
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.5]);
-  const opacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
-  const blur = useTransform(scrollYProgress, [0, 0.4], ["0px", "20px"]);
-  
-  // Content moves up slightly slower than scroll
-  const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  // --- CINEMATIC ZOOM EFFECT ---
+  // Text scales UP towards viewer while blurring out, simulating moving INTO the content.
+  const scale = useTransform(scrollYProgress, [0, 0.4], [1, 1.2]); 
+  const opacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
+  const blur = useTransform(scrollYProgress, [0, 0.3], ["0px", "12px"]);
+  const y = useTransform(scrollYProgress, [0, 0.4], [0, 100]);
 
   return (
-    // Reduced height to 90vh for better spacing flow
-    <section ref={ref} className="relative h-[90vh] w-full bg-white dark:bg-black transition-colors duration-500">
+    // Reduced height from 120vh to 105vh to fix excessive bottom spacing
+    <section ref={ref} className="relative h-[105vh] w-full bg-white dark:bg-black transition-colors duration-500">
       
       {/* Sticky Background Visual */}
       <div className="sticky top-0 h-screen w-full overflow-hidden z-0">
@@ -392,10 +390,10 @@ const Hero: React.FC = () => {
         {/* The Monochrome Black Hole Shader */}
         <BlackHoleBackground theme={theme} />
 
-        {/* Overlay for text readability */}
+        {/* Overlay for text readability - Adaptive Gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-white/90 dark:from-black/30 dark:via-transparent dark:to-black/80 z-10 pointer-events-none transition-colors duration-500"></div>
         
-        {/* Content Container */}
+        {/* Content Container - Now fixed within the sticky viewport for parallax */}
         <div className="absolute inset-0 flex flex-col items-center justify-center px-4 z-20 pointer-events-none">
            <motion.div 
               style={{ opacity, scale, filter: blur, y }}

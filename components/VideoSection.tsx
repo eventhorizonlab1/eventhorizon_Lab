@@ -125,6 +125,7 @@ const VideoSection: React.FC = () => {
   const { t } = useThemeLanguage();
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   
+  // Keep parallax only for the main featured video which is singular
   const { scrollYProgress } = useScroll({
     target: featuredRef,
     offset: ["start end", "end start"]
@@ -145,30 +146,34 @@ const VideoSection: React.FC = () => {
 
       <motion.section 
         id="videos" 
-        className="py-24 px-4 md:px-12 max-w-[1800px] mx-auto"
+        // Adjusted padding: reduced top padding to 16 (4rem) to be closer to Hero, keeping bottom consistent
+        className="pt-20 pb-24 px-4 md:px-12 max-w-[1800px] mx-auto"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         
-        {/* 1. CHANNEL BANNER */}
-        {/* Uniform gap mb-12 (approx 48px) between elements */}
+        {/* YouTube Channel Promotion Banner - Margin Bottom 12 for consistency */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="mb-12 relative overflow-hidden rounded-none md:rounded-3xl bg-gray-50 dark:bg-[#080808] text-black dark:text-white border-y md:border border-gray-200 dark:border-white/10 shadow-sm transition-colors duration-500"
         >
+           {/* Background Tech Grid */}
            <div className="absolute inset-0 z-0 pointer-events-none opacity-30">
               <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.1)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
            </div>
 
            <div className="relative z-10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-8">
+              
               <div className="flex flex-row items-center gap-6 w-full md:w-auto">
+                 {/* Technical Logo Placeholder */}
                  <div className="hidden md:flex w-16 h-16 border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 items-center justify-center rounded-lg">
                     <Radio className="w-6 h-6 text-black dark:text-white opacity-80" />
                  </div>
+                 
                  <div className="flex flex-col">
                     <div className="flex items-center gap-2 mb-2">
                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
@@ -182,6 +187,8 @@ const VideoSection: React.FC = () => {
                     </p>
                  </div>
               </div>
+              
+              {/* Right Side CTA */}
               <a 
                 href="https://www.youtube.com/results?search_query=cnes" 
                 target="_blank"
@@ -193,10 +200,12 @@ const VideoSection: React.FC = () => {
                   <ArrowUpRight size={14} />
                 </div>
               </a>
+
            </div>
         </motion.div>
 
-        {/* 2. SECTION HEADER */}
+
+        {/* Section Header - Margin Bottom 12 for consistency */}
         <div className="mb-12 flex items-end justify-between border-b border-gray-200 dark:border-gray-800 pb-6">
           <div>
                <span className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-2 block">Médiathèque</span>
@@ -209,7 +218,7 @@ const VideoSection: React.FC = () => {
           </a>
         </div>
 
-        {/* 3. FEATURED VIDEO */}
+        {/* Featured Video - Margin Bottom 12 for consistency */}
         <div className="mb-12" ref={featuredRef}>
           <motion.div 
             initial={{ opacity: 0 }}
@@ -246,7 +255,7 @@ const VideoSection: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* 4. GRID LAYOUT */}
+        {/* Grid Layout - 10 Videos */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
           {VIDEOS.map((video, index) => (
             <VideoCard key={video.id} video={video} index={index} onPlay={setSelectedVideo} />

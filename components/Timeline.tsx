@@ -99,7 +99,7 @@ const Timeline: React.FC = () => {
   const height = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
-    <section id="history" className="relative py-24 px-4" aria-label={t('hero_history_title')}>
+    <section id="history" className="relative py-16 md:py-24 px-4" aria-label={t('hero_history_title')}>
        <div className="text-center mb-20">
           <motion.h3 
             initial={{ opacity: 0, y: 20 }}

@@ -64,7 +64,7 @@ const EcosystemSection: React.FC = () => {
   return (
     <motion.section 
       id="ecosystem" 
-      className="py-24"
+      className="py-16 md:py-24"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
