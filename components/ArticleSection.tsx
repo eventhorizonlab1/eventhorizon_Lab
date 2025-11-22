@@ -20,6 +20,8 @@ const cardVariants: Variants = {
 
 const ArticleCard: React.FC<{ article: Article }> = ({ article }) => {
   const { t } = useThemeLanguage();
+  const title = t(`article_${article.id}_title`);
+  const summary = t(`article_${article.id}_summary`);
 
   return (
     <motion.div 
@@ -46,10 +48,10 @@ const ArticleCard: React.FC<{ article: Article }> = ({ article }) => {
           {/* Content */}
           <div className="flex-grow">
             <h3 className="text-2xl md:text-3xl font-serif font-bold leading-tight mb-4 text-black dark:text-white group-hover:underline decoration-1 underline-offset-4 transition-all">
-              {article.title}
+              {title}
             </h3>
             <p className="text-gray-600 dark:text-gray-400 text-sm font-medium leading-relaxed line-clamp-3 border-t border-gray-200 dark:border-white/10 pt-4">
-              {article.summary}
+              {summary}
             </p>
           </div>
 

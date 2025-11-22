@@ -15,6 +15,7 @@ const PartnerCard: React.FC<{ partner: Partner; index: number }> = ({ partner, i
 
   // More pronounced parallax effect for dynamic depth
   const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
+  const role = t(`partner_${partner.id}_role`);
 
   return (
     <motion.div 
@@ -50,7 +51,7 @@ const PartnerCard: React.FC<{ partner: Partner; index: number }> = ({ partner, i
            <h3 className="text-2xl font-bold uppercase tracking-tight mb-1 text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
              {partner.name}
            </h3>
-           <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block border-t border-gray-200 dark:border-gray-800 pt-2 inline-block min-w-[50px]">{partner.role}</span>
+           <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block border-t border-gray-200 dark:border-gray-800 pt-2 inline-block min-w-[50px]">{role}</span>
          </div>
       </motion.div>
     </motion.div>

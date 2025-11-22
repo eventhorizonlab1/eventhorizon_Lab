@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { MILESTONES } from '../constants';
@@ -10,6 +11,10 @@ const TimelineItem: React.FC<{ data: typeof MILESTONES[0], index: number }> = ({
     target: ref,
     offset: ["start end", "end start"]
   });
+  const { t } = useThemeLanguage();
+  
+  const title = t(`milestone_${index}_title`);
+  const description = t(`milestone_${index}_desc`);
 
   // Parallax for text
   const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
@@ -71,10 +76,10 @@ const TimelineItem: React.FC<{ data: typeof MILESTONES[0], index: number }> = ({
                   id={`milestone-title-${index}`}
                   className="text-xl font-bold text-black dark:text-white uppercase tracking-wide mb-2"
                 >
-                    {data.title}
+                    {title}
                 </h4>
                 <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                    {data.description}
+                    {description}
                 </p>
              </article>
           </div>

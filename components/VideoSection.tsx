@@ -72,6 +72,10 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
 };
 
 const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => void }> = ({ video, index, onPlay }) => {
+  const { t } = useThemeLanguage();
+  const title = t(`video_${video.id}_title`);
+  const category = t(`video_${video.id}_cat`);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -87,7 +91,7 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
           <div className="relative overflow-hidden rounded-xl bg-gray-100 dark:bg-eh-gray aspect-video mb-4 transition-colors duration-500 border border-black/5 dark:border-white/5">
              <img 
               src={video.imageUrl} 
-              alt={video.title} 
+              alt={title} 
               loading="lazy"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
             />
@@ -103,10 +107,10 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
           
           <div className="pr-2">
             <div className="flex justify-between items-start mb-2">
-                <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest border border-blue-600/20 dark:border-blue-400/20 px-2 py-0.5 rounded-full">{video.category}</span>
+                <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest border border-blue-600/20 dark:border-blue-400/20 px-2 py-0.5 rounded-full">{category}</span>
             </div>
             <h4 className="text-lg font-bold leading-tight transition-colors duration-300 text-black dark:text-white group-hover:text-gray-600 dark:group-hover:text-gray-300 line-clamp-2">
-              {video.title}
+              {title}
             </h4>
           </div>
         </div>
@@ -127,6 +131,9 @@ const VideoSection: React.FC = () => {
   });
   
   const imageY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
+
+  const featuredTitle = t(`video_${FEATURED_VIDEO.id}_title`);
+  const featuredCat = t(`video_${FEATURED_VIDEO.id}_cat`);
 
   return (
     <>
@@ -171,10 +178,10 @@ const VideoSection: React.FC = () => {
                        <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">Transmission Entrante</span>
                     </div>
                     <h2 className="text-2xl md:text-4xl font-bold tracking-tighter uppercase text-black dark:text-white">
-                      Chaîne Officielle
+                      {t('videos_channel')}
                     </h2>
                     <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 max-w-md mt-2 font-medium">
-                      Reportages, Lancements et Directs du CNES.
+                      {t('videos_channel_desc')}
                     </p>
                  </div>
               </div>
@@ -187,7 +194,7 @@ const VideoSection: React.FC = () => {
                 className="group relative px-8 py-4 bg-transparent border border-black dark:border-white text-black dark:text-white overflow-hidden transition-all hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black w-full md:w-auto text-center"
               >
                 <div className="relative flex items-center justify-center gap-3">
-                  <span className="font-bold text-xs tracking-[0.2em] uppercase">Accéder au flux</span>
+                  <span className="font-bold text-xs tracking-[0.2em] uppercase">{t('videos_access')}</span>
                   <ArrowUpRight size={16} />
                 </div>
               </a>
@@ -221,7 +228,7 @@ const VideoSection: React.FC = () => {
               <motion.div style={{ y: imageY }} className="w-full h-[120%] -mt-[10%]">
                 <img 
                   src={FEATURED_VIDEO.imageUrl} 
-                  alt={FEATURED_VIDEO.title} 
+                  alt={featuredTitle} 
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
                 />
@@ -230,11 +237,11 @@ const VideoSection: React.FC = () => {
               
               <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 flex flex-col md:flex-row justify-between items-end gap-6">
                   <div>
-                      <span className="inline-block px-3 py-1 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest mb-3 rounded-full">À la une</span>
+                      <span className="inline-block px-3 py-1 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest mb-3 rounded-full">{t('videos_featured')}</span>
                       <h3 className="text-3xl md:text-5xl font-black tracking-tighter uppercase text-white mb-2">
-                          {FEATURED_VIDEO.title}
+                          {featuredTitle}
                       </h3>
-                      <p className="text-white/70 text-sm font-mono">{FEATURED_VIDEO.category} // {FEATURED_VIDEO.duration}</p>
+                      <p className="text-white/70 text-sm font-mono">{featuredCat} // {FEATURED_VIDEO.duration}</p>
                   </div>
                   
                   <button className="w-14 h-14 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.3)]">
