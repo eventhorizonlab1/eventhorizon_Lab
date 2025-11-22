@@ -291,12 +291,8 @@ const LensingFragmentShader = `
         float normalized_dist = dist / rs;
         
         // Strong lensing near horizon
-        // Non-linear response for more dramatic slider control
-        float strength_curve = pow(u_lensing_strength, 1.5);
-        float d_strength = 0.06 * strength_curve; 
-        
-        // Adjusted bending curve for Interstellar accuracy
-        float offset = d_strength / (pow(normalized_dist - 0.85, 2.0) + 0.005);
+        float d_strength = 0.025 * u_lensing_strength;
+        float offset = d_strength / (pow(normalized_dist - 0.9, 2.0) + 0.02);
         
         offset *= smoothstep(LENSING_RADIUS, rs, dist);
         
@@ -304,8 +300,8 @@ const LensingFragmentShader = `
         vec2 sampling_offset = direction * offset;
         sampling_offset.x /= (u_resolution.x / u_resolution.y); 
         
-        // Chromatic Aberration scales with lensing strength
-        float ca = 0.02 * offset * (10.0 + strength_curve * 40.0); 
+        // Chromatic Aberration
+        float ca = 0.008 * offset * 40.0; 
         
         vec2 uv_r = uv - sampling_offset * (1.0 + ca);
         vec2 uv_g = uv - sampling_offset;
@@ -321,19 +317,18 @@ const LensingFragmentShader = `
         float edge_dist = dist - SCHWARZSCHILD_RADIUS;
         
         // Extremely sharp internal ring
-        float ring_width = 0.0015;
+        float ring_width = 0.002;
         float photon_ring = smoothstep(ring_width, 0.0, edge_dist);
         
         // Add slight bloom/haze around it
-        photon_ring += exp(-edge_dist * 200.0) * 0.3;
+        photon_ring += exp(-edge_dist * 150.0) * 0.4;
         
         vec3 ring_warm = vec3(1.0, 0.95, 0.85); 
         vec3 ring_cool = vec3(0.8, 0.95, 1.0);  
         vec3 ring_col = mix(ring_warm, ring_cool, u_mode);
 
-        // Apply ring additively - drastically increase brightness with lensing strength
-        float ring_intensity = 1.5 + pow(u_lensing_strength, 2.0) * 4.0;
-        color += ring_col * photon_ring * ring_intensity;
+        // Apply ring additively
+        color += ring_col * photon_ring * (1.5 + u_lensing_strength * 0.5);
 
         gl_FragColor = vec4(color, 1.0);
     }
