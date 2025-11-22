@@ -27,77 +27,94 @@ const DebrisVertexShader = `
     varying float v_alpha;
     varying float v_brightness;
 
+    // Pseudo-random for shader
+    float hash(float n) { return fract(sin(n) * 43758.5453123); }
+
     void main() {
         // Physics Simulation: Chaotic Accretion
-        float time = u_time * 0.06; // Slow, majestic movement
+        float time = u_time * 0.08; // Simulation speed
         
         // 1. Orbital Dynamics (Keplerian + Drag)
-        // Particles orbit faster closer to center
+        // Calculate inward drift (accretion)
+        // Particles closer to the center drift in faster due to higher friction/gravity gradient.
+        // Modified to be more aggressive near the center.
+        float decay_rate = (40.0 / (a_start_radius + 2.0)) * a_speed_modifier;
         
-        // Calculate decay based on initial radius and speed modifier
-        // Simulate spiraling in over time
-        float decay_rate = (18.0 / (a_start_radius + 2.0)) * a_speed_modifier * 0.6;
-        float radius_drift = mod(time * decay_rate * 6.0, 100.0);
-        
+        // Add chaotic burst to decay based on clump ID to simulate turbulent friction
+        float clump_decay_noise = sin(time * 0.5 + a_clump_id * 0.1) * 0.5 + 0.5;
+        decay_rate *= (0.8 + 0.6 * clump_decay_noise);
+
+        // Continuous drift calculation with seamless wrapping
+        float radius_drift = mod(time * decay_rate * 3.0, 115.0);
         float current_radius = a_start_radius - radius_drift;
         
-        // Seamless loop logic
-        if (current_radius < 9.0) {
-             current_radius = 110.0 - (9.0 - current_radius);
+        // Wrap logic: If particle goes below horizon, wrap to outer edge
+        float horizon = 8.0;
+        float outer_edge = 120.0;
+        if (current_radius < horizon) {
+             current_radius = outer_edge - (horizon - current_radius);
         }
         
-        // Angular velocity - v ~ 1/sqrt(r) -> omega ~ 1/r^1.5
-        // Stronger gravity near the event horizon
-        float omega = 70.0 / pow(max(4.0, current_radius), 1.5);
+        // Angular Velocity (Kepler's 3rd Law approx: omega ~ r^-1.5)
+        // Increased speed multiplier for more dynamic motion
+        float omega = 140.0 / pow(max(5.0, current_radius), 1.5);
         
-        // Add some chaotic noise to the angle based on the clump ID to maintain some group coherence while moving
-        float clump_chaos = sin(time * 0.3 + a_clump_id * 0.5) * 0.08;
-        float current_angle = a_initial_angle + time * omega + clump_chaos;
-
-        // 2. Turbulence & Density Waves
-        // Create "standing waves" in the disk that particles pass through
-        float spiral_wave = sin(current_angle * 2.5 - current_radius * 0.18) * 1.8;
-        float turbulence = sin(current_angle * 5.0 + time * 1.5) * cos(current_radius * 0.4);
+        // 2. Stream & Clump Logic
+        // Maintain spiral structure while rotating
+        // Logarithmic spiral equation: theta = ln(r)/b
+        float spiral_offset = log(max(1.0, current_radius)) * 3.5; 
         
-        current_radius += spiral_wave * 0.35;
-        current_radius += turbulence * 0.2 * a_speed_modifier;
+        // Turbulence that varies with radius and time
+        float turbulence = sin(current_radius * 0.5 - time * 2.5) * 0.15;
+        
+        // Local clump chaotic rotation (vortices within the disk)
+        float clump_instability = sin(time * 2.0 + a_clump_id * 15.0) * 0.08 * (30.0 / current_radius);
+        
+        float current_angle = a_initial_angle + time * omega - spiral_offset * 0.1 + turbulence + clump_instability;
 
         // 3. Vertical Displacement (Accretion Disk Thickness)
-        // Flaring: Thicker at edges, very thin near center
+        // Flaring: Thicker at edges, thin near center
         float thickness = 0.03 * current_radius;
-        float bobbing = sin(time * 2.0 + current_radius * 0.6) * cos(current_angle * 3.0) * 0.4;
-        float current_y = a_random_y * thickness + bobbing;
+        
+        // Vertical waves (warping of the disk) - deeper and slower
+        float warp = sin(current_angle * 3.0 - time * 0.5) * cos(current_radius * 0.2) * 1.5;
+        float current_y = a_random_y * thickness + warp;
 
         // --- VISUALS ---
         
-        // Soft fade at inner and outer edges
-        float edge_fade = smoothstep(9.0, 16.0, current_radius) * (1.0 - smoothstep(100.0, 110.0, current_radius));
+        // Fade edges
+        float edge_fade = smoothstep(horizon, horizon + 5.0, current_radius) * (1.0 - smoothstep(outer_edge - 15.0, outer_edge, current_radius));
         v_alpha = edge_fade;
 
-        // Color Gradients - Cinematic Interstellar Palette - MATCHING DISK SHADER
+        // Color Gradients - Interstellar Style
         vec3 warmColor;
         vec3 coolColor;
         
-        // Refined gradients for consistency with AccretionDiskFragmentShader
-        if (current_radius < 24.0) warmColor = vec3(1.0, 0.98, 0.9); // Hot/White Inner
-        else if (current_radius < 52.0) warmColor = vec3(1.0, 0.6, 0.2); // Orange Mid
-        else warmColor = vec3(0.4, 0.05, 0.02); // Red/Dark Outer
+        // Temperature gradient based on radius
+        if (current_radius < 18.0) warmColor = vec3(1.0, 0.98, 0.95); // White/Hot
+        else if (current_radius < 35.0) warmColor = vec3(1.0, 0.7, 0.2); // Orange/Gold
+        else warmColor = vec3(0.6, 0.1, 0.05); // Red/Dark
 
-        if (current_radius < 24.0) coolColor = vec3(0.9, 0.95, 1.0);
-        else if (current_radius < 52.0) coolColor = vec3(0.1, 0.5, 0.9);
-        else coolColor = vec3(0.05, 0.05, 0.3);
+        if (current_radius < 18.0) coolColor = vec3(0.9, 0.95, 1.0);
+        else if (current_radius < 35.0) coolColor = vec3(0.2, 0.6, 1.0);
+        else coolColor = vec3(0.05, 0.1, 0.4);
         
         v_color = mix(warmColor, coolColor, u_mode);
         
-        // Brightness physics
-        // Inverse square law for intensity + relativistic beaming approximation
-        // Particles moving towards camera (left side usually) are brighter
-        float view_doppler = sin(current_angle + 1.6); 
-        float doppler_mult = smoothstep(-0.7, 1.0, view_doppler) * 1.8 + 0.4;
+        // Doppler Beaming / Relativistic Brightness
+        // Particles moving towards viewer (left side) are brighter
+        // Adjusted phase for camera angle
+        float view_doppler = sin(current_angle + 2.0); 
+        float doppler_mult = smoothstep(-0.8, 1.0, view_doppler) * 3.0 + 0.5;
         
-        v_brightness = (320.0 / (current_radius * current_radius * 0.22 + 25.0)) * u_temperature * doppler_mult;
+        // Inverse square law intensity + heat
+        v_brightness = (600.0 / (current_radius * current_radius * 0.2 + 5.0)) * u_temperature * doppler_mult;
+        
+        // Random flicker & Clump brightness boost
+        float clump_brightness = 1.0 + 0.5 * sin(a_clump_id * 10.0 + time * 5.0);
+        v_brightness *= clump_brightness;
 
-        // Position Calculation
+        // Position
         vec3 pos;
         pos.x = current_radius * cos(current_angle);
         pos.z = current_radius * sin(current_angle);
@@ -106,8 +123,8 @@ const DebrisVertexShader = `
         vec4 mv_position = modelViewMatrix * vec4(pos, 1.0);
         gl_Position = projectionMatrix * mv_position;
         
-        // Point size attenuation
-        float size_attenuation = (450.0 / -mv_position.z);
+        // Size attenuation
+        float size_attenuation = (600.0 / -mv_position.z);
         gl_PointSize = max(0.0, a_scale * size_attenuation);
     }
 `;
@@ -122,9 +139,10 @@ const DebrisFragmentShader = `
         float dist = length(coord);
         if (dist > 0.5) discard;
         
-        // Soft particle edge
+        // Soft particle edge with dense core
+        // Cubic falloff for smoother look
         float glow = 1.0 - (dist * 2.0);
-        glow = pow(glow, 2.5); // Sharper particles for better clump definition
+        glow = glow * glow * (3.0 - 2.0 * glow); 
         
         // Color application
         vec3 final_color = v_color;
@@ -132,11 +150,11 @@ const DebrisFragmentShader = `
         // Apply brightness
         final_color *= v_brightness;
         
-        // Add a white core for very bright/hot particles
-        float core = smoothstep(0.0, 0.15, 0.5 - dist) * smoothstep(1.5, 4.0, v_brightness);
-        final_color += vec3(core);
+        // Add a white core for very bright/hot particles to simulate high energy
+        float core = smoothstep(0.0, 0.15, 0.5 - dist) * smoothstep(2.0, 8.0, v_brightness);
+        final_color = mix(final_color, vec3(1.0), core);
 
-        gl_FragColor = vec4(final_color, v_alpha * glow);
+        gl_FragColor = vec4(final_color, v_alpha * glow * 0.8);
     }
 `;
 
@@ -199,24 +217,24 @@ const AccretionDiskFragmentShader = `
         float rot_angle = angle + u_time * speed * 0.1;
 
         // Multi-layered noise for structure
-        float n1 = snoise(vec2(rot_angle * 12.0, radius * 15.0));
-        float n2 = snoise(vec2(rot_angle * 6.0, radius * 5.0 - u_time * 0.2));
+        float n1 = snoise(vec2(rot_angle * 8.0, radius * 12.0));
+        float n2 = snoise(vec2(rot_angle * 4.0, radius * 3.0 - u_time * 0.1));
         
-        float streaks = (n1 * 0.6 + 0.4) * (n2 * 0.5 + 0.5);
-        streaks = pow(streaks, 2.0); // High contrast streaks
+        float streaks = (n1 * 0.4 + 0.6) * (n2 * 0.4 + 0.6);
+        streaks = pow(streaks, 1.5); // Softer streaks
 
         float r_norm = (radius - 0.28) / (1.0 - 0.28);
         
         // Refined Color Gradients for Realistic Temperature shift
         // Warm Mode (Interstellar style): White Hot -> Golden -> Deep Red/Charcoal
-        vec3 col_inner_warm = vec3(1.0, 0.98, 0.9); // White-hot center
-        vec3 col_mid_warm = vec3(1.0, 0.6, 0.2);    // Intense Orange
-        vec3 col_outer_warm = vec3(0.4, 0.05, 0.02);// Cooling Magma / Dark Red
+        vec3 col_inner_warm = vec3(1.0, 0.95, 0.85); // Slightly warmer white
+        vec3 col_mid_warm = vec3(1.0, 0.5, 0.1);    // Deep Orange
+        vec3 col_outer_warm = vec3(0.2, 0.02, 0.01);// Very dark red/black
 
         // Cool Mode (Sci-Fi/Light Mode): Blue White -> Cyan/Azure -> Deep Violet
-        vec3 col_inner_cool = vec3(0.9, 0.95, 1.0); // Blue-white core
-        vec3 col_mid_cool = vec3(0.1, 0.5, 0.9);    // Electric Blue
-        vec3 col_outer_cool = vec3(0.05, 0.05, 0.3);// Deep Violet/Cold Space
+        vec3 col_inner_cool = vec3(0.95, 0.98, 1.0); // Pure blue-white
+        vec3 col_mid_cool = vec3(0.2, 0.6, 1.0);    // Bright Azure
+        vec3 col_outer_cool = vec3(0.02, 0.05, 0.2);// Dark Deep Space Blue
 
         vec3 col_inner = mix(col_inner_warm, col_inner_cool, u_mode);
         vec3 col_mid = mix(col_mid_warm, col_mid_cool, u_mode);
@@ -224,36 +242,38 @@ const AccretionDiskFragmentShader = `
         
         vec3 color;
         // Adjusted gradient stops for better distribution
-        float mid_point = 0.35; 
+        float mid_point = 0.45; 
         if (r_norm < mid_point) {
-            color = mix(col_inner, col_mid, r_norm / mid_point);
+            float t = r_norm / mid_point;
+            color = mix(col_inner, col_mid, t * t);
         } else {
-            color = mix(col_mid, col_outer, (r_norm - mid_point) / (1.0 - mid_point));
+            float t = (r_norm - mid_point) / (1.0 - mid_point);
+            color = mix(col_mid, col_outer, sqrt(t));
         }
 
         color = mix(color, vec3(1.0), (u_temperature - 1.0) * 0.3);
 
         // Alpha taper
-        float alpha = smoothstep(0.28, 0.35, radius) * (1.0 - smoothstep(0.85, 1.0, radius));
+        float alpha = smoothstep(0.28, 0.35, radius) * (1.0 - smoothstep(0.9, 1.0, radius));
         
         // RELATIVISTIC BEAMING (Doppler)
-        float doppler = sin(angle + 1.6); 
-        float beaming = 1.0 + doppler * 0.7;
+        float doppler = sin(angle + 1.8); 
+        float beaming = 1.0 + doppler * 0.5;
         
         if (doppler > 0.0) {
-            color = mix(color, vec3(1.0, 0.95, 0.9), doppler * 0.4); // Blue-shift/Brighter
-            beaming = pow(beaming, 1.2);
+            color = mix(color, vec3(1.0, 1.0, 1.0), doppler * 0.15); // Less desaturation
+            beaming = pow(beaming, 1.1);
         } else {
-            color *= vec3(0.8, 0.5, 0.3); // Red-shift/Darker
-            beaming *= 0.3; 
+            color *= vec3(0.9, 0.7, 0.6); // Less aggressive red shift tinting
+            beaming *= 0.5; 
         }
 
         vec3 final_color = color * streaks * u_brightness * beaming;
-        final_color *= (1.0 + u_mode * 0.2);
+        final_color *= (1.0 + u_mode * 0.1);
 
         // Inner ring glow (Photon ring proximity)
-        float inner_glow = exp(-(radius - 0.28) * 20.0);
-        final_color += vec3(1.0, 0.9, 0.8) * inner_glow * 2.0;
+        float inner_glow = exp(-(radius - 0.28) * 30.0);
+        final_color += col_inner * inner_glow * 1.5;
 
         gl_FragColor = vec4(final_color, alpha);
     }
@@ -494,64 +514,72 @@ class BlackHoleSim {
     }
 
     initDebrisField() {
-        const PARTICLE_COUNT = 30000; 
+        const PARTICLE_COUNT = 45000; // Increased for denser clumps
         const positions = [], colors = [];
         const scales = [], startRadii = [], initialAngles = [], randomYs = [], speedModifiers = [];
         const clumpIds = [];
 
         for (let i = 0; i < PARTICLE_COUNT; i++) {
-            // Advanced Spiral Generation for Clumpiness
-            const isStructure = Math.random() > 0.18; // Particles in spiral structures
+            // More structured distribution
+            const isStructure = Math.random() > 0.15; 
             
             let radius, angle, clumpId;
 
             if (isStructure) {
-                // 2 Major Spiral Arms for that classic galaxy/accretion look
-                const armCount = 2;
+                // Logarithmic Spiral Distribution - 3 Arms
+                const armCount = 3; 
                 const armIndex = i % armCount;
+                const t = Math.random(); // distance along arm (normalized)
                 
-                const t = Math.random(); 
-                // Radius concentrated in mid-disk
-                radius = 14 + 96 * Math.pow(t, 0.75); 
+                // Radius concentrated slightly more towards center but maintaining width
+                // r = r_min + (r_max - r_min) * t^power
+                radius = 10 + 105 * Math.pow(t, 0.8); 
                 
-                // Winding logarithmic spiral
-                const winding = 3.8; 
+                const winding = 4.0; 
                 const armOffset = (Math.PI * 2 / armCount) * armIndex;
+                
+                // Logarithmic spiral: theta = a + b * ln(r)
+                // We approximate visually here
                 angle = t * Math.PI * 2 * winding + armOffset;
                 
-                // Micro-clumping
-                clumpId = Math.floor(Math.random() * 80); 
+                // Clumping: Group particles by IDs to move together in shader turbulence
+                // Creating distinct "chunks" in the stream
+                const chunk = Math.floor(t * 20);
+                clumpId = armIndex * 100 + chunk;
                 
-                // Spread
-                const spreadBase = 0.8 + t * 5.5;
+                // Scatter from spine of spiral arm
+                // Spread increases with radius
+                const spreadBase = 2.0 + t * 15.0;
                 const r_spread = THREE.MathUtils.randFloatSpread(spreadBase);
-                const a_spread = THREE.MathUtils.randFloatSpread(0.25 / (t + 0.15)); 
+                
+                // Angular spread depends on radius (arc length)
+                const a_spread = THREE.MathUtils.randFloatSpread(0.5 / (t + 0.2)); 
                 
                 radius += r_spread;
                 angle += a_spread;
             } else {
-                // Diffuse background halo
-                radius = THREE.MathUtils.randFloat(12, 110);
+                // Diffuse background halo / inter-arm dust
+                radius = THREE.MathUtils.randFloat(9, 115);
                 angle = Math.random() * Math.PI * 2;
-                clumpId = 0;
+                clumpId = Math.random() * 1000;
             }
 
             // Disk Profile (Flared)
-            const thickness = 0.35 + (radius / 110.0) * 2.8; 
+            const thickness = 0.25 + (radius / 120.0) * 6.0; 
             const u = Math.random();
             const v = Math.random();
             // Box-Muller transform for Gaussian vertical distribution
             const z = Math.sqrt(-2.0 * Math.log(1.0 - u)) * Math.cos(2.0 * Math.PI * v);
-            const yVal = z * thickness * 0.55;
+            const yVal = z * thickness * 0.4; // Flattened slightly
 
-            positions.push(0, 0, 0); // Position handled in shader
+            positions.push(0, 0, 0); // Position calculated in vertex shader
             
             startRadii.push(radius);
             initialAngles.push(angle);
             randomYs.push(yVal);
-            scales.push(Math.random() * 1.6 + 0.4);
+            scales.push(Math.random() * 2.0 + 0.5);
             colors.push(1,1,1); 
-            speedModifiers.push(Math.random() * 0.45 + 0.8); 
+            speedModifiers.push(Math.random() * 0.4 + 0.8); 
             clumpIds.push(clumpId);
         }
 
