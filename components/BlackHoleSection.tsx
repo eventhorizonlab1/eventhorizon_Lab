@@ -6,11 +6,11 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { RefreshCw, Eye, Thermometer, Activity, Sun, Disc, Globe, Navigation, Layers, ZoomIn } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { RefreshCw, Eye, Thermometer, Activity, Sun, Disc, Globe, Navigation, Layers, ZoomIn, Cpu } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 
-// --- INTERSTELLAR SHADERS --- (Same as before)
+// --- INTERSTELLAR SHADERS ---
 
 const DebrisVertexShader = `
     uniform float u_time;
@@ -408,7 +408,6 @@ class BlackHoleSim {
         this.initPostProcessing(container.clientWidth, container.clientHeight);
     }
 
-    // ... [Init Methods Omitted for Brevity - they are identical to previous version] ...
     initLensing(width: number, height: number) {
         this.lensingMaterial = new THREE.ShaderMaterial({
             uniforms: {
@@ -648,16 +647,90 @@ class BlackHoleSim {
     }
 }
 
+const SimLoader = () => {
+    const [progress, setProgress] = useState(0);
+    const [status, setStatus] = useState("INITIALIZING SYSTEM");
+
+    useEffect(() => {
+        const phases = [
+            { t: 5, msg: "LOADING ASSETS" },
+            { t: 25, msg: "COMPILING SHADERS" },
+            { t: 50, msg: "CALIBRATING GRAVITY" },
+            { t: 75, msg: "ALIGNING OPTICS" },
+            { t: 90, msg: "FINALIZING" },
+            { t: 100, msg: "READY" }
+        ];
+
+        let currentPhase = 0;
+        const interval = setInterval(() => {
+            setProgress((prev) => {
+                const next = prev + Math.random() * 5;
+                if (currentPhase < phases.length && next > phases[currentPhase].t) {
+                    setStatus(phases[currentPhase].msg);
+                    currentPhase++;
+                }
+                return next > 100 ? 100 : next;
+            });
+        }, 100);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <div className="absolute inset-0 z-50 bg-black flex flex-col items-center justify-center text-white font-mono pointer-events-none">
+            {/* Central Ring Spinner */}
+            <div className="relative w-32 h-32 mb-8 flex items-center justify-center">
+                <motion.div 
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 border-t-2 border-l-2 border-blue-500 rounded-full"
+                />
+                <motion.div 
+                    animate={{ rotate: -360 }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-2 border-b-2 border-r-2 border-purple-500 rounded-full opacity-70"
+                />
+                <div className="text-2xl font-bold tracking-tighter">{Math.floor(progress)}%</div>
+            </div>
+
+            <div className="flex flex-col items-center gap-2">
+                 <div className="flex items-center gap-2 text-blue-400">
+                    <Cpu size={16} className="animate-pulse" />
+                    <span className="text-xs font-bold tracking-[0.2em] uppercase">{status}</span>
+                 </div>
+                 <div className="w-48 h-1 bg-gray-800 rounded-full overflow-hidden">
+                    <motion.div 
+                        className="h-full bg-blue-500"
+                        style={{ width: `${progress}%` }}
+                    />
+                 </div>
+            </div>
+
+            {/* Random Hex Grid overlay for tech feel */}
+            <div className="absolute inset-0 opacity-10 bg-[linear-gradient(0deg,transparent_24%,rgba(255,255,255,.5)_25%,rgba(255,255,255,.5)_26%,transparent_27%,transparent_74%,rgba(255,255,255,.5)_75%,rgba(255,255,255,.5)_76%,transparent_77%,transparent),linear-gradient(90deg,transparent_24%,rgba(255,255,255,.5)_25%,rgba(255,255,255,.5)_26%,transparent_27%,transparent_74%,rgba(255,255,255,.5)_75%,rgba(255,255,255,.5)_76%,transparent_77%,transparent)] bg-[length:30px_30px]"></div>
+        </div>
+    );
+}
+
 const BlackHoleSection: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const simRef = useRef<BlackHoleSim | null>(null);
   const { t, theme } = useThemeLanguage();
   
+  const [isLoading, setIsLoading] = useState(true);
   const [rotationSpeed, setRotationSpeed] = useState(0.3);
   const [bloomIntensity, setBloomIntensity] = useState(0.5); 
   const [lensingStrength, setLensingStrength] = useState(1.2);
   const [diskBrightness, setDiskBrightness] = useState(1.0); 
   const [temperature, setTemperature] = useState(1.0);
+
+  // Simulate loading delay
+  useEffect(() => {
+      const timer = setTimeout(() => {
+          setIsLoading(false);
+      }, 2200); // 2.2s loading time
+      return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -787,6 +860,20 @@ const BlackHoleSection: React.FC = () => {
         <div className="lg:col-span-8">
              <div className="relative rounded-[2rem] overflow-hidden bg-black border border-gray-200 dark:border-white/10 shadow-2xl w-full aspect-square md:aspect-[16/10] flex flex-col group">
                 
+                {/* Loader Overlay */}
+                <AnimatePresence>
+                    {isLoading && (
+                        <motion.div
+                            initial={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.8, ease: "easeInOut" }}
+                            className="absolute inset-0 z-50"
+                        >
+                            <SimLoader />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
                 {/* Frame Header / Status Bar */}
                 <div className="bg-white/5 p-4 border-b border-white/10 flex justify-between items-center backdrop-blur-md z-20 absolute top-0 left-0 w-full">
                     <div className="flex gap-2">

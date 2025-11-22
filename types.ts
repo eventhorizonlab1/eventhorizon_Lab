@@ -4,6 +4,7 @@ export interface Video {
   category: string;
   duration: string;
   imageUrl: string;
+  videoUrl?: string;
 }
 
 export interface Article {
