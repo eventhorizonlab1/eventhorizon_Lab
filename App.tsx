@@ -1,3 +1,5 @@
+
+
 import React from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -5,6 +7,9 @@ import VideoSection from './components/VideoSection';
 import ArticleSection from './components/ArticleSection';
 import EcosystemSection from './components/EcosystemSection';
 import BlackHoleSection from './components/BlackHoleSection';
+import MissionControlSection from './components/MissionControlSection';
+import ImageGenSection from './components/ImageGenSection';
+import Timeline from './components/Timeline';
 import Footer from './components/Footer';
 
 const App: React.FC = () => {
@@ -24,10 +29,17 @@ const App: React.FC = () => {
       <Header />
       <Hero />
       
-      <div className="relative z-10 bg-white dark:bg-eh-black rounded-t-[3rem] -mt-12 pt-12 shadow-[0_-20px_40px_rgba(0,0,0,0.05)] transition-colors duration-500">
+      {/* 
+        Visual overlap card. 
+        Hero is now 90vh. Using -mt-20 (5rem) to pull content slightly over.
+      */}
+      <div className="relative z-10 bg-white dark:bg-eh-black rounded-t-[3rem] -mt-20 shadow-[0_-20px_40px_rgba(0,0,0,0.05)] transition-colors duration-500">
         <VideoSection />
         <ArticleSection />
+        <Timeline />
         <EcosystemSection />
+        <MissionControlSection />
+        <ImageGenSection />
         <BlackHoleSection />
         <Footer />
       </div>

@@ -1,4 +1,5 @@
 
+
 import React, { useRef, useState } from 'react';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
 import { Play, Radio, ArrowUpRight, X, Loader2 } from 'lucide-react';
@@ -109,7 +110,7 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
             <div className="flex justify-between items-start mb-2">
                 <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest border border-blue-600/20 dark:border-blue-400/20 px-2 py-0.5 rounded-full">{category}</span>
             </div>
-            <h4 className="text-lg font-bold leading-tight transition-colors duration-300 text-black dark:text-white group-hover:text-gray-600 dark:group-hover:text-gray-300 line-clamp-2">
+            <h4 className="text-base md:text-lg font-bold leading-tight transition-colors duration-300 text-black dark:text-white group-hover:text-gray-600 dark:group-hover:text-gray-300 line-clamp-2">
               {title}
             </h4>
           </div>
@@ -124,7 +125,6 @@ const VideoSection: React.FC = () => {
   const { t } = useThemeLanguage();
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   
-  // Keep parallax only for the main featured video which is singular
   const { scrollYProgress } = useScroll({
     target: featuredRef,
     offset: ["start end", "end start"]
@@ -152,57 +152,51 @@ const VideoSection: React.FC = () => {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         
-        {/* YouTube Channel Promotion Banner */}
+        {/* 1. CHANNEL BANNER */}
+        {/* Uniform gap mb-12 (approx 48px) between elements */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-24 relative overflow-hidden rounded-none md:rounded-3xl bg-gray-50 dark:bg-[#080808] text-black dark:text-white border-y md:border border-gray-200 dark:border-white/10 shadow-sm transition-colors duration-500"
+          className="mb-12 relative overflow-hidden rounded-none md:rounded-3xl bg-gray-50 dark:bg-[#080808] text-black dark:text-white border-y md:border border-gray-200 dark:border-white/10 shadow-sm transition-colors duration-500"
         >
-           {/* Background Tech Grid */}
            <div className="absolute inset-0 z-0 pointer-events-none opacity-30">
               <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.1)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
            </div>
 
-           <div className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row justify-between items-center gap-10">
-              
+           <div className="relative z-10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-8">
               <div className="flex flex-row items-center gap-6 w-full md:w-auto">
-                 {/* Technical Logo Placeholder */}
-                 <div className="hidden md:flex w-20 h-20 border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 items-center justify-center rounded-lg">
-                    <Radio className="w-8 h-8 text-black dark:text-white opacity-80" />
+                 <div className="hidden md:flex w-16 h-16 border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 items-center justify-center rounded-lg">
+                    <Radio className="w-6 h-6 text-black dark:text-white opacity-80" />
                  </div>
-                 
                  <div className="flex flex-col">
                     <div className="flex items-center gap-2 mb-2">
                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
                        <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">Transmission Entrante</span>
                     </div>
-                    <h2 className="text-2xl md:text-4xl font-bold tracking-tighter uppercase text-black dark:text-white">
+                    <h2 className="text-xl md:text-3xl font-bold tracking-tighter uppercase text-black dark:text-white">
                       {t('videos_channel')}
                     </h2>
-                    <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 max-w-md mt-2 font-medium">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 max-w-md mt-2 font-medium">
                       {t('videos_channel_desc')}
                     </p>
                  </div>
               </div>
-              
-              {/* Right Side CTA */}
               <a 
                 href="https://www.youtube.com/results?search_query=cnes" 
                 target="_blank"
                 rel="noreferrer"
-                className="group relative px-8 py-4 bg-transparent border border-black dark:border-white text-black dark:text-white overflow-hidden transition-all hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black w-full md:w-auto text-center"
+                className="group relative px-6 py-3 bg-transparent border border-black dark:border-white text-black dark:text-white overflow-hidden transition-all hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black w-full md:w-auto text-center rounded-md"
               >
                 <div className="relative flex items-center justify-center gap-3">
                   <span className="font-bold text-xs tracking-[0.2em] uppercase">{t('videos_access')}</span>
-                  <ArrowUpRight size={16} />
+                  <ArrowUpRight size={14} />
                 </div>
               </a>
-
            </div>
         </motion.div>
 
-
+        {/* 2. SECTION HEADER */}
         <div className="mb-12 flex items-end justify-between border-b border-gray-200 dark:border-gray-800 pb-6">
           <div>
                <span className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-2 block">Médiathèque</span>
@@ -215,8 +209,8 @@ const VideoSection: React.FC = () => {
           </a>
         </div>
 
-        {/* Featured Video */}
-        <div className="mb-16" ref={featuredRef}>
+        {/* 3. FEATURED VIDEO */}
+        <div className="mb-12" ref={featuredRef}>
           <motion.div 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -238,13 +232,13 @@ const VideoSection: React.FC = () => {
               <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 flex flex-col md:flex-row justify-between items-end gap-6">
                   <div>
                       <span className="inline-block px-3 py-1 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest mb-3 rounded-full">{t('videos_featured')}</span>
-                      <h3 className="text-3xl md:text-5xl font-black tracking-tighter uppercase text-white mb-2">
+                      <h3 className="text-2xl md:text-4xl font-black tracking-tighter uppercase text-white mb-2">
                           {featuredTitle}
                       </h3>
-                      <p className="text-white/70 text-sm font-mono">{featuredCat} // {FEATURED_VIDEO.duration}</p>
+                      <p className="text-white/70 text-xs md:text-sm font-mono">{featuredCat} // {FEATURED_VIDEO.duration}</p>
                   </div>
                   
-                  <button className="w-14 h-14 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+                  <button className="w-12 h-12 md:w-14 md:h-14 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.3)]">
                       <Play className="w-5 h-5 fill-current ml-1" />
                   </button>
               </div>
@@ -252,7 +246,7 @@ const VideoSection: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Grid Layout - 10 Videos */}
+        {/* 4. GRID LAYOUT */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
           {VIDEOS.map((video, index) => (
             <VideoCard key={video.id} video={video} index={index} onPlay={setSelectedVideo} />

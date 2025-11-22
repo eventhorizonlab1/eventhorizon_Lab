@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect } from 'react';
 import { motion, useScroll, useTransform, Variants } from 'framer-motion';
 import { Play } from 'lucide-react';
@@ -5,8 +6,6 @@ import * as THREE from 'three';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 
 // --- SHADER: LUMINET 1979 / INTERSTELLAR EXPERIMENTAL ---
-// Objectif : Briser la symétrie parfaite du cercle d'ombre par une densité élevée du disque frontal.
-
 const VertexShader = `
     varying vec2 vUv;
     void main() {
@@ -24,14 +23,12 @@ const FragmentShader = `
     varying vec2 vUv;
 
     // --- NOISE FUNCTIONS ---
-    // Bruit haute fréquence pour le grain "photographique"
     float hash(vec2 p) {
         p = fract(p * vec2(123.34, 456.21));
         p += dot(p, p + 45.32);
         return fract(p.x * p.y);
     }
 
-    // Simplex noise 3D basique pour le gaz
     vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
     vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
     vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
@@ -50,8 +47,8 @@ const FragmentShader = `
         vec3 i2 = max( g.xyz, l.zxy );
 
         vec3 x1 = x0 - i1 + C.xxx;
-        vec3 x2 = x0 - i2 + C.yyy; // 2.0*C.x = 1/3 = C.y
-        vec3 x3 = x0 - 1.0 + 3.0*C.xxx; // 1.0 + 3.0*C.x = 0.5 = 0.5
+        vec3 x2 = x0 - i2 + C.yyy; 
+        vec3 x3 = x0 - 1.0 + 3.0*C.xxx; 
 
         i = mod289(i);
         vec4 p = permute( permute( permute(
@@ -59,13 +56,13 @@ const FragmentShader = `
                 + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
                 + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
 
-        float n_ = 0.142857142857; // 1.0/7.0
+        float n_ = 0.142857142857; 
         vec3  ns = n_ * D.wyz - D.xzx;
 
-        vec4 j = p - 49.0 * floor(p * ns.z * ns.z);  //  mod(p,7*7)
+        vec4 j = p - 49.0 * floor(p * ns.z * ns.z); 
 
         vec4 x_ = floor(j * ns.z);
-        vec4 y_ = floor(j - 7.0 * x_ );    // mod(j,N)
+        vec4 y_ = floor(j - 7.0 * x_ ); 
 
         vec4 x = x_ *ns.x + ns.yyyy;
         vec4 y = y_ *ns.x + ns.yyyy;
@@ -98,14 +95,13 @@ const FragmentShader = `
                                     dot(p2,x2), dot(p3,x3) ) );
     }
 
-    // Fractal Brownian Motion pour les structures du disque
     float fbm(vec3 p) {
         float f = 0.0;
         float amp = 0.5;
         float freq = 1.0;
         for(int i=0; i<5; i++) {
             f += amp * snoise(p * freq);
-            p.xy *= 1.6; // Rotation simple pour varier
+            p.xy *= 1.6; 
             p.z *= 1.1;
             amp *= 0.5;
             freq *= 1.4;
@@ -114,174 +110,110 @@ const FragmentShader = `
     }
 
     void main() {
-        // 1. Setup UVs
         vec2 uv = (vUv - 0.5) * 2.0;
         uv.x *= u_resolution.x / u_resolution.y;
 
-        // 2. Camera Setup - VUE RASANTE (Important pour Luminet/Interstellar)
-        // ro.y est très bas pour voir le disque par la tranche
-        // ro.z est la distance
         vec3 ro = vec3(0.0, 0.08, -12.0); 
         
-        // Tilt de la caméra pour viser le centre
         vec3 target = vec3(0.0, -0.5, 0.0);
         vec3 forward = normalize(target - ro);
         vec3 right = normalize(cross(vec3(0.0, 1.0, 0.0), forward));
         vec3 up = cross(forward, right);
         
-        // Zoom / FOV
         vec3 rd = normalize(forward * 2.5 + uv.x * right + uv.y * up);
 
-        // Interaction Souris (Légère orbite)
         float mx = u_mouse.x * 0.5;
         float my = u_mouse.y * 0.2;
         mat2 rotX = mat2(cos(mx), sin(mx), -sin(mx), cos(mx));
         ro.xz *= rotX; rd.xz *= rotX;
         
-        // 3. Paramètres Physiques du Trou Noir
-        float rs = 1.0; // Rayon Horizon (Schwarzschild)
-        float isco = 1.5; // Disque Interne (Innermost Stable Circular Orbit)
-        float diskRad = 9.0; // Disque Externe
+        float rs = 1.0; 
+        float isco = 1.5; 
+        float diskRad = 9.0; 
         
-        // Ray Marching State
         vec3 p = ro;
         vec3 col = vec3(0.0);
-        float accum = 0.0; // Lumière accumulée
-        float trans = 1.0; // Transparence restante
+        float accum = 0.0; 
+        float trans = 1.0; 
         
-        float stepSize = 0.05; // Précision initiale
+        float stepSize = 0.05; 
         
-        // Boucle de Ray Marching
         for(int i=0; i<120; i++) {
             float r = length(p);
             
-            // A. Lentille Gravitationnelle (Gravity Bending)
-            // Formule approximée mais visuellement efficace pour courber l'arrière plan
-            // Plus on est proche (r petit), plus la force est grande.
-            // Le facteur 1.5 amplifie l'effet "Interstellar" pour bien voir l'anneau arrière
             vec3 force = -normalize(p) * (2.5 / (r * r + 0.01)); 
             rd += force * stepSize;
             rd = normalize(rd);
             
-            // B. Horizon des événements (L'Ombre)
-            // Si on touche la sphère noire, on absorbe toute la lumière restante
             if(r < rs) {
-                // L'ombre noire
-                accum += 0.0; // Pas de lumière
-                trans = 0.0;  // Opacité totale
+                accum += 0.0; 
+                trans = 0.0;  
                 break;
             }
             
-            // C. Disque d'Accrétion (Intersection Volume)
-            // On vérifie la distance au plan Y=0 (Equateur)
-            // On ajoute un warp vertical basé sur r pour courber légèrement le disque visuellement
             float distToPlane = abs(p.y); 
             
             if(distToPlane < 0.5 && r > isco && r < diskRad) {
-                // Coordonnées Polaires Locales
                 float angle = atan(p.z, p.x);
                 float rad = length(p.xz);
                 
-                // Densité de base (plus dense près du trou)
                 float density = exp(-(rad - isco) * 0.8);
                 
-                // Turbulence (Gaz)
-                // La vitesse de rotation dépend de la distance (Kepler)
                 float rotSpeed = 8.0 / (rad + 0.1);
                 float noiseVal = fbm(vec3(rad * 2.0, angle * 3.0 + u_time * rotSpeed * 0.2, p.y * 8.0));
                 
-                // Structure en anneaux
                 float rings = 0.5 + 0.5 * sin(rad * 10.0 + noiseVal * 2.0);
                 density *= rings;
-                density *= (noiseVal * 0.5 + 0.5); // Ajout de chaos
+                density *= (noiseVal * 0.5 + 0.5); 
                 
-                // Masquage vertical (le disque est fin)
                 density *= smoothstep(0.4, 0.0, distToPlane);
 
-                // --- EFFET DOPPLER (BEAMING) ---
-                // C'est LA signature visuelle.
-                // Le gaz à gauche vient vers nous (très brillant).
-                // Le gaz à droite s'éloigne (très sombre).
-                vec3 tangent = normalize(vec3(-p.z, 0.0, p.x)); // Vecteur vitesse tangentielle
-                float doppler = dot(rd, tangent); // Produit scalaire avec le rayon de vue
+                vec3 tangent = normalize(vec3(-p.z, 0.0, p.x)); 
+                float doppler = dot(rd, tangent); 
                 
-                // Facteur d'amplification Doppler
                 float beam = smoothstep(-0.5, 1.0, doppler * 1.5 + 0.2);
-                beam = pow(beam, 3.0); // Contraste très fort
+                beam = pow(beam, 3.0); 
                 
-                // Accumulation de lumière
-                // Si on est "devant" le trou noir, density est forte -> accumule vite
-                float stepDens = density * stepSize * 4.0; // Facteur 4.0 = Densité Gaz
+                float stepDens = density * stepSize * 4.0; 
                 
-                // Couleur du gaz
                 float light = stepDens * beam;
-                accum += light * trans; // On ajoute la lumière pondérée par la transparence
-                trans *= (1.0 - stepDens); // Le rayon perd de l'énergie en traversant le gaz
+                accum += light * trans; 
+                trans *= (1.0 - stepDens); 
                 
-                if(trans < 0.01) break; // Optimisation: Si c'est opaque, on arrête
+                if(trans < 0.01) break; 
             }
             
-            // Pas adaptatif : on ralentit près du trou pour la précision
             float nextStep = max(0.05, r * 0.05);
             p += rd * nextStep;
             
-            if(r > 20.0) break; // Trop loin
+            if(r > 20.0) break; 
         }
         
-        // 4. Composition Finale
         col = vec3(accum);
         
-        // Tone mapping
-        col = pow(col, vec3(0.6)); // Gamma correction
-        col = smoothstep(0.0, 1.2, col); // Clamp
+        col = pow(col, vec3(0.6)); 
+        col = smoothstep(0.0, 1.2, col); 
 
-        // 5. POST-PROCESSING ET ADAPTATION AU THÈME
-        
         float grain = hash(uv + u_time * 10.0);
         float grainStrength = 0.15 + 0.1 * smoothstep(0.0, 0.5, length(col));
         col += (grain - 0.5) * grainStrength;
         
-        // Vignette
         float vig = 1.0 - smoothstep(0.5, 1.6, length(vUv - 0.5) * 2.0);
         col *= vig;
         
-        // Noir et Blanc de base
         float gray = dot(col, vec3(0.299, 0.587, 0.114));
         gray = smoothstep(0.02, 0.9, gray);
         
         vec3 finalColor = vec3(gray);
 
-        // --- MODE CLAIR (INVERSION) ---
         if (u_is_light > 0.5) {
-            // En mode clair : Fond papier blanc, Disque "Encre"
-            // On inverse la logique : là où il y a de la lumière (gray), ça devient sombre.
+            vec3 paperColor = vec3(0.96, 0.96, 0.98); 
+            vec3 inkColor = vec3(0.1, 0.12, 0.18); 
             
-            vec3 paperColor = vec3(0.96, 0.96, 0.98); // Blanc cassé / Papier
-            vec3 inkColor = vec3(0.1, 0.12, 0.18); // Bleu nuit très sombre / Encre
-            
-            // On utilise 'gray' comme masque d'opacité de l'encre
-            // gray = 0 (Espace) -> Paper
-            // gray = 1 (Disque) -> Ink
-            
-            // On renforce le contraste pour le mode clair pour avoir un trait net
             float inkMask = smoothstep(0.05, 0.8, gray); 
             
-            // Le centre du trou noir (trans = 0.0 dans la boucle mais ici c'est complexe à retrouver)
-            // Hack visuel : Si accum est très faible (espace vide) -> blanc.
-            // Si on a touché l'horizon (trans == 0 au milieu), accum est 0.
-            // On doit distinguer l'espace vide (noir -> blanc) du trou noir (noir -> noir ou blanc ?)
-            // Choix artistique : Trou noir = Singularité NOIRE sur fond BLANC.
-            // Le disque brillant = ENCRE NOIRE.
-            
-            // Mais le centre du trou noir dans 'gray' est noir (0.0).
-            // Donc il deviendrait blanc avec l'inversion simple.
-            // Pour garder le trou noir 'noir', on détecte le centre géométrique grossièrement
-            // ou on accepte un trou blanc (abstraite).
-            
-            // Version "Dessin technique" : Tout ce qui est noir devient blanc, tout ce qui est brillant devient noir.
             finalColor = mix(paperColor, inkColor, inkMask);
             
-            // Ajout d'une grille subtile en mode clair pour l'effet "papier millimétré"
             float grid = 0.0;
             if (mod(vUv.x * 40.0, 1.0) < 0.05 || mod(vUv.y * 40.0 * (u_resolution.y/u_resolution.x), 1.0) < 0.05) {
                 grid = 0.1;
@@ -292,8 +224,6 @@ const FragmentShader = `
         gl_FragColor = vec4(finalColor, 1.0);
     }
 `;
-
-// --- REACT COMPONENTS ---
 
 const titleContainerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -398,16 +328,10 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
     const animate = () => {
       animationId = requestAnimationFrame(animate);
       material.uniforms.u_time.value = clock.getElapsedTime();
-      
-      // Update light mode uniform
       const targetLight = theme === 'light' ? 1.0 : 0.0;
-      // Smooth transition for theme switch
       material.uniforms.u_is_light.value += (targetLight - material.uniforms.u_is_light.value) * 0.05;
-
-      // Smooth mouse interpolation
       material.uniforms.u_mouse.value.x += (mouseRef.current.x - material.uniforms.u_mouse.value.x) * 0.05;
       material.uniforms.u_mouse.value.y += (mouseRef.current.y - material.uniforms.u_mouse.value.y) * 0.05;
-      
       renderer.render(scene, camera);
     };
     animate();
@@ -436,7 +360,7 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
             container.removeChild(renderer.domElement);
         }
     };
-  }, [theme]); // Re-run effect if theme changes to ensure uniform target is updated
+  }, [theme]); 
 
   return <div ref={containerRef} className="absolute inset-0 w-full h-full z-0" />;
 };
@@ -446,15 +370,21 @@ const Hero: React.FC = () => {
   const { t, theme } = useThemeLanguage();
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start start", "end end"]
+    offset: ["start start", "end start"]
   });
 
-  const yTitle = useTransform(scrollYProgress, [0, 0.6], [0, 600]); 
-  const yContent = useTransform(scrollYProgress, [0, 0.6], [0, 250]); 
-  const opacityText = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+  // --- CINEMATIC PARALLAX EFFECT ---
+  // Text zooms in, blurs, and fades out as user scrolls down
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.5]);
+  const opacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+  const blur = useTransform(scrollYProgress, [0, 0.4], ["0px", "20px"]);
+  
+  // Content moves up slightly slower than scroll
+  const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
 
   return (
-    <section ref={ref} className="relative min-h-[120vh] bg-white dark:bg-black transition-colors duration-500">
+    // Reduced height to 90vh for better spacing flow
+    <section ref={ref} className="relative h-[90vh] w-full bg-white dark:bg-black transition-colors duration-500">
       
       {/* Sticky Background Visual */}
       <div className="sticky top-0 h-screen w-full overflow-hidden z-0">
@@ -462,20 +392,16 @@ const Hero: React.FC = () => {
         {/* The Monochrome Black Hole Shader */}
         <BlackHoleBackground theme={theme} />
 
-        {/* Overlay for text readability - Adaptive Gradient */}
+        {/* Overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-white/90 dark:from-black/30 dark:via-transparent dark:to-black/80 z-10 pointer-events-none transition-colors duration-500"></div>
-      </div>
-
-      {/* Content Container */}
-      <div className="relative z-20 w-full -mt-[100vh]">
         
-        <div className="h-screen flex flex-col items-center justify-center px-4 pt-32 md:pt-0">
+        {/* Content Container */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 z-20 pointer-events-none">
            <motion.div 
-              style={{ opacity: opacityText }}
-              className="text-center max-w-[95vw] md:max-w-7xl flex flex-col items-center"
+              style={{ opacity, scale, filter: blur, y }}
+              className="text-center max-w-[95vw] md:max-w-7xl flex flex-col items-center pointer-events-auto"
            >
-              <motion.h1 
-                style={{ y: yTitle }}
+              <div 
                 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.0] md:leading-[0.9] mb-8 md:mb-12 flex flex-col items-center w-full drop-shadow-lg text-black dark:text-white dark:mix-blend-overlay dark:opacity-90"
               >
                 <div className="block w-full">
@@ -484,10 +410,9 @@ const Hero: React.FC = () => {
                 <div className="block w-full">
                   <AnimatedText text={t('hero_line2')} className="md:mt-2 lg:mt-4" />
                 </div>
-              </motion.h1>
+              </div>
 
               <motion.div
-                style={{ y: yContent }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.5, duration: 1 }}
@@ -516,7 +441,6 @@ const Hero: React.FC = () => {
               </motion.div>
            </motion.div>
         </div>
-
       </div>
     </section>
   );

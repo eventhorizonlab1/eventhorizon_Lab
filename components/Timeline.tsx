@@ -23,7 +23,7 @@ const TimelineItem: React.FC<{ data: typeof MILESTONES[0], index: number }> = ({
     <div 
       ref={ref} 
       role="listitem"
-      className={`relative flex items-center justify-center w-full mb-32 ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'}`}
+      className={`relative flex items-center justify-center w-full mb-20 ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'}`}
     >
        {/* Spacer */}
        <div className="hidden md:block w-1/2" />
@@ -51,11 +51,11 @@ const TimelineItem: React.FC<{ data: typeof MILESTONES[0], index: number }> = ({
          whileInView={{ opacity: 1, filter: "blur(0px)" }}
          viewport={{ once: true, margin: "-100px" }}
          transition={{ duration: 0.8 }}
-         className="w-full pl-16 md:pl-0 md:w-1/2 md:px-16"
+         className="w-full pl-16 md:pl-0 md:w-1/2 md:px-12"
        >
           <div className={`flex flex-col ${isEven ? 'md:text-right items-start md:items-end' : 'md:text-left items-start'} group`}>
              <span 
-                className="text-8xl font-black text-gray-200 dark:text-white/5 tracking-tighter absolute -z-10 -translate-y-10 select-none transition-all duration-700 group-hover:text-gray-300 dark:group-hover:text-white/10 group-hover:scale-110"
+                className="text-7xl font-black text-gray-200 dark:text-white/5 tracking-tighter absolute -z-10 -translate-y-8 select-none transition-all duration-700 group-hover:text-gray-300 dark:group-hover:text-white/10 group-hover:scale-110"
                 aria-hidden="true"
              >
                 {data.year}
@@ -74,7 +74,7 @@ const TimelineItem: React.FC<{ data: typeof MILESTONES[0], index: number }> = ({
                 </span>
                 <h4 
                   id={`milestone-title-${index}`}
-                  className="text-xl font-bold text-black dark:text-white uppercase tracking-wide mb-2"
+                  className="text-lg font-bold text-black dark:text-white uppercase tracking-wide mb-2"
                 >
                     {title}
                 </h4>
@@ -100,7 +100,7 @@ const Timeline: React.FC = () => {
 
   return (
     <section id="history" className="relative py-24 px-4" aria-label={t('hero_history_title')}>
-       <div className="text-center mb-32">
+       <div className="text-center mb-20">
           <motion.h3 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
