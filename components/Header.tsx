@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { NAV_LINKS } from '../constants';
 import { motion, AnimatePresence, useScroll, useSpring, animate } from 'framer-motion';
-import { X, Moon, Sun, Languages, ChevronDown } from 'lucide-react';
+import { X, Moon, Sun, ChevronDown } from 'lucide-react';
 import { useThemeLanguage, SUPPORTED_LANGUAGES } from '../context/ThemeLanguageContext';
 
 const Header: React.FC = () => {
@@ -68,18 +68,29 @@ const Header: React.FC = () => {
     setIsMenuOpen(false);
   };
 
-  // Logic: White text at top (dark hero), Black text when scrolled (white bg) OR when in dark mode (dark bg)
-  let textColorClass = 'text-white';
-  let navHoverClass = 'bg-white';
+  // Logic: Adapt text color based on Scroll position AND Theme
+  let textColorClass = '';
+  let navHoverClass = '';
+  let separatorClass = '';
   
   if (isScrolled) {
-    // Scrolled down
+    // Scrolled down: Solid background (White in Light, Black in Dark)
     textColorClass = 'text-black dark:text-white';
     navHoverClass = 'bg-black dark:bg-white';
+    separatorClass = 'border-gray-200 dark:border-gray-700';
   } else {
-    // At top (Hero)
-    textColorClass = 'text-white';
-    navHoverClass = 'bg-white';
+    // At top: Transparent background over Hero
+    if (theme === 'light') {
+       // Light Mode Hero is bright Paper style -> Black Text
+       textColorClass = 'text-black';
+       navHoverClass = 'bg-black';
+       separatorClass = 'border-black/10';
+    } else {
+       // Dark Mode Hero is dark Black Hole -> White Text
+       textColorClass = 'text-white';
+       navHoverClass = 'bg-white';
+       separatorClass = 'border-white/20';
+    }
   }
 
   // Override if menu is open (Mobile)
@@ -123,10 +134,10 @@ const Header: React.FC = () => {
             </nav>
 
             {/* Toggles */}
-            <div className={`flex items-center gap-4 border-l pl-6 ${isScrolled ? 'border-gray-200 dark:border-gray-700' : 'border-white/20'}`}>
+            <div className={`flex items-center gap-4 border-l pl-6 transition-colors duration-300 ${separatorClass}`}>
               <button 
                 onClick={toggleTheme}
-                className={`p-2 rounded-full transition-colors ${textColorClass} hover:bg-white/10`}
+                className={`p-2 rounded-full transition-colors ${textColorClass} hover:bg-black/5 dark:hover:bg-white/10`}
                 aria-label="Toggle Theme"
               >
                 {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
@@ -136,7 +147,7 @@ const Header: React.FC = () => {
               <div className="relative" ref={langMenuRef}>
                 <button 
                   onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-                  className={`p-2 pl-3 pr-3 rounded-full font-bold text-xs uppercase tracking-widest transition-colors ${textColorClass} hover:bg-white/10 flex items-center gap-2`}
+                  className={`p-2 pl-3 pr-3 rounded-full font-bold text-xs uppercase tracking-widest transition-colors ${textColorClass} hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2`}
                   aria-label="Select Language"
                 >
                    <span className="text-base leading-none">{currentLangObj.flag}</span>

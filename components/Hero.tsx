@@ -19,6 +19,7 @@ const FragmentShader = `
     uniform float u_time;
     uniform vec2 u_resolution;
     uniform vec2 u_mouse;
+    uniform float u_is_light; // 0.0 = Dark Mode, 1.0 = Light Mode
     
     varying vec2 vUv;
 
@@ -212,7 +213,7 @@ const FragmentShader = `
                 // Si on est "devant" le trou noir, density est forte -> accumule vite
                 float stepDens = density * stepSize * 4.0; // Facteur 4.0 = Densité Gaz
                 
-                // Couleur du gaz (Blanc chaud pour Luminet)
+                // Couleur du gaz
                 float light = stepDens * beam;
                 accum += light * trans; // On ajoute la lumière pondérée par la transparence
                 trans *= (1.0 - stepDens); // Le rayon perd de l'énergie en traversant le gaz
@@ -230,29 +231,65 @@ const FragmentShader = `
         // 4. Composition Finale
         col = vec3(accum);
         
-        // Tone mapping "Film Noir"
-        col = pow(col, vec3(0.6)); // Gamma correction pour voir les détails sombres
+        // Tone mapping
+        col = pow(col, vec3(0.6)); // Gamma correction
         col = smoothstep(0.0, 1.2, col); // Clamp
 
-        // 5. GRAIN ET ESTHÉTIQUE SCIENTIFIQUE (LUMINET)
-        // Bruit statique intense
-        float grain = hash(uv + u_time * 10.0);
+        // 5. POST-PROCESSING ET ADAPTATION AU THÈME
         
-        // Mélange le grain : plus visible dans les gris, moins dans le noir/blanc pur
+        float grain = hash(uv + u_time * 10.0);
         float grainStrength = 0.15 + 0.1 * smoothstep(0.0, 0.5, length(col));
         col += (grain - 0.5) * grainStrength;
         
-        // Vignette forte
+        // Vignette
         float vig = 1.0 - smoothstep(0.5, 1.6, length(vUv - 0.5) * 2.0);
         col *= vig;
         
-        // Teinte finale : Noir et Blanc pur
+        // Noir et Blanc de base
         float gray = dot(col, vec3(0.299, 0.587, 0.114));
+        gray = smoothstep(0.02, 0.9, gray);
         
-        // Boost final du contraste pour détacher la barre blanche du fond noir
-        gray = smoothstep(0.02, 0.9, gray); 
+        vec3 finalColor = vec3(gray);
 
-        gl_FragColor = vec4(vec3(gray), 1.0);
+        // --- MODE CLAIR (INVERSION) ---
+        if (u_is_light > 0.5) {
+            // En mode clair : Fond papier blanc, Disque "Encre"
+            // On inverse la logique : là où il y a de la lumière (gray), ça devient sombre.
+            
+            vec3 paperColor = vec3(0.96, 0.96, 0.98); // Blanc cassé / Papier
+            vec3 inkColor = vec3(0.1, 0.12, 0.18); // Bleu nuit très sombre / Encre
+            
+            // On utilise 'gray' comme masque d'opacité de l'encre
+            // gray = 0 (Espace) -> Paper
+            // gray = 1 (Disque) -> Ink
+            
+            // On renforce le contraste pour le mode clair pour avoir un trait net
+            float inkMask = smoothstep(0.05, 0.8, gray); 
+            
+            // Le centre du trou noir (trans = 0.0 dans la boucle mais ici c'est complexe à retrouver)
+            // Hack visuel : Si accum est très faible (espace vide) -> blanc.
+            // Si on a touché l'horizon (trans == 0 au milieu), accum est 0.
+            // On doit distinguer l'espace vide (noir -> blanc) du trou noir (noir -> noir ou blanc ?)
+            // Choix artistique : Trou noir = Singularité NOIRE sur fond BLANC.
+            // Le disque brillant = ENCRE NOIRE.
+            
+            // Mais le centre du trou noir dans 'gray' est noir (0.0).
+            // Donc il deviendrait blanc avec l'inversion simple.
+            // Pour garder le trou noir 'noir', on détecte le centre géométrique grossièrement
+            // ou on accepte un trou blanc (abstraite).
+            
+            // Version "Dessin technique" : Tout ce qui est noir devient blanc, tout ce qui est brillant devient noir.
+            finalColor = mix(paperColor, inkColor, inkMask);
+            
+            // Ajout d'une grille subtile en mode clair pour l'effet "papier millimétré"
+            float grid = 0.0;
+            if (mod(vUv.x * 40.0, 1.0) < 0.05 || mod(vUv.y * 40.0 * (u_resolution.y/u_resolution.x), 1.0) < 0.05) {
+                grid = 0.1;
+            }
+            finalColor -= grid * 0.1;
+        }
+
+        gl_FragColor = vec4(finalColor, 1.0);
     }
 `;
 
@@ -310,7 +347,7 @@ const AnimatedText = ({ text, className }: { text: string, className?: string })
           <motion.span 
             key={j} 
             variants={letterVariants} 
-            className="inline-block transform-gpu text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-gray-400"
+            className="inline-block transform-gpu text-transparent bg-clip-text bg-gradient-to-b from-black via-black to-gray-600 dark:from-white dark:via-white dark:to-gray-400"
             style={{ backfaceVisibility: "hidden" }} 
           >
             {char}
@@ -321,7 +358,7 @@ const AnimatedText = ({ text, className }: { text: string, className?: string })
   </motion.div>
 );
 
-const BlackHoleBackground = () => {
+const BlackHoleBackground = ({ theme }: { theme: string }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
 
@@ -345,7 +382,8 @@ const BlackHoleBackground = () => {
       uniforms: {
         u_time: { value: 0 },
         u_resolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) },
-        u_mouse: { value: new THREE.Vector2(0, 0) }
+        u_mouse: { value: new THREE.Vector2(0, 0) },
+        u_is_light: { value: theme === 'light' ? 1.0 : 0.0 }
       },
       vertexShader: VertexShader,
       fragmentShader: FragmentShader,
@@ -361,6 +399,11 @@ const BlackHoleBackground = () => {
       animationId = requestAnimationFrame(animate);
       material.uniforms.u_time.value = clock.getElapsedTime();
       
+      // Update light mode uniform
+      const targetLight = theme === 'light' ? 1.0 : 0.0;
+      // Smooth transition for theme switch
+      material.uniforms.u_is_light.value += (targetLight - material.uniforms.u_is_light.value) * 0.05;
+
       // Smooth mouse interpolation
       material.uniforms.u_mouse.value.x += (mouseRef.current.x - material.uniforms.u_mouse.value.x) * 0.05;
       material.uniforms.u_mouse.value.y += (mouseRef.current.y - material.uniforms.u_mouse.value.y) * 0.05;
@@ -393,14 +436,14 @@ const BlackHoleBackground = () => {
             container.removeChild(renderer.domElement);
         }
     };
-  }, []);
+  }, [theme]); // Re-run effect if theme changes to ensure uniform target is updated
 
   return <div ref={containerRef} className="absolute inset-0 w-full h-full z-0" />;
 };
 
 const Hero: React.FC = () => {
   const ref = useRef<HTMLDivElement>(null);
-  const { t } = useThemeLanguage();
+  const { t, theme } = useThemeLanguage();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end end"]
@@ -411,16 +454,16 @@ const Hero: React.FC = () => {
   const opacityText = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
 
   return (
-    <section ref={ref} className="relative min-h-[120vh] bg-black">
+    <section ref={ref} className="relative min-h-[120vh] bg-white dark:bg-black transition-colors duration-500">
       
       {/* Sticky Background Visual */}
       <div className="sticky top-0 h-screen w-full overflow-hidden z-0">
         
         {/* The Monochrome Black Hole Shader */}
-        <BlackHoleBackground />
+        <BlackHoleBackground theme={theme} />
 
-        {/* Overlay for text readability - Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/80 z-10 pointer-events-none"></div>
+        {/* Overlay for text readability - Adaptive Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-white/90 dark:from-black/30 dark:via-transparent dark:to-black/80 z-10 pointer-events-none transition-colors duration-500"></div>
       </div>
 
       {/* Content Container */}
@@ -433,7 +476,7 @@ const Hero: React.FC = () => {
            >
               <motion.h1 
                 style={{ y: yTitle }}
-                className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.0] md:leading-[0.9] mb-8 md:mb-12 flex flex-col items-center w-full drop-shadow-2xl mix-blend-overlay text-white opacity-90"
+                className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.0] md:leading-[0.9] mb-8 md:mb-12 flex flex-col items-center w-full drop-shadow-lg text-black dark:text-white dark:mix-blend-overlay dark:opacity-90"
               >
                 <div className="block w-full">
                   <AnimatedText text={t('hero_line1')} />
@@ -450,13 +493,13 @@ const Hero: React.FC = () => {
                 transition={{ delay: 1.5, duration: 1 }}
                 className="flex flex-col items-center gap-6"
               >
-                <p className="text-lg md:text-xl text-gray-300 max-w-lg mx-auto font-bold drop-shadow-lg shadow-black mix-blend-screen">
+                <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-lg mx-auto font-bold drop-shadow-md mix-blend-multiply dark:mix-blend-screen">
                   {t('hero_subtitle')}
                 </p>
                 
                 <a 
                   href="#videos" 
-                  className="group flex items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full text-sm font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-all hover:scale-105 shadow-lg shadow-white/5 z-30"
+                  className="group flex items-center gap-3 px-8 py-4 bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 text-black dark:text-white rounded-full text-sm font-bold tracking-widest uppercase hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all hover:scale-105 shadow-lg shadow-black/5 dark:shadow-white/5 z-30"
                 >
                   <span>{t('hero_cta')}</span>
                   <Play size={16} className="fill-current" />
@@ -465,10 +508,10 @@ const Hero: React.FC = () => {
                 <motion.div 
                   animate={{ y: [0, 10, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="mt-8 md:mt-12 text-white/30 text-xs font-bold uppercase tracking-widest flex flex-col items-center gap-2"
+                  className="mt-8 md:mt-12 text-black/30 dark:text-white/30 text-xs font-bold uppercase tracking-widest flex flex-col items-center gap-2"
                 >
                   <span>{t('hero_scroll')}</span>
-                  <div className="w-px h-12 bg-gradient-to-b from-white/50 to-transparent"></div>
+                  <div className="w-px h-12 bg-gradient-to-b from-black/20 to-transparent dark:from-white/50 dark:to-transparent"></div>
                 </motion.div>
               </motion.div>
            </motion.div>
