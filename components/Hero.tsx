@@ -1,9 +1,263 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion, useScroll, useTransform, Variants } from 'framer-motion';
 import { Play } from 'lucide-react';
+import * as THREE from 'three';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 
-// Animation Container: Orchestrates the stagger effect
+// --- SHADER: LUMINET 1979 / INTERSTELLAR EXPERIMENTAL ---
+// Objectif : Briser la symétrie parfaite du cercle d'ombre par une densité élevée du disque frontal.
+
+const VertexShader = `
+    varying vec2 vUv;
+    void main() {
+        vUv = uv;
+        gl_Position = vec4(position, 1.0);
+    }
+`;
+
+const FragmentShader = `
+    uniform float u_time;
+    uniform vec2 u_resolution;
+    uniform vec2 u_mouse;
+    
+    varying vec2 vUv;
+
+    // --- NOISE FUNCTIONS ---
+    // Bruit haute fréquence pour le grain "photographique"
+    float hash(vec2 p) {
+        p = fract(p * vec2(123.34, 456.21));
+        p += dot(p, p + 45.32);
+        return fract(p.x * p.y);
+    }
+
+    // Simplex noise 3D basique pour le gaz
+    vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+    vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+    vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+    vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+
+    float snoise(vec3 v) {
+        const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
+        const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
+
+        vec3 i  = floor(v + dot(v, C.yyy) );
+        vec3 x0 = v - i + dot(i, C.xxx) ;
+
+        vec3 g = step(x0.yzx, x0.xyz);
+        vec3 l = 1.0 - g;
+        vec3 i1 = min( g.xyz, l.zxy );
+        vec3 i2 = max( g.xyz, l.zxy );
+
+        vec3 x1 = x0 - i1 + C.xxx;
+        vec3 x2 = x0 - i2 + C.yyy; // 2.0*C.x = 1/3 = C.y
+        vec3 x3 = x0 - 1.0 + 3.0*C.xxx; // 1.0 + 3.0*C.x = 0.5 = 0.5
+
+        i = mod289(i);
+        vec4 p = permute( permute( permute(
+                    i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
+                + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
+                + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
+
+        float n_ = 0.142857142857; // 1.0/7.0
+        vec3  ns = n_ * D.wyz - D.xzx;
+
+        vec4 j = p - 49.0 * floor(p * ns.z * ns.z);  //  mod(p,7*7)
+
+        vec4 x_ = floor(j * ns.z);
+        vec4 y_ = floor(j - 7.0 * x_ );    // mod(j,N)
+
+        vec4 x = x_ *ns.x + ns.yyyy;
+        vec4 y = y_ *ns.x + ns.yyyy;
+        vec4 h = 1.0 - abs(x) - abs(y);
+
+        vec4 b0 = vec4( x.xy, y.xy );
+        vec4 b1 = vec4( x.zw, y.zw );
+
+        vec4 s0 = floor(b0)*2.0 + 1.0;
+        vec4 s1 = floor(b1)*2.0 + 1.0;
+        vec4 sh = -step(h, vec4(0.0));
+
+        vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
+        vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
+
+        vec3 p0 = vec3(a0.xy,h.x);
+        vec3 p1 = vec3(a0.zw,h.y);
+        vec3 p2 = vec3(a1.xy,h.z);
+        vec3 p3 = vec3(a1.zw,h.w);
+
+        vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+        p0 *= norm.x;
+        p1 *= norm.y;
+        p2 *= norm.z;
+        p3 *= norm.w;
+
+        vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+        m = m * m;
+        return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1),
+                                    dot(p2,x2), dot(p3,x3) ) );
+    }
+
+    // Fractal Brownian Motion pour les structures du disque
+    float fbm(vec3 p) {
+        float f = 0.0;
+        float amp = 0.5;
+        float freq = 1.0;
+        for(int i=0; i<5; i++) {
+            f += amp * snoise(p * freq);
+            p.xy *= 1.6; // Rotation simple pour varier
+            p.z *= 1.1;
+            amp *= 0.5;
+            freq *= 1.4;
+        }
+        return f;
+    }
+
+    void main() {
+        // 1. Setup UVs
+        vec2 uv = (vUv - 0.5) * 2.0;
+        uv.x *= u_resolution.x / u_resolution.y;
+
+        // 2. Camera Setup - VUE RASANTE (Important pour Luminet/Interstellar)
+        // ro.y est très bas pour voir le disque par la tranche
+        // ro.z est la distance
+        vec3 ro = vec3(0.0, 0.08, -12.0); 
+        
+        // Tilt de la caméra pour viser le centre
+        vec3 target = vec3(0.0, -0.5, 0.0);
+        vec3 forward = normalize(target - ro);
+        vec3 right = normalize(cross(vec3(0.0, 1.0, 0.0), forward));
+        vec3 up = cross(forward, right);
+        
+        // Zoom / FOV
+        vec3 rd = normalize(forward * 2.5 + uv.x * right + uv.y * up);
+
+        // Interaction Souris (Légère orbite)
+        float mx = u_mouse.x * 0.5;
+        float my = u_mouse.y * 0.2;
+        mat2 rotX = mat2(cos(mx), sin(mx), -sin(mx), cos(mx));
+        ro.xz *= rotX; rd.xz *= rotX;
+        
+        // 3. Paramètres Physiques du Trou Noir
+        float rs = 1.0; // Rayon Horizon (Schwarzschild)
+        float isco = 1.5; // Disque Interne (Innermost Stable Circular Orbit)
+        float diskRad = 9.0; // Disque Externe
+        
+        // Ray Marching State
+        vec3 p = ro;
+        vec3 col = vec3(0.0);
+        float accum = 0.0; // Lumière accumulée
+        float trans = 1.0; // Transparence restante
+        
+        float stepSize = 0.05; // Précision initiale
+        
+        // Boucle de Ray Marching
+        for(int i=0; i<120; i++) {
+            float r = length(p);
+            
+            // A. Lentille Gravitationnelle (Gravity Bending)
+            // Formule approximée mais visuellement efficace pour courber l'arrière plan
+            // Plus on est proche (r petit), plus la force est grande.
+            // Le facteur 1.5 amplifie l'effet "Interstellar" pour bien voir l'anneau arrière
+            vec3 force = -normalize(p) * (2.5 / (r * r + 0.01)); 
+            rd += force * stepSize;
+            rd = normalize(rd);
+            
+            // B. Horizon des événements (L'Ombre)
+            // Si on touche la sphère noire, on absorbe toute la lumière restante
+            if(r < rs) {
+                // L'ombre noire
+                accum += 0.0; // Pas de lumière
+                trans = 0.0;  // Opacité totale
+                break;
+            }
+            
+            // C. Disque d'Accrétion (Intersection Volume)
+            // On vérifie la distance au plan Y=0 (Equateur)
+            // On ajoute un warp vertical basé sur r pour courber légèrement le disque visuellement
+            float distToPlane = abs(p.y); 
+            
+            if(distToPlane < 0.5 && r > isco && r < diskRad) {
+                // Coordonnées Polaires Locales
+                float angle = atan(p.z, p.x);
+                float rad = length(p.xz);
+                
+                // Densité de base (plus dense près du trou)
+                float density = exp(-(rad - isco) * 0.8);
+                
+                // Turbulence (Gaz)
+                // La vitesse de rotation dépend de la distance (Kepler)
+                float rotSpeed = 8.0 / (rad + 0.1);
+                float noiseVal = fbm(vec3(rad * 2.0, angle * 3.0 + u_time * rotSpeed * 0.2, p.y * 8.0));
+                
+                // Structure en anneaux
+                float rings = 0.5 + 0.5 * sin(rad * 10.0 + noiseVal * 2.0);
+                density *= rings;
+                density *= (noiseVal * 0.5 + 0.5); // Ajout de chaos
+                
+                // Masquage vertical (le disque est fin)
+                density *= smoothstep(0.4, 0.0, distToPlane);
+
+                // --- EFFET DOPPLER (BEAMING) ---
+                // C'est LA signature visuelle.
+                // Le gaz à gauche vient vers nous (très brillant).
+                // Le gaz à droite s'éloigne (très sombre).
+                vec3 tangent = normalize(vec3(-p.z, 0.0, p.x)); // Vecteur vitesse tangentielle
+                float doppler = dot(rd, tangent); // Produit scalaire avec le rayon de vue
+                
+                // Facteur d'amplification Doppler
+                float beam = smoothstep(-0.5, 1.0, doppler * 1.5 + 0.2);
+                beam = pow(beam, 3.0); // Contraste très fort
+                
+                // Accumulation de lumière
+                // Si on est "devant" le trou noir, density est forte -> accumule vite
+                float stepDens = density * stepSize * 4.0; // Facteur 4.0 = Densité Gaz
+                
+                // Couleur du gaz (Blanc chaud pour Luminet)
+                float light = stepDens * beam;
+                accum += light * trans; // On ajoute la lumière pondérée par la transparence
+                trans *= (1.0 - stepDens); // Le rayon perd de l'énergie en traversant le gaz
+                
+                if(trans < 0.01) break; // Optimisation: Si c'est opaque, on arrête
+            }
+            
+            // Pas adaptatif : on ralentit près du trou pour la précision
+            float nextStep = max(0.05, r * 0.05);
+            p += rd * nextStep;
+            
+            if(r > 20.0) break; // Trop loin
+        }
+        
+        // 4. Composition Finale
+        col = vec3(accum);
+        
+        // Tone mapping "Film Noir"
+        col = pow(col, vec3(0.6)); // Gamma correction pour voir les détails sombres
+        col = smoothstep(0.0, 1.2, col); // Clamp
+
+        // 5. GRAIN ET ESTHÉTIQUE SCIENTIFIQUE (LUMINET)
+        // Bruit statique intense
+        float grain = hash(uv + u_time * 10.0);
+        
+        // Mélange le grain : plus visible dans les gris, moins dans le noir/blanc pur
+        float grainStrength = 0.15 + 0.1 * smoothstep(0.0, 0.5, length(col));
+        col += (grain - 0.5) * grainStrength;
+        
+        // Vignette forte
+        float vig = 1.0 - smoothstep(0.5, 1.6, length(vUv - 0.5) * 2.0);
+        col *= vig;
+        
+        // Teinte finale : Noir et Blanc pur
+        float gray = dot(col, vec3(0.299, 0.587, 0.114));
+        
+        // Boost final du contraste pour détacher la barre blanche du fond noir
+        gray = smoothstep(0.02, 0.9, gray); 
+
+        gl_FragColor = vec4(vec3(gray), 1.0);
+    }
+`;
+
+// --- REACT COMPONENTS ---
+
 const titleContainerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -16,16 +270,15 @@ const titleContainerVariants: Variants = {
   }
 };
 
-// Letter Animation: "Orbital Arrival" / Space Warp Effect
 const letterVariants: Variants = {
   hidden: { 
     opacity: 0,
-    scale: 8, // Start very large (close to camera/viewer)
-    y: 100, // Offset vertically
-    rotateX: -90, // Start completely flat (horizontal)
-    rotateZ: -30, // Significant tilt
-    filter: "blur(20px)", // Heavy blur for speed/depth effect
-    transformOrigin: "50% 100%", // Pivot from bottom
+    scale: 8,
+    y: 100,
+    rotateX: -90,
+    rotateZ: -30,
+    filter: "blur(20px)",
+    transformOrigin: "50% 100%",
   },
   visible: { 
     opacity: 1,
@@ -37,12 +290,11 @@ const letterVariants: Variants = {
     transformOrigin: "50% 50%",
     transition: {
       duration: 1.4,
-      ease: [0.2, 0.8, 0.2, 1], // Custom bezier for a floaty space feel
+      ease: [0.2, 0.8, 0.2, 1],
     }
   }
 };
 
-// Word wrapper to keep words together
 const AnimatedText = ({ text, className }: { text: string, className?: string }) => (
   <motion.div 
     key={text} 
@@ -50,7 +302,7 @@ const AnimatedText = ({ text, className }: { text: string, className?: string })
     initial="hidden"
     animate="visible"
     className={`flex flex-wrap justify-center gap-x-[0.3em] gap-y-2 ${className}`}
-    style={{ perspective: "1200px" }} // Deep perspective for 3D effects
+    style={{ perspective: "1200px" }}
   >
     {text.split(" ").map((word, i) => (
       <span key={i} className="inline-block whitespace-nowrap relative" style={{ transformStyle: "preserve-3d" }}>
@@ -69,69 +321,82 @@ const AnimatedText = ({ text, className }: { text: string, className?: string })
   </motion.div>
 );
 
-const SpaceBackground = () => {
-  const stars = useMemo(() => {
-    return [...Array(100)].map((_, i) => ({
-      id: i,
-      top: `${Math.random() * 100}%`,
-      left: `${Math.random() * 100}%`,
-      size: Math.random() * 2 + 1, // 1-3px
-      opacity: Math.random() * 0.8 + 0.2,
-      duration: Math.random() * 3 + 2,
-      delay: Math.random() * 2,
-    }));
+const BlackHoleBackground = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mouseRef = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    
+    const container = containerRef.current;
+    const scene = new THREE.Scene();
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const renderer = new THREE.WebGLRenderer({ 
+      alpha: true, 
+      powerPreference: "high-performance",
+      antialias: false 
+    });
+    
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const material = new THREE.ShaderMaterial({
+      uniforms: {
+        u_time: { value: 0 },
+        u_resolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) },
+        u_mouse: { value: new THREE.Vector2(0, 0) }
+      },
+      vertexShader: VertexShader,
+      fragmentShader: FragmentShader,
+    });
+
+    const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+    scene.add(quad);
+    
+    const clock = new THREE.Clock();
+    
+    let animationId: number;
+    const animate = () => {
+      animationId = requestAnimationFrame(animate);
+      material.uniforms.u_time.value = clock.getElapsedTime();
+      
+      // Smooth mouse interpolation
+      material.uniforms.u_mouse.value.x += (mouseRef.current.x - material.uniforms.u_mouse.value.x) * 0.05;
+      material.uniforms.u_mouse.value.y += (mouseRef.current.y - material.uniforms.u_mouse.value.y) * 0.05;
+      
+      renderer.render(scene, camera);
+    };
+    animate();
+    
+    const handleResize = () => {
+        if (!container) return;
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        material.uniforms.u_resolution.value.set(container.clientWidth, container.clientHeight);
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+        mouseRef.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    }
+    
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('mousemove', handleMouseMove);
+    
+    return () => {
+        window.removeEventListener('resize', handleResize);
+        window.removeEventListener('mousemove', handleMouseMove);
+        cancelAnimationFrame(animationId);
+        renderer.dispose();
+        material.dispose();
+        if (container && container.contains(renderer.domElement)) {
+            container.removeChild(renderer.domElement);
+        }
+    };
   }, []);
 
-  return (
-    <div className="absolute inset-0 overflow-hidden z-0 pointer-events-none">
-      <div className="absolute inset-0 bg-black" />
-      
-      {/* Rotating Galaxy/Nebula Gradient */}
-      <motion.div 
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vmax] h-[150vmax] opacity-30 mix-blend-screen"
-        animate={{ 
-          rotate: 360,
-          scale: [1, 1.05, 1],
-        }}
-        transition={{ 
-          rotate: { duration: 120, repeat: Infinity, ease: "linear" },
-          scale: { duration: 10, repeat: Infinity, ease: "easeInOut" }
-        }}
-        style={{ 
-            background: 'radial-gradient(circle, rgba(40,50,120,0.4) 0%, rgba(80,20,100,0.1) 40%, rgba(0,0,0,0) 70%)'
-        }}
-      />
-      
-      {/* Rotating Starfield */}
-      <motion.div 
-         className="absolute inset-[-50%] w-[200%] h-[200%]"
-         animate={{ rotate: 360 }} 
-         transition={{ duration: 240, repeat: Infinity, ease: "linear" }}
-      >
-         {stars.map(star => (
-            <motion.div 
-               key={star.id}
-               className="absolute bg-white rounded-full"
-               style={{ 
-                 top: star.top, 
-                 left: star.left, 
-                 width: star.size, 
-                 height: star.size,
-                 boxShadow: `0 0 ${star.size}px rgba(255,255,255,0.8)`
-               }}
-               animate={{ opacity: [star.opacity, star.opacity * 0.3, star.opacity] }}
-               transition={{ 
-                 duration: star.duration, 
-                 repeat: Infinity, 
-                 ease: "easeInOut",
-                 delay: star.delay
-               }}
-            />
-         ))}
-      </motion.div>
-    </div>
-  )
-}
+  return <div ref={containerRef} className="absolute inset-0 w-full h-full z-0" />;
+};
 
 const Hero: React.FC = () => {
   const ref = useRef<HTMLDivElement>(null);
@@ -141,46 +406,34 @@ const Hero: React.FC = () => {
     offset: ["start start", "end end"]
   });
 
-  // Refined Parallax Values for distinct layer velocities
-  const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "35%"]); // Increased depth
-  const scaleBg = useTransform(scrollYProgress, [0, 1], [1, 1.2]); // Slight zoom for immersion
-  const yTitle = useTransform(scrollYProgress, [0, 0.6], [0, 600]); // Strong drag on title
-  const yContent = useTransform(scrollYProgress, [0, 0.6], [0, 250]); // Content moves slower than title
+  const yTitle = useTransform(scrollYProgress, [0, 0.6], [0, 600]); 
+  const yContent = useTransform(scrollYProgress, [0, 0.6], [0, 250]); 
   const opacityText = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
 
   return (
     <section ref={ref} className="relative min-h-[120vh] bg-black">
       
-      {/* Sticky Background Visual - Dark Space */}
+      {/* Sticky Background Visual */}
       <div className="sticky top-0 h-screen w-full overflow-hidden z-0">
         
-        {/* Dynamic 3D Space Background */}
-        <SpaceBackground />
+        {/* The Monochrome Black Hole Shader */}
+        <BlackHoleBackground />
 
-        <div className="absolute inset-0 bg-black/50 z-10"></div>
-        <motion.img 
-          style={{ y: yBg, scale: scaleBg }}
-          src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1920&auto=format&fit=crop"
-          alt="Earth from Space" 
-          className="w-full h-full object-cover opacity-60 origin-center relative z-0"
-        />
-        {/* Gradient fade at bottom of screen */}
-        <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-black via-black/50 to-transparent z-10"></div>
+        {/* Overlay for text readability - Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/80 z-10 pointer-events-none"></div>
       </div>
 
-      {/* Content Container - Overlays the sticky background */}
+      {/* Content Container */}
       <div className="relative z-20 w-full -mt-[100vh]">
         
-        {/* Hero Intro (First Screen) - Added pt-32 to push content down away from header */}
         <div className="h-screen flex flex-col items-center justify-center px-4 pt-32 md:pt-0">
            <motion.div 
               style={{ opacity: opacityText }}
               className="text-center max-w-[95vw] md:max-w-7xl flex flex-col items-center"
            >
-              {/* Main Title Container - Reduced font size to lg:text-8xl to prevent header overlap */}
               <motion.h1 
                 style={{ y: yTitle }}
-                className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.0] md:leading-[0.9] mb-8 md:mb-12 flex flex-col items-center w-full"
+                className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.0] md:leading-[0.9] mb-8 md:mb-12 flex flex-col items-center w-full drop-shadow-2xl mix-blend-overlay text-white opacity-90"
               >
                 <div className="block w-full">
                   <AnimatedText text={t('hero_line1')} />
@@ -197,13 +450,13 @@ const Hero: React.FC = () => {
                 transition={{ delay: 1.5, duration: 1 }}
                 className="flex flex-col items-center gap-6"
               >
-                <p className="text-lg md:text-xl text-gray-200 max-w-lg mx-auto font-bold">
+                <p className="text-lg md:text-xl text-gray-300 max-w-lg mx-auto font-bold drop-shadow-lg shadow-black mix-blend-screen">
                   {t('hero_subtitle')}
                 </p>
                 
                 <a 
                   href="#videos" 
-                  className="group flex items-center gap-3 px-8 py-4 bg-white text-black rounded-full text-sm font-bold tracking-widest uppercase hover:bg-gray-200 transition-all hover:scale-105"
+                  className="group flex items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full text-sm font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-all hover:scale-105 shadow-lg shadow-white/5 z-30"
                 >
                   <span>{t('hero_cta')}</span>
                   <Play size={16} className="fill-current" />
@@ -212,7 +465,7 @@ const Hero: React.FC = () => {
                 <motion.div 
                   animate={{ y: [0, 10, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="mt-8 md:mt-12 text-white/50 text-xs font-bold uppercase tracking-widest flex flex-col items-center gap-2"
+                  className="mt-8 md:mt-12 text-white/30 text-xs font-bold uppercase tracking-widest flex flex-col items-center gap-2"
                 >
                   <span>{t('hero_scroll')}</span>
                   <div className="w-px h-12 bg-gradient-to-b from-white/50 to-transparent"></div>
