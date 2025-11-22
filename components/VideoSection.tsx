@@ -1,6 +1,7 @@
+
 import React, { useRef } from 'react';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
-import { Play, Youtube, ExternalLink, Radio } from 'lucide-react';
+import { Play, Youtube, Radio, ArrowUpRight } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Video } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
@@ -12,42 +13,41 @@ const VideoCard: React.FC<{ video: Video; index: number }> = ({ video, index }) 
     offset: ["start end", "end start"]
   });
   
-  // Parallax translation
-  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
+  // Subtle parallax
+  const y = useTransform(scrollYProgress, [0, 1], [30, -30]);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.6, delay: (index % 3) * 0.1, ease: "easeOut" }}
+      transition={{ duration: 0.5, delay: (index % 3) * 0.05, ease: "easeOut" }}
+      className="group cursor-pointer"
     >
-      {/* Wrapper div to hold the ref for stable scroll measurement */}
       <div ref={ref}>
-        <motion.div 
-          style={{ y }}
-          className="group cursor-pointer"
-        >
-          {/* Card Image Container - Light: light gray, Dark: dark gray/black */}
-          <div className="relative overflow-hidden rounded-[2rem] bg-gray-100 dark:bg-eh-gray aspect-[4/3] mb-6 transition-colors duration-500">
+        <motion.div style={{ y }}>
+          {/* Card Image Container */}
+          <div className="relative overflow-hidden rounded-xl bg-gray-100 dark:bg-eh-gray aspect-video mb-4 transition-colors duration-500 border border-black/5 dark:border-white/5">
              <img 
               src={video.imageUrl} 
               alt={video.title} 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
             />
-            <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full">
+            <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm text-white text-[10px] font-mono px-2 py-0.5 rounded-md border border-white/10">
               {video.duration}
             </div>
-             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <Play className="w-5 h-5 text-white fill-white" />
+             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20">
+                <div className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
+                  <Play className="w-4 h-4 text-black fill-black ml-0.5" />
                 </div>
              </div>
           </div>
           
-          <div className="pr-4">
-            <span className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3 block">{video.category}</span>
-            <h4 className="text-3xl md:text-4xl font-black tracking-tighter uppercase leading-[1] transition-colors duration-300 text-black dark:text-white group-hover:text-gray-600 dark:group-hover:text-gray-400">
+          <div className="pr-2">
+            <div className="flex justify-between items-start mb-2">
+                <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest border border-blue-600/20 dark:border-blue-400/20 px-2 py-0.5 rounded-full">{video.category}</span>
+            </div>
+            <h4 className="text-lg font-bold leading-tight transition-colors duration-300 text-black dark:text-white group-hover:text-gray-600 dark:group-hover:text-gray-300 line-clamp-2">
               {video.title}
             </h4>
           </div>
@@ -58,7 +58,6 @@ const VideoCard: React.FC<{ video: Video; index: number }> = ({ video, index }) 
 };
 
 const VideoSection: React.FC = () => {
-  // Ref for featured video parallax
   const featuredRef = useRef<HTMLDivElement>(null);
   const { t } = useThemeLanguage();
   const { scrollYProgress } = useScroll({
@@ -66,7 +65,6 @@ const VideoSection: React.FC = () => {
     offset: ["start end", "end start"]
   });
   
-  // Image parallax inside the container
   const imageY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
 
   return (
@@ -79,86 +77,78 @@ const VideoSection: React.FC = () => {
       transition={{ duration: 0.8, ease: "easeOut" }}
     >
       
-      {/* YouTube Channel Promotion Banner - Redesigned */}
+      {/* REDESIGNED: YouTube Channel Promotion Banner */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="mb-24 relative overflow-hidden rounded-[2.5rem] bg-gray-50 dark:bg-[#0a0a0a] text-black dark:text-white border border-gray-200 dark:border-white/5 shadow-2xl transition-colors duration-500"
+        className="mb-24 relative overflow-hidden rounded-none md:rounded-3xl bg-gray-50 dark:bg-[#080808] text-black dark:text-white border-y md:border border-gray-200 dark:border-white/10 shadow-sm transition-colors duration-500"
       >
-         {/* Background Atmosphere */}
-         <div className="absolute inset-0 z-0 pointer-events-none">
-            {/* Grid Pattern - Adapted for Light/Dark */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.05)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_100%)]"></div>
-            
-            {/* Red Glow / Event Horizon Effect */}
-            <div className="absolute -right-[10%] top-1/2 -translate-y-1/2 w-[60%] h-[150%] bg-red-500/10 dark:bg-red-600/20 blur-[120px] rounded-full mix-blend-multiply dark:mix-blend-screen"></div>
-            <div className="absolute -left-[10%] -bottom-[20%] w-[40%] h-[80%] bg-blue-500/10 dark:bg-blue-900/10 blur-[100px] rounded-full mix-blend-multiply dark:mix-blend-screen"></div>
+         {/* Background Tech Grid */}
+         <div className="absolute inset-0 z-0 pointer-events-none opacity-30">
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.1)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
          </div>
 
-         <div className="relative z-10 p-8 md:p-16 flex flex-col lg:flex-row justify-between items-center gap-12">
+         <div className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row justify-between items-center gap-10">
             
-            <div className="flex-1 text-center lg:text-left space-y-6">
-              {/* Header Badge */}
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white border border-gray-200 dark:bg-white/5 dark:border-white/10 backdrop-blur-sm mb-2 shadow-sm dark:shadow-none transition-colors duration-500">
-                 <span className="relative flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600"></span>
-                 </span>
-                 <span className="text-xs font-black tracking-[0.2em] uppercase text-gray-600 dark:text-gray-300">Chaîne Officielle</span>
-              </div>
-
-              {/* Main Title with Hollow Effect */}
-              <div className="relative">
-                <h2 className="text-5xl md:text-7xl xl:text-8xl font-black tracking-tighter uppercase leading-[0.85]">
-                  <span className="block text-transparent bg-clip-text bg-gradient-to-b from-black to-gray-500 dark:from-white dark:to-white/40 transition-all duration-500">Event</span>
-                  <span className="block text-transparent [-webkit-text-stroke:1px_rgba(0,0,0,0.3)] dark:[-webkit-text-stroke:1px_rgba(255,255,255,0.3)] transition-all duration-500">Horizon</span>
-                </h2>
-              </div>
-              
-              <p className="text-gray-600 dark:text-gray-400 text-lg md:text-xl max-w-lg font-medium leading-relaxed mx-auto lg:mx-0 transition-colors duration-500">
-                Rejoignez l'élite de l'industrie spatiale. Reportages exclusifs, lancements en direct et analyses techniques.
-              </p>
+            <div className="flex flex-row items-center gap-6 w-full md:w-auto">
+               {/* Technical Logo Placeholder */}
+               <div className="hidden md:flex w-20 h-20 border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 items-center justify-center rounded-lg">
+                  <Radio className="w-8 h-8 text-black dark:text-white opacity-80" />
+               </div>
+               
+               <div className="flex flex-col">
+                  <div className="flex items-center gap-2 mb-2">
+                     <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                     <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">Transmission Entrante</span>
+                  </div>
+                  <h2 className="text-2xl md:text-4xl font-bold tracking-tighter uppercase text-black dark:text-white">
+                    Chaîne Officielle
+                  </h2>
+                  <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 max-w-md mt-2 font-medium">
+                    Reportages, Lancements et Directs du CNES.
+                  </p>
+               </div>
             </div>
             
             {/* Right Side CTA */}
-            <div className="flex flex-col items-center gap-6 shrink-0">
-               <a 
-                 href="#" 
-                 className="group relative px-10 py-6 bg-black text-white dark:bg-white dark:text-black rounded-full overflow-hidden transition-all hover:scale-105 shadow-xl dark:shadow-[0_0_40px_rgba(255,255,255,0.3)] dark:hover:shadow-[0_0_60px_rgba(255,255,255,0.5)]"
-               >
-                 <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 dark:via-white/50 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]"></div>
-                 <div className="relative flex items-center gap-3">
-                   <Youtube size={24} className="text-red-500 dark:text-red-600 fill-red-500 dark:fill-red-600" />
-                   <span className="font-black text-sm tracking-widest uppercase">S'abonner à la chaîne</span>
-                 </div>
-               </a>
-               <span className="text-xs font-bold text-gray-400 dark:text-white/30 uppercase tracking-widest">Rejoignez 150k+ passionnés</span>
-            </div>
+            <a 
+              href="https://www.youtube.com/results?search_query=cnes" 
+              target="_blank"
+              rel="noreferrer"
+              className="group relative px-8 py-4 bg-transparent border border-black dark:border-white text-black dark:text-white overflow-hidden transition-all hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black w-full md:w-auto text-center"
+            >
+              <div className="relative flex items-center justify-center gap-3">
+                <span className="font-bold text-xs tracking-[0.2em] uppercase">Accéder au flux</span>
+                <ArrowUpRight size={16} />
+              </div>
+            </a>
 
          </div>
       </motion.div>
 
 
-      <div className="mb-16 flex items-end justify-between">
-        <h2 className="text-4xl md:text-6xl font-bold tracking-tighter text-black dark:text-white transition-colors duration-500">
-          {t('videos_title')}
-        </h2>
-        <span className="hidden md:block text-sm font-bold uppercase tracking-widest text-gray-400">
-          {t('videos_subtitle')}
-        </span>
+      <div className="mb-12 flex items-end justify-between border-b border-gray-200 dark:border-gray-800 pb-6">
+        <div>
+             <span className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-2 block">Médiathèque</span>
+             <h2 className="text-3xl md:text-5xl font-bold tracking-tighter text-black dark:text-white transition-colors duration-500">
+             {t('videos_title')}
+             </h2>
+        </div>
+        <a href="#" className="hidden md:flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:text-blue-500 transition-colors">
+          {t('videos_subtitle')} <ArrowUpRight size={14} />
+        </a>
       </div>
 
       {/* Featured Video */}
-      <div className="mb-24" ref={featuredRef}>
+      <div className="mb-16" ref={featuredRef}>
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="group cursor-pointer"
+          className="group cursor-pointer relative"
         >
-          <div className="relative overflow-hidden rounded-[2.5rem] bg-gray-100 dark:bg-eh-gray aspect-video md:aspect-[21/9] transition-colors duration-500">
+          <div className="relative overflow-hidden rounded-2xl bg-gray-100 dark:bg-eh-gray aspect-video md:aspect-[21/9] transition-colors duration-500 border border-black/5 dark:border-white/5">
             <motion.div style={{ y: imageY }} className="w-full h-[120%] -mt-[10%]">
               <img 
                 src={FEATURED_VIDEO.imageUrl} 
@@ -166,36 +156,38 @@ const VideoSection: React.FC = () => {
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
               />
             </motion.div>
-            <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
             
-            {/* Play Button Overlay */}
-            <div className="absolute inset-0 flex items-center justify-center">
-               <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 border border-white/30">
-                  <Play className="w-8 h-8 text-white fill-white" />
-               </div>
+            <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 flex flex-col md:flex-row justify-between items-end gap-6">
+                <div>
+                    <span className="inline-block px-3 py-1 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest mb-3 rounded-full">À la une</span>
+                    <h3 className="text-3xl md:text-5xl font-black tracking-tighter uppercase text-white mb-2">
+                        {FEATURED_VIDEO.title}
+                    </h3>
+                    <p className="text-white/70 text-sm font-mono">{FEATURED_VIDEO.category} // {FEATURED_VIDEO.duration}</p>
+                </div>
+                
+                <button className="w-14 h-14 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+                    <Play className="w-5 h-5 fill-current ml-1" />
+                </button>
             </div>
-          </div>
-          
-          <div className="mt-8 flex flex-col md:flex-row md:items-start justify-between gap-4">
-            <div className="max-w-4xl">
-              <span className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">{FEATURED_VIDEO.category} — {FEATURED_VIDEO.duration}</span>
-              <h3 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-[0.9] transition-colors duration-300 text-black dark:text-white group-hover:text-gray-600 dark:group-hover:text-gray-400">
-                {FEATURED_VIDEO.title}
-              </h3>
-            </div>
-            <button className="hidden md:block px-6 py-3 border border-gray-200 dark:border-gray-700 rounded-full uppercase text-xs font-bold tracking-widest hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors flex-shrink-0 text-black dark:text-white">
-              {t('videos_watch')}
-            </button>
           </div>
         </motion.div>
       </div>
 
-      {/* Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-20">
+      {/* Grid Layout - 10 Videos */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
         {VIDEOS.map((video, index) => (
           <VideoCard key={video.id} video={video} index={index} />
         ))}
       </div>
+      
+      <div className="mt-16 text-center md:hidden">
+        <a href="#" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest border-b border-black dark:border-white pb-1">
+          {t('videos_subtitle')} <ArrowUpRight size={14} />
+        </a>
+      </div>
+
     </motion.section>
   );
 };

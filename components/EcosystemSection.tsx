@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import { PARTNERS } from '../constants';
 import { motion, useScroll, useTransform } from 'framer-motion';
@@ -13,7 +14,7 @@ const PartnerCard: React.FC<{ partner: Partner; index: number }> = ({ partner, i
   });
 
   // More pronounced parallax effect for dynamic depth
-  const y = useTransform(scrollYProgress, [0, 1], [400, -400]);
+  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
 
   return (
     <motion.div 
@@ -27,27 +28,29 @@ const PartnerCard: React.FC<{ partner: Partner; index: number }> = ({ partner, i
         viewport={{ once: true, margin: "-30px" }}
         transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.1 }}
       >
-         {/* Card Visual */}
-         <div className="relative overflow-hidden rounded-[2rem] bg-gray-100 dark:bg-eh-gray aspect-[4/5] mb-6 transition-colors duration-500">
-            <img 
-              src={partner.imageUrl} 
-              alt={partner.name} 
-              className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500"
-            />
+         {/* Card Visual - Full Color */}
+         <div className="relative overflow-hidden rounded-xl bg-white dark:bg-white/5 aspect-[4/5] mb-6 transition-colors duration-500 border border-gray-100 dark:border-white/10 shadow-sm">
+            <div className="absolute inset-0 p-8 flex items-center justify-center bg-white dark:bg-transparent">
+                <img 
+                src={partner.imageUrl} 
+                alt={partner.name} 
+                className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-110"
+                />
+            </div>
             {/* Hover Overlay info */}
-            <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <span className="text-white font-bold tracking-widest uppercase border border-white rounded-full px-4 py-2 text-xs">
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-sm">
+              <span className="text-white font-bold tracking-widest uppercase border border-white/50 rounded-full px-4 py-2 text-xs bg-black/50">
                 {t('ecosystem_view')}
               </span>
             </div>
          </div>
 
          {/* Text Under Card */}
-         <div className="text-center md:text-left">
-           <h3 className="text-3xl font-black uppercase tracking-tighter mb-2 text-black dark:text-white group-hover:text-gray-600 dark:group-hover:text-gray-400 transition-colors">
+         <div className="text-center md:text-left pl-2">
+           <h3 className="text-2xl font-bold uppercase tracking-tight mb-1 text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
              {partner.name}
            </h3>
-           <span className="text-xs font-black text-gray-400 uppercase tracking-widest block">{partner.role}</span>
+           <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block border-t border-gray-200 dark:border-gray-800 pt-2 inline-block min-w-[50px]">{partner.role}</span>
          </div>
       </motion.div>
     </motion.div>
@@ -66,7 +69,7 @@ const EcosystemSection: React.FC = () => {
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.8, ease: "easeOut" }}
     >
-       <div className="px-4 md:px-12 max-w-[1800px] mx-auto mb-16">
+       <div className="px-4 md:px-12 max-w-[1800px] mx-auto mb-16 border-l-4 border-black dark:border-white pl-6">
         <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4 text-black dark:text-white">
           {t('ecosystem_title')}
         </h2>
@@ -76,7 +79,7 @@ const EcosystemSection: React.FC = () => {
       </div>
 
       <div className="overflow-hidden">
-        <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-6 pb-12">
+        <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-8 pb-12">
            {PARTNERS.map((partner, index) => (
              <PartnerCard key={partner.id} partner={partner} index={index} />
            ))}
