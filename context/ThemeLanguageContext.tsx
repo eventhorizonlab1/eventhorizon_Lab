@@ -1,5 +1,6 @@
 
 
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export type Language = string;
@@ -50,38 +51,44 @@ const translations: Translations = {
   videos_featured: { fr: 'À la une', en: 'Featured', de: 'Vorgestellt', es: 'Destacado', it: 'In evidenza' },
 
   // Video Content
-  video_feat_1_title: { fr: 'Cap sur 2025 : Les Vœux du CNES', en: 'Heading for 2025: CNES Wishes', de: 'Auf dem Weg zu 2025: CNES Wünsche', es: 'Rumbo a 2025: Deseos del CNES', it: 'Verso il 2025: Auguri del CNES' },
-  video_feat_1_cat: { fr: 'INSTITUTIONNEL', en: 'INSTITUTIONAL', de: 'INSTITUTIONELL', es: 'INSTITUCIONAL', it: 'ISTITUZIONALE' },
+  video_feat_1_title: { fr: 'Lancement Ariane 6 : Sentinel-1D (VA265)', en: 'Ariane 6 Launch: Sentinel-1D (VA265)', de: 'Start Ariane 6: Sentinel-1D (VA265)', es: 'Lanzamiento Ariane 6: Sentinel-1D (VA265)', it: 'Lancio Ariane 6: Sentinel-1D (VA265)' },
+  video_feat_1_cat: { fr: 'LANCEURS', en: 'LAUNCHERS', de: 'TRÄGERRAKETEN', es: 'LANZADORES', it: 'LANCIATORI' },
 
-  video_v1_title: { fr: 'Décollage réussi pour JUICE', en: 'Successful Liftoff for JUICE', de: 'Erfolgreicher Start für JUICE', es: 'Despegue exitoso de JUICE', it: 'Decollo riuscito per JUICE' },
-  video_v1_cat: { fr: 'EXPLORATION', en: 'EXPLORATION', de: 'ERFORSCHUNG', es: 'EXPLORACIÓN', it: 'ESPLORAZIONE' },
+  video_v1_title: { fr: 'Ariane 6 : la fusée européenne a réussi son 3ème envol', en: 'Ariane 6: European Rocket Succeeds 3rd Flight', de: 'Ariane 6: Erfolgreicher dritter Flug', es: 'Ariane 6: El cohete europeo logra su tercer vuelo', it: 'Ariane 6: Il razzo europeo riesce il terzo volo' },
+  video_v1_cat: { fr: 'ACTUALITÉ', en: 'NEWS', de: 'NACHRICHTEN', es: 'NOTICIAS', it: 'NOTIZIE' },
   
-  video_v2_title: { fr: "SWOT : L'eau vue de l'espace", en: 'SWOT: Water seen from space', de: 'SWOT: Wasser aus dem All', es: 'SWOT: El agua vista desde el espacio', it: "SWOT: L'acqua vista dallo spazio" },
-  video_v2_cat: { fr: 'CLIMAT', en: 'CLIMATE', de: 'KLIMA', es: 'CLIMA', it: 'CLIMA' },
+  video_v2_title: { fr: "Pourquoi Ariane s'acharne face à SpaceX ?", en: 'Why Ariane persists against SpaceX?', de: 'Warum Ariane gegen SpaceX besteht?', es: '¿Por qué Ariane persiste frente a SpaceX?', it: 'Perché Ariane insiste contro SpaceX?' },
+  video_v2_cat: { fr: 'STRATÉGIE', en: 'STRATEGY', de: 'STRATEGIE', es: 'ESTRATEGIA', it: 'STRATEGIA' },
 
-  video_v3_title: { fr: 'Thomas Pesquet : Retour sur Alpha', en: 'Thomas Pesquet: Alpha Mission Review', de: 'Thomas Pesquet: Rückblick Alpha', es: 'Thomas Pesquet: Resumen Misión Alpha', it: 'Thomas Pesquet: Ritorno su Alpha' },
-  video_v3_cat: { fr: 'ASTRONAUTE', en: 'ASTRONAUT', de: 'ASTRONAUT', es: 'ASTRONAUTA', it: 'ASTRONAUTA' },
+  video_v3_title: { fr: 'MaiaSpace, l\'entreprise française qui veut rivaliser avec SpaceX', en: 'MaiaSpace, the French rival to SpaceX', de: 'MaiaSpace, der französische SpaceX-Rivale', es: 'MaiaSpace, el rival francés de SpaceX', it: 'MaiaSpace, il rivale francese di SpaceX' },
+  video_v3_cat: { fr: 'NEWSPACE', en: 'NEWSPACE', de: 'NEWSPACE', es: 'NEWSPACE', it: 'NEWSPACE' },
 
-  video_v4_title: { fr: 'Le Centre Spatial Guyanais (CSG)', en: 'Guiana Space Centre (CSG)', de: 'Raumfahrtzentrum Guayana', es: 'Centro Espacial de Guayana', it: 'Centro Spaziale della Guyana' },
-  video_v4_cat: { fr: 'INFRASTRUCTURE', en: 'INFRASTRUCTURE', de: 'INFRASTRUKTUR', es: 'INFRAESTRUCTURA', it: 'INFRASTRUTTURA' },
+  video_v4_title: { fr: 'Enfin une FUSÉE RÉUTILISABLE en EUROPE ! MAIA SPACE', en: 'Finally a REUSABLE ROCKET in EUROPE! MAIA SPACE', de: 'Endlich eine WIEDERVERWENDBARE RAKETE in EUROPA! MAIA SPACE', es: '¡Finalmente un COHETE REUTILIZABLE en EUROPA! MAIA SPACE', it: 'Finalmente un RAZZO RIUTILIZZABILE in EUROPA! MAIA SPACE' },
+  video_v4_cat: { fr: 'TECH', en: 'TECH', de: 'TECH', es: 'TEC', it: 'TECH' },
 
-  video_v5_title: { fr: 'MicroCarb : Piéger le CO2', en: 'MicroCarb: Trapping CO2', de: 'MicroCarb: CO2 einfangen', es: 'MicroCarb: Atrapando CO2', it: 'MicroCarb: Intrappolare la CO2' },
-  video_v5_cat: { fr: 'SCIENCE', en: 'SCIENCE', de: 'WISSENSCHAFT', es: 'CIENCIA', it: 'SCIENZA' },
+  video_v5_title: { fr: 'La France a ENFIN son SpaceX ( Baguette One, Latitude.. ) ?', en: 'Does France FINALLY have its SpaceX (Latitude)?', de: 'Hat Frankreich ENDLICH sein SpaceX (Latitude)?', es: '¿Francia tiene FINALMENTE su SpaceX (Latitude)?', it: 'La Francia ha FINALMENTE il suo SpaceX (Latitude)?' },
+  video_v5_cat: { fr: 'STARTUP', en: 'STARTUP', de: 'STARTUP', es: 'STARTUP', it: 'STARTUP' },
 
-  video_v6_title: { fr: 'Les Rovers Martiens : Perseverance', en: 'Mars Rovers: Perseverance', de: 'Mars Rover: Perseverance', es: 'Rovers de Marte: Perseverance', it: 'Rover Marziani: Perseverance' },
-  video_v6_cat: { fr: 'MARS', en: 'MARS', de: 'MARS', es: 'MARTE', it: 'MARTE' },
+  video_v6_title: { fr: 'Space Startup News: The Exploration Company Nyx Crew Vehicle', en: 'Space Startup News: The Exploration Company Nyx Crew Vehicle', de: 'Space Startup News: The Exploration Company Nyx Crew Vehicle', es: 'Space Startup News: The Exploration Company Nyx Crew Vehicle', it: 'Space Startup News: The Exploration Company Nyx Crew Vehicle' },
+  video_v6_cat: { fr: 'CARGO', en: 'CARGO', de: 'FRACHT', es: 'CARGA', it: 'CARICO' },
 
-  video_v7_title: { fr: 'Nanosatellites : La Révolution Angels', en: 'Nanosatellites: The Angels Revolution', de: 'Nanosatelliten: Die Angels Revolution', es: 'Nanosatélites: La Revolución Angels', it: 'Nanosatelliti: La Rivoluzione Angels' },
-  video_v7_cat: { fr: 'NEWSPACE', en: 'NEWSPACE', de: 'NEWSPACE', es: 'NEWSPACE', it: 'NEWSPACE' },
+  video_v7_title: { fr: 'NASA should use The Exploration Company Nyx to backup Starship!', en: 'NASA should use The Exploration Company Nyx to backup Starship!', de: 'NASA sollte Nyx als Backup für Starship nutzen!', es: '¡NASA debería usar Nyx como respaldo de Starship!', it: 'La NASA dovrebbe usare Nyx come backup per Starship!' },
+  video_v7_cat: { fr: 'OPINION', en: 'OPINION', de: 'MEINUNG', es: 'OPINIÓN', it: 'OPINIONE' },
 
-  video_v8_title: { fr: 'Gaia : Cartographier la Voie Lactée', en: 'Gaia: Mapping the Milky Way', de: 'Gaia: Kartierung der Milchstraße', es: 'Gaia: Mapeando la Vía Láctea', it: 'Gaia: Mappare la Via Lattea' },
-  video_v8_cat: { fr: 'ASTRONOMIE', en: 'ASTRONOMY', de: 'ASTRONOMIE', es: 'ASTRONOMÍA', it: 'ASTRONOMIA' },
+  video_v8_title: { fr: 'Euclid discovers a stunning Einstein ring', en: 'Euclid discovers a stunning Einstein ring', de: 'Euclid entdeckt einen atemberaubenden Einsteinring', es: 'Euclid descubre un impresionante anillo de Einstein', it: 'Euclid scopre uno straordinario anello di Einstein' },
+  video_v8_cat: { fr: 'SCIENCE', en: 'SCIENCE', de: 'WISSENSCHAFT', es: 'CIENCIA', it: 'SCIENZA' },
 
-  video_v9_title: { fr: 'Le Ballon Stratosphérique', en: 'The Stratospheric Balloon', de: 'Der Stratosphärenballon', es: 'El Globo Estratosférico', it: 'Il Pallone Stratosferico' },
-  video_v9_cat: { fr: 'INNOVATION', en: 'INNOVATION', de: 'INNOVATION', es: 'INNOVACIÓN', it: 'INNOVAZIONE' },
+  video_v9_title: { fr: 'The Telescope Images Scientists Have Been Waiting 12 Years For | Euclid', en: 'The Telescope Images Scientists Have Been Waiting 12 Years For | Euclid', de: 'Die Teleskopbilder, auf die Wissenschaftler 12 Jahre gewartet haben | Euclid', es: 'Las imágenes que los científicos han esperado 12 años | Euclid', it: 'Le immagini che gli scienziati aspettavano da 12 anni | Euclid' },
+  video_v9_cat: { fr: 'DOCUMENTAIRE', en: 'DOCUMENTARY', de: 'DOKUMENTARFILM', es: 'DOCUMENTAL', it: 'DOCUMENTARIO' },
 
-  video_v10_title: { fr: 'Ariane 6 : Préparatifs', en: 'Ariane 6: Preparations', de: 'Ariane 6: Vorbereitungen', es: 'Ariane 6: Preparativos', it: 'Ariane 6: Preparativi' },
-  video_v10_cat: { fr: 'LANCEURS', en: 'LAUNCHERS', de: 'TRÄGERRAKETEN', es: 'LANZADORES', it: 'LANCIATORI' },
+  video_v10_title: { fr: 'Incroyable ! JAMES WEBB détecte les toutes premières étoiles de l\'univers !', en: 'Incredible! JAMES WEBB detects the very first stars of the universe!', de: 'Unglaublich! JAMES WEBB entdeckt die allerersten Sterne!', es: '¡Increíble! JAMES WEBB detecta las primeras estrellas del universo!', it: 'Incredibile! JAMES WEBB rileva le primissime stelle dell\'universo!' },
+  video_v10_cat: { fr: 'ASTRONOMIE', en: 'ASTRONOMY', de: 'ASTRONOMIE', es: 'ASTRONOMÍA', it: 'ASTRONOMIA' },
+
+  video_v11_title: { fr: 'James Webb observe des points rouges que personne ne comprend !', en: 'James Webb observes red dots that no one understands!', de: 'James Webb beobachtet rote Punkte, die niemand versteht!', es: 'James Webb observa puntos rojos que nadie entiende!', it: 'James Webb osserva punti rossi che nessuno capisce!' },
+  video_v11_cat: { fr: 'MYSTÈRE', en: 'MYSTERY', de: 'GEHEIMNIS', es: 'MISTERIO', it: 'MISTERO' },
+
+  video_v12_title: { fr: 'ClearSpace-1 Mission Launch Update', en: 'ClearSpace-1 Mission Launch Update', de: 'ClearSpace-1 Missions-Update', es: 'Actualización misión ClearSpace-1', it: 'Aggiornamento missione ClearSpace-1' },
+  video_v12_cat: { fr: 'DURABILITÉ', en: 'SUSTAINABILITY', de: 'NACHHALTIGKEIT', es: 'SOSTENIBILIDAD', it: 'SOSTENIBILITÀ' },
 
 
   // --- ARTICLES ---

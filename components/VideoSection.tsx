@@ -1,7 +1,7 @@
 
 import React, { useRef, useState } from 'react';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
-import { Play, Radio, ArrowUpRight, X, Loader2 } from 'lucide-react';
+import { Play, Radio, ArrowUpRight, X, ExternalLink } from 'lucide-react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Video } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
@@ -9,6 +9,7 @@ import { useThemeLanguage } from '../context/ThemeLanguageContext';
 // --- VIDEO UTILS ---
 const getYouTubeId = (url: string | undefined) => {
     if (!url) return null;
+    // Robust regex for YouTube ID extraction handling various formats
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
@@ -24,49 +25,57 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 md:p-12"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-12"
             onClick={onClose}
         >
             <button 
                 onClick={onClose}
-                className="absolute top-6 right-6 p-2 text-white hover:bg-white/10 rounded-full transition-colors z-50"
+                className="absolute top-6 right-6 p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-colors z-50"
             >
                 <X size={32} />
             </button>
 
-            <motion.div
-                initial={{ scale: 0.9, y: 20 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.9, y: 20 }}
-                onClick={(e) => e.stopPropagation()}
-                className="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10"
-            >
-                {videoId ? (
-                    <iframe
-                        width="100%"
-                        height="100%"
-                        src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
-                        title={video.title}
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowFullScreen
-                        className="absolute inset-0 w-full h-full"
-                    ></iframe>
-                ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center text-white">
-                        <Loader2 size={48} className="animate-spin mb-4 opacity-50" />
-                        <p>Chargement de la source...</p>
-                        <a 
-                            href={video.videoUrl} 
-                            target="_blank" 
-                            rel="noreferrer"
-                            className="mt-4 underline text-blue-400"
-                        >
-                            Ouvrir dans une nouvelle fenêtre
-                        </a>
-                    </div>
-                )}
-            </motion.div>
+            <div className="flex flex-col w-full max-w-5xl gap-4" onClick={(e) => e.stopPropagation()}>
+                <motion.div
+                    initial={{ scale: 0.9, y: 20 }}
+                    animate={{ scale: 1, y: 0 }}
+                    exit={{ scale: 0.9, y: 20 }}
+                    className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+                >
+                    {videoId ? (
+                        <iframe
+                            width="100%"
+                            height="100%"
+                            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+                            title={video.title}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerPolicy="strict-origin-when-cross-origin"
+                            allowFullScreen
+                            className="absolute inset-0 w-full h-full"
+                        ></iframe>
+                    ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center text-white p-8 text-center bg-gray-900">
+                            <p className="text-lg font-bold mb-2">Vidéo non disponible</p>
+                            <p className="text-sm text-gray-400 mb-6">L'URL de la vidéo semble incorrecte.</p>
+                        </div>
+                    )}
+                </motion.div>
+
+                {/* Fallback & Info Bar */}
+                <div className="flex justify-between items-center text-white px-2">
+                    <h3 className="text-lg font-bold line-clamp-1 mr-4">{video.title}</h3>
+                    <a 
+                        href={video.videoUrl} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-xs font-bold uppercase tracking-widest transition-colors whitespace-nowrap"
+                    >
+                        <span>Ouvrir sur YouTube</span>
+                        <ExternalLink size={14} />
+                    </a>
+                </div>
+            </div>
         </motion.div>
     );
 };

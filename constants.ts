@@ -10,95 +10,109 @@ export const NAV_LINKS = [
 
 export const FEATURED_VIDEO: Video = {
   id: 'feat-1',
-  title: 'Cap sur 2025 : Les Vœux du CNES',
-  category: 'INSTITUTIONNEL',
-  duration: '01:08',
-  imageUrl: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80', // Earth Orbit (Safe)
-  videoUrl: 'https://youtu.be/2FF0SRT7NW8?si=2XuKZ5DpK6Iqz0s7'
+  title: 'Lancement Ariane 6 : Sentinel-1D (VA265)',
+  category: 'LANCEURS',
+  duration: 'Live',
+  imageUrl: 'https://images.unsplash.com/photo-1517976487492-5750f3195933?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80', // Rocket Launch Night
+  videoUrl: 'https://www.youtube.com/watch?v=ukoMgE_8heo'
 };
 
 export const VIDEOS: Video[] = [
   { 
     id: 'v1', 
-    title: 'Décollage réussi pour JUICE', 
-    category: 'EXPLORATION', 
-    duration: '04:12', 
-    // Nouvelle image de lancement de fusée pour correspondre au "Décollage"
-    imageUrl: 'https://images.unsplash.com/photo-1541185933-710694998292?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 
-    videoUrl: 'https://www.youtube.com/watch?v=M9jM_w0Yh9I' 
+    title: 'Ariane 6 : la fusée européenne a réussi son 3ème envol', 
+    category: 'ACTUALITÉ', 
+    duration: '12:30', 
+    imageUrl: 'https://images.unsplash.com/photo-1636819488524-1f019c4e1c44?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Rocket in hangar/prep
+    videoUrl: 'https://www.youtube.com/watch?v=hCg8hox12C4' 
   },
   { 
     id: 'v2', 
-    title: 'SWOT : L\'eau vue de l\'espace', 
-    category: 'CLIMAT', 
-    duration: '03:45', 
-    // Vue de la Terre depuis l'espace pour correspondre au sujet
-    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 
-    videoUrl: 'https://www.youtube.com/watch?v=g7zFqO0sBqE'
+    title: 'Pourquoi Ariane s\'acharne face à SpaceX ?', 
+    category: 'STRATÉGIE', 
+    duration: '10:15', 
+    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Analytics/Data
+    videoUrl: 'https://www.youtube.com/watch?v=0StUZuq0K5Y'
   },
   { 
     id: 'v3', 
-    title: 'Thomas Pesquet : Retour sur Alpha', 
-    category: 'ASTRONAUTE', 
-    duration: '26:30', 
-    imageUrl: 'https://images.unsplash.com/photo-1541873676-a18131494184?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Astronaut/Suit
-    videoUrl: 'https://www.youtube.com/watch?v=h4aOaLzL-p8'
+    title: 'MaiaSpace, l\'entreprise française qui veut rivaliser avec SpaceX', 
+    category: 'NEWSPACE', 
+    duration: '03:45', 
+    imageUrl: 'https://images.unsplash.com/photo-1518364538800-6bae3c2ea0f2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Rocket Engine
+    videoUrl: 'https://www.youtube.com/watch?v=5nUehsleKQA'
   },
   { 
     id: 'v4', 
-    title: 'Le Centre Spatial Guyanais (CSG)', 
-    category: 'INFRASTRUCTURE', 
-    duration: '08:15', 
-    imageUrl: 'https://images.unsplash.com/photo-1517976487492-5750f3195933?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Rocket Launch
-    videoUrl: 'https://www.youtube.com/watch?v=7_8qj1y2wz4'
+    title: 'Enfin une FUSÉE RÉUTILISABLE en EUROPE ! MAIA SPACE', 
+    category: 'TECH', 
+    duration: '18:20', 
+    imageUrl: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Engineering/Lab
+    videoUrl: 'https://www.youtube.com/watch?v=1sjA4krnCDY'
   },
   { 
     id: 'v5', 
-    title: 'MicroCarb : Piéger le CO2', 
-    category: 'SCIENCE', 
-    duration: '05:00', 
-    imageUrl: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Lab/Science
-    videoUrl: 'https://www.youtube.com/watch?v=hQ_rRj6d-kU'
+    title: 'La France a ENFIN son SpaceX ( Baguette One, Latitude.. ) ?', 
+    category: 'STARTUP', 
+    duration: '15:10', 
+    imageUrl: 'https://images.unsplash.com/photo-1517420704952-d9f39714aeb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Startup/Office/Space
+    videoUrl: 'https://www.youtube.com/watch?v=4akJfQCpsFA'
   },
   { 
     id: 'v6', 
-    title: 'Les Rovers Martiens : Perseverance', 
-    category: 'MARS', 
-    duration: '11:25', 
-    imageUrl: 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Mars Surface
-    videoUrl: 'https://www.youtube.com/watch?v=4czjS9h4Fpg'
+    title: 'Space Startup News: The Exploration Company Nyx Crew Vehicle', 
+    category: 'CARGO', 
+    duration: '08:45', 
+    imageUrl: 'https://images.unsplash.com/photo-1541873676-a18131494184?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Astronaut/Capsule
+    videoUrl: 'https://www.youtube.com/watch?v=XP4VjQBPlqQ'
   },
   { 
     id: 'v7', 
-    title: 'Nanosatellites : La Révolution Angels', 
-    category: 'NEWSPACE', 
-    duration: '06:45', 
-    imageUrl: 'https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Satellite array
-    videoUrl: 'https://www.youtube.com/watch?v=r8s8hZ1_w0Y'
+    title: 'NASA should use The Exploration Company Nyx to backup Starship!', 
+    category: 'OPINION', 
+    duration: '11:30', 
+    imageUrl: 'https://images.unsplash.com/photo-1454789548728-85d2696cf667?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Moon/Orbit
+    videoUrl: 'https://www.youtube.com/watch?v=nvEMhxTceQs'
   },
   { 
     id: 'v8', 
-    title: 'Gaia : Cartographier la Voie Lactée', 
-    category: 'ASTRONOMIE', 
-    duration: '09:10', 
-    imageUrl: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Galaxy/Stars
-    videoUrl: 'https://www.youtube.com/watch?v=oGjMyWv9s1c'
+    title: 'Euclid discovers a stunning Einstein ring', 
+    category: 'SCIENCE', 
+    duration: '01:15', 
+    imageUrl: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Deep Space Galaxy
+    videoUrl: 'https://www.youtube.com/watch?v=pyCw_fhSndI'
   },
   { 
     id: 'v9', 
-    title: 'Le Ballon Stratosphérique', 
-    category: 'INNOVATION', 
-    duration: '07:20', 
-    imageUrl: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Sky/Atmosphere
-    videoUrl: 'https://www.youtube.com/watch?v=d3J7X5l6g6E'
+    title: 'The Telescope Images Scientists Have Been Waiting 12 Years For | Euclid', 
+    category: 'DOCUMENTAIRE', 
+    duration: '22:00', 
+    imageUrl: 'https://images.unsplash.com/photo-1506318137071-a8bcbf67cc77?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Telescope lens/Space
+    videoUrl: 'https://www.youtube.com/watch?v=N1AY3iCYkGs'
   },
   { 
     id: 'v10', 
-    title: 'Ariane 6 : Préparatifs', 
-    category: 'LANCEURS', 
-    duration: '02:30', 
-    imageUrl: 'https://images.unsplash.com/photo-1518364538800-6bae3c2ea0f2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Rocket Engine
-    videoUrl: 'https://www.youtube.com/watch?v=phVjD3d2yGg'
+    title: 'Incroyable ! JAMES WEBB détecte les toutes premières étoiles de l\'univers !', 
+    category: 'ASTRONOMIE', 
+    duration: '14:50', 
+    imageUrl: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Starfield
+    videoUrl: 'https://www.youtube.com/watch?v=35lR0Wg5FII'
+  },
+  { 
+    id: 'v11', 
+    title: 'James Webb observe des points rouges que personne ne comprend !', 
+    category: 'MYSTÈRE', 
+    duration: '12:10', 
+    imageUrl: 'https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Deep Red Space
+    videoUrl: 'https://www.youtube.com/watch?v=CQUs61L3xko'
+  },
+  { 
+    id: 'v12', 
+    title: 'ClearSpace-1 Mission Launch Update', 
+    category: 'DURABILITÉ', 
+    duration: '04:20', 
+    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Earth/Debris/Orbit
+    videoUrl: 'https://www.youtube.com/watch?v=03ZZdJf2nDA'
   },
 ];
 
