@@ -814,47 +814,25 @@ const BlackHoleSection: React.FC = () => {
   return (
     <motion.section 
       id="blackhole" 
-      className="py-16 md:py-24 max-w-[1800px] mx-auto"
+      className="pt-8 md:pt-12 pb-16 md:pb-24 max-w-[1800px] mx-auto px-4 md:px-12"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.8, ease: "easeOut" }}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start px-4 md:px-12">
-        
-        {/* Left: Controls & Info */}
-        <div className="lg:col-span-4 sticky top-24">
-          <div className="mb-8 border-l-4 border-black dark:border-white pl-6 -ml-4 md:-ml-12">
+        {/* Header - Full Width */}
+        <div className="mb-12 border-l-4 border-black dark:border-white pl-6 -ml-4 md:ml-0">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white transition-colors">
               {t('bh_title')}
             </h2>
-            <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg leading-relaxed">
+            <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg leading-relaxed max-w-2xl">
                {t('bh_subtitle')}
             </p>
-          </div>
-
-          {/* Settings Panel */}
-          <div className="bg-gray-100 dark:bg-eh-gray p-8 rounded-[2rem] border border-gray-200 dark:border-white/5 relative overflow-hidden shadow-lg transition-colors duration-500">
-             <div className="relative z-10">
-                <div className="flex justify-between items-center mb-6 border-b border-gray-200 dark:border-white/10 pb-4">
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">{t('bh_controls')}</h3>
-                </div>
-                
-                <ControlSlider label={t('bh_rotation')} icon={RefreshCw} value={rotationSpeed} min={0} max={2} step={0.1} onChange={setRotationSpeed} />
-                <ControlSlider label={t('bh_bloom')} icon={Sun} value={bloomIntensity} min={0} max={4} step={0.1} onChange={setBloomIntensity} />
-                <ControlSlider label={t('bh_lensing')} icon={Eye} value={lensingStrength} min={0} max={2} step={0.1} onChange={setLensingStrength} />
-                <ControlSlider label={t('bh_density')} icon={Activity} value={diskBrightness} min={1} max={10} step={0.1} onChange={setDiskBrightness} />
-                <ControlSlider label={t('bh_temp')} icon={Thermometer} value={temperature} min={0.5} max={2} step={0.1} onChange={setTemperature} />
-             </div>
-             
-             {/* Background Accent */}
-             <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.05),transparent_50%)] pointer-events-none"></div>
-          </div>
         </div>
 
-        {/* Right: Simulation Frame */}
-        <div className="lg:col-span-8">
-             <div className="relative rounded-[2rem] overflow-hidden bg-black border border-gray-200 dark:border-white/10 shadow-2xl w-full aspect-square md:aspect-[16/10] flex flex-col group">
+        {/* Simulation Frame - Full Width with Cinematic Aspect Ratio */}
+        <div className="mb-12">
+             <div className="relative rounded-[2rem] overflow-hidden bg-black border border-gray-200 dark:border-white/10 shadow-2xl w-full aspect-square md:aspect-[21/9] flex flex-col group">
                 
                 {/* Loader Overlay */}
                 <AnimatePresence>
@@ -928,7 +906,26 @@ const BlackHoleSection: React.FC = () => {
             </div>
         </div>
 
-      </div>
+        {/* Controls Panel - Below Simulation */}
+        <div className="bg-gray-100 dark:bg-eh-gray p-8 rounded-[2rem] border border-gray-200 dark:border-white/5 relative overflow-hidden shadow-lg transition-colors duration-500 max-w-6xl mx-auto w-full">
+             <div className="relative z-10">
+                <div className="flex justify-between items-center mb-8 border-b border-gray-200 dark:border-white/10 pb-4">
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">{t('bh_controls')}</h3>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-4">
+                    <ControlSlider label={t('bh_rotation')} icon={RefreshCw} value={rotationSpeed} min={0} max={2} step={0.1} onChange={setRotationSpeed} />
+                    <ControlSlider label={t('bh_bloom')} icon={Sun} value={bloomIntensity} min={0} max={4} step={0.1} onChange={setBloomIntensity} />
+                    <ControlSlider label={t('bh_lensing')} icon={Eye} value={lensingStrength} min={0} max={2} step={0.1} onChange={setLensingStrength} />
+                    <ControlSlider label={t('bh_density')} icon={Activity} value={diskBrightness} min={1} max={10} step={0.1} onChange={setDiskBrightness} />
+                    <ControlSlider label={t('bh_temp')} icon={Thermometer} value={temperature} min={0.5} max={2} step={0.1} onChange={setTemperature} />
+                </div>
+             </div>
+             
+             {/* Background Accent */}
+             <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.05),transparent_50%)] pointer-events-none"></div>
+        </div>
+
     </motion.section>
   );
 };
