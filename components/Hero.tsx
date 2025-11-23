@@ -437,13 +437,15 @@ const Hero: React.FC = () => {
                 style={{ opacity, scale, filter: blur, y: yCTA }}
                 className="flex flex-col items-center mt-8 md:mt-12 gap-8"
               >
-                <a 
+                <motion.a 
                   href="#videos" 
-                  className="group flex items-center gap-3 px-8 py-4 bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 text-black dark:text-white rounded-full text-sm font-bold tracking-widest uppercase hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all hover:scale-105 shadow-lg shadow-black/5 dark:shadow-white/5 z-30"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="group flex items-center gap-3 px-8 py-4 bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 text-black dark:text-white rounded-full text-sm font-bold tracking-widest uppercase transition-colors duration-300 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black hover:shadow-[0_0_30px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] shadow-lg shadow-black/5 dark:shadow-white/5 z-30"
                 >
                   <span>{t('hero_cta')}</span>
                   <Play size={16} className="fill-current" />
-                </a>
+                </motion.a>
 
                 <motion.div 
                   animate={{ y: [0, 10, 0] }}

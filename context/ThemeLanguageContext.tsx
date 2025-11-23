@@ -98,11 +98,28 @@ const translations: Translations = {
     es: "Análisis, entrevistas e informes detallados sobre noticias espaciales.",
     it: "Analisi, interviste e reportage approfonditi sulle notizie spaziali."
   },
-  article_read_more: { fr: 'Lire la suite', en: 'Read more', de: 'Mehr lesen', es: 'Leer más', it: 'Leggi di più' },
+  article_read_more: { fr: 'Lire l\'article complet', en: 'Read full article', de: 'Vollständigen Artikel lesen', es: 'Leer artículo completo', it: 'Leggi articolo completo' },
 
+  // ARTICLE 1: TOULOUSE
   article_a1_title: { fr: 'Pourquoi Toulouse est la capitale du spatial', en: 'Why Toulouse is the Space Capital', de: 'Warum Toulouse die Raumfahrthauptstadt ist', es: 'Por qué Toulouse es la capital espacial', it: 'Perché Tolosa è la capitale dello spazio' },
   article_a1_summary: { fr: "Analyse économique et structurelle de l'écosystème Aerospace Valley.", en: "Economic and structural analysis of the Aerospace Valley ecosystem.", de: "Wirtschaftliche und strukturelle Analyse des Aerospace Valley.", es: "Análisis económico y estructural del ecosistema Aerospace Valley.", it: "Analisi economica e strutturale dell'ecosistema Aerospace Valley." },
+  article_a1_content: { 
+    fr: "Toulouse n'est pas seulement connue pour ses briques roses et son climat ensoleillé. C'est le cœur battant de l'industrie aérospatiale européenne. \n\nAvec plus de 124 000 emplois industriels, l'Aerospace Valley concentre une puissance technologique unique au monde. C'est ici que siège Airbus, le géant mondial de l'aéronautique, mais aussi la division spatiale d'Airbus Defence and Space, responsable de la construction de satellites majeurs et de modules pour la Station Spatiale Internationale.\n\nMais Toulouse, c'est aussi le Centre Spatial de Toulouse (CST) du CNES. Fondé dans les années 60, il est le plus grand centre technique spatial en Europe. C'est ici que sont conçus les véhicules orbitaux, que sont opérées les missions martiennes comme Curiosity ou Perseverance (via le FOC), et que se prépare l'avenir de l'exploration.\n\nL'excellence toulousaine repose également sur son vivier de talents. Des institutions comme l'ISAE-SUPAERO, l'ENAC et l'INSA forment chaque année l'élite des ingénieurs spatiaux. Cet écosystème académique nourrit une myriade de startups du NewSpace (comme Loft Orbital ou Kinéis) qui redéfinissent l'accès à l'espace.\n\nEnfin, la culture spatiale y est omniprésente. La Cité de l'Espace, parc à thème scientifique unique en Europe, accueille des centaines de milliers de visiteurs, inspirant les futures générations d'astronautes et d'ingénieurs.",
+    en: "Toulouse is not just known for its pink bricks and sunny climate. It is the beating heart of the European aerospace industry. \n\nWith over 124,000 industrial jobs, Aerospace Valley concentrates a technological power unique in the world. This is where Airbus, the global aviation giant, is headquartered, as well as the space division of Airbus Defence and Space, responsible for building major satellites and modules for the International Space Station.\n\nBut Toulouse is also home to the Toulouse Space Centre (CST) of CNES. Founded in the 60s, it is the largest space technical centre in Europe. This is where orbital vehicles are designed, where Martian missions like Curiosity or Perseverance are operated (via the FOC), and where the future of exploration is prepared.\n\nToulouse's excellence also relies on its talent pool. Institutions like ISAE-SUPAERO, ENAC, and INSA train the elite of space engineers every year. This academic ecosystem nourishes a myriad of NewSpace startups (like Loft Orbital or Kinéis) that are redefining access to space.\n\nFinally, space culture is omnipresent. The Cité de l'Espace, a unique scientific theme park in Europe, welcomes hundreds of thousands of visitors, inspiring future generations of astronauts and engineers.",
+    de: "Toulouse ist nicht nur für seine rosa Ziegelsteine und sein sonniges Klima bekannt. Es ist das schlagende Herz der europäischen Luft- und Raumfahrtindustrie. \n\nMit über 124.000 Industriearbeitsplätzen konzentriert das Aerospace Valley eine weltweit einzigartige technologische Macht. Hier hat Airbus, der globale Luftfahrtriese, seinen Hauptsitz, ebenso wie die Raumfahrtsparte von Airbus Defence and Space.\n\nAber Toulouse ist auch die Heimat des Toulouse Space Centre (CST) des CNES. Es wurde in den 60er Jahren gegründet und ist das größte technische Raumfahrtzentrum Europas. Hier werden Orbitalfahrzeuge entworfen und Marsmissionen wie Curiosity oder Perseverance gesteuert.\n\nDie Exzellenz von Toulouse beruht auch auf seinem Talentpool. Institutionen wie ISAE-SUPAERO, ENAC und INSA bilden jedes Jahr die Elite der Raumfahrtingenieure aus. Dieses akademische Ökosystem nährt unzählige NewSpace-Startups.\n\nSchließlich ist die Raumfahrtkultur allgegenwärtig. Die Cité de l'Espace, ein einzigartiger wissenschaftlicher Themenpark in Europa, empfängt Hunderttausende von Besuchern und inspiriert zukünftige Generationen von Astronauten und Ingenieuren.",
+    es: "Toulouse no es solo conocida por sus ladrillos rosados y su clima soleado. Es el corazón palpitante de la industria aeroespacial europea. \n\nCon más de 124,000 empleos industriales, el Aerospace Valley concentra un poder tecnológico único en el mundo. Aquí es donde tiene su sede Airbus, el gigante mundial de la aviación, así como la división espacial de Airbus Defence and Space.\n\nPero Toulouse es también el hogar del Centro Espacial de Toulouse (CST) del CNES. Fundado en los años 60, es el mayor centro técnico espacial de Europa. Aquí es donde se diseñan los vehículos orbitales y se operan misiones marcianas como Curiosity o Perseverance.\n\nLa excelencia de Toulouse también se basa en su cantera de talentos. Instituciones como ISAE-SUPAERO, ENAC e INSA forman cada año a la élite de ingenieros espaciales. Este ecosistema académico nutre a una miríada de startups del NewSpace.\n\nFinalmente, la cultura espacial es omnipresente. La Cité de l'Espace, un parque temático científico único en Europa, acoge a cientos de miles de visitantes, inspirando a las futuras generaciones de astronautas e ingenieros.",
+    it: "Tolosa non è conosciuta solo per i suoi mattoni rosa e il clima soleggiato. È il cuore pulsante dell'industria aerospaziale europea. \n\nCon oltre 124.000 posti di lavoro industriali, l'Aerospace Valley concentra una potenza tecnologica unica al mondo. Qui ha sede Airbus, il gigante globale dell'aviazione, così come la divisione spaziale di Airbus Defence and Space.\n\nMa Tolosa è anche la sede del Centro Spaziale di Tolosa (CST) del CNES. Fondato negli anni '60, è il più grande centro tecnico spaziale in Europa. È qui che vengono progettati i veicoli orbitali e operate missioni marziane come Curiosity o Perseverance.\n\nL'eccellenza di Tolosa si basa anche sul suo bacino di talenti. Istituzioni come ISAE-SUPAERO, ENAC e INSA formano ogni anno l'élite degli ingegneri spaziali. Questo ecosistema accademico nutre una miriade di startup NewSpace.\n\nInfine, la cultura spaziale è onnipresente. La Cité de l'Espace, un parco a tema scientifico unico in Europa, accoglie centinaia di migliaia di visitatori, ispirando le future generazioni di astronauti e ingegneri."
+  },
   
+  // PLACEHOLDERS FOR OTHER ARTICLES
+  article_placeholder_content: {
+      fr: "Le contenu complet de cet article est en cours de rédaction par nos équipes éditoriales. Revenez bientôt pour découvrir l'analyse complète.",
+      en: "The full content of this article is currently being written by our editorial teams. Check back soon for the full analysis.",
+      de: "Der vollständige Inhalt dieses Artikels wird derzeit von unseren Redaktionsteams verfasst. Schauen Sie bald wieder vorbei.",
+      es: "El contenido completo de este artículo está siendo redactado actualmente por nuestros equipos editoriales. Vuelva pronto.",
+      it: "Il contenuto completo di questo articolo è attualmente in fase di redazione da parte dei nostri team editoriali. Torna presto."
+  },
+
   article_a2_title: { fr: "Interview exclusive : Le DG de l'ESA", en: "Exclusive Interview: ESA DG", de: "Exklusivinterview: ESA GD", es: "Entrevista exclusiva: DG de la ESA", it: "Intervista esclusiva: DG dell'ESA" },
   article_a2_summary: { fr: "Vision stratégique pour l'autonomie européenne à l'horizon 2030.", en: "Strategic vision for European autonomy by 2030.", de: "Strategische Vision für die europäische Autonomie bis 2030.", es: "Visión estratégica para la autonomía europea hacia 2030.", it: "Visione strategica per l'autonomia europea entro il 2030." },
   
@@ -171,6 +188,48 @@ const translations: Translations = {
   footer_rights: { fr: 'Tous droits réservés.', en: 'All rights reserved.', de: 'Alle Rechte vorbehalten.', es: 'Todos los derechos reservados.', it: 'Tutti i diritti riservati.' },
   footer_legal: { fr: 'Mentions Légales', en: 'Legal Notice', de: 'Impressum', es: 'Aviso Legal', it: 'Note Legali' },
   footer_privacy: { fr: 'Confidentialité', en: 'Privacy Policy', de: 'Datenschutz', es: 'Privacidad', it: 'Privacy' },
+  
+  // --- STUDIO ---
+  studio_title: { fr: 'Studio de Conception', en: 'Design Studio', de: 'Designstudio', es: 'Estudio de Diseño', it: 'Studio di Design' },
+  studio_desc: { 
+    fr: "Générez des concepts de vaisseaux, de bases lunaires ou de phénomènes cosmiques grâce à l'IA.", 
+    en: "Generate concepts for ships, lunar bases, or cosmic phenomena using AI.",
+    de: "Generieren Sie Konzepte für Schiffe, Mondbasen oder kosmische Phänomene mit KI.",
+    es: "Genere conceptos de naves, bases lunares o fenómenos cósmicos con IA.",
+    it: "Genera concetti per navi, basi lunari o fenomeni cosmici utilizzando l'IA."
+  },
+  studio_label: { fr: 'Description du concept', en: 'Concept Description', de: 'Konzeptbeschreibung', es: 'Descripción del concepto', it: 'Descrizione del concetto' },
+  studio_placeholder: { 
+    fr: 'Ex: Une station spatiale futuriste en orbite autour de Mars, style cinématique, éclairage dramatique...', 
+    en: 'Ex: A futuristic space station orbiting Mars, cinematic style, dramatic lighting...',
+    de: 'Bsp: Eine futuristische Raumstation im Orbit um den Mars, kinematischer Stil, dramatische Beleuchtung...',
+    es: 'Ej: Una estación espacial futurista orbitando Marte, estilo cinematográfico, iluminación dramática...',
+    it: 'Es: Una stazione spaziale futuristica in orbita attorno a Marte, stile cinematografico, illuminazione drammatica...'
+  },
+  studio_btn_generate: { fr: 'Générer le concept', en: 'Generate Concept', de: 'Konzept generieren', es: 'Generar Concepto', it: 'Genera Concetto' },
+  studio_btn_generating: { fr: 'Initialisation des moteurs...', en: 'Initializing engines...', de: 'Motoren initialisieren...', es: 'Inicializando motores...', it: 'Inizializzazione motori...' },
+  studio_download: { fr: 'Télécharger', en: 'Download', de: 'Herunterladen', es: 'Descargar', it: 'Scarica' },
+  studio_empty: { fr: 'Le visualiseur est prêt. Entrez une description pour commencer.', en: 'The visualizer is ready. Enter a description to start.', de: 'Der Visualisierer ist bereit. Geben Sie eine Beschreibung ein, um zu beginnen.', es: 'El visualizador está listo. Ingrese una descripción para comenzar.', it: 'Il visualizzatore è pronto. Inserisci una descrizione per iniziare.' },
+  
+  studio_error_generic: { fr: 'Erreur de génération. Veuillez réessayer.', en: 'Generation error. Please try again.', de: 'Generierungsfehler. Bitte versuchen Sie es erneut.', es: 'Error de generación. Inténtelo de nuevo.', it: 'Errore di generazione. Riprova.' },
+  studio_error_safety: { fr: 'Contenu non autorisé détecté. Veuillez reformuler.', en: 'Unauthorized content detected. Please rephrase.', de: 'Unzulässiger Inhalt erkannt. Bitte umformulieren.', es: 'Contenido no autorizado detectado. Por favor reformule.', it: 'Contenuto non autorizzato rilevato. Per favore riformula.' },
+  studio_error_quota: { fr: 'Limite de requêtes atteinte. Réessayez plus tard.', en: 'Request limit reached. Try again later.', de: 'Anfragelimit erreicht. Versuchen Sie es später erneut.', es: 'Límite de solicitudes alcanzado. Inténtelo más tarde.', it: 'Limite di richieste raggiunto. Riprova più tardi.' },
+  studio_error_timeout: { fr: 'Le système ne répond pas. Réessayez.', en: 'System not responding. Try again.', de: 'System antwortet nicht. Versuchen Sie es erneut.', es: 'El sistema no responde. Inténtelo de nuevo.', it: 'Il sistema non risponde. Riprova.' },
+
+  // --- ORACLE (MISSION CONTROL) ---
+  oracle_title: { fr: 'Centre de Contrôle', en: 'Mission Control', de: 'Missionskontrolle', es: 'Control de Misión', it: 'Controllo Missione' },
+  oracle_desc: { 
+    fr: "Interrogez l'IA centrale sur l'histoire spatiale, les technologies de propulsion ou les missions en cours.",
+    en: "Query the central AI about space history, propulsion technologies, or ongoing missions.",
+    de: "Befragen Sie die zentrale KI zur Weltraumgeschichte, Antriebstechnologien oder laufenden Missionen.",
+    es: "Consulte a la IA central sobre historia espacial, tecnologías de propulsión o misiones en curso.",
+    it: "Interroga l'IA centrale sulla storia dello spazio, le tecnologie di propulsione o le missioni in corso."
+  },
+  oracle_placeholder: { fr: 'Entrez votre commande ou question ici...', en: 'Enter your command or question here...', de: 'Geben Sie Ihren Befehl oder Ihre Frage hier ein...', es: 'Ingrese su comando o pregunta aquí...', it: 'Inserisci il tuo comando o domanda qui...' },
+  oracle_quick_access: { fr: 'Accès Rapide', en: 'Quick Access', de: 'Schnellzugriff', es: 'Acceso Rápido', it: 'Accesso Rapido' },
+  oracle_sugg_1: { fr: "Explique-moi le fonctionnement d'un moteur Raptor", en: "Explain how a Raptor engine works", de: "Erkläre mir, wie ein Raptor-Triebwerk funktioniert", es: "Explícame cómo funciona un motor Raptor", it: "Spiegami come funziona un motore Raptor" },
+  oracle_sugg_2: { fr: "Quelle est la différence entre Ariane 5 et 6 ?", en: "What is the difference between Ariane 5 and 6?", de: "Was ist der Unterschied zwischen Ariane 5 und 6?", es: "¿Cuál es la diferencia entre Ariane 5 y 6?", it: "Qual è la differenza tra Ariane 5 e 6?" },
+  oracle_sugg_3: { fr: "Détails de la mission JUICE vers Jupiter", en: "Details of the JUICE mission to Jupiter", de: "Details der JUICE-Mission zum Jupiter", es: "Detalles de la misión JUICE a Júpiter", it: "Dettagli della missione JUICE su Giove" },
 };
 
 interface ThemeLanguageContextType {
