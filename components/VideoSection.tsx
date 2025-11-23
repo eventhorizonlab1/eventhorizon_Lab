@@ -49,6 +49,7 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
                             src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
                             title={video.title}
                             frameBorder="0"
+                            loading="lazy"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             referrerPolicy="strict-origin-when-cross-origin"
                             allowFullScreen

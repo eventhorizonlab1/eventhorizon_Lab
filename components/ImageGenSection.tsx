@@ -1,91 +1,143 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Download, Image as ImageIcon } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 
-// -- COMPOSANT DE CHARGEMENT COSMIQUE --
+// -- COMPOSANT DE CHARGEMENT COSMIQUE AVANCÉ --
 const CosmicLoader = () => {
   const { t } = useThemeLanguage();
   const [loadingPhase, setLoadingPhase] = useState(0);
   
   const phases = [
-    "Initialisation des capteurs...",
-    "Triangulation des coordonnées...",
-    "Synthèse de la poussière cosmique...",
-    "Rendu des nébuleuses...",
-    "Finalisation de l'image..."
+    "Initialisation des capteurs quantiques...",
+    "Alignement des prismes stellaires...",
+    "Condensation de la poussière cosmique...",
+    "Synthèse des nébuleuses...",
+    "Rendu haute résolution..."
   ];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setLoadingPhase((prev) => (prev + 1) % phases.length);
-    }, 800);
+    }, 1200); // Ralentissement pour laisser le temps de lire
     return () => clearInterval(interval);
   }, []);
 
-  // Configuration des étoiles orbitales
-  const orbits = [
-    { radius: 30, duration: 2, size: 3, color: 'bg-blue-400', delay: 0 },
-    { radius: 45, duration: 3, size: 4, color: 'bg-purple-400', delay: 0.1 },
-    { radius: 60, duration: 4, size: 2, color: 'bg-white', delay: 0.2 },
-    { radius: 75, duration: 5, size: 5, color: 'bg-indigo-300', delay: 0.3 },
-    { radius: 90, duration: 7, size: 3, color: 'bg-cyan-400', delay: 0.4 },
-  ];
+  // Génération de particules aléatoires pour le champ d'étoiles
+  const stars = Array.from({ length: 20 }).map((_, i) => ({
+    id: i,
+    top: `${Math.random() * 100}%`,
+    left: `${Math.random() * 100}%`,
+    size: Math.random() * 3 + 1,
+    duration: Math.random() * 2 + 1,
+    delay: Math.random() * 2
+  }));
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full relative overflow-hidden">
-      {/* Fond nébuleux subtil */}
+    <div className="flex flex-col items-center justify-center w-full h-full min-h-[400px] relative overflow-hidden bg-black/5 dark:bg-black/20 rounded-[2rem]">
+      
+      {/* 1. Fond dynamique (Deep Space) */}
       <motion.div 
-        animate={{ opacity: [0.1, 0.3, 0.1], scale: [1, 1.1, 1] }}
+        animate={{ opacity: [0.3, 0.6, 0.3] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute inset-0 bg-gradient-radial from-purple-500/10 via-transparent to-transparent blur-2xl"
+        className="absolute inset-0 bg-gradient-radial from-indigo-900/20 via-transparent to-transparent blur-3xl"
       />
 
-      <div className="relative w-64 h-64 flex items-center justify-center mb-4">
-        {/* Noyau Central */}
+      {/* 2. Champ d'étoiles scintillant */}
+      {stars.map((star) => (
         <motion.div
-          animate={{ scale: [1, 1.2, 1], opacity: [0.8, 1, 0.8] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute w-3 h-3 bg-white rounded-full shadow-[0_0_25px_rgba(255,255,255,1)] z-20"
+          key={star.id}
+          className="absolute bg-white rounded-full"
+          style={{ 
+            top: star.top, 
+            left: star.left, 
+            width: star.size, 
+            height: star.size 
+          }}
+          animate={{ opacity: [0, 1, 0], scale: [0.5, 1.2, 0.5] }}
+          transition={{ 
+            duration: star.duration, 
+            repeat: Infinity, 
+            delay: star.delay,
+            ease: "easeInOut" 
+          }}
         />
+      ))}
+
+      {/* 3. La Galaxie en formation (Centre de l'animation) */}
+      <div className="relative w-48 h-48 mb-8 flex items-center justify-center">
         
-        {/* Orbites d'étoiles */}
-        {orbits.map((orbit, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full border border-white/5"
-            style={{ width: orbit.radius * 2, height: orbit.radius * 2 }}
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1, rotate: 360 }}
-            transition={{ 
-              opacity: { duration: 0.5, delay: orbit.delay },
-              scale: { duration: 0.8, delay: orbit.delay, ease: "easeOut" },
-              rotate: { duration: orbit.duration, repeat: Infinity, ease: "linear", delay: orbit.delay }
-            }}
-          >
-             <motion.div 
-               className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-[0_0_8px_currentColor] ${orbit.color}`}
-               style={{ width: orbit.size, height: orbit.size }}
-             />
-          </motion.div>
-        ))}
+        {/* Noyau Hyper-lumineux */}
+        <motion.div
+          animate={{ scale: [1, 1.2, 1], opacity: [0.8, 1, 0.8], filter: ["blur(4px)", "blur(8px)", "blur(4px)"] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute w-8 h-8 bg-white rounded-full shadow-[0_0_40px_rgba(255,255,255,0.8)] z-30"
+        />
+
+        {/* Anneau d'accrétion interne (Rapide) */}
+        <motion.div
+          className="absolute inset-0 border-[3px] border-transparent border-t-cyan-400 border-b-blue-500 rounded-full opacity-80"
+          style={{ width: '100%', height: '100%' }}
+          animate={{ rotate: 360, scale: [0.9, 1, 0.9] }}
+          transition={{ rotate: { duration: 3, repeat: Infinity, ease: "linear" }, scale: { duration: 2, repeat: Infinity } }}
+        />
+
+        {/* Anneau intermédiaire (Moyen + Tilt) */}
+        <motion.div
+          className="absolute border-[2px] border-transparent border-r-purple-500 border-l-pink-500 rounded-full opacity-60"
+          style={{ width: '140%', height: '140%' }}
+          animate={{ rotate: -360 }}
+          transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
+        />
+
+        {/* Anneau externe (Lent + Particules de poussière) */}
+        <motion.div
+          className="absolute border-[1px] border-dashed border-white/20 rounded-full"
+          style={{ width: '180%', height: '180%' }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        >
+           {/* Planètes en orbite */}
+           <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full shadow-[0_0_10px_white]"></div>
+           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-3 h-3 bg-blue-400 rounded-full blur-[1px]"></div>
+        </motion.div>
+
+        {/* Effet de scan vertical */}
+        <motion.div 
+           className="absolute w-full h-2 bg-blue-500/30 blur-md"
+           style={{ width: '200%' }}
+           animate={{ top: ['-50%', '150%'] }}
+           transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+        />
       </div>
 
-      {/* Texte de chargement */}
-      <div className="h-6 overflow-hidden relative flex justify-center items-center w-full px-4 text-center z-20">
-        <AnimatePresence mode='wait'>
-          <motion.p 
-            key={loadingPhase}
-            initial={{ y: 10, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -10, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="text-xs font-black uppercase tracking-[0.15em] text-black dark:text-white whitespace-nowrap"
-          >
-            {phases[loadingPhase]}
-          </motion.p>
-        </AnimatePresence>
+      {/* 4. Indicateur textuel style terminal */}
+      <div className="relative z-20 flex flex-col items-center space-y-2">
+        <div className="h-6 overflow-hidden relative flex justify-center items-center w-full px-4 text-center">
+            <AnimatePresence mode='wait'>
+            <motion.p 
+                key={loadingPhase}
+                initial={{ y: 20, opacity: 0, filter: "blur(5px)" }}
+                animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+                exit={{ y: -20, opacity: 0, filter: "blur(5px)" }}
+                transition={{ duration: 0.4 }}
+                className="text-xs md:text-sm font-bold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-300 whitespace-nowrap"
+            >
+                {phases[loadingPhase]}
+            </motion.p>
+            </AnimatePresence>
+        </div>
+        
+        {/* Barre de progression indéterminée */}
+        <div className="w-32 h-1 bg-gray-200 dark:bg-white/10 rounded-full overflow-hidden">
+            <motion.div 
+                className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500"
+                animate={{ x: ['-100%', '100%'] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+            />
+        </div>
       </div>
     </div>
   );
