@@ -184,11 +184,19 @@ interface ThemeLanguageContextType {
 const ThemeLanguageContext = createContext<ThemeLanguageContextType | undefined>(undefined);
 
 export const ThemeLanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  // Default to 'dark' for performance and aesthetic preference as requested
+  // Always default to 'dark' strictly
   const [theme, setTheme] = useState<Theme>('dark');
   const [language, setLanguage] = useState<Language>('fr');
 
-  // Apply class on mount and change
+  // Enforce dark mode class on mount
+  useEffect(() => {
+    const root = document.documentElement;
+    // Always start with dark to avoid flash
+    if (!root.classList.contains('dark')) {
+        root.classList.add('dark');
+    }
+  }, []);
+
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'dark') {

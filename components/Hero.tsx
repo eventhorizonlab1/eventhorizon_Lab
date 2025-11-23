@@ -291,8 +291,7 @@ const AnimatedText = ({ text, className }: { text: string, className?: string })
 const BlackHoleBackground = ({ theme }: { theme: string }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
-  // Optimization: Detect if visible
-  const isInView = useInView(containerRef);
+  const isInView = useInView(containerRef); // Optimization: Detect visibility
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -307,7 +306,7 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
     });
     
     renderer.setSize(container.clientWidth, container.clientHeight);
-    // Performance: Limit pixel ratio to 1.5 to save GPU on high-DPI screens
+    // Performance: Limit pixel ratio to 1.5 max for iPhone retina screens
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     container.appendChild(renderer.domElement);
 
@@ -331,7 +330,7 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
     const animate = () => {
       animationId = requestAnimationFrame(animate);
       
-      // Performance: Skip rendering if not in viewport
+      // Stop rendering if not visible to save battery
       if (!isInView) return;
 
       material.uniforms.u_time.value = clock.getElapsedTime();
@@ -350,7 +349,6 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-        // Optimization: Only calculate mouse pos if visible
         if (!isInView) return;
         mouseRef.current.x = (e.clientX / window.innerWidth) * 2 - 1;
         mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -369,7 +367,7 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
             container.removeChild(renderer.domElement);
         }
     };
-  }, [theme, isInView]); // Re-run effect if view status changes to ensure clean start/stop handling
+  }, [theme, isInView]);
 
   return <div ref={containerRef} className="absolute inset-0 w-full h-full z-0" />;
 };
@@ -382,12 +380,10 @@ const Hero: React.FC = () => {
     offset: ["start start", "end start"]
   });
 
-  // Shared Exit Effects for "zooming in" transition
   const opacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
   const blur = useTransform(scrollYProgress, [0, 0.4], ["0px", "12px"]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.15]);
 
-  // Staggered Parallax for Depth
   const yTitle = useTransform(scrollYProgress, [0, 1], [0, 150]);
   const ySubtitle = useTransform(scrollYProgress, [0, 1], [0, 250]);
   const yCTA = useTransform(scrollYProgress, [0, 1], [0, 350]);
@@ -402,16 +398,15 @@ const Hero: React.FC = () => {
 
         <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-white/90 dark:from-black/30 dark:via-transparent dark:to-black/80 z-10 pointer-events-none transition-colors duration-500"></div>
         
-        {/* Content Container */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 z-20 pointer-events-none">
+        {/* Content Container - Added padding-top 32 (8rem) to force content down from header on iPhone SE */}
+        <div className="absolute inset-0 flex flex-col items-center justify-start pt-32 md:justify-center md:pt-0 px-4 z-20 pointer-events-none">
            
-           {/* Static container layout, animating children independently for parallax */}
            <div className="text-center max-w-[95vw] md:max-w-7xl flex flex-col items-center pointer-events-auto">
               
-              {/* TITLE LAYER (Slowest) */}
+              {/* TITLE LAYER - Reduced font size for mobile (text-4xl) to fix iPhone SE clipping */}
               <motion.div 
                 style={{ opacity, scale, filter: blur, y: yTitle }}
-                className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.0] md:leading-[0.9] mb-8 md:mb-12 flex flex-col items-center w-full drop-shadow-lg text-black dark:text-white dark:mix-blend-overlay dark:opacity-90"
+                className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.0] md:leading-[0.9] mb-8 md:mb-12 flex flex-col items-center w-full drop-shadow-lg text-black dark:text-white dark:mix-blend-overlay dark:opacity-90"
               >
                 <div className="block w-full">
                   <AnimatedText text={t('hero_line1')} />
@@ -421,7 +416,7 @@ const Hero: React.FC = () => {
                 </div>
               </motion.div>
 
-              {/* SUBTITLE LAYER (Medium Speed) */}
+              {/* SUBTITLE LAYER */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -429,12 +424,12 @@ const Hero: React.FC = () => {
                 style={{ opacity, scale, filter: blur, y: ySubtitle }}
                 className="w-full"
               >
-                <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-lg mx-auto font-bold drop-shadow-md mix-blend-multiply dark:mix-blend-screen">
+                <p className="text-base md:text-xl text-gray-600 dark:text-gray-300 max-w-lg mx-auto font-bold drop-shadow-md mix-blend-multiply dark:mix-blend-screen px-4">
                   {t('hero_subtitle')}
                 </p>
               </motion.div>
               
-              {/* CTA & SCROLL LAYER (Fastest) */}
+              {/* CTA & SCROLL LAYER */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
