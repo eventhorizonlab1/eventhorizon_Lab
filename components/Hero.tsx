@@ -194,9 +194,23 @@ const FragmentShader = `
         col = pow(col, vec3(0.6)); 
         col = smoothstep(0.0, 1.2, col); 
 
-        float grain = hash(uv + u_time * 10.0);
-        float grainStrength = 0.15 + 0.1 * smoothstep(0.0, 0.5, length(col));
-        col += (grain - 0.5) * grainStrength;
+        // --- ORGANIC FILM GRAIN ---
+        // Calculate luminance (perceived brightness)
+        float lum = dot(col, vec3(0.299, 0.587, 0.114));
+        
+        // High frequency noise
+        float grain = hash(uv * 1.5 + u_time * 12.0);
+        
+        // Luminance Masking: 
+        // 1. Removes grain from deep blacks (keeps OLED black pure) -> smoothstep(0.02, 0.3, lum)
+        // 2. Reduces grain in bright highlights to avoid clipping artifacts -> (1.0 - smoothstep(0.7, 1.0, lum))
+        // 3. Result: Grain is concentrated in the mid-tones
+        float grainMask = smoothstep(0.02, 0.4, lum) * (1.0 - smoothstep(0.8, 1.0, lum));
+        
+        // Intensity Scaling
+        float grainIntensity = 0.08; 
+        
+        col += (grain - 0.5) * grainIntensity * grainMask;
         
         float vig = 1.0 - smoothstep(0.5, 1.6, length(vUv - 0.5) * 2.0);
         col *= vig;
