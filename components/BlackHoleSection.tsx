@@ -814,7 +814,7 @@ const BlackHoleSection: React.FC = () => {
   return (
     <motion.section 
       id="blackhole" 
-      className="pt-8 md:pt-12 pb-16 md:pb-24 max-w-[1800px] mx-auto px-4 md:px-12"
+      className="pt-2 md:pt-4 pb-16 md:pb-24 max-w-[1800px] mx-auto px-4 md:px-12"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
@@ -857,15 +857,18 @@ const BlackHoleSection: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-4">
                          {/* Camera Navigation Controls */}
-                         <div className="hidden md:flex bg-black/50 rounded-lg p-1 gap-1 border border-white/10">
-                            <button onClick={() => moveCamera('orbit')} className="p-1.5 hover:bg-white/20 rounded text-white/70 hover:text-white transition-colors" title="Orbit View">
-                                <Navigation size={14} />
+                         <div className="hidden md:flex bg-black/50 rounded-full p-1 gap-1 border border-white/10">
+                            <button onClick={() => moveCamera('orbit')} className="flex items-center gap-2 px-4 py-1.5 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-widest">
+                                <Navigation size={12} />
+                                <span>Orbit</span>
                             </button>
-                            <button onClick={() => moveCamera('top')} className="p-1.5 hover:bg-white/20 rounded text-white/70 hover:text-white transition-colors" title="Top View">
-                                <Layers size={14} />
+                            <button onClick={() => moveCamera('top')} className="flex items-center gap-2 px-4 py-1.5 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-widest">
+                                <Layers size={12} />
+                                <span>Top View</span>
                             </button>
-                            <button onClick={() => moveCamera('side')} className="p-1.5 hover:bg-white/20 rounded text-white/70 hover:text-white transition-colors" title="Side View">
-                                <ZoomIn size={14} />
+                            <button onClick={() => moveCamera('side')} className="flex items-center gap-2 px-4 py-1.5 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-widest">
+                                <ZoomIn size={12} />
+                                <span>Side View</span>
                             </button>
                          </div>
                         <div className="flex items-center gap-2 opacity-70">

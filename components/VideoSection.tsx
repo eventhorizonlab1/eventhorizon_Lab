@@ -48,7 +48,7 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
                         src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
                         title={video.title}
                         frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowFullScreen
                         className="absolute inset-0 w-full h-full"
                     ></iframe>
@@ -194,7 +194,7 @@ const VideoSection: React.FC = () => {
                 {/* Right Side CTA */}
                 <a 
                     href="https://www.youtube.com/@EventHorizonLab-n9g" 
-                    target="_blank"
+                    target="_blank" 
                     rel="noreferrer"
                     className="group relative px-6 py-3 bg-transparent border border-black dark:border-white text-black dark:text-white overflow-hidden transition-all hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black w-full md:w-auto text-center rounded-md"
                 >

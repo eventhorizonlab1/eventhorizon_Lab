@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Youtube, Linkedin, Twitter, Mail } from 'lucide-react';
+import { Youtube, Linkedin, X, Mail } from 'lucide-react';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 
 const Footer: React.FC = () => {
@@ -20,13 +20,13 @@ const Footer: React.FC = () => {
         <div className="flex gap-8">
             <a href="https://www.youtube.com/@EventHorizonLab-n9g" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"><Youtube size={24} strokeWidth={1.5} /></a>
             <a href="#" className="text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"><Linkedin size={24} strokeWidth={1.5} /></a>
-            <a href="#" className="text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"><Twitter size={24} strokeWidth={1.5} /></a>
-            <a href="mailto:contact@eventhorizon.eu" className="text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"><Mail size={24} strokeWidth={1.5} /></a>
+            <a href="https://x.com/LabEventHorizon" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"><X size={24} strokeWidth={1.5} /></a>
+            <a href="mailto:eventhorizonlab1@gmail.com" className="text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"><Mail size={24} strokeWidth={1.5} /></a>
         </div>
       </div>
 
       <div className="max-w-[1800px] mx-auto mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500 uppercase tracking-widest font-medium">
-        <p>© 2023 Event Horizon. {t('footer_rights')}</p>
+        <p>© 2026 Event Horizon. {t('footer_rights')}</p>
         <div className="flex gap-6">
             <a href="#" className="relative group hover:text-white transition-colors duration-300">
               {t('footer_legal')}
