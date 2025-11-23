@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { NAV_LINKS } from '../constants';
 import { motion, AnimatePresence, useScroll, useSpring, animate } from 'framer-motion';
@@ -95,7 +96,9 @@ const Header: React.FC = () => {
 
   // Override if menu is open (Mobile)
   if (isMenuOpen) {
-    textColorClass = 'text-black'; 
+    // In mobile menu (which is white or black depending on theme), we need contrasting text
+    // The menu background is handled in the mobile menu div below
+    textColorClass = 'text-black dark:text-white'; 
   }
 
   const headerBgClass = isScrolled 
@@ -196,7 +199,7 @@ const Header: React.FC = () => {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? (
-               <X size={32} className="text-black" />
+               <X size={32} className={`${textColorClass}`} />
             ) : (
               <>
                 <span className={`w-8 h-0.5 bg-current transition-colors ${textColorClass}`}></span>
@@ -221,9 +224,11 @@ const Header: React.FC = () => {
             animate={{ opacity: 1, y: "0%" }}
             exit={{ opacity: 0, y: "-100%" }}
             transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-40 bg-white flex flex-col justify-center items-center md:hidden overflow-y-auto"
+            // Fix Layout: Changed justify-center to justify-start and added pt-32 to clear the logo area on iPhone SE
+            // Added dark:bg-eh-black for dark mode support
+            className="fixed inset-0 z-40 bg-white dark:bg-eh-black flex flex-col justify-start items-center md:hidden overflow-y-auto pt-32 pb-10"
           >
-            <nav className="flex flex-col gap-8 text-center mb-12 mt-20">
+            <nav className="flex flex-col gap-6 text-center mb-12">
               {NAV_LINKS.map((link, index) => (
                 <motion.a
                   key={link.href}
@@ -232,7 +237,7 @@ const Header: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + index * 0.1 }}
                   onClick={(e) => handleLinkClick(e, link.href)}
-                  className="text-3xl font-bold uppercase tracking-tighter hover:text-gray-500 transition-colors text-black"
+                  className="text-3xl font-bold uppercase tracking-tighter hover:text-gray-500 transition-colors text-black dark:text-white"
                 >
                   {t(link.key)}
                 </motion.a>
@@ -244,22 +249,26 @@ const Header: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="flex flex-col items-center gap-6 w-full px-8"
+              className="flex flex-col items-center gap-6 w-full px-8 mt-auto"
             >
                <div className="flex gap-4">
-                 <button onClick={toggleTheme} className="p-4 rounded-full bg-gray-100 text-black flex items-center gap-2 font-bold uppercase text-xs tracking-widest">
+                 <button onClick={toggleTheme} className="p-4 rounded-full bg-gray-100 dark:bg-white/10 text-black dark:text-white flex items-center gap-2 font-bold uppercase text-xs tracking-widest transition-colors">
                     {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
                     <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
                  </button>
                </div>
 
                {/* Mobile Language Grid */}
-               <div className="w-full max-w-sm bg-gray-50 rounded-2xl p-4 grid grid-cols-3 gap-2 max-h-[200px] overflow-y-auto">
+               <div className="w-full max-w-sm bg-gray-50 dark:bg-white/5 rounded-2xl p-4 grid grid-cols-3 gap-2 max-h-[200px] overflow-y-auto border border-gray-100 dark:border-white/5">
                   {SUPPORTED_LANGUAGES.map(lang => (
                     <button 
                       key={lang.code}
                       onClick={() => setLanguage(lang.code)}
-                      className={`flex flex-col items-center p-2 rounded-lg transition-colors ${language === lang.code ? 'bg-black text-white shadow-lg' : 'hover:bg-gray-200 text-gray-600'}`}
+                      className={`flex flex-col items-center p-2 rounded-lg transition-colors ${
+                        language === lang.code 
+                          ? 'bg-black text-white dark:bg-white dark:text-black shadow-lg' 
+                          : 'hover:bg-gray-200 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300'
+                      }`}
                     >
                       <span className="text-xl mb-1">{lang.flag}</span>
                       <span className="text-[10px] font-bold uppercase">{lang.code}</span>
@@ -272,7 +281,7 @@ const Header: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="mt-12 pb-8 text-xs font-bold text-gray-400 uppercase tracking-widest"
+              className="mt-8 text-xs font-bold text-gray-400 uppercase tracking-widest"
             >
               © 2023 Event Horizon
             </motion.div>
