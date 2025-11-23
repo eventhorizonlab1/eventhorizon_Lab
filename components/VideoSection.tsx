@@ -1,7 +1,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
-import { Play, Radio, ArrowUpRight, X, ExternalLink } from 'lucide-react';
+import { Play, Radio, ArrowUpRight, X, ExternalLink, Loader } from 'lucide-react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Video } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
@@ -17,14 +17,14 @@ const getYouTubeId = (url: string | undefined) => {
 
 // --- VIDEO PLAYER MODAL ---
 const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ video, onClose }) => {
-    const [isIframeLoaded, setIsIframeLoaded] = useState(false);
+    const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
 
     useEffect(() => {
-        setIsIframeLoaded(false);
+        setShouldLoadIframe(false);
         if (video) {
-            // Delay iframe loading to allow modal animation to complete smoothly
-            // This ensures "lazy loading" behavior relative to the UI interaction
-            const timer = setTimeout(() => setIsIframeLoaded(true), 400); 
+            // LAZY LOADING: Delay iframe injection to allow modal animation to start/complete
+            // This prevents heavy YouTube scripts from blocking the UI thread during transition
+            const timer = setTimeout(() => setShouldLoadIframe(true), 600); 
             return () => clearTimeout(timer);
         }
     }, [video]);
@@ -52,6 +52,7 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
                     initial={{ scale: 0.9, y: 20 }}
                     animate={{ scale: 1, y: 0 }}
                     exit={{ scale: 0.9, y: 20 }}
+                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
                     className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10"
                 >
                     {!videoId ? (
@@ -59,30 +60,29 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
                             <p className="text-lg font-bold mb-2">Vidéo non disponible</p>
                             <p className="text-sm text-gray-400 mb-6">L'URL de la vidéo semble incorrecte.</p>
                         </div>
-                    ) : isIframeLoaded ? (
+                    ) : shouldLoadIframe ? (
                         <iframe
                             width="100%"
                             height="100%"
                             src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
                             title={video.title}
                             frameBorder="0"
-                            loading="lazy"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             referrerPolicy="strict-origin-when-cross-origin"
                             allowFullScreen
-                            className="absolute inset-0 w-full h-full"
+                            className="absolute inset-0 w-full h-full animate-in fade-in duration-500"
                         ></iframe>
                     ) : (
                         <div className="absolute inset-0 w-full h-full bg-gray-900 flex items-center justify-center">
-                             {/* Placeholder with Thumbnail and Spinner */}
+                             {/* Optimized Placeholder */}
                              <img 
                                 src={video.imageUrl} 
                                 alt={video.title} 
-                                className="absolute inset-0 w-full h-full object-cover opacity-50 blur-sm scale-105" 
+                                className="absolute inset-0 w-full h-full object-cover opacity-40 blur-md scale-105" 
                              />
                              <div className="relative z-10 flex flex-col items-center gap-3">
-                                 <div className="w-12 h-12 border-4 border-white/20 border-t-blue-500 rounded-full animate-spin"></div>
-                                 <span className="text-xs font-bold uppercase tracking-widest text-white/80">Chargement...</span>
+                                 <div className="w-16 h-16 rounded-full border-2 border-white/20 border-t-white flex items-center justify-center animate-spin"></div>
+                                 <span className="text-xs font-bold uppercase tracking-widest text-white/80">Chargement du flux...</span>
                              </div>
                         </div>
                     )}

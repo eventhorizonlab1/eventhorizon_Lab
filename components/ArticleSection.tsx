@@ -103,7 +103,7 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="text-2xl md:text-5xl font-sans font-extrabold leading-tight text-black dark:text-white drop-shadow-sm mb-4 max-w-3xl"
+                            className="text-3xl md:text-6xl font-sans font-black leading-[0.9] text-black dark:text-white drop-shadow-sm mb-4 max-w-3xl tracking-tight"
                         >
                             {title}
                         </motion.h2>
@@ -166,10 +166,10 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={cardVariants}
-      className="snap-start shrink-0 w-[85vw] md:w-[380px] h-[520px]"
+      className="snap-start shrink-0 w-[85vw] md:w-[400px] h-[580px]"
       onClick={() => onClick(article)}
     >
-        <div className="group cursor-pointer h-full relative overflow-hidden rounded-[1.5rem] bg-black shadow-lg hover:shadow-2xl transition-all duration-500 border border-white/10">
+        <div className="group cursor-pointer h-full relative overflow-hidden rounded-[2rem] bg-black shadow-lg hover:shadow-3xl transition-all duration-500 border border-white/10">
           
           {/* Background Image - Full Magazine Cover Style */}
           <div className="absolute inset-0 w-full h-full transform transition-transform duration-1000 group-hover:scale-105">
@@ -179,25 +179,24 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
                 alt={title} 
                 loading="lazy"
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-cover opacity-90 transition-opacity duration-500 group-hover:opacity-100"
+                className="w-full h-full object-cover opacity-80 transition-opacity duration-500 group-hover:opacity-90"
              />
           </div>
           
           {/* Refined Subtle Overlay for Text Readability */}
-          {/* Slightly darker gradient for better text contrast with larger font */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-95"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-100"></div>
 
           {/* Top Metadata - Magazine Date Line */}
           <div className="absolute top-8 left-8 z-20">
              <div className="flex items-center gap-3 text-white/80 group-hover:text-white transition-colors">
-                <span className="w-8 h-[2px] bg-white/60 group-hover:bg-blue-500 transition-colors duration-300"></span>
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] shadow-black drop-shadow-md">{article.date}</span>
+                <span className="w-8 h-[3px] bg-white/60 group-hover:bg-blue-500 transition-colors duration-300"></span>
+                <span className="text-[11px] font-black uppercase tracking-[0.25em] shadow-black drop-shadow-md">{article.date}</span>
              </div>
           </div>
 
           {/* Bottom Content */}
-          <div className="absolute bottom-0 left-0 w-full p-8 z-20 flex flex-col justify-end h-full pointer-events-none">
-             <div className="transform transition-transform duration-500 translate-y-8 group-hover:translate-y-0">
+          <div className="absolute bottom-0 left-0 w-full p-8 md:p-10 z-20 flex flex-col justify-end h-full pointer-events-none">
+             <div className="transform transition-transform duration-500 translate-y-12 group-hover:translate-y-0">
                 
                 {/* Tag Pill - Appears on Hover */}
                 <div className="mb-4 opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-y-2 group-hover:translate-y-0">
@@ -208,19 +207,19 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
                 </div>
 
                 {/* Enhanced Title - Larger and Bolder */}
-                <h3 className="text-4xl md:text-5xl font-sans font-black leading-[0.95] mb-4 text-white drop-shadow-xl line-clamp-3 group-hover:line-clamp-none transition-all tracking-tighter">
+                <h3 className="text-4xl md:text-6xl font-sans font-black leading-[0.9] mb-6 text-white drop-shadow-xl line-clamp-4 group-hover:line-clamp-none transition-all tracking-tighter">
                   {title}
                 </h3>
                 
                 {/* Summary Reveal */}
                 <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out">
                     <div className="overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                        <p className="text-gray-300 text-sm font-medium leading-relaxed border-t border-white/20 pt-4 mb-5">
+                        <p className="text-gray-300 text-base font-medium leading-relaxed border-t border-white/20 pt-4 mb-6 max-w-[90%]">
                         {summary}
                         </p>
-                        <button className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white group/btn hover:text-blue-400 transition-colors pointer-events-auto">
+                        <button className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-white group/btn hover:text-blue-400 transition-colors pointer-events-auto bg-white/10 hover:bg-white/20 px-4 py-3 rounded-full w-fit backdrop-blur-sm">
                             {t('article_read_more')} 
-                            <ArrowRight size={14} className="group-hover/btn:translate-x-2 transition-transform duration-300" />
+                            <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform duration-300" />
                         </button>
                     </div>
                 </div>
@@ -239,7 +238,7 @@ const ArticleSection: React.FC = () => {
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
       const { current } = scrollContainerRef;
-      const scrollAmount = direction === 'left' ? -380 : 380;
+      const scrollAmount = direction === 'left' ? -400 : 400;
       current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };

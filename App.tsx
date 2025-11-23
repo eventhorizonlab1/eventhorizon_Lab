@@ -1,12 +1,16 @@
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import VideoSection from './components/VideoSection';
 import ArticleSection from './components/ArticleSection';
 import EcosystemSection from './components/EcosystemSection';
-import BlackHoleSection from './components/BlackHoleSection';
 import Footer from './components/Footer';
+import { Loader2 } from 'lucide-react';
+
+// OPTIMISATION VERCEL : Lazy loading du composant 3D lourd (Three.js)
+// Cela réduit considérablement la taille du bundle initial (First Load JS)
+const BlackHoleSection = React.lazy(() => import('./components/BlackHoleSection'));
 
 const App: React.FC = () => {
   return (
@@ -33,7 +37,18 @@ const App: React.FC = () => {
         <VideoSection />
         <ArticleSection />
         <EcosystemSection />
-        <BlackHoleSection />
+        
+        <Suspense fallback={
+          <div className="h-[600px] flex items-center justify-center bg-black">
+            <div className="flex flex-col items-center gap-4 text-white/50">
+               <Loader2 className="animate-spin w-8 h-8" />
+               <span className="text-xs font-mono tracking-widest uppercase">Initialisation de la Singularité...</span>
+            </div>
+          </div>
+        }>
+           <BlackHoleSection />
+        </Suspense>
+        
         <Footer />
       </div>
     </main>
