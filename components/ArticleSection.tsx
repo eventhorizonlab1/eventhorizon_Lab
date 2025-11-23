@@ -166,6 +166,7 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={cardVariants}
+      // SNAP-START: Critical for mobile carousel feel
       className="snap-start shrink-0 w-[85vw] md:w-[400px] h-[580px]"
       onClick={() => onClick(article)}
     >
@@ -206,8 +207,8 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
                     </span>
                 </div>
 
-                {/* Enhanced Title - Larger and Bolder */}
-                <h3 className="text-4xl md:text-6xl font-sans font-black leading-[0.9] mb-6 text-white drop-shadow-xl line-clamp-4 group-hover:line-clamp-none transition-all tracking-tighter">
+                {/* Enhanced Title - Mobile size tweaked (text-3xl) to prevent breakage */}
+                <h3 className="text-3xl md:text-5xl font-sans font-black leading-[0.95] md:leading-[0.9] mb-6 text-white drop-shadow-xl line-clamp-4 group-hover:line-clamp-none transition-all tracking-tighter">
                   {title}
                 </h3>
                 
@@ -278,7 +279,7 @@ const ArticleSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Carousel */}
+      {/* Carousel with snap-mandatory for mobile native feel */}
       <div 
         ref={scrollContainerRef}
         className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-6 pb-12"

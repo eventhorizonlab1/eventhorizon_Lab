@@ -351,12 +351,15 @@ class BlackHoleSim {
     bloomPass: UnrealBloomPass;
     
     currentMode: number = 0; 
+    isMobile: boolean = false;
     
     // Camera Animation Target
     targetCameraPosition: THREE.Vector3;
     isAnimatingCamera: boolean = false;
 
     constructor(container: HTMLElement) {
+        this.isMobile = window.innerWidth < 768;
+        
         this.backgroundScene = new THREE.Scene();
         this.scene = new THREE.Scene();
         this.lensingScene = new THREE.Scene();
@@ -373,8 +376,12 @@ class BlackHoleSim {
             depth: false
         });
         this.renderer.setSize(container.clientWidth, container.clientHeight);
-        // Performance optimization: Limit pixel ratio
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+        
+        // MOBILE OPTIMIZATION: Cap Pixel Ratio at 1.0 for mobile devices to save battery/GPU
+        // On desktop, we still cap at 1.5 to avoid overheating 4K screens
+        const maxPixelRatio = this.isMobile ? 1.0 : 1.5;
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio));
+        
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 0.9; 
         container.appendChild(this.renderer.domElement);
@@ -382,8 +389,8 @@ class BlackHoleSim {
         this.clock = new THREE.Clock();
 
         this.backgroundRenderTarget = new THREE.WebGLRenderTarget(
-            container.clientWidth * Math.min(window.devicePixelRatio, 1.5),
-            container.clientHeight * Math.min(window.devicePixelRatio, 1.5),
+            container.clientWidth * Math.min(window.devicePixelRatio, maxPixelRatio),
+            container.clientHeight * Math.min(window.devicePixelRatio, maxPixelRatio),
             { 
                 type: THREE.HalfFloatType, 
                 minFilter: THREE.LinearFilter, 
@@ -448,7 +455,9 @@ class BlackHoleSim {
     }
 
     initDebrisField() {
-        const PARTICLE_COUNT = 45000; 
+        // MOBILE OPTIMIZATION: Drastically reduce particle count on mobile
+        const PARTICLE_COUNT = this.isMobile ? 15000 : 45000; 
+        
         const positions = [], colors = [];
         const scales = [], startRadii = [], initialAngles = [], randomYs = [], speedModifiers = [];
         const clumpIds = [];
@@ -523,7 +532,8 @@ class BlackHoleSim {
 
     initStarfield() {
         const geometry = new THREE.BufferGeometry();
-        const count = 8000; 
+        // Reduce star count on mobile as well
+        const count = this.isMobile ? 3000 : 8000; 
         const positions = [];
         const sizes = [];
         const opacities = [];
@@ -575,6 +585,7 @@ class BlackHoleSim {
     }
 
     initPostProcessing(width: number, height: number) {
+        const maxPixelRatio = this.isMobile ? 1.0 : 1.5;
         const renderTarget = new THREE.WebGLRenderTarget(
             width, height,
             { type: THREE.HalfFloatType, format: THREE.RGBAFormat }
@@ -594,7 +605,8 @@ class BlackHoleSim {
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(width, height);
         this.composer.setSize(width, height);
-        this.backgroundRenderTarget.setSize(width * Math.min(window.devicePixelRatio, 1.5), height * Math.min(window.devicePixelRatio, 1.5));
+        const maxPixelRatio = this.isMobile ? 1.0 : 1.5;
+        this.backgroundRenderTarget.setSize(width * Math.min(window.devicePixelRatio, maxPixelRatio), height * Math.min(window.devicePixelRatio, maxPixelRatio));
         if (this.lensingMaterial) this.lensingMaterial.uniforms.u_resolution.value.set(width, height);
     }
 
