@@ -734,7 +734,7 @@ const BlackHoleSection: React.FC = () => {
   
   const [isLoading, setIsLoading] = useState(true);
   const [rotationSpeed, setRotationSpeed] = useState(0.3);
-  const [bloomIntensity, setBloomIntensity] = useState(0.5); 
+  const [bloomIntensity, setBloomIntensity] = useState(0.1); 
   const [lensingStrength, setLensingStrength] = useState(1.2);
   const [diskBrightness, setDiskBrightness] = useState(1.0); 
   const [temperature, setTemperature] = useState(1.0);
