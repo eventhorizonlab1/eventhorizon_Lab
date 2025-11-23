@@ -193,7 +193,7 @@ const VideoSection: React.FC = () => {
                 
                 {/* Right Side CTA */}
                 <a 
-                    href="https://www.youtube.com/results?search_query=cnes" 
+                    href="https://www.youtube.com/@EventHorizonLab-n9g" 
                     target="_blank"
                     rel="noreferrer"
                     className="group relative px-6 py-3 bg-transparent border border-black dark:border-white text-black dark:text-white overflow-hidden transition-all hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black w-full md:w-auto text-center rounded-md"

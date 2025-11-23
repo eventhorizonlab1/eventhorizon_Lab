@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Youtube, Linkedin, Twitter, Mail } from 'lucide-react';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
@@ -17,7 +18,7 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="flex gap-8">
-            <a href="#" className="text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"><Youtube size={24} strokeWidth={1.5} /></a>
+            <a href="https://www.youtube.com/@EventHorizonLab-n9g" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"><Youtube size={24} strokeWidth={1.5} /></a>
             <a href="#" className="text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"><Linkedin size={24} strokeWidth={1.5} /></a>
             <a href="#" className="text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"><Twitter size={24} strokeWidth={1.5} /></a>
             <a href="mailto:contact@eventhorizon.eu" className="text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"><Mail size={24} strokeWidth={1.5} /></a>
