@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -26,10 +25,10 @@ const App: React.FC = () => {
       <Hero />
       
       {/* 
-        Adjusted negative margin to -mt-24 to pull the white/black card up over the Hero properly, 
-        matching the new Hero height and VideoSection padding logic.
+        Adjusted negative margin to -mt-20 to pull the white/black card up over the 90vh Hero.
+        This ensures consistent overlap and visual flow.
       */}
-      <div className="relative z-10 bg-white dark:bg-eh-black rounded-t-[3rem] -mt-24 shadow-[0_-20px_40px_rgba(0,0,0,0.05)] transition-colors duration-500">
+      <div className="relative z-10 bg-white dark:bg-eh-black rounded-t-[3rem] -mt-20 shadow-[0_-20px_40px_rgba(0,0,0,0.05)] transition-colors duration-500">
         <VideoSection />
         <ArticleSection />
         <EcosystemSection />

@@ -1,4 +1,3 @@
-
 import React, { useRef } from 'react';
 import { PARTNERS } from '../constants';
 import { motion, useScroll, useTransform } from 'framer-motion';
@@ -31,10 +30,12 @@ const PartnerCard: React.FC<{ partner: Partner; index: number }> = ({ partner, i
       >
          {/* Card Visual - Full Color */}
          <div className="relative overflow-hidden rounded-xl bg-white dark:bg-white/5 aspect-[4/5] mb-6 transition-colors duration-500 border border-gray-100 dark:border-white/10 shadow-sm">
-            <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-transparent">
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
                 <img 
                 src={partner.imageUrl} 
                 alt={partner.name} 
+                loading="lazy"
+                referrerPolicy="no-referrer"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-90 group-hover:opacity-100"
                 />
             </div>

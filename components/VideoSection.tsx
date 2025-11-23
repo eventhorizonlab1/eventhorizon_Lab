@@ -1,5 +1,3 @@
-
-
 import React, { useRef, useState } from 'react';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
 import { Play, Radio, ArrowUpRight, X, Loader2 } from 'lucide-react';
@@ -89,11 +87,12 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
       <div className="block h-full">
         <div>
           {/* Card Image Container */}
-          <div className="relative overflow-hidden rounded-xl bg-gray-100 dark:bg-eh-gray aspect-video mb-4 transition-colors duration-500 border border-black/5 dark:border-white/5">
+          <div className="relative overflow-hidden rounded-xl bg-gray-200 dark:bg-gray-800 aspect-video mb-4 transition-colors duration-500 border border-black/5 dark:border-white/5">
              <img 
               src={video.imageUrl} 
               alt={title} 
               loading="lazy"
+              referrerPolicy="no-referrer"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
             />
             <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm text-white text-[10px] font-mono px-2 py-0.5 rounded-md border border-white/10">
@@ -146,8 +145,8 @@ const VideoSection: React.FC = () => {
 
       <motion.section 
         id="videos" 
-        // Adjusted padding: reduced top padding to 16 (4rem) to be closer to Hero, keeping bottom consistent
-        className="pt-20 pb-24 px-4 md:px-12 max-w-[1800px] mx-auto"
+        // Harmonized padding to pt-24 to be consistent with other sections
+        className="pt-24 pb-24 px-4 md:px-12 max-w-[1800px] mx-auto"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
@@ -227,12 +226,13 @@ const VideoSection: React.FC = () => {
             className="group cursor-pointer relative"
             onClick={() => setSelectedVideo(FEATURED_VIDEO)}
           >
-            <div className="relative overflow-hidden rounded-2xl bg-gray-100 dark:bg-eh-gray aspect-video md:aspect-[21/9] transition-colors duration-500 border border-black/5 dark:border-white/5">
+            <div className="relative overflow-hidden rounded-2xl bg-gray-200 dark:bg-gray-800 aspect-video md:aspect-[21/9] transition-colors duration-500 border border-black/5 dark:border-white/5">
               <motion.div style={{ y: imageY }} className="w-full h-[120%] -mt-[10%]">
                 <img 
                   src={FEATURED_VIDEO.imageUrl} 
                   alt={featuredTitle} 
                   loading="lazy"
+                  referrerPolicy="no-referrer"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
                 />
               </motion.div>

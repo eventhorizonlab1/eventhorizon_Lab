@@ -1,4 +1,3 @@
-
 import React, { useRef } from 'react';
 import { ARTICLES } from '../constants';
 import { ArrowRight, ArrowLeft, FileText } from 'lucide-react';
@@ -49,7 +48,13 @@ const ArticleCard: React.FC<{ article: Article }> = ({ article }) => {
           <div className="flex-grow">
             {/* Thumbnail for article (optional but adds to the visual) */}
             <div className="w-full h-32 mb-4 overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-800">
-                <img src={article.imageUrl} alt={title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100"/>
+                <img 
+                  src={article.imageUrl} 
+                  alt={title} 
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                />
             </div>
 
             <h3 className="text-xl md:text-2xl font-serif font-bold leading-tight mb-3 text-black dark:text-white group-hover:underline decoration-1 underline-offset-4 transition-all">
@@ -110,16 +115,23 @@ const ArticleSection: React.FC = () => {
         </div>
       </div>
 
+      {/* Carousel */}
       <div 
         ref={scrollContainerRef}
-        className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-6 pb-12 items-stretch"
+        className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-6 pb-12"
       >
         {ARTICLES.map((article) => (
           <ArticleCard key={article.id} article={article} />
         ))}
-        {/* Empty spacer for scroll padding */}
-        <div className="w-12 shrink-0"></div>
       </div>
+      
+      {/* Mobile Scroll Indicator */}
+      <div className="flex md:hidden justify-center mt-4 gap-1">
+         <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-50"></div>
+         <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+         <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+      </div>
+
     </motion.section>
   );
 };

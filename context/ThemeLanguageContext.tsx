@@ -25,7 +25,6 @@ const translations: Translations = {
   nav_videos: { fr: 'Vidéos', en: 'Videos', de: 'Videos', es: 'Vídeos', it: 'Video' },
   nav_articles: { fr: 'Articles', en: 'Articles', de: 'Artikel', es: 'Artículos', it: 'Articoli' },
   nav_ecosystem: { fr: 'Écosystème', en: 'Ecosystem', de: 'Ökosystem', es: 'Ecosistema', it: 'Ecosistema' },
-  nav_studio: { fr: 'IA Oracle', en: 'Oracle AI', de: 'Orakel KI', es: 'IA Oráculo', it: 'IA Oracolo' },
   
   // --- HERO ---
   hero_line1: { fr: 'DANS LES COULISSES', en: 'BEHIND THE SCENES', de: 'HINTER DEN KULISSEN', es: 'ENTRE BASTIDORES', it: 'DIETRO LE QUINTE' },
@@ -39,8 +38,6 @@ const translations: Translations = {
   },
   hero_cta: { fr: 'Découvrez nos vidéos', en: 'Watch our videos', de: 'Videos ansehen', es: 'Ver videos', it: 'Guarda i video' },
   hero_scroll: { fr: 'Scroll pour explorer', en: 'Scroll to explore', de: 'Scrollen zum Entdecken', es: 'Desplazar para explorar', it: 'Scorri per esplorare' },
-  hero_history_title: { fr: "Odyssée Orbitale", en: "Orbital Odyssey", de: "Orbitale Odyssee", es: "Odisea Orbital", it: "Odissea Orbitale" },
-  hero_history_sub: { fr: "Les grandes étapes de la conquête spatiale européenne", en: "Major milestones in European space conquest", de: "Wichtige Meilensteine der europäischen Raumfahrteroberung", es: "Grandes hitos de la conquista espacial europea", it: "Le grandi tappe della conquista spaziale europea" },
 
   // --- VIDEOS ---
   videos_title: { fr: 'Vidéos', en: 'Videos', de: 'Videos', es: 'Vídeos', it: 'Video' },
@@ -123,94 +120,83 @@ const translations: Translations = {
   partner_p4_role: { fr: 'Excellence', en: 'Excellence', de: 'Exzellenz', es: 'Excelencia', it: 'Eccellenza' },
   partner_p5_role: { fr: 'Culture', en: 'Culture', de: 'Kultur', es: 'Cultura', it: 'Cultura' },
 
-  // --- TIMELINE ---
-  milestone_0_title: { fr: 'Création de l\'ESA', en: 'Creation of ESA', de: 'Gründung der ESA', es: 'Creación de la ESA', it: 'Creazione dell\'ESA' },
-  milestone_0_desc: { fr: 'L\'Europe unit ses forces spatiales.', en: 'Europe unites its space forces.', de: 'Europa vereint seine Raumfahrtkräfte.', es: 'Europa une sus fuerzas espaciales.', it: 'L\'Europa unisce le forze spaziali.' },
-  
-  milestone_1_title: { fr: 'Ariane 1', en: 'Ariane 1', de: 'Ariane 1', es: 'Ariane 1', it: 'Ariane 1' },
-  milestone_1_desc: { fr: 'Premier vol qui ouvre l\'accès à l\'espace.', en: 'First flight opening access to space.', de: 'Erster Flug öffnet den Zugang zum All.', es: 'Primer vuelo que abre acceso al espacio.', it: 'Primo volo che apre l\'accesso allo spazio.' },
-
-  milestone_2_title: { fr: 'Mission Rosetta', en: 'Rosetta Mission', de: 'Mission Rosetta', es: 'Misión Rosetta', it: 'Missione Rosetta' },
-  milestone_2_desc: { fr: 'Première orbite autour d\'une comète.', en: 'First orbit around a comet.', de: 'Erster Orbit um einen Kometen.', es: 'Primera órbita alrededor de un cometa.', it: 'Prima orbita attorno a una cometa.' },
-
-  milestone_3_title: { fr: 'Galileo', en: 'Galileo', de: 'Galileo', es: 'Galileo', it: 'Galileo' },
-  milestone_3_desc: { fr: 'Le GPS européen devient opérationnel.', en: 'European GPS becomes operational.', de: 'Europäisches GPS wird operativ.', es: 'El GPS europeo entra en funcionamiento.', it: 'Il GPS europeo diventa operativo.' },
-
-  milestone_4_title: { fr: 'Ariane 6', en: 'Ariane 6', de: 'Ariane 6', es: 'Ariane 6', it: 'Ariane 6' },
-  milestone_4_desc: { fr: 'La souveraineté retrouvée.', en: 'Sovereignty regained.', de: 'Wiedergewonnene Souveränität.', es: 'Soberanía recuperada.', it: 'Sovranità ritrovata.' },
-
-
-  // --- ORACLE ---
-  oracle_title: { fr: "Centre de Contrôle", en: "Mission Control", de: "Missionskontrolle", es: "Control de Misión", it: "Controllo Missione" },
-  oracle_desc: { fr: "Accédez à la base de connaissance de l'Event Horizon. Posez vos questions techniques, explorez des scénarios hypothétiques ou analysez des données de vol.", en: "Access the Event Horizon knowledge base. Ask technical questions, explore hypothetical scenarios, or analyze flight data.", de: "Greifen Sie auf die Wissensdatenbank zu. Stellen Sie technische Fragen.", es: "Acceda a la base de conocimientos. Haga preguntas técnicas.", it: "Accedi al database. Poni domande tecniche." },
-  oracle_placeholder: { fr: "Entrez votre requête (ex: Trajectoire Mars...)", en: "Enter query (ex: Mars Trajectory...)", de: "Eingabe (z.B. Mars Trajektorie...)", es: "Entrada (ej: Trayectoria Marte...)", it: "Inserisci (es: Traiettoria Marte...)" },
-  oracle_quick_access: { fr: "Protocoles Rapides", en: "Quick Protocols", de: "Schnellprotokolle", es: "Protocolos Rápidos", it: "Protocolli Rapidi" },
-  oracle_sugg_1: { fr: "Quelle est la charge utile maximale d'Ariane 6 ?", en: "What is the max payload of Ariane 6?", de: "Was ist die max. Nutzlast von Ariane 6?", es: "¿Cuál es la carga útil máx de Ariane 6?", it: "Qual è il carico utile max di Ariane 6?" },
-  oracle_sugg_2: { fr: "Explique le point de Lagrange L2", en: "Explain Lagrange Point L2", de: "Erkläre Lagrange-Punkt L2", es: "Explica el punto Lagrange L2", it: "Spiega il punto di Lagrange L2" },
-  oracle_sugg_3: { fr: "Comment devenir astronaute à l'ESA ?", en: "How to become an ESA astronaut?", de: "Wie wird man ESA-Astronaut?", es: "¿Cómo ser astronauta de la ESA?", it: "Come diventare astronauta ESA?" },
-
-  // --- BLACK HOLE ---
-  bh_title: { fr: "Singularité", en: "Singularity", de: "Singularität", es: "Singularidad", it: "Singolarità" },
-  bh_subtitle: { fr: "Simulation de l'Horizon des Événements", en: "Event Horizon Simulation", de: "Ereignishorizont-Simulation", es: "Simulación del Horizonte de Sucesos", it: "Simulazione dell'Orizzonte degli Eventi" },
-  bh_controls: { fr: "Paramètres Physique", en: "Physics Parameters", de: "Physikalische Parameter", es: "Parámetros Físicos", it: "Parametri Fisici" },
-  bh_rotation: { fr: "Rotation", en: "Rotation", de: "Rotation", es: "Rotación", it: "Rotazione" },
-  bh_bloom: { fr: "Intensité Lumineuse", en: "Glow Intensity", de: "Leuchtintensität", es: "Intensidad de Brillo", it: "Intensità Luminosa" },
-  bh_lensing: { fr: "Lentille Gravitationnelle", en: "Gravitational Lensing", de: "Gravitationslinse", es: "Lente Gravitacional", it: "Lente Gravitazionale" },
-  bh_density: { fr: "Densité Disque", en: "Disk Density", de: "Scheibendichte", es: "Densidad del Disco", it: "Densità del Disco" },
-  bh_temp: { fr: "Température", en: "Temperature", de: "Temperatur", es: "Temperatura", it: "Temperatura" },
-  bh_interact: { fr: "Glisser pour tourner • Scroller pour zoomer", en: "Drag to Rotate • Scroll to Zoom", de: "Ziehen zum Drehen • Scrollen zum Zoomen", es: "Arrastrar para rotar • Desplazar para zoom", it: "Trascina per ruotare • Scorri per zoomare" },
-
-  // --- STUDIO ---
-  studio_title: { fr: "Studio Cosmique", en: "Cosmic Studio", de: "Kosmisches Studio", es: "Estudio Cósmico", it: "Studio Cosmico" },
-  studio_desc: { fr: "Générez des visuels spatiaux ultra-réalistes assistés par IA.", en: "Generate ultra-realistic space visuals assisted by AI.", de: "Erstellen Sie ultrarealistische Weltraumbilder mit KI.", es: "Generar imágenes espaciales ultra realistas con IA.", it: "Genera immagini spaziali ultra realistiche con l'IA." },
-  studio_label: { fr: "Prompt de Mission", en: "Mission Prompt", de: "Missions-Prompt", es: "Prompt de Misión", it: "Prompt di Missione" },
-  studio_placeholder: { fr: "Décrivez le phénomène cosmique ou le vaisseau...", en: "Describe the cosmic phenomenon or spacecraft...", de: "Beschreiben Sie das kosmische Phänomen...", es: "Describa el fenómeno cósmico...", it: "Descrivi il fenomeno cosmico..." },
-  studio_btn_generate: { fr: "Initialiser le Rendu", en: "Initialize Render", de: "Render starten", es: "Iniciar Render", it: "Inizializza Render" },
-  studio_btn_generating: { fr: "Calcul en cours...", en: "Processing...", de: "Verarbeitung...", es: "Procesando...", it: "Elaborazione..." },
-  studio_download: { fr: "Télécharger la Donnée", en: "Download Data", de: "Daten herunterladen", es: "Descargar Datos", it: "Scarica Dati" },
-  studio_empty: { fr: "En attente de coordonnées visuelles", en: "Awaiting visual coordinates", de: "Warte auf visuelle Koordinaten", es: "Esperando coordenadas visuales", it: "In attesa di coordinate visive" },
-  studio_error_generic: { fr: "Erreur de génération. Veuillez réessayer.", en: "Generation error. Please try again.", de: "Generierungsfehler. Bitte erneut versuchen.", es: "Error de generación. Intente de nuevo.", it: "Errore di generazione. Riprova." },
-  studio_error_safety: { fr: "Le système de sécurité a rejeté cette requête.", en: "Safety system rejected this request.", de: "Sicherheitssystem hat abgelehnt.", es: "Sistema de seguridad rechazó la solicitud.", it: "Il sistema di sicurezza ha respinto la richiesta." },
-  studio_error_quota: { fr: "Quota de calcul dépassé. Réessayez plus tard.", en: "Calculation quota exceeded. Try again later.", de: "Rechenquote überschritten.", es: "Cuota de cálculo excedida.", it: "Quota di calcolo superata." },
-  studio_error_timeout: { fr: "Délai d'attente dépassé.", en: "Request timed out.", de: "Zeitüberschreitung der Anfrage.", es: "Tiempo de espera agotado.", it: "Richiesta scaduta." },
+  // --- BLACK HOLE SIM ---
+  bh_title: { fr: 'Singularité', en: 'Singularity', de: 'Singularität', es: 'Singularidad', it: 'Singolarità' },
+  bh_subtitle: { 
+    fr: "Simulation astrophysique temps réel d'un trou noir de Kerr (supermassif en rotation). Données visuelles basées sur les modèles Luminet (1979).",
+    en: "Real-time astrophysical simulation of a Kerr black hole. Visual data based on Luminet models (1979).",
+    de: "Echtzeit-Astrophysik-Simulation eines Kerr-Schwarzen Lochs. Basierend auf Luminet-Modellen.",
+    es: "Simulación astrofísica en tiempo real de un agujero negro de Kerr.",
+    it: "Simulazione astrofisica in tempo reale di un buco nero di Kerr."
+  },
+  bh_controls: { fr: 'Paramètres de Simulation', en: 'Simulation Parameters', de: 'Simulationsparameter', es: 'Parámetros de Simulación', it: 'Parametri di Simulazione' },
+  bh_rotation: { fr: 'Vitesse de Rotation', en: 'Rotation Speed', de: 'Rotationsgeschwindigkeit', es: 'Velocidad de Rotación', it: 'Velocità di Rotazione' },
+  bh_bloom: { fr: 'Intensité Lumineuse', en: 'Light Intensity', de: 'Lichtintensität', es: 'Intensidad de Luz', it: 'Intensità Luminosa' },
+  bh_lensing: { fr: 'Lentille Gravitationnelle', en: 'Gravitational Lensing', de: 'Gravitationslinse', es: 'Lente Gravitacional', it: 'Lente Gravitazionale' },
+  bh_density: { fr: 'Densité Disque', en: 'Disk Density', de: 'Scheibendichte', es: 'Densidad del Disco', it: 'Densità del Disco' },
+  bh_temp: { fr: 'Température (K)', en: 'Temperature (K)', de: 'Temperatur (K)', es: 'Temperatura (K)', it: 'Temperatura (K)' },
+  bh_interact: { fr: 'Simulation Interactive', en: 'Interactive Simulation', de: 'Interaktive Simulation', es: 'Simulación Interactiva', it: 'Simulazione Interattiva' },
 
   // --- FOOTER ---
-  footer_rights: { fr: "Tous droits réservés.", en: "All rights reserved.", de: "Alle Rechte vorbehalten.", es: "Todos los derechos reservados.", it: "Tutti i diritti riservati." },
-  footer_legal: { fr: "Mentions Légales", en: "Legal Notice", de: "Impressum", es: "Aviso Legal", it: "Note Legali" },
-  footer_privacy: { fr: "Confidentialité", en: "Privacy Policy", de: "Datenschutz", es: "Política de Privacidad", it: "Privacy" },
-  footer_desc: { fr: "Connecter les passionnés à la réalité de l'industrie spatiale européenne.", en: "Connecting enthusiasts to the reality of the European space industry.", de: "Verbindung von Enthusiasten mit der Realität der europäischen Raumfahrt.", es: "Conectando entusiastas con la realidad espacial europea.", it: "Connettere gli appassionati alla realtà dell'industria spaziale europea." },
+  footer_desc: { 
+    fr: "La plateforme de référence pour suivre l'actualité, les innovations et les missions de l'industrie spatiale européenne.",
+    en: "The reference platform to follow news, innovations, and missions of the European space industry.",
+    de: "Die Referenzplattform für Nachrichten, Innovationen und Missionen der europäischen Raumfahrt.",
+    es: "La plataforma de referencia para seguir noticias, innovaciones y misiones de la industria espacial europea.",
+    it: "La piattaforma di riferimento per seguire notizie, innovazioni e missioni dell'industria spaziale europea."
+  },
+  footer_rights: { fr: 'Tous droits réservés.', en: 'All rights reserved.', de: 'Alle Rechte vorbehalten.', es: 'Todos los derechos reservados.', it: 'Tutti i diritti riservati.' },
+  footer_legal: { fr: 'Mentions Légales', en: 'Legal Notice', de: 'Impressum', es: 'Aviso Legal', it: 'Note Legali' },
+  footer_privacy: { fr: 'Confidentialité', en: 'Privacy Policy', de: 'Datenschutz', es: 'Privacidad', it: 'Privacy' },
+
+  // --- TIMELINE TRANSLATIONS (Kept in file but unused in UI as per request to remove section) ---
+  hero_history_title: { fr: 'Notre Héritage', en: 'Our Legacy', de: 'Unser Erbe', es: 'Nuestro Legado', it: 'La Nostra Eredità' },
+  hero_history_sub: { fr: 'Les grandes dates du spatial européen', en: 'Key dates in European space history', de: 'Schlüsseldaten der europäischen Raumfahrt', es: 'Fechas clave de la historia espacial europea', it: 'Date chiave della storia spaziale europea' },
+
+  milestone_0_title: { fr: 'Création du CNES', en: 'CNES Creation', de: 'Gründung des CNES', es: 'Creación del CNES', it: 'Creazione del CNES' },
+  milestone_0_desc: { fr: "Le Général de Gaulle fonde l'agence spatiale française.", en: "General de Gaulle founds the French space agency.", de: "General de Gaulle gründet die französische Raumfahrtagentur.", es: "El General de Gaulle funda la agencia espacial francesa.", it: "Il Generale de Gaulle fonda l'agenzia spaziale francese." },
+
+  milestone_1_title: { fr: 'Premier vol Ariane 1', en: 'First Ariane 1 Flight', de: 'Erster Ariane 1 Flug', es: 'Primer vuelo de Ariane 1', it: 'Primo volo Ariane 1' },
+  milestone_1_desc: { fr: "L'Europe acquiert son indépendance d'accès à l'espace.", en: "Europe gains independent access to space.", de: "Europa erlangt unabhängigen Zugang zum Weltraum.", es: "Europa gana acceso independiente al espacio.", it: "L'Europa ottiene accesso indipendente allo spazio." },
+
+  milestone_2_title: { fr: 'Mission Rosetta', en: 'Rosetta Mission', de: 'Rosetta Mission', es: 'Misión Rosetta', it: 'Missione Rosetta' },
+  milestone_2_desc: { fr: "Première sonde en orbite autour d'une comète.", en: "First probe to orbit a comet.", de: "Erste Sonde im Orbit um einen Kometen.", es: "Primera sonda en orbitar un cometa.", it: "Prima sonda in orbita attorno a una cometa." },
+
+  milestone_3_title: { fr: 'Atterrissage de Philae', en: 'Philae Landing', de: 'Philae Landung', es: 'Aterrizaje de Philae', it: 'Atterraggio di Philae' },
+  milestone_3_desc: { fr: "Exploit historique sur la comète 67P.", en: "Historic feat on comet 67P.", de: "Historische Leistung auf Komet 67P.", es: "Hazaña histórica en el cometa 67P.", it: "Impresa storica sulla cometa 67P." },
+
+  milestone_4_title: { fr: 'Lancement JWST', en: 'JWST Launch', de: 'JWST Start', es: 'Lanzamiento JWST', it: 'Lancio JWST' },
+  milestone_4_desc: { fr: "Ariane 5 lance le plus grand télescope spatial.", en: "Ariane 5 launches the largest space telescope.", de: "Ariane 5 startet das größte Weltraumteleskop.", es: "Ariane 5 lanza el telescopio espacial más grande.", it: "Ariane 5 lancia il più grande telescopio spaziale." },
+
+  milestone_5_title: { fr: 'Ariane 6', en: 'Ariane 6', de: 'Ariane 6', es: 'Ariane 6', it: 'Ariane 6' },
+  milestone_5_desc: { fr: "La nouvelle ère des lanceurs européens.", en: "The new era of European launchers.", de: "Die neue Ära der europäischen Trägerraketen.", es: "La nueva era de los lanzadores europeos.", it: "La nuova era dei lanciatori europei." },
 };
 
 interface ThemeLanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
   theme: Theme;
   toggleTheme: () => void;
+  language: Language;
+  setLanguage: (lang: Language) => void;
   t: (key: string) => string;
 }
 
 const ThemeLanguageContext = createContext<ThemeLanguageContextType | undefined>(undefined);
 
 export const ThemeLanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return 'light';
+  });
+
   const [language, setLanguage] = useState<Language>('fr');
-  const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setTheme('dark');
-    }
-    const browserLang = navigator.language.split('-')[0];
-    if (SUPPORTED_LANGUAGES.some(l => l.code === browserLang)) {
-      setLanguage(browserLang);
-    }
-  }, []);
-
-  useEffect(() => {
-    const html = document.documentElement;
     if (theme === 'dark') {
-      html.classList.add('dark');
+      document.documentElement.classList.add('dark');
     } else {
-      html.classList.remove('dark');
+      document.documentElement.classList.remove('dark');
     }
   }, [theme]);
 
@@ -218,20 +204,13 @@ export const ThemeLanguageProvider: React.FC<{ children: ReactNode }> = ({ child
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  const t = (key: string) => {
-    if (translations[key]) {
-      if (translations[key][language]) {
-        return translations[key][language];
-      }
-      if (translations[key]['en']) {
-        return translations[key]['en'];
-      }
-    }
-    return key;
+  const t = (key: string): string => {
+    if (!translations[key]) return key;
+    return translations[key][language] || translations[key]['fr'] || key;
   };
 
   return (
-    <ThemeLanguageContext.Provider value={{ language, setLanguage, theme, toggleTheme, t }}>
+    <ThemeLanguageContext.Provider value={{ theme, toggleTheme, language, setLanguage, t }}>
       {children}
     </ThemeLanguageContext.Provider>
   );
@@ -239,7 +218,7 @@ export const ThemeLanguageProvider: React.FC<{ children: ReactNode }> = ({ child
 
 export const useThemeLanguage = () => {
   const context = useContext(ThemeLanguageContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useThemeLanguage must be used within a ThemeLanguageProvider');
   }
   return context;

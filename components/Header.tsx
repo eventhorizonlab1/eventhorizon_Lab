@@ -124,10 +124,8 @@ const Header: React.FC = () => {
                   onClick={(e) => handleLinkClick(e, link.href)}
                   className={`text-sm font-medium uppercase tracking-widest hover:opacity-50 transition-opacity relative group ${textColorClass}`}
                 >
-                  {link.label === 'Vidéos' ? t('nav_videos') : 
-                   link.label === 'Articles' ? t('nav_articles') :
-                   link.label === 'Écosystème' ? t('nav_ecosystem') :
-                   t('nav_studio')}
+                  {/* Dynamic translation using the key provided in NAV_LINKS */}
+                  {t(link.key)}
                   <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full ${navHoverClass}`}></span>
                 </a>
               ))}
@@ -236,10 +234,7 @@ const Header: React.FC = () => {
                   onClick={(e) => handleLinkClick(e, link.href)}
                   className="text-3xl font-bold uppercase tracking-tighter hover:text-gray-500 transition-colors text-black"
                 >
-                  {link.label === 'Vidéos' ? t('nav_videos') : 
-                   link.label === 'Articles' ? t('nav_articles') :
-                   link.label === 'Écosystème' ? t('nav_ecosystem') :
-                   t('nav_studio')}
+                  {t(link.key)}
                 </motion.a>
               ))}
             </nav>

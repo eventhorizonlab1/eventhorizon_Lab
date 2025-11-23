@@ -381,8 +381,8 @@ const Hero: React.FC = () => {
   const y = useTransform(scrollYProgress, [0, 0.4], [0, 100]);
 
   return (
-    // Reduced height from 120vh to 105vh to fix excessive bottom spacing
-    <section ref={ref} className="relative h-[105vh] w-full bg-white dark:bg-black transition-colors duration-500">
+    // Reduced height to 90vh to fix excessive bottom spacing
+    <section ref={ref} className="relative h-[90vh] w-full bg-white dark:bg-black transition-colors duration-500">
       
       {/* Sticky Background Visual */}
       <div className="sticky top-0 h-screen w-full overflow-hidden z-0">
