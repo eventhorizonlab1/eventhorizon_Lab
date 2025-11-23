@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
 import { Play, Radio, ArrowUpRight, X, ExternalLink } from 'lucide-react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
@@ -17,6 +17,18 @@ const getYouTubeId = (url: string | undefined) => {
 
 // --- VIDEO PLAYER MODAL ---
 const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ video, onClose }) => {
+    const [isIframeLoaded, setIsIframeLoaded] = useState(false);
+
+    useEffect(() => {
+        setIsIframeLoaded(false);
+        if (video) {
+            // Delay iframe loading to allow modal animation to complete smoothly
+            // This ensures "lazy loading" behavior relative to the UI interaction
+            const timer = setTimeout(() => setIsIframeLoaded(true), 400); 
+            return () => clearTimeout(timer);
+        }
+    }, [video]);
+
     if (!video) return null;
     const videoId = getYouTubeId(video.videoUrl);
 
@@ -42,7 +54,12 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
                     exit={{ scale: 0.9, y: 20 }}
                     className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10"
                 >
-                    {videoId ? (
+                    {!videoId ? (
+                        <div className="w-full h-full flex flex-col items-center justify-center text-white p-8 text-center bg-gray-900 relative z-10">
+                            <p className="text-lg font-bold mb-2">Vidéo non disponible</p>
+                            <p className="text-sm text-gray-400 mb-6">L'URL de la vidéo semble incorrecte.</p>
+                        </div>
+                    ) : isIframeLoaded ? (
                         <iframe
                             width="100%"
                             height="100%"
@@ -56,9 +73,17 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
                             className="absolute inset-0 w-full h-full"
                         ></iframe>
                     ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center text-white p-8 text-center bg-gray-900">
-                            <p className="text-lg font-bold mb-2">Vidéo non disponible</p>
-                            <p className="text-sm text-gray-400 mb-6">L'URL de la vidéo semble incorrecte.</p>
+                        <div className="absolute inset-0 w-full h-full bg-gray-900 flex items-center justify-center">
+                             {/* Placeholder with Thumbnail and Spinner */}
+                             <img 
+                                src={video.imageUrl} 
+                                alt={video.title} 
+                                className="absolute inset-0 w-full h-full object-cover opacity-50 blur-sm scale-105" 
+                             />
+                             <div className="relative z-10 flex flex-col items-center gap-3">
+                                 <div className="w-12 h-12 border-4 border-white/20 border-t-blue-500 rounded-full animate-spin"></div>
+                                 <span className="text-xs font-bold uppercase tracking-widest text-white/80">Chargement...</span>
+                             </div>
                         </div>
                     )}
                 </motion.div>
@@ -219,19 +244,21 @@ const VideoSection: React.FC = () => {
         </div>
 
 
-        {/* Section Header */}
-        <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-l-4 border-black dark:border-white pl-6">
-          <div>
-               <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white transition-colors duration-500">
-               {t('videos_title')}
-               </h2>
-               <p className="text-gray-500 text-base md:text-lg max-w-md">
-                 {t('videos_subtitle')}
-               </p>
+        {/* Section Header - Fixed Mobile Alignment */}
+        <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-12">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-l-4 border-black dark:border-white pl-6 -ml-4 md:ml-0">
+              <div>
+                  <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white transition-colors duration-500">
+                  {t('videos_title')}
+                  </h2>
+                  <p className="text-gray-500 text-base md:text-lg max-w-md">
+                    {t('videos_subtitle')}
+                  </p>
+              </div>
+              <a href="#" className="hidden md:flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:text-blue-500 transition-colors pb-1">
+                Voir tout <ArrowUpRight size={14} />
+              </a>
           </div>
-          <a href="#" className="hidden md:flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:text-blue-500 transition-colors pb-1">
-             Voir tout <ArrowUpRight size={14} />
-          </a>
         </div>
 
         {/* Featured Video - Margin Bottom 12 for consistency */}

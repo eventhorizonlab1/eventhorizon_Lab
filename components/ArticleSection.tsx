@@ -1,7 +1,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { ARTICLES } from '../constants';
-import { ArrowRight, ArrowLeft, FileText, X } from 'lucide-react';
+import { ArrowRight, ArrowLeft, FileText, X, Clock, Calendar } from 'lucide-react';
 import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion';
 import { Article } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
@@ -48,13 +48,17 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
 
     // Split content by newlines to create paragraphs
     const paragraphs = contentText.split('\n\n');
+    
+    // Calculate estimated reading time (avg 200 words per minute)
+    const wordCount = contentText.split(/\s+/).length;
+    const readTime = Math.max(1, Math.ceil(wordCount / 200));
 
     return (
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-end md:items-center justify-center bg-black/80 backdrop-blur-md p-0 md:p-6"
+            className="fixed inset-0 z-[100] flex items-end md:items-center justify-center bg-black/90 backdrop-blur-md p-0 md:p-6"
             onClick={onClose}
         >
             <motion.div
@@ -62,58 +66,88 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className="bg-white dark:bg-[#111] w-full max-w-4xl h-[95vh] md:h-[90vh] rounded-t-3xl md:rounded-3xl overflow-hidden flex flex-col shadow-2xl relative"
+                className="bg-white dark:bg-[#0a0a0a] w-full max-w-4xl h-[95vh] md:h-[90vh] rounded-t-3xl md:rounded-3xl overflow-hidden flex flex-col shadow-2xl relative border border-gray-200 dark:border-white/10"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Close Button */}
                 <button 
                     onClick={onClose}
-                    className="absolute top-4 right-4 md:top-6 md:right-6 z-50 p-2 bg-black/20 dark:bg-white/10 hover:bg-black/40 dark:hover:bg-white/20 rounded-full text-white backdrop-blur-sm transition-colors"
+                    className="absolute top-4 right-4 md:top-6 md:right-6 z-50 p-2 bg-white/20 hover:bg-white/40 dark:bg-black/40 dark:hover:bg-black/60 backdrop-blur-md rounded-full text-black dark:text-white transition-colors border border-white/20"
                 >
                     <X size={24} />
                 </button>
 
                 {/* Header Image - Parallax feel */}
-                <div className="relative h-[35vh] md:h-[40vh] shrink-0">
-                    <img 
+                <div className="relative h-[35vh] md:h-[45vh] shrink-0 overflow-hidden">
+                    <motion.img 
+                        initial={{ scale: 1.1 }}
+                        animate={{ scale: 1 }}
+                        transition={{ duration: 1.5 }}
                         src={article.imageUrl} 
                         alt={title}
                         className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#111] to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#0a0a0a] via-transparent to-black/30"></div>
                     
                     <div className="absolute bottom-0 left-0 w-full p-6 md:p-10">
-                        <span className="inline-block px-3 py-1 bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest mb-4 rounded-full shadow-lg">
-                            Article
-                        </span>
-                        <h2 className="text-2xl md:text-5xl font-sans font-extrabold leading-tight text-black dark:text-white drop-shadow-sm mb-2">
+                        <motion.span 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="inline-flex items-center gap-2 px-3 py-1 bg-blue-600/90 text-white text-[10px] font-bold uppercase tracking-widest mb-4 rounded-full shadow-lg backdrop-blur-sm"
+                        >
+                            <FileText size={12} />
+                            Editorial
+                        </motion.span>
+                        <motion.h2 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="text-2xl md:text-5xl font-sans font-extrabold leading-tight text-black dark:text-white drop-shadow-sm mb-4 max-w-3xl"
+                        >
                             {title}
-                        </h2>
-                        <div className="flex items-center gap-4 text-sm font-medium text-gray-600 dark:text-gray-400">
-                             <span className="uppercase tracking-widest">{date}</span>
-                             <span className="w-1 h-1 bg-current rounded-full"></span>
-                             <span>Event Horizon Editorial</span>
-                        </div>
+                        </motion.h2>
+                        
+                        <motion.div 
+                             initial={{ opacity: 0 }}
+                             animate={{ opacity: 1 }}
+                             transition={{ delay: 0.4 }}
+                             className="flex flex-wrap items-center gap-4 text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300"
+                        >
+                             <div className="flex items-center gap-2 bg-white/50 dark:bg-black/50 px-3 py-1 rounded-full backdrop-blur-md border border-gray-200 dark:border-white/10">
+                                <Calendar size={14} />
+                                <span className="uppercase tracking-widest">{date}</span>
+                             </div>
+                             <div className="flex items-center gap-2 bg-white/50 dark:bg-black/50 px-3 py-1 rounded-full backdrop-blur-md border border-gray-200 dark:border-white/10">
+                                <Clock size={14} />
+                                <span>{readTime} min read</span>
+                             </div>
+                        </motion.div>
                     </div>
                 </div>
 
                 {/* Content Body - Scrollable */}
-                <div className="flex-1 overflow-y-auto px-6 md:px-10 py-8 custom-scrollbar">
-                    <div className="prose prose-lg dark:prose-invert max-w-none">
-                        <p className="font-serif text-xl md:text-2xl leading-relaxed text-gray-800 dark:text-gray-200 first-letter:text-5xl first-letter:font-bold first-letter:mr-1 first-letter:float-left mb-8">
-                            {paragraphs[0]}
-                        </p>
-                        {paragraphs.slice(1).map((para, idx) => (
-                            <p key={idx} className="font-serif text-lg leading-loose text-gray-600 dark:text-gray-300 mb-6">
-                                {para}
+                <div className="flex-1 overflow-y-auto px-6 md:px-12 py-8 custom-scrollbar bg-white dark:bg-[#0a0a0a]">
+                    <div className="max-w-3xl mx-auto">
+                        <div className="prose prose-lg dark:prose-invert max-w-none">
+                            {/* Drop cap for first paragraph */}
+                            <p className="font-serif text-xl md:text-2xl leading-relaxed text-gray-900 dark:text-gray-100 mb-8 first-letter:text-6xl first-letter:font-bold first-letter:mr-3 first-letter:float-left first-letter:text-blue-600 dark:first-letter:text-blue-500">
+                                {paragraphs[0]}
                             </p>
-                        ))}
-                    </div>
+                            
+                            {paragraphs.slice(1).map((para, idx) => (
+                                <p key={idx} className="font-serif text-lg leading-loose text-gray-700 dark:text-gray-300 mb-6 text-justify">
+                                    {para}
+                                </p>
+                            ))}
+                        </div>
 
-                    <div className="mt-12 pt-12 border-t border-gray-200 dark:border-white/10 flex justify-center">
-                        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
-                            *** Fin de transmission ***
-                        </p>
+                        <div className="mt-16 pt-12 border-t border-gray-100 dark:border-white/10 flex flex-col items-center gap-4">
+                            <div className="w-16 h-1 bg-blue-600 rounded-full"></div>
+                            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
+                                *** Fin de transmission ***
+                            </p>
+                        </div>
                     </div>
                 </div>
             </motion.div>
@@ -132,13 +166,13 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={cardVariants}
-      className="snap-start shrink-0 w-[85vw] md:w-[360px] h-[520px]"
+      className="snap-start shrink-0 w-[85vw] md:w-[380px] h-[520px]"
       onClick={() => onClick(article)}
     >
-        <div className="group cursor-pointer h-full relative overflow-hidden rounded-xl bg-black shadow-lg hover:shadow-2xl transition-all duration-500">
+        <div className="group cursor-pointer h-full relative overflow-hidden rounded-[1.5rem] bg-black shadow-lg hover:shadow-2xl transition-all duration-500 border border-white/10">
           
           {/* Background Image - Full Magazine Cover Style */}
-          <div className="absolute inset-0 w-full h-full transform transition-transform duration-1000 group-hover:scale-110">
+          <div className="absolute inset-0 w-full h-full transform transition-transform duration-1000 group-hover:scale-105">
              <div className="absolute inset-0 bg-gray-900 animate-pulse" /> {/* Placeholder */}
              <img 
                 src={article.imageUrl} 
@@ -149,19 +183,20 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
              />
           </div>
           
-          {/* Subtle Overlay for Text Readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-80"></div>
+          {/* Refined Subtle Overlay for Text Readability */}
+          {/* Slightly darker gradient for better text contrast with larger font */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-95"></div>
 
           {/* Top Metadata - Magazine Date Line */}
           <div className="absolute top-8 left-8 z-20">
              <div className="flex items-center gap-3 text-white/80 group-hover:text-white transition-colors">
-                <span className="w-8 h-[2px] bg-white/60 group-hover:bg-white transition-colors"></span>
+                <span className="w-8 h-[2px] bg-white/60 group-hover:bg-blue-500 transition-colors duration-300"></span>
                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] shadow-black drop-shadow-md">{article.date}</span>
              </div>
           </div>
 
           {/* Bottom Content */}
-          <div className="absolute bottom-0 left-0 w-full p-8 z-20 flex flex-col justify-end h-full">
+          <div className="absolute bottom-0 left-0 w-full p-8 z-20 flex flex-col justify-end h-full pointer-events-none">
              <div className="transform transition-transform duration-500 translate-y-8 group-hover:translate-y-0">
                 
                 {/* Tag Pill - Appears on Hover */}
@@ -172,7 +207,8 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
                     </span>
                 </div>
 
-                <h3 className="text-2xl md:text-3xl font-sans font-extrabold leading-[1.1] mb-2 text-white drop-shadow-lg">
+                {/* Enhanced Title - Larger and Bolder */}
+                <h3 className="text-4xl md:text-5xl font-sans font-black leading-[0.95] mb-4 text-white drop-shadow-xl line-clamp-3 group-hover:line-clamp-none transition-all tracking-tighter">
                   {title}
                 </h3>
                 
@@ -182,10 +218,10 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
                         <p className="text-gray-300 text-sm font-medium leading-relaxed border-t border-white/20 pt-4 mb-5">
                         {summary}
                         </p>
-                        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white group/btn">
+                        <button className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white group/btn hover:text-blue-400 transition-colors pointer-events-auto">
                             {t('article_read_more')} 
                             <ArrowRight size={14} className="group-hover/btn:translate-x-2 transition-transform duration-300" />
-                        </div>
+                        </button>
                     </div>
                 </div>
              </div>
