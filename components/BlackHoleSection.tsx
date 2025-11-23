@@ -814,21 +814,17 @@ const BlackHoleSection: React.FC = () => {
   return (
     <motion.section 
       id="blackhole" 
-      className="py-16 md:py-24 px-4 md:px-12 max-w-[1800px] mx-auto"
+      className="py-16 md:py-24 max-w-[1800px] mx-auto"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.8, ease: "easeOut" }}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start px-4 md:px-12">
         
         {/* Left: Controls & Info */}
         <div className="lg:col-span-4 sticky top-24">
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-4 text-orange-500">
-                <Disc size={32} strokeWidth={1.5} className="animate-spin-slow" />
-                <span className="text-xs font-bold uppercase tracking-[0.2em]">Astrophysics Sim</span>
-            </div>
+          <div className="mb-8 border-l-4 border-black dark:border-white pl-6 -ml-4 md:-ml-12">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white transition-colors">
               {t('bh_title')}
             </h2>

@@ -149,8 +149,7 @@ const VideoSection: React.FC = () => {
 
       <motion.section 
         id="videos" 
-        // Harmonized padding to pt-24 to be consistent with other sections
-        className="pt-24 pb-24 px-4 md:px-12 max-w-[1800px] mx-auto"
+        className="pt-24 pb-24" // Removed global padding here to handle mobile full-width banner
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
@@ -158,71 +157,75 @@ const VideoSection: React.FC = () => {
       >
         
         {/* YouTube Channel Promotion Banner - Margin Bottom 12 for consistency */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-12 relative overflow-hidden rounded-none md:rounded-3xl bg-gray-50 dark:bg-[#080808] text-black dark:text-white border-y md:border border-gray-200 dark:border-white/10 shadow-sm transition-colors duration-500"
-        >
-           {/* Background Tech Grid */}
-           <div className="absolute inset-0 z-0 pointer-events-none opacity-30">
-              <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.1)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
-           </div>
+        <div className="max-w-[1800px] mx-auto md:px-12">
+            <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-12 relative overflow-hidden rounded-none md:rounded-3xl bg-gray-50 dark:bg-[#080808] text-black dark:text-white border-y md:border border-gray-200 dark:border-white/10 shadow-sm transition-colors duration-500"
+            >
+            {/* Background Tech Grid */}
+            <div className="absolute inset-0 z-0 pointer-events-none opacity-30">
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.1)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+            </div>
 
-           <div className="relative z-10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-8">
-              
-              <div className="flex flex-row items-center gap-6 w-full md:w-auto">
-                 {/* Technical Logo Placeholder */}
-                 <div className="hidden md:flex w-16 h-16 border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 items-center justify-center rounded-lg">
-                    <Radio className="w-6 h-6 text-black dark:text-white opacity-80" />
-                 </div>
-                 
-                 <div className="flex flex-col">
-                    <div className="flex items-center gap-2 mb-2">
-                       <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                       <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">Transmission Entrante</span>
+            <div className="relative z-10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-8">
+                
+                <div className="flex flex-row items-center gap-6 w-full md:w-auto">
+                    {/* Technical Logo Placeholder */}
+                    <div className="hidden md:flex w-16 h-16 border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 items-center justify-center rounded-lg">
+                        <Radio className="w-6 h-6 text-black dark:text-white opacity-80" />
                     </div>
-                    <h2 className="text-xl md:text-3xl font-bold tracking-tighter uppercase text-black dark:text-white">
-                      {t('videos_channel')}
-                    </h2>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 max-w-md mt-2 font-medium">
-                      {t('videos_channel_desc')}
-                    </p>
-                 </div>
-              </div>
-              
-              {/* Right Side CTA */}
-              <a 
-                href="https://www.youtube.com/results?search_query=cnes" 
-                target="_blank"
-                rel="noreferrer"
-                className="group relative px-6 py-3 bg-transparent border border-black dark:border-white text-black dark:text-white overflow-hidden transition-all hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black w-full md:w-auto text-center rounded-md"
-              >
-                <div className="relative flex items-center justify-center gap-3">
-                  <span className="font-bold text-xs tracking-[0.2em] uppercase">{t('videos_access')}</span>
-                  <ArrowUpRight size={14} />
+                    
+                    <div className="flex flex-col">
+                        <div className="flex items-center gap-2 mb-2">
+                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                        <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">Transmission Entrante</span>
+                        </div>
+                        <h2 className="text-xl md:text-3xl font-bold tracking-tighter uppercase text-black dark:text-white">
+                        {t('videos_channel')}
+                        </h2>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 max-w-md mt-2 font-medium">
+                        {t('videos_channel_desc')}
+                        </p>
+                    </div>
                 </div>
-              </a>
+                
+                {/* Right Side CTA */}
+                <a 
+                    href="https://www.youtube.com/results?search_query=cnes" 
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group relative px-6 py-3 bg-transparent border border-black dark:border-white text-black dark:text-white overflow-hidden transition-all hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black w-full md:w-auto text-center rounded-md"
+                >
+                    <div className="relative flex items-center justify-center gap-3">
+                    <span className="font-bold text-xs tracking-[0.2em] uppercase">{t('videos_access')}</span>
+                    <ArrowUpRight size={14} />
+                    </div>
+                </a>
 
-           </div>
-        </motion.div>
+            </div>
+            </motion.div>
+        </div>
 
 
-        {/* Section Header - Margin Bottom 12 for consistency */}
-        <div className="mb-12 flex items-end justify-between border-b border-gray-200 dark:border-gray-800 pb-6">
+        {/* Section Header */}
+        <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-12 flex flex-col md:flex-row justify-between items-end gap-6 border-l-4 border-black dark:border-white pl-6">
           <div>
-               <span className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-2 block">Médiathèque</span>
-               <h2 className="text-3xl md:text-5xl font-bold tracking-tighter text-black dark:text-white transition-colors duration-500">
+               <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white transition-colors duration-500">
                {t('videos_title')}
                </h2>
+               <p className="text-gray-500 text-base md:text-lg max-w-md">
+                 {t('videos_subtitle')}
+               </p>
           </div>
-          <a href="#" className="hidden md:flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:text-blue-500 transition-colors">
-            {t('videos_subtitle')} <ArrowUpRight size={14} />
+          <a href="#" className="hidden md:flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:text-blue-500 transition-colors pb-1">
+             Voir tout <ArrowUpRight size={14} />
           </a>
         </div>
 
         {/* Featured Video - Margin Bottom 12 for consistency */}
-        <div className="mb-12" ref={featuredRef}>
+        <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-12" ref={featuredRef}>
           <motion.div 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -263,13 +266,13 @@ const VideoSection: React.FC = () => {
         </div>
 
         {/* Grid Layout - 10 Videos */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
+        <div className="max-w-[1800px] mx-auto px-4 md:px-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
           {VIDEOS.map((video, index) => (
             <VideoCard key={video.id} video={video} index={index} onPlay={setSelectedVideo} />
           ))}
         </div>
         
-        <div className="mt-16 text-center md:hidden">
+        <div className="max-w-[1800px] mx-auto px-4 md:px-12 mt-16 text-center md:hidden">
           <a href="#" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest border-b border-black dark:border-white pb-1">
             {t('videos_subtitle')} <ArrowUpRight size={14} />
           </a>

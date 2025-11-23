@@ -102,9 +102,8 @@ const ArticleSection: React.FC = () => {
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
     >
-      <div className="px-4 md:px-12 max-w-[1800px] mx-auto mb-12 flex flex-col md:flex-row justify-between items-end gap-8">
+      <div className="px-4 md:px-12 max-w-[1800px] mx-auto mb-12 flex flex-col md:flex-row justify-between items-end gap-8 border-l-4 border-black dark:border-white pl-6">
         <div>
-          <span className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">Publications</span>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white">
             {t('articles_title')}
           </h2>
@@ -113,7 +112,7 @@ const ArticleSection: React.FC = () => {
           </p>
         </div>
         
-        <div className="hidden md:flex gap-2">
+        <div className="hidden md:flex gap-2 pb-2">
           <button onClick={() => scroll('left')} className="p-3 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black text-black dark:text-white transition-colors rounded-full">
             <ArrowLeft size={20} />
           </button>
