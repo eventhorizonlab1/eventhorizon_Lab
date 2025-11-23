@@ -1,6 +1,7 @@
+
 import { Video, Article, Partner } from './types';
 
-// Removed History, Studio and Oracle as requested
+// Navigation simplifiée : Vidéos, Articles, Écosystème
 export const NAV_LINKS = [
   { label: 'Vidéos', href: '#videos', key: 'nav_videos' },
   { label: 'Articles', href: '#articles', key: 'nav_articles' },
@@ -12,7 +13,7 @@ export const FEATURED_VIDEO: Video = {
   title: 'Cap sur 2025 : Les Vœux du CNES',
   category: 'INSTITUTIONNEL',
   duration: '01:08',
-  imageUrl: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80', // Earth Orbit
+  imageUrl: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80', // Earth Orbit (Safe)
   videoUrl: 'https://youtu.be/2FF0SRT7NW8?si=2XuKZ5DpK6Iqz0s7'
 };
 
@@ -22,7 +23,8 @@ export const VIDEOS: Video[] = [
     title: 'Décollage réussi pour JUICE', 
     category: 'EXPLORATION', 
     duration: '04:12', 
-    imageUrl: 'https://images.unsplash.com/photo-1614730341194-75c6074065db?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Jupiter
+    // Nouvelle image de lancement de fusée pour correspondre au "Décollage"
+    imageUrl: 'https://images.unsplash.com/photo-1541185933-710694998292?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 
     videoUrl: 'https://www.youtube.com/watch?v=M9jM_w0Yh9I' 
   },
   { 
@@ -30,7 +32,8 @@ export const VIDEOS: Video[] = [
     title: 'SWOT : L\'eau vue de l\'espace', 
     category: 'CLIMAT', 
     duration: '03:45', 
-    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Tech/Satellite View
+    // Vue de la Terre depuis l'espace pour correspondre au sujet
+    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 
     videoUrl: 'https://www.youtube.com/watch?v=g7zFqO0sBqE'
   },
   { 
@@ -173,8 +176,6 @@ export const PARTNERS: Partner[] = [
 export const MILESTONES = [
   { year: '1961' },
   { year: '1979' },
-  { year: '2004' },
   { year: '2014' },
   { year: '2021' },
-  { year: '2024' }
 ];

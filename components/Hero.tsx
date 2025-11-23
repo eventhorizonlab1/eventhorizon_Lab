@@ -370,36 +370,39 @@ const Hero: React.FC = () => {
   const { t, theme } = useThemeLanguage();
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start start", "end start"] // Tracks the scroll of the hero section itself
+    offset: ["start start", "end start"]
   });
 
-  // --- CINEMATIC ZOOM EFFECT ---
-  // Text scales UP towards viewer while blurring out, simulating moving INTO the content.
-  const scale = useTransform(scrollYProgress, [0, 0.4], [1, 1.2]); 
-  const opacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
-  const blur = useTransform(scrollYProgress, [0, 0.3], ["0px", "12px"]);
-  const y = useTransform(scrollYProgress, [0, 0.4], [0, 100]);
+  // Shared Exit Effects for "zooming in" transition
+  const opacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+  const blur = useTransform(scrollYProgress, [0, 0.4], ["0px", "12px"]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.15]);
+
+  // Staggered Parallax for Depth
+  // By applying different Y translation speeds, we separate the layers visually during scroll.
+  const yTitle = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const ySubtitle = useTransform(scrollYProgress, [0, 1], [0, 250]);
+  const yCTA = useTransform(scrollYProgress, [0, 1], [0, 350]);
 
   return (
-    // Reduced height to 90vh to fix excessive bottom spacing
     <section ref={ref} className="relative h-[90vh] w-full bg-white dark:bg-black transition-colors duration-500">
       
       {/* Sticky Background Visual */}
       <div className="sticky top-0 h-screen w-full overflow-hidden z-0">
         
-        {/* The Monochrome Black Hole Shader */}
         <BlackHoleBackground theme={theme} />
 
-        {/* Overlay for text readability - Adaptive Gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-white/90 dark:from-black/30 dark:via-transparent dark:to-black/80 z-10 pointer-events-none transition-colors duration-500"></div>
         
-        {/* Content Container - Now fixed within the sticky viewport for parallax */}
+        {/* Content Container */}
         <div className="absolute inset-0 flex flex-col items-center justify-center px-4 z-20 pointer-events-none">
-           <motion.div 
-              style={{ opacity, scale, filter: blur, y }}
-              className="text-center max-w-[95vw] md:max-w-7xl flex flex-col items-center pointer-events-auto"
-           >
-              <div 
+           
+           {/* Static container layout, animating children independently for parallax */}
+           <div className="text-center max-w-[95vw] md:max-w-7xl flex flex-col items-center pointer-events-auto">
+              
+              {/* TITLE LAYER (Slowest) */}
+              <motion.div 
+                style={{ opacity, scale, filter: blur, y: yTitle }}
                 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.0] md:leading-[0.9] mb-8 md:mb-12 flex flex-col items-center w-full drop-shadow-lg text-black dark:text-white dark:mix-blend-overlay dark:opacity-90"
               >
                 <div className="block w-full">
@@ -408,18 +411,29 @@ const Hero: React.FC = () => {
                 <div className="block w-full">
                   <AnimatedText text={t('hero_line2')} className="md:mt-2 lg:mt-4" />
                 </div>
-              </div>
+              </motion.div>
 
+              {/* SUBTITLE LAYER (Medium Speed) */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.5, duration: 1 }}
-                className="flex flex-col items-center gap-6"
+                transition={{ delay: 1.2, duration: 1, ease: "easeOut" }}
+                style={{ opacity, scale, filter: blur, y: ySubtitle }}
+                className="w-full"
               >
                 <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-lg mx-auto font-bold drop-shadow-md mix-blend-multiply dark:mix-blend-screen">
                   {t('hero_subtitle')}
                 </p>
-                
+              </motion.div>
+              
+              {/* CTA & SCROLL LAYER (Fastest) */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.5, duration: 1, ease: "easeOut" }}
+                style={{ opacity, scale, filter: blur, y: yCTA }}
+                className="flex flex-col items-center mt-8 md:mt-12 gap-8"
+              >
                 <a 
                   href="#videos" 
                   className="group flex items-center gap-3 px-8 py-4 bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 text-black dark:text-white rounded-full text-sm font-bold tracking-widest uppercase hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all hover:scale-105 shadow-lg shadow-black/5 dark:shadow-white/5 z-30"
@@ -431,13 +445,13 @@ const Hero: React.FC = () => {
                 <motion.div 
                   animate={{ y: [0, 10, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="mt-8 md:mt-12 text-black/30 dark:text-white/30 text-xs font-bold uppercase tracking-widest flex flex-col items-center gap-2"
+                  className="text-black/30 dark:text-white/30 text-xs font-bold uppercase tracking-widest flex flex-col items-center gap-2"
                 >
                   <span>{t('hero_scroll')}</span>
                   <div className="w-px h-12 bg-gradient-to-b from-black/20 to-transparent dark:from-white/50 dark:to-transparent"></div>
                 </motion.div>
               </motion.div>
-           </motion.div>
+           </div>
         </div>
       </div>
     </section>

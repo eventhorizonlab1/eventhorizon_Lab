@@ -1,3 +1,5 @@
+
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export type Language = string;
@@ -112,13 +114,29 @@ const translations: Translations = {
   // --- ECOSYSTEM ---
   ecosystem_title: { fr: "L'Écosystème Toulousain", en: "The Toulouse Ecosystem", de: "Das Ökosystem von Toulouse", es: "El Ecosistema de Toulouse", it: "L'Ecosistema di Tolosa" },
   ecosystem_subtitle: { fr: "Les acteurs majeurs qui façonnent l'avenir depuis la ville rose.", en: "Major players shaping the future from the Pink City.", de: "Wichtige Akteure, die die Zukunft gestalten.", es: "Actores clave que dan forma al futuro.", it: "Attori chiave che plasmano il futuro." },
-  ecosystem_view: { fr: "Voir le profil", en: "View profile", de: "Profil ansehen", es: "Ver perfil", it: "Vedi profilo" },
+  ecosystem_view: { fr: "Voir le profil", en: "View profile", de: "Profil ansehen", es: "Profil ansehen", it: "Vedi profilo" },
   
   partner_p1_role: { fr: 'Agence Spatiale', en: 'Space Agency', de: 'Raumfahrtagentur', es: 'Agencia Espacial', it: 'Agenzia Spaziale' },
   partner_p2_role: { fr: 'Constructeur', en: 'Manufacturer', de: 'Hersteller', es: 'Fabricante', it: 'Costruttore' },
   partner_p3_role: { fr: 'Satellites', en: 'Satellites', de: 'Satelliten', es: 'Satélites', it: 'Satelliti' },
   partner_p4_role: { fr: 'Excellence', en: 'Excellence', de: 'Exzellenz', es: 'Excelencia', it: 'Eccellenza' },
   partner_p5_role: { fr: 'Culture', en: 'Culture', de: 'Kultur', es: 'Cultura', it: 'Cultura' },
+
+  // --- TIMELINE ---
+  hero_history_title: { fr: 'Notre Histoire', en: 'Our History', de: 'Unsere Geschichte', es: 'Nuestra Historia', it: 'La Nostra Storia' },
+  hero_history_sub: { fr: "L'héritage de l'exploration spatiale européenne", en: "The legacy of European space exploration", de: "Das Erbe der europäischen Weltraumforschung", es: "El legado de la exploración espacial europea", it: "L'eredità dell'esplorazione spaziale europea" },
+  
+  milestone_0_title: { fr: "Création du CNES", en: "Creation of CNES", de: "Gründung des CNES", es: "Creación del CNES", it: "Creazione del CNES" },
+  milestone_0_desc: { fr: "Fondation de l'agence spatiale française par le Général de Gaulle.", en: "Foundation of the French space agency by General de Gaulle.", de: "Gründung der französischen Raumfahrtagentur durch General de Gaulle.", es: "Fundación de la agencia espacial francesa por el General de Gaulle.", it: "Fondazione dell'agenzia spaziale francese da parte del Generale de Gaulle." },
+  
+  milestone_1_title: { fr: "Premier vol Ariane", en: "First Ariane Flight", de: "Erster Ariane-Flug", es: "Primer vuelo de Ariane", it: "Primo volo Ariane" },
+  milestone_1_desc: { fr: "L'Europe gagne son accès indépendant à l'espace avec Ariane 1.", en: "Europe gains independent access to space with Ariane 1.", de: "Europa erhält mit Ariane 1 unabhängigen Zugang zum Weltraum.", es: "Europa obtiene acceso independiente al espacio con Ariane 1.", it: "L'Europa ottiene accesso indipendente allo spazio con Ariane 1." },
+  
+  milestone_2_title: { fr: "Mission Rosetta", en: "Rosetta Mission", de: "Rosetta-Mission", es: "Misión Rosetta", it: "Missione Rosetta" },
+  milestone_2_desc: { fr: "Première atterrissage sur une comète avec le robot Philae.", en: "First landing on a comet with the Philae lander.", de: "Erste Landung auf einem Kometen mit dem Lander Philae.", es: "Primer aterrizaje en un cometa con el módulo Philae.", it: "Primo atterraggio su una cometa con il lander Philae." },
+  
+  milestone_3_title: { fr: "Station Spatiale (ISS)", en: "Space Station (ISS)", de: "Raumstation (ISS)", es: "Estación Espacial (ISS)", it: "Stazione Spaziale (ISS)" },
+  milestone_3_desc: { fr: "Thomas Pesquet prend le commandement de l'ISS.", en: "Thomas Pesquet takes command of the ISS.", de: "Thomas Pesquet übernimmt das Kommando über die ISS.", es: "Thomas Pesquet asume el mando de la ISS.", it: "Thomas Pesquet assume il comando della ISS." },
 
   // --- BLACK HOLE SIM ---
   bh_title: { fr: 'Singularité', en: 'Singularity', de: 'Singularität', es: 'Singularidad', it: 'Singolarità' },
@@ -148,28 +166,6 @@ const translations: Translations = {
   footer_rights: { fr: 'Tous droits réservés.', en: 'All rights reserved.', de: 'Alle Rechte vorbehalten.', es: 'Todos los derechos reservados.', it: 'Tutti i diritti riservati.' },
   footer_legal: { fr: 'Mentions Légales', en: 'Legal Notice', de: 'Impressum', es: 'Aviso Legal', it: 'Note Legali' },
   footer_privacy: { fr: 'Confidentialité', en: 'Privacy Policy', de: 'Datenschutz', es: 'Privacidad', it: 'Privacy' },
-
-  // --- TIMELINE TRANSLATIONS (Kept in file but unused in UI as per request to remove section) ---
-  hero_history_title: { fr: 'Notre Héritage', en: 'Our Legacy', de: 'Unser Erbe', es: 'Nuestro Legado', it: 'La Nostra Eredità' },
-  hero_history_sub: { fr: 'Les grandes dates du spatial européen', en: 'Key dates in European space history', de: 'Schlüsseldaten der europäischen Raumfahrt', es: 'Fechas clave de la historia espacial europea', it: 'Date chiave della storia spaziale europea' },
-
-  milestone_0_title: { fr: 'Création du CNES', en: 'CNES Creation', de: 'Gründung des CNES', es: 'Creación del CNES', it: 'Creazione del CNES' },
-  milestone_0_desc: { fr: "Le Général de Gaulle fonde l'agence spatiale française.", en: "General de Gaulle founds the French space agency.", de: "General de Gaulle gründet die französische Raumfahrtagentur.", es: "El General de Gaulle funda la agencia espacial francesa.", it: "Il Generale de Gaulle fonda l'agenzia spaziale francese." },
-
-  milestone_1_title: { fr: 'Premier vol Ariane 1', en: 'First Ariane 1 Flight', de: 'Erster Ariane 1 Flug', es: 'Primer vuelo de Ariane 1', it: 'Primo volo Ariane 1' },
-  milestone_1_desc: { fr: "L'Europe acquiert son indépendance d'accès à l'espace.", en: "Europe gains independent access to space.", de: "Europa erlangt unabhängigen Zugang zum Weltraum.", es: "Europa gana acceso independiente al espacio.", it: "L'Europa ottiene accesso indipendente allo spazio." },
-
-  milestone_2_title: { fr: 'Mission Rosetta', en: 'Rosetta Mission', de: 'Rosetta Mission', es: 'Misión Rosetta', it: 'Missione Rosetta' },
-  milestone_2_desc: { fr: "Première sonde en orbite autour d'une comète.", en: "First probe to orbit a comet.", de: "Erste Sonde im Orbit um einen Kometen.", es: "Primera sonda en orbitar un cometa.", it: "Prima sonda in orbita attorno a una cometa." },
-
-  milestone_3_title: { fr: 'Atterrissage de Philae', en: 'Philae Landing', de: 'Philae Landung', es: 'Aterrizaje de Philae', it: 'Atterraggio di Philae' },
-  milestone_3_desc: { fr: "Exploit historique sur la comète 67P.", en: "Historic feat on comet 67P.", de: "Historische Leistung auf Komet 67P.", es: "Hazaña histórica en el cometa 67P.", it: "Impresa storica sulla cometa 67P." },
-
-  milestone_4_title: { fr: 'Lancement JWST', en: 'JWST Launch', de: 'JWST Start', es: 'Lanzamiento JWST', it: 'Lancio JWST' },
-  milestone_4_desc: { fr: "Ariane 5 lance le plus grand télescope spatial.", en: "Ariane 5 launches the largest space telescope.", de: "Ariane 5 startet das größte Weltraumteleskop.", es: "Ariane 5 lanza el telescopio espacial más grande.", it: "Ariane 5 lancia il più grande telescopio spaziale." },
-
-  milestone_5_title: { fr: 'Ariane 6', en: 'Ariane 6', de: 'Ariane 6', es: 'Ariane 6', it: 'Ariane 6' },
-  milestone_5_desc: { fr: "La nouvelle ère des lanceurs européens.", en: "The new era of European launchers.", de: "Die neue Ära der europäischen Trägerraketen.", es: "La nueva era de los lanzadores europeos.", it: "La nuova era dei lanciatori europei." },
 };
 
 interface ThemeLanguageContextType {

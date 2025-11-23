@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import { PARTNERS } from '../constants';
 import { motion, useScroll, useTransform } from 'framer-motion';

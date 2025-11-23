@@ -1,3 +1,4 @@
+
 import React, { useRef, useState } from 'react';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
 import { Play, Radio, ArrowUpRight, X, Loader2 } from 'lucide-react';
@@ -93,6 +94,9 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
               alt={title} 
               loading="lazy"
               referrerPolicy="no-referrer"
+              onError={(e) => {
+                e.currentTarget.src = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+              }}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
             />
             <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm text-white text-[10px] font-mono px-2 py-0.5 rounded-md border border-white/10">
@@ -233,6 +237,9 @@ const VideoSection: React.FC = () => {
                   alt={featuredTitle} 
                   loading="lazy"
                   referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80';
+                  }}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
                 />
               </motion.div>

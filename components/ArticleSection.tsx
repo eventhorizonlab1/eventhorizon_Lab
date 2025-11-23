@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import { ARTICLES } from '../constants';
 import { ArrowRight, ArrowLeft, FileText } from 'lucide-react';
@@ -28,47 +29,54 @@ const ArticleCard: React.FC<{ article: Article }> = ({ article }) => {
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={cardVariants}
-      className="snap-start shrink-0 w-[85vw] md:w-[380px] h-full"
+      className="snap-start shrink-0 w-[85vw] md:w-[340px] h-[480px]"
     >
-        <div className="group cursor-pointer h-full flex flex-col p-6 md:p-8 bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 hover:border-black dark:hover:border-white transition-colors duration-300 relative overflow-hidden">
+        <div className="group cursor-pointer h-full relative overflow-hidden rounded-2xl border border-gray-200 dark:border-white/10 shadow-md hover:shadow-xl transition-all duration-500 bg-gray-900">
           
-          {/* Decorative Accent */}
-          <div className="absolute top-0 left-0 w-1 h-full bg-gray-200 dark:bg-white/10 group-hover:bg-blue-600 dark:group-hover:bg-blue-500 transition-colors duration-300"></div>
+          {/* Background Image */}
+          <div className="absolute inset-0 w-full h-full">
+             <div className="absolute inset-0 bg-gray-800 animate-pulse" /> {/* Loading placeholder behind image */}
+             <img 
+                src={article.imageUrl} 
+                alt={title} 
+                loading="lazy"
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90"
+             />
+          </div>
           
-          {/* Header */}
-          <div className="flex justify-between items-start mb-6 opacity-60">
-             <div className="flex items-center gap-2">
-                <FileText size={14} />
-                <span className="text-[10px] font-black uppercase tracking-widest">{article.date}</span>
+          {/* Gradient Overlay - Darker at bottom for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"></div>
+
+          {/* Top Tags */}
+          <div className="absolute top-4 right-4 z-20">
+             <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-white/90">
+                <FileText size={12} />
+                <span className="text-[10px] font-bold uppercase tracking-widest">{article.date}</span>
              </div>
-             <span className="text-[10px] font-mono border border-current px-1.5 py-0.5 rounded">DOC</span>
           </div>
 
-          {/* Content */}
-          <div className="flex-grow">
-            {/* Thumbnail for article (optional but adds to the visual) */}
-            <div className="w-full h-32 mb-4 overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-800">
-                <img 
-                  src={article.imageUrl} 
-                  alt={title} 
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100"
-                />
-            </div>
+          {/* Bottom Content */}
+          <div className="absolute bottom-0 left-0 w-full p-6 z-20 flex flex-col justify-end h-full translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+             <div className="mt-auto">
+                <h3 className="text-2xl font-serif font-bold leading-tight mb-3 text-white drop-shadow-md group-hover:text-blue-300 transition-colors">
+                  {title}
+                </h3>
+                
+                <div className="overflow-hidden transition-all duration-500 max-h-[0px] opacity-0 group-hover:max-h-[100px] group-hover:opacity-100">
+                    <p className="text-gray-300 text-sm font-medium leading-relaxed line-clamp-3 border-t border-white/20 pt-3 mb-4">
+                      {summary}
+                    </p>
+                </div>
 
-            <h3 className="text-xl md:text-2xl font-serif font-bold leading-tight mb-3 text-black dark:text-white group-hover:underline decoration-1 underline-offset-4 transition-all">
-              {title}
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm font-medium leading-relaxed line-clamp-3 border-t border-gray-200 dark:border-white/10 pt-4">
-              {summary}
-            </p>
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/80 group-hover:text-white transition-colors">
+                   {t('article_read_more')} <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform duration-300" />
+                </div>
+             </div>
           </div>
 
-          {/* Footer */}
-          <div className="mt-6 pt-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black dark:text-white group-hover:translate-x-2 transition-transform duration-300">
-             {t('article_read_more')} <ArrowRight size={14} />
-          </div>
+          {/* Hover Border Effect */}
+          <div className="absolute inset-0 border-2 border-transparent group-hover:border-blue-500/30 rounded-2xl transition-colors duration-500 pointer-events-none"></div>
         </div>
     </motion.div>
   );
@@ -81,7 +89,7 @@ const ArticleSection: React.FC = () => {
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
       const { current } = scrollContainerRef;
-      const scrollAmount = direction === 'left' ? -400 : 400;
+      const scrollAmount = direction === 'left' ? -360 : 360;
       current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
