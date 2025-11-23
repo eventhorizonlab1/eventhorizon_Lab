@@ -80,7 +80,7 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
     );
 };
 
-const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => void }> = ({ video, index, onPlay }) => {
+const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => void }> = React.memo(({ video, index, onPlay }) => {
   const { t } = useThemeLanguage();
   const title = t(`video_${video.id}_title`);
   const category = t(`video_${video.id}_cat`);
@@ -130,7 +130,7 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
       </div>
     </motion.div>
   );
-};
+});
 
 const VideoSection: React.FC = () => {
   const featuredRef = useRef<HTMLDivElement>(null);

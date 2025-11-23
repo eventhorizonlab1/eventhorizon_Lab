@@ -7,7 +7,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RefreshCw, Eye, Thermometer, Activity, Sun, Disc, Globe, Navigation, Layers, ZoomIn, Cpu } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 
 // --- INTERSTELLAR SHADERS ---
@@ -373,7 +373,8 @@ class BlackHoleSim {
             depth: false
         });
         this.renderer.setSize(container.clientWidth, container.clientHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        // Performance optimization: Limit pixel ratio
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 0.9; 
         container.appendChild(this.renderer.domElement);
@@ -381,8 +382,8 @@ class BlackHoleSim {
         this.clock = new THREE.Clock();
 
         this.backgroundRenderTarget = new THREE.WebGLRenderTarget(
-            container.clientWidth * Math.min(window.devicePixelRatio, 2),
-            container.clientHeight * Math.min(window.devicePixelRatio, 2),
+            container.clientWidth * Math.min(window.devicePixelRatio, 1.5),
+            container.clientHeight * Math.min(window.devicePixelRatio, 1.5),
             { 
                 type: THREE.HalfFloatType, 
                 minFilter: THREE.LinearFilter, 
@@ -593,7 +594,7 @@ class BlackHoleSim {
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(width, height);
         this.composer.setSize(width, height);
-        this.backgroundRenderTarget.setSize(width * Math.min(window.devicePixelRatio, 2), height * Math.min(window.devicePixelRatio, 2));
+        this.backgroundRenderTarget.setSize(width * Math.min(window.devicePixelRatio, 1.5), height * Math.min(window.devicePixelRatio, 1.5));
         if (this.lensingMaterial) this.lensingMaterial.uniforms.u_resolution.value.set(width, height);
     }
 
@@ -716,6 +717,8 @@ const BlackHoleSection: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const simRef = useRef<BlackHoleSim | null>(null);
   const { t, theme } = useThemeLanguage();
+  // Performance optimization: Check if in view
+  const isInView = useInView(containerRef);
   
   const [isLoading, setIsLoading] = useState(true);
   const [rotationSpeed, setRotationSpeed] = useState(0.3);
@@ -732,6 +735,11 @@ const BlackHoleSection: React.FC = () => {
       return () => clearTimeout(timer);
   }, []);
 
+  const paramsRef = useRef({ rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme });
+  useEffect(() => {
+      paramsRef.current = { rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme };
+  }, [rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme]);
+
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -742,13 +750,17 @@ const BlackHoleSection: React.FC = () => {
     
     const animate = () => {
         animationId = requestAnimationFrame(animate);
+        
+        // Performance optimization: Skip loop if not visible
+        if (!isInView && !isLoading) return;
+
         if (simRef.current) {
              simRef.current.update(sim.clock.getElapsedTime(), sim.clock.getDelta(), {
-                rotationSpeed,
-                bloomIntensity,
-                lensingStrength,
-                diskBrightness,
-                temperature,
+                rotationSpeed: paramsRef.current.rotationSpeed,
+                bloomIntensity: paramsRef.current.bloomIntensity,
+                lensingStrength: paramsRef.current.lensingStrength,
+                diskBrightness: paramsRef.current.diskBrightness,
+                temperature: paramsRef.current.temperature,
                 isLightMode: paramsRef.current.theme === 'light'
             });
         }
@@ -772,12 +784,7 @@ const BlackHoleSection: React.FC = () => {
             containerRef.current.innerHTML = '';
         }
     };
-  }, []);
-
-  const paramsRef = useRef({ rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme });
-  useEffect(() => {
-      paramsRef.current = { rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme };
-  }, [rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme]);
+  }, [isInView, isLoading]); // Re-bind if view changes
 
   const moveCamera = (position: 'orbit' | 'top' | 'side') => {
       if (!simRef.current) return;

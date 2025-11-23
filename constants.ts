@@ -9,11 +9,11 @@ export const NAV_LINKS = [
 ];
 
 export const FEATURED_VIDEO: Video = {
-  id: 'feat-1',
-  title: 'Lancement Ariane 6 : Sentinel-1D (VA265)',
+  id: 'feat_1', // Correction: feat_1 (underscore) to match translation key
+  title: '🚀 Ariane 6 : Le Retour du Géant Européen',
   category: 'LANCEURS',
   duration: 'Live',
-  imageUrl: 'https://images.unsplash.com/photo-1517976487492-5750f3195933?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80', // Rocket Launch Night
+  imageUrl: 'https://images.unsplash.com/photo-1614728853970-3027b9cb323d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80', // Ariane 5/6 on launchpad
   videoUrl: 'https://www.youtube.com/watch?v=ukoMgE_8heo'
 };
 

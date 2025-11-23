@@ -1,6 +1,6 @@
 
 import React, { useRef, useEffect } from 'react';
-import { motion, useScroll, useTransform, Variants } from 'framer-motion';
+import { motion, useScroll, useTransform, Variants, useInView } from 'framer-motion';
 import { Play } from 'lucide-react';
 import * as THREE from 'three';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
@@ -291,6 +291,8 @@ const AnimatedText = ({ text, className }: { text: string, className?: string })
 const BlackHoleBackground = ({ theme }: { theme: string }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
+  // Optimization: Detect if visible
+  const isInView = useInView(containerRef);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -305,7 +307,8 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
     });
     
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Performance: Limit pixel ratio to 1.5 to save GPU on high-DPI screens
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     container.appendChild(renderer.domElement);
 
     const material = new THREE.ShaderMaterial({
@@ -327,6 +330,10 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
     let animationId: number;
     const animate = () => {
       animationId = requestAnimationFrame(animate);
+      
+      // Performance: Skip rendering if not in viewport
+      if (!isInView) return;
+
       material.uniforms.u_time.value = clock.getElapsedTime();
       const targetLight = theme === 'light' ? 1.0 : 0.0;
       material.uniforms.u_is_light.value += (targetLight - material.uniforms.u_is_light.value) * 0.05;
@@ -343,6 +350,8 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
     };
 
     const handleMouseMove = (e: MouseEvent) => {
+        // Optimization: Only calculate mouse pos if visible
+        if (!isInView) return;
         mouseRef.current.x = (e.clientX / window.innerWidth) * 2 - 1;
         mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
     }
@@ -360,7 +369,7 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
             container.removeChild(renderer.domElement);
         }
     };
-  }, [theme]); 
+  }, [theme, isInView]); // Re-run effect if view status changes to ensure clean start/stop handling
 
   return <div ref={containerRef} className="absolute inset-0 w-full h-full z-0" />;
 };
@@ -379,13 +388,12 @@ const Hero: React.FC = () => {
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.15]);
 
   // Staggered Parallax for Depth
-  // By applying different Y translation speeds, we separate the layers visually during scroll.
   const yTitle = useTransform(scrollYProgress, [0, 1], [0, 150]);
   const ySubtitle = useTransform(scrollYProgress, [0, 1], [0, 250]);
   const yCTA = useTransform(scrollYProgress, [0, 1], [0, 350]);
 
   return (
-    <section ref={ref} className="relative h-[90vh] w-full bg-white dark:bg-black transition-colors duration-500">
+    <section ref={ref} className="relative h-[90vh] w-full bg-eh-black transition-colors duration-500">
       
       {/* Sticky Background Visual */}
       <div className="sticky top-0 h-screen w-full overflow-hidden z-0">

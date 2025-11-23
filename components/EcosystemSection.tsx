@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Partner } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 
-const PartnerCard: React.FC<{ partner: Partner; index: number }> = ({ partner, index }) => {
+const PartnerCard: React.FC<{ partner: Partner; index: number }> = React.memo(({ partner, index }) => {
   const ref = useRef<HTMLDivElement>(null);
   const { t } = useThemeLanguage();
   const { scrollYProgress } = useScroll({
@@ -58,7 +58,7 @@ const PartnerCard: React.FC<{ partner: Partner; index: number }> = ({ partner, i
       </motion.div>
     </motion.div>
   );
-}
+});
 
 const EcosystemSection: React.FC = () => {
   const { t } = useThemeLanguage();

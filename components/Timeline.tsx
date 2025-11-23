@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { MILESTONES } from '../constants';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 
-const TimelineItem: React.FC<{ data: typeof MILESTONES[0], index: number }> = ({ data, index }) => {
+const TimelineItem: React.FC<{ data: typeof MILESTONES[0], index: number }> = React.memo(({ data, index }) => {
   const isEven = index % 2 === 0;
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -86,7 +86,7 @@ const TimelineItem: React.FC<{ data: typeof MILESTONES[0], index: number }> = ({
        </motion.div>
     </div>
   );
-}
+});
 
 const Timeline: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);

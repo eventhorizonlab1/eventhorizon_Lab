@@ -1,6 +1,4 @@
 
-
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export type Language = string;
@@ -51,7 +49,7 @@ const translations: Translations = {
   videos_featured: { fr: 'À la une', en: 'Featured', de: 'Vorgestellt', es: 'Destacado', it: 'In evidenza' },
 
   // Video Content
-  video_feat_1_title: { fr: 'Lancement Ariane 6 : Sentinel-1D (VA265)', en: 'Ariane 6 Launch: Sentinel-1D (VA265)', de: 'Start Ariane 6: Sentinel-1D (VA265)', es: 'Lanzamiento Ariane 6: Sentinel-1D (VA265)', it: 'Lancio Ariane 6: Sentinel-1D (VA265)' },
+  video_feat_1_title: { fr: '🚀 Ariane 6 : Le Retour du Géant Européen', en: '🚀 Ariane 6: The Return of the European Giant', de: '🚀 Ariane 6: Die Rückkehr des europäischen Giganten', es: '🚀 Ariane 6: El Regreso del Gigante Europeo', it: '🚀 Ariane 6: Il Ritorno del Gigante Europeo' },
   video_feat_1_cat: { fr: 'LANCEURS', en: 'LAUNCHERS', de: 'TRÄGERRAKETEN', es: 'LANZADORES', it: 'LANCIATORI' },
 
   video_v1_title: { fr: 'Ariane 6 : la fusée européenne a réussi son 3ème envol', en: 'Ariane 6: European Rocket Succeeds 3rd Flight', de: 'Ariane 6: Erfolgreicher dritter Flug', es: 'Ariane 6: El cohete europeo logra su tercer vuelo', it: 'Ariane 6: Il razzo europeo riesce il terzo volo' },
@@ -186,20 +184,17 @@ interface ThemeLanguageContextType {
 const ThemeLanguageContext = createContext<ThemeLanguageContextType | undefined>(undefined);
 
 export const ThemeLanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    return 'light';
-  });
-
+  // Default to 'dark' for performance and aesthetic preference as requested
+  const [theme, setTheme] = useState<Theme>('dark');
   const [language, setLanguage] = useState<Language>('fr');
 
+  // Apply class on mount and change
   useEffect(() => {
+    const root = document.documentElement;
     if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
+      root.classList.add('dark');
     } else {
-      document.documentElement.classList.remove('dark');
+      root.classList.remove('dark');
     }
   }, [theme]);
 

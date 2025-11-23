@@ -18,7 +18,7 @@ const cardVariants: Variants = {
   }
 };
 
-const ArticleCard: React.FC<{ article: Article }> = ({ article }) => {
+const ArticleCard: React.FC<{ article: Article }> = React.memo(({ article }) => {
   const { t } = useThemeLanguage();
   const title = t(`article_${article.id}_title`);
   const summary = t(`article_${article.id}_summary`);
@@ -80,7 +80,7 @@ const ArticleCard: React.FC<{ article: Article }> = ({ article }) => {
         </div>
     </motion.div>
   );
-};
+});
 
 const ArticleSection: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
