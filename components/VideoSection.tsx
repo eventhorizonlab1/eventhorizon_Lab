@@ -117,8 +117,11 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10%" }}
       transition={{ duration: 0.5, delay: Math.min((index % 3) * 0.05, 0.2), ease: "easeOut" }}
-      className="group cursor-pointer"
+      // Responsive classes: Fixed width on mobile (for carousel), Auto width on desktop (for grid)
+      // transform-gpu forces GPU layer creation to prevent repaints during scroll
+      className="group cursor-pointer snap-start shrink-0 w-[85vw] sm:w-[400px] md:w-auto transform-gpu"
       onClick={() => onPlay(video)}
+      style={{ willChange: 'transform, opacity' }}
     >
       <div className="block h-full">
         <div>
@@ -128,6 +131,7 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
               src={video.imageUrl} 
               alt={title} 
               loading="lazy"
+              decoding="async" // Async decoding prevents main thread blocking
               referrerPolicy="no-referrer"
               onError={(e) => {
                 e.currentTarget.src = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
@@ -144,7 +148,7 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
              </div>
           </div>
           
-          <div className="pr-2">
+          <div className="pr-2 whitespace-normal">
             <div className="flex justify-between items-start mb-2">
                 <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest border border-blue-600/20 dark:border-blue-400/20 px-2 py-0.5 rounded-full">{category}</span>
             </div>
@@ -270,12 +274,13 @@ const VideoSection: React.FC = () => {
             className="group cursor-pointer relative"
             onClick={() => setSelectedVideo(FEATURED_VIDEO)}
           >
-            <div className="relative overflow-hidden rounded-2xl bg-gray-200 dark:bg-gray-800 aspect-video md:aspect-[21/9] transition-colors duration-500 border border-black/5 dark:border-white/5">
-              <motion.div style={{ y: imageY }} className="w-full h-[120%] -mt-[10%]">
+            <div className="relative overflow-hidden rounded-2xl bg-gray-200 dark:bg-gray-800 aspect-video md:aspect-[21/9] transition-colors duration-500 border border-black/5 dark:border-white/5 transform-gpu">
+              <motion.div style={{ y: imageY }} className="w-full h-[120%] -mt-[10%] will-change-transform">
                 <img 
                   src={FEATURED_VIDEO.imageUrl} 
                   alt={featuredTitle} 
                   loading="lazy"
+                  decoding="async"
                   referrerPolicy="no-referrer"
                   onError={(e) => {
                     e.currentTarget.src = 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80';
@@ -302,14 +307,22 @@ const VideoSection: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Grid Layout - 10 Videos */}
-        <div className="max-w-[1800px] mx-auto px-4 md:px-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
+        {/* Grid Layout (Desktop) / Carousel (Mobile) - Optimized for scrolling performance */}
+        {/* touch-pan-x enables native browser handling of horizontal gestures without delay */}
+        <div className="max-w-[1800px] mx-auto px-4 md:px-12 flex overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-x-6 md:gap-y-12 snap-x snap-mandatory md:snap-none no-scrollbar pb-8 md:pb-0 touch-pan-x" style={{ WebkitOverflowScrolling: 'touch' }}>
           {VIDEOS.map((video, index) => (
             <VideoCard key={video.id} video={video} index={index} onPlay={setSelectedVideo} />
           ))}
         </div>
         
-        <div className="max-w-[1800px] mx-auto px-4 md:px-12 mt-16 text-center md:hidden">
+        {/* Mobile Scroll Indicator - Only visible if carousel */}
+        <div className="flex md:hidden justify-center gap-1 mt-2 mb-8">
+             <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-50"></div>
+             <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+             <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+        </div>
+
+        <div className="max-w-[1800px] mx-auto px-4 md:px-12 mt-4 text-center md:hidden">
           <a href="#" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest border-b border-black dark:border-white pb-1">
             {t('videos_subtitle')} <ArrowUpRight size={14} />
           </a>

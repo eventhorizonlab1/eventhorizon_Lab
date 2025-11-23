@@ -13,8 +13,8 @@ const PartnerCard: React.FC<{ partner: Partner; index: number }> = React.memo(({
     offset: ["start end", "end start"]
   });
 
-  // More pronounced parallax effect for dynamic depth
-  const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
+  // Reduced parallax effect to minimize gap below the section
+  const y = useTransform(scrollYProgress, [0, 1], [20, -20]);
   const role = t(`partner_${partner.id}_role`);
 
   return (
@@ -82,7 +82,8 @@ const EcosystemSection: React.FC = () => {
       </div>
 
       <div className="overflow-hidden">
-        <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-6 pb-12">
+        {/* Reduced bottom padding from pb-12 to pb-6 */}
+        <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-6 pb-6">
            {PARTNERS.map((partner, index) => (
              <PartnerCard key={partner.id} partner={partner} index={index} />
            ))}

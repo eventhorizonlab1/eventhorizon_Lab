@@ -833,7 +833,8 @@ const BlackHoleSection: React.FC = () => {
   return (
     <motion.section 
       id="blackhole" 
-      className="pt-2 md:pt-4 pb-16 md:pb-24 max-w-[1800px] mx-auto px-4 md:px-12"
+      // Removed top padding to fix gap issue
+      className="pt-0 md:pt-0 pb-16 md:pb-24 max-w-[1800px] mx-auto px-4 md:px-12"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}

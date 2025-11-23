@@ -85,6 +85,7 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
                         transition={{ duration: 1.5 }}
                         src={article.imageUrl} 
                         alt={title}
+                        decoding="async"
                         className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#0a0a0a] via-transparent to-black/30"></div>
@@ -167,8 +168,10 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
       viewport={{ once: true, margin: "-50px" }}
       variants={cardVariants}
       // SNAP-START: Critical for mobile carousel feel
-      className="snap-start shrink-0 w-[85vw] md:w-[400px] h-[580px]"
+      // transform-gpu ensures the element is promoted to its own layer for smoother scrolling
+      className="snap-start shrink-0 w-[85vw] md:w-[400px] h-[580px] transform-gpu"
       onClick={() => onClick(article)}
+      style={{ willChange: 'transform' }}
     >
         <div className="group cursor-pointer h-full relative overflow-hidden rounded-[2rem] bg-black shadow-lg hover:shadow-3xl transition-all duration-500 border border-white/10">
           
@@ -179,6 +182,7 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
                 src={article.imageUrl} 
                 alt={title} 
                 loading="lazy"
+                decoding="async" // Async decoding prevents main thread jank during scroll
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover opacity-80 transition-opacity duration-500 group-hover:opacity-90"
              />
@@ -280,9 +284,11 @@ const ArticleSection: React.FC = () => {
       </div>
 
       {/* Carousel with snap-mandatory for mobile native feel */}
+      {/* touch-pan-x: Allows the browser to handle horizontal swipes without waiting for JS */}
       <div 
         ref={scrollContainerRef}
-        className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-6 pb-12"
+        className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-6 pb-12 touch-pan-x"
+        style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {ARTICLES.map((article) => (
           <ArticleCard key={article.id} article={article} onClick={setSelectedArticle} />
