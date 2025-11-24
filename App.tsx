@@ -1,3 +1,4 @@
+
 import React, { Suspense, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -68,7 +69,7 @@ const App: React.FC = () => {
             <div className="mb-12 relative w-full aspect-square md:aspect-[21/9] bg-gray-100 dark:bg-black rounded-[2rem] border border-gray-200 dark:border-white/10 flex items-center justify-center shadow-lg">
                 <div className="flex flex-col items-center gap-4 text-gray-400 dark:text-white/50">
                     <Loader2 className="animate-spin w-8 h-8" />
-                    <span className="text-xs font-mono tracking-widest uppercase">Initialisation de la Singularité...</span>
+                    <span className="text-xs font-mono tracking-widest uppercase">{t('bh_loading')}</span>
                 </div>
             </div>
             

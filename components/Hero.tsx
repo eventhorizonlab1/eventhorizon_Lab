@@ -250,7 +250,7 @@ const titleContainerVariants: Variants = {
 const AnimatedText = ({ text, className }: { text: string, className?: string }) => {
   const shouldReduceMotion = useReducedMotion();
 
-  const letterVariants: Variants = {
+  const letterVariants: Variants = React.useMemo(() => ({
     hidden: { 
       opacity: 0,
       // Disable complex transforms if reduced motion is requested
@@ -274,7 +274,7 @@ const AnimatedText = ({ text, className }: { text: string, className?: string })
         ease: [0.2, 0.8, 0.2, 1],
       }
     }
-  };
+  }), [shouldReduceMotion]);
 
   return (
     <motion.div 

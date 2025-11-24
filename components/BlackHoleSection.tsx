@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -603,6 +604,9 @@ class BlackHoleSim {
     }
 
     resize(width: number, height: number) {
+        // Update isMobile dynamic status in case of window resize/orientation change
+        this.isMobile = width < 768;
+        
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(width, height);
@@ -782,8 +786,8 @@ interface ControlSliderProps {
     icon?: React.ElementType;
 }
 
-// Extracted outside the component to prevent re-rendering and focus loss during interaction
-const ControlSlider: React.FC<ControlSliderProps> = ({ label, value, min, max, step, onChange, icon: Icon }) => (
+// Extracted outside the component and Memoized to prevent re-rendering during state updates in parent
+const ControlSlider = React.memo<ControlSliderProps>(({ label, value, min, max, step, onChange, icon: Icon }) => (
   <div className="mb-6 group">
       <div className="flex justify-between items-center mb-2">
           <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 group-hover:text-black dark:group-hover:text-gray-200 transition-colors">
@@ -801,7 +805,7 @@ const ControlSlider: React.FC<ControlSliderProps> = ({ label, value, min, max, s
           className="w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500 hover:[&::-webkit-slider-thumb]:bg-blue-400 transition-all [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
       />
   </div>
-);
+));
 
 const BlackHoleSection: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
