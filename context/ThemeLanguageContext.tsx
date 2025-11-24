@@ -44,8 +44,8 @@ export const ThemeLanguageProvider: React.FC<{ children: ReactNode }> = ({ child
   };
 
   const t = (key: string): string => {
-    if (!TRANSLATIONS[key]) return key;
-    return TRANSLATIONS[key][language] || TRANSLATIONS[key]['fr'] || key;
+    const langDict = TRANSLATIONS[language] || TRANSLATIONS['fr'];
+    return langDict[key] || key;
   };
 
   return (
