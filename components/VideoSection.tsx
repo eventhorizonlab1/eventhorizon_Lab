@@ -51,10 +51,16 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-12"
             onClick={onClose}
+            role="dialog"
+            aria-modal="true"
         >
             <button 
-                onClick={onClose}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onClose();
+                }}
                 className="absolute top-6 right-6 p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-colors z-50"
+                aria-label="Fermer"
             >
                 <X size={32} />
             </button>
