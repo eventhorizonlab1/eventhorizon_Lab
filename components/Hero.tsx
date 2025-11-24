@@ -308,6 +308,15 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
   const mouseRef = useRef({ x: 0, y: 0 });
   const isInView = useInView(containerRef);
   const shouldReduceMotion = useReducedMotion();
+  
+  // PERFORMANCE OPTIMIZATION:
+  // Use a Ref to track theme changes. This avoids re-running the main useEffect and 
+  // destroying/recreating the WebGL context every time the user toggles the theme.
+  const themeRef = useRef(theme);
+
+  useEffect(() => {
+      themeRef.current = theme;
+  }, [theme]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -333,7 +342,7 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
         u_time: { value: 0 },
         u_resolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) },
         u_mouse: { value: new THREE.Vector2(0, 0) },
-        u_is_light: { value: theme === 'light' ? 1.0 : 0.0 }
+        u_is_light: { value: themeRef.current === 'light' ? 1.0 : 0.0 }
       },
       vertexShader: VertexShader,
       fragmentShader: FragmentShader,
@@ -355,7 +364,8 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
       const timeMultiplier = shouldReduceMotion ? 0.1 : 1.0;
       material.uniforms.u_time.value = clock.getElapsedTime() * timeMultiplier;
 
-      const targetLight = theme === 'light' ? 1.0 : 0.0;
+      // Update theme uniform smoothly using the Ref value
+      const targetLight = themeRef.current === 'light' ? 1.0 : 0.0;
       material.uniforms.u_is_light.value += (targetLight - material.uniforms.u_is_light.value) * 0.05;
       
       // Reduce mouse influence if reduced motion
@@ -396,7 +406,7 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
             container.removeChild(renderer.domElement);
         }
     };
-  }, [theme, isInView, shouldReduceMotion]);
+  }, [isInView, shouldReduceMotion]); // Removed 'theme' from dependency array to allow persistent WebGL context
 
   return <div ref={containerRef} className="absolute inset-0 w-full h-full z-0" />;
 };
