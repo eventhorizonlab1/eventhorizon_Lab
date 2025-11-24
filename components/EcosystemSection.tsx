@@ -49,7 +49,7 @@ const PartnerCard: React.FC<{ partner: Partner; index: number }> = React.memo(({
          </div>
 
          {/* Text Under Card */}
-         <div className="text-center md:text-left pl-1">
+         <div className="text-center md:text-left">
            <h3 className="text-xl font-bold uppercase tracking-tight mb-1 text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
              {partner.name}
            </h3>
@@ -73,7 +73,7 @@ const EcosystemSection: React.FC = () => {
       transition={{ duration: 0.8, ease: "easeOut" }}
     >
        <div className="px-4 md:px-12 max-w-[1800px] mx-auto mb-12">
-        <div className="border-l-4 border-black dark:border-white pl-6 -ml-4 md:-ml-7">
+        <div className="border-l-4 border-black dark:border-white pl-3 md:pl-6 -ml-4 md:-ml-7">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white">
             {t('ecosystem_title')}
             </h2>

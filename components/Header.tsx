@@ -110,7 +110,7 @@ const Header: React.FC = () => {
   return (
     <>
       <header 
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out px-6 md:px-12 ${headerBgClass}`}
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out px-4 md:px-12 ${headerBgClass}`}
       >
         <div className="max-w-[1800px] mx-auto flex justify-between items-center">
           <a href="#" onClick={(e) => handleLinkClick(e, '#')} className={`text-xl md:text-2xl font-bold tracking-tighter uppercase z-50 relative transition-colors duration-300 ${textColorClass}`}>

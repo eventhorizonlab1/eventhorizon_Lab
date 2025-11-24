@@ -59,8 +59,8 @@ const App: React.FC = () => {
         
         <Suspense fallback={
           <section className="pt-0 md:pt-0 pb-16 md:pb-24 max-w-[1800px] mx-auto px-4 md:px-12">
-            {/* Title Skeleton */}
-            <div className="mb-12 border-l-4 border-gray-200 dark:border-white/10 pl-6 -ml-4 md:ml-0">
+            {/* Title Skeleton - Updated to match BlackHoleSection alignment (pl-3 md:pl-6 and negative margins) */}
+            <div className="mb-12 border-l-4 border-gray-200 dark:border-white/10 pl-3 md:pl-6 -ml-4 md:-ml-7">
                 <div className="h-10 w-64 bg-gray-200 dark:bg-white/5 rounded mb-4 animate-pulse"></div>
                 <div className="h-6 w-96 bg-gray-100 dark:bg-white/5 rounded animate-pulse"></div>
             </div>
