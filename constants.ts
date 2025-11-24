@@ -1,5 +1,6 @@
 
 
+
 import { Video, Article, Partner } from './types';
 
 // Navigation simplifiée : Vidéos, Articles, Écosystème
@@ -10,11 +11,9 @@ export const NAV_LINKS = [
 ];
 
 /* 
-  GUIDE D'INTEGRATION DES IMAGES PERSONNALISÉES :
-  Pour changer une vignette, remplacez la valeur 'imageUrl' par le lien de votre image.
-  
-  NOTE : L'URL ci-dessous pointe vers une version archivée spécifique de l'image sur GitHub.
-  Cela permet d'assurer son affichage même si le fichier local ou sur 'main' est temporairement manquant.
+  GUIDE D'INTEGRATION DES IMAGES :
+  Pour éviter que les images ne disparaissent lors des redémarrages de l'environnement Cloud,
+  nous utilisons des URLs externes fiables (Wikimedia, Unsplash, etc.).
 */
 
 export const FEATURED_VIDEO: Video = {
@@ -22,8 +21,9 @@ export const FEATURED_VIDEO: Video = {
   title: '🚀 Ariane 6 : Le Retour du Géant Européen',
   category: 'LANCEURS',
   duration: 'Live',
-  // Lien vers un commit spécifique (historique) pour garantir la disponibilité de l'image
-  imageUrl: 'https://github.com/eventhorizonlab1/eventhorizon_Lab/raw/1b23f67e40a4b23acf6ef2b73014f4da76370473/images/vignette_ariane6.jpeg', 
+  // Photo officielle du décollage d'Ariane 6 (Source: ESA/CNES/Arianespace via Wikimedia)
+  // Cette URL est stable et ne sera pas supprimée par l'environnement.
+  imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Ariane_6_first_flight_%28VA262%29_liftoff.jpg/1280px-Ariane_6_first_flight_%28VA262%29_liftoff.jpg', 
   videoUrl: 'https://www.youtube.com/watch?v=ukoMgE_8heo'
 };
 
