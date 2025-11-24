@@ -594,7 +594,8 @@ class BlackHoleSim {
         this.scene.add(this.backgroundScene);
         const lensingPass = new RenderPass(this.lensingScene, this.camera);
         this.composer.addPass(lensingPass);
-        this.bloomPass = new UnrealBloomPass(new THREE.Vector2(width, height), 1.5, 0.5, 0.85);
+        // Initialize bloom with 0.1 strength to match React state
+        this.bloomPass = new UnrealBloomPass(new THREE.Vector2(width, height), 0.1, 0.5, 0.85);
         this.composer.addPass(this.bloomPass);
         const outputPass = new OutputPass();
         this.composer.addPass(outputPass);
