@@ -256,23 +256,25 @@ const ArticleSection: React.FC = () => {
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
     >
-      <div className="px-4 md:px-12 max-w-[1800px] mx-auto mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border-l-4 border-black dark:border-white pl-6">
-        <div>
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white">
-            {t('articles_title')}
-          </h2>
-          <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg max-w-md">
-            {t('articles_subtitle')}
-          </p>
-        </div>
-        
-        <div className="hidden md:flex gap-2 pb-2">
-          <button onClick={() => scroll('left')} className="p-3 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded-full transition-all active:scale-95 text-black dark:text-white">
-            <ArrowLeft size={24} />
-          </button>
-          <button onClick={() => scroll('right')} className="p-3 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded-full transition-all active:scale-95 text-black dark:text-white">
-            <ArrowRight size={24} />
-          </button>
+      <div className="px-4 md:px-12 max-w-[1800px] mx-auto mb-12">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border-l-4 border-black dark:border-white pl-6 -ml-4 md:ml-0">
+            <div>
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white">
+                    {t('articles_title')}
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg max-w-md">
+                    {t('articles_subtitle')}
+                </p>
+            </div>
+            
+            <div className="hidden md:flex gap-2 pb-2">
+                <button onClick={() => scroll('left')} className="p-3 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded-full transition-all active:scale-95 text-black dark:text-white">
+                    <ArrowLeft size={24} />
+                </button>
+                <button onClick={() => scroll('right')} className="p-3 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded-full transition-all active:scale-95 text-black dark:text-white">
+                    <ArrowRight size={24} />
+                </button>
+            </div>
         </div>
       </div>
 
