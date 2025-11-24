@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -772,8 +771,19 @@ const SimLoader = () => {
     );
 }
 
+// Interface for props typing
+interface ControlSliderProps {
+    label: string;
+    value: number;
+    min: number;
+    max: number;
+    step: number;
+    onChange: (value: number) => void;
+    icon?: React.ElementType;
+}
+
 // Extracted outside the component to prevent re-rendering and focus loss during interaction
-const ControlSlider = ({ label, value, min, max, step, onChange, icon: Icon }: any) => (
+const ControlSlider: React.FC<ControlSliderProps> = ({ label, value, min, max, step, onChange, icon: Icon }) => (
   <div className="mb-6 group">
       <div className="flex justify-between items-center mb-2">
           <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 group-hover:text-black dark:group-hover:text-gray-200 transition-colors">

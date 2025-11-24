@@ -1,4 +1,3 @@
-
 import React, { Suspense, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -58,12 +57,24 @@ const App: React.FC = () => {
         <EcosystemSection />
         
         <Suspense fallback={
-          <div className="h-[600px] flex items-center justify-center bg-gray-50 dark:bg-black transition-colors duration-500">
-            <div className="flex flex-col items-center gap-4 text-gray-400 dark:text-white/50">
-               <Loader2 className="animate-spin w-8 h-8" />
-               <span className="text-xs font-mono tracking-widest uppercase">Initialisation de la Singularité...</span>
+          <section className="pt-0 md:pt-0 pb-16 md:pb-24 max-w-[1800px] mx-auto px-4 md:px-12">
+            {/* Title Skeleton */}
+            <div className="mb-12 border-l-4 border-gray-200 dark:border-white/10 pl-6 -ml-4 md:ml-0">
+                <div className="h-10 w-64 bg-gray-200 dark:bg-white/5 rounded mb-4 animate-pulse"></div>
+                <div className="h-6 w-96 bg-gray-100 dark:bg-white/5 rounded animate-pulse"></div>
             </div>
-          </div>
+            
+            {/* Main Viewport Skeleton matching aspect ratio of the 3D component */}
+            <div className="mb-12 relative w-full aspect-square md:aspect-[21/9] bg-gray-100 dark:bg-black rounded-[2rem] border border-gray-200 dark:border-white/10 flex items-center justify-center shadow-lg">
+                <div className="flex flex-col items-center gap-4 text-gray-400 dark:text-white/50">
+                    <Loader2 className="animate-spin w-8 h-8" />
+                    <span className="text-xs font-mono tracking-widest uppercase">Initialisation de la Singularité...</span>
+                </div>
+            </div>
+            
+            {/* Controls Skeleton */}
+            <div className="bg-white dark:bg-eh-gray p-8 rounded-[2rem] border border-gray-200 dark:border-white/5 h-64 animate-pulse"></div>
+          </section>
         }>
            <BlackHoleSection />
         </Suspense>
