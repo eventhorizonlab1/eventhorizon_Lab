@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect } from 'react';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
 import { Play, Radio, ArrowUpRight, X, ExternalLink, Loader } from 'lucide-react';
@@ -18,6 +17,7 @@ const getYouTubeId = (url: string | undefined) => {
 // --- VIDEO PLAYER MODAL ---
 const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ video, onClose }) => {
     const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
+    const { t } = useThemeLanguage();
 
     useEffect(() => {
         setShouldLoadIframe(false);
@@ -30,6 +30,10 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
 
     if (!video) return null;
     const videoId = getYouTubeId(video.videoUrl);
+    
+    const translatedTitle = t(`video_${video.id}_title`);
+    // Fallback if translation key missing (e.g. for dynamic content not in dict, though current app uses static constants)
+    const title = translatedTitle.startsWith('video_') ? video.title : translatedTitle;
 
     return (
         <motion.div
@@ -39,6 +43,10 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-12"
             onClick={onClose}
         >
+            {/* React 19 Native Metadata Support */}
+            <title>{title} | Event Horizon Video</title>
+            <meta name="description" content={`Regardez ${title} sur Event Horizon.`} />
+
             <button 
                 onClick={onClose}
                 className="absolute top-6 right-6 p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-colors z-50"
@@ -64,7 +72,7 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
                             width="100%"
                             height="100%"
                             src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
-                            title={video.title}
+                            title={title}
                             frameBorder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             referrerPolicy="strict-origin-when-cross-origin"
@@ -76,7 +84,7 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
                              {/* Optimized Placeholder */}
                              <img 
                                 src={video.imageUrl} 
-                                alt={video.title} 
+                                alt={title} 
                                 className="absolute inset-0 w-full h-full object-cover opacity-40 blur-md scale-105" 
                              />
                              <div className="relative z-10 flex flex-col items-center gap-3">
@@ -89,7 +97,7 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
 
                 {/* Fallback & Info Bar */}
                 <div className="flex justify-between items-center text-white px-2">
-                    <h3 className="text-lg font-bold line-clamp-1 mr-4">{video.title}</h3>
+                    <h3 className="text-lg font-bold line-clamp-1 mr-4">{title}</h3>
                     <a 
                         href={video.videoUrl} 
                         target="_blank" 

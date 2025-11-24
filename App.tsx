@@ -1,5 +1,4 @@
-
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import VideoSection from './components/VideoSection';
@@ -7,14 +6,27 @@ import ArticleSection from './components/ArticleSection';
 import EcosystemSection from './components/EcosystemSection';
 import Footer from './components/Footer';
 import { Loader2 } from 'lucide-react';
+import { useThemeLanguage } from './context/ThemeLanguageContext';
 
 // OPTIMISATION VERCEL : Lazy loading du composant 3D lourd (Three.js)
 // Cela réduit considérablement la taille du bundle initial (First Load JS)
 const BlackHoleSection = React.lazy(() => import('./components/BlackHoleSection'));
 
 const App: React.FC = () => {
+  const { t, language } = useThemeLanguage();
+
+  // React 19: Manually update html lang attribute as it is outside the root
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
+
   return (
     <main className="relative w-full overflow-hidden bg-white dark:bg-eh-black transition-colors duration-500">
+      {/* React 19 Native Metadata Support */}
+      <title>Event Horizon - L'Industrie Spatiale Européenne</title>
+      <meta name="description" content={t('footer_desc')} />
+      <meta name="theme-color" content="#0a0a0a" />
+
       {/* Cinematic Noise Overlay */}
       <div className="fixed inset-0 z-[9999] pointer-events-none opacity-[0.05] mix-blend-overlay">
         <div 

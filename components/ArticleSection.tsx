@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect } from 'react';
 import { ARTICLES } from '../constants';
 import { ArrowRight, ArrowLeft, FileText, X, Clock, Calendar } from 'lucide-react';
@@ -47,6 +46,9 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
     const wordCount = contentText.split(/\s+/).length;
     const readTime = Math.max(1, Math.ceil(wordCount / 200));
 
+    // Create a plain text summary for meta description (removing first sentence if too long)
+    const metaSummary = t(`article_${article.id}_summary`);
+
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -55,6 +57,10 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
             className="fixed inset-0 z-[100] flex items-end md:items-center justify-center bg-black/90 backdrop-blur-md p-0 md:p-6"
             onClick={onClose}
         >
+            {/* React 19 Native Metadata Support - Hoisted to <head> */}
+            <title>{title} | Event Horizon</title>
+            <meta name="description" content={metaSummary} />
+
             <motion.div
                 initial={{ y: "100%" }}
                 animate={{ y: 0 }}
