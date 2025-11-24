@@ -22,7 +22,6 @@ const cardVariants: Variants = {
 const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> = ({ article, onClose }) => {
     const { t } = useThemeLanguage();
     
-    // Prevent scrolling when modal is open
     useEffect(() => {
         if (article) {
             document.body.style.overflow = 'hidden';
@@ -39,17 +38,12 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
     const title = t(`article_${article.id}_title`);
     const date = article.date;
     
-    // Try to get specific content, fallback to placeholder
     let contentText = t(`article_${article.id}_content`);
-    // If the translation key returns itself (meaning missing translation), use placeholder
     if (contentText === `article_${article.id}_content`) {
         contentText = t('article_placeholder_content');
     }
 
-    // Split content by newlines to create paragraphs
     const paragraphs = contentText.split('\n\n');
-    
-    // Calculate estimated reading time (avg 200 words per minute)
     const wordCount = contentText.split(/\s+/).length;
     const readTime = Math.max(1, Math.ceil(wordCount / 200));
 
@@ -69,7 +63,6 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
                 className="bg-white dark:bg-[#0a0a0a] w-full max-w-4xl h-[95vh] md:h-[90vh] rounded-t-3xl md:rounded-3xl overflow-hidden flex flex-col shadow-2xl relative border border-gray-200 dark:border-white/10"
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* Close Button */}
                 <button 
                     onClick={onClose}
                     className="absolute top-4 right-4 md:top-6 md:right-6 z-50 p-2 bg-white/20 hover:bg-white/40 dark:bg-black/40 dark:hover:bg-black/60 backdrop-blur-md rounded-full text-black dark:text-white transition-colors border border-white/20"
@@ -77,7 +70,6 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
                     <X size={24} />
                 </button>
 
-                {/* Header Image - Parallax feel */}
                 <div className="relative h-[35vh] md:h-[45vh] shrink-0 overflow-hidden">
                     <motion.img 
                         initial={{ scale: 1.1 }}
@@ -127,11 +119,9 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
                     </div>
                 </div>
 
-                {/* Content Body - Scrollable */}
                 <div className="flex-1 overflow-y-auto px-6 md:px-12 py-8 custom-scrollbar bg-white dark:bg-[#0a0a0a]">
                     <div className="max-w-3xl mx-auto">
                         <div className="prose prose-lg dark:prose-invert max-w-none">
-                            {/* Drop cap for first paragraph */}
                             <p className="font-serif text-xl md:text-2xl leading-relaxed text-gray-900 dark:text-gray-100 mb-8 first-letter:text-6xl first-letter:font-bold first-letter:mr-3 first-letter:float-left first-letter:text-blue-600 dark:first-letter:text-blue-500">
                                 {paragraphs[0]}
                             </p>
@@ -167,31 +157,26 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={cardVariants}
-      // SNAP-START: Critical for mobile carousel feel
-      // transform-gpu ensures the element is promoted to its own layer for smoother scrolling
       className="snap-start shrink-0 w-[85vw] md:w-[400px] h-[580px] transform-gpu"
       onClick={() => onClick(article)}
       style={{ willChange: 'transform' }}
     >
         <div className="group cursor-pointer h-full relative overflow-hidden rounded-[2rem] bg-black shadow-lg hover:shadow-3xl transition-all duration-500 border border-white/10">
           
-          {/* Background Image - Full Magazine Cover Style */}
           <div className="absolute inset-0 w-full h-full transform transition-transform duration-1000 group-hover:scale-105">
-             <div className="absolute inset-0 bg-gray-900 animate-pulse" /> {/* Placeholder */}
+             <div className="absolute inset-0 bg-gray-900 animate-pulse" /> 
              <img 
                 src={article.imageUrl} 
                 alt={title} 
                 loading="lazy"
-                decoding="async" // Async decoding prevents main thread jank during scroll
+                decoding="async" 
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover opacity-80 transition-opacity duration-500 group-hover:opacity-90"
              />
           </div>
           
-          {/* Refined Subtle Overlay for Text Readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-100"></div>
 
-          {/* Top Metadata - Magazine Date Line */}
           <div className="absolute top-8 left-8 z-20">
              <div className="flex items-center gap-3 text-white/80 group-hover:text-white transition-colors">
                 <span className="w-8 h-[3px] bg-white/60 group-hover:bg-blue-500 transition-colors duration-300"></span>
@@ -199,11 +184,9 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
              </div>
           </div>
 
-          {/* Bottom Content */}
           <div className="absolute bottom-0 left-0 w-full p-8 md:p-10 z-20 flex flex-col justify-end h-full pointer-events-none">
              <div className="transform transition-transform duration-500 translate-y-12 group-hover:translate-y-0">
                 
-                {/* Tag Pill - Appears on Hover */}
                 <div className="mb-4 opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-y-2 group-hover:translate-y-0">
                     <span className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest text-white border border-white/20">
                         <FileText size={10} /> 
@@ -211,12 +194,10 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
                     </span>
                 </div>
 
-                {/* Enhanced Title - Mobile size tweaked (text-3xl) to prevent breakage */}
                 <h3 className="text-3xl md:text-5xl font-sans font-black leading-[0.95] md:leading-[0.9] mb-6 text-white drop-shadow-xl line-clamp-4 group-hover:line-clamp-none transition-all tracking-tighter">
                   {title}
                 </h3>
                 
-                {/* Summary Reveal */}
                 <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out">
                     <div className="overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
                         <p className="text-gray-300 text-base font-medium leading-relaxed border-t border-white/20 pt-4 mb-6 max-w-[90%]">
@@ -268,7 +249,7 @@ const ArticleSection: React.FC = () => {
           <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white">
             {t('articles_title')}
           </h2>
-          <p className="text-gray-500 text-base md:text-lg max-w-md">
+          <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg max-w-md">
             {t('articles_subtitle')}
           </p>
         </div>
@@ -283,8 +264,6 @@ const ArticleSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Carousel with snap-mandatory for mobile native feel */}
-      {/* touch-pan-x: Allows the browser to handle horizontal swipes without waiting for JS */}
       <div 
         ref={scrollContainerRef}
         className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-6 pb-12 touch-pan-x"
@@ -295,7 +274,6 @@ const ArticleSection: React.FC = () => {
         ))}
       </div>
       
-      {/* Mobile Scroll Indicator */}
       <div className="flex md:hidden justify-center mt-4 gap-1">
          <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-50"></div>
          <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>

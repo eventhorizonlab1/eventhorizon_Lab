@@ -7,7 +7,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RefreshCw, Eye, Thermometer, Activity, Sun, Disc, Globe, Navigation, Layers, ZoomIn, Cpu } from 'lucide-react';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 
 // --- INTERSTELLAR SHADERS ---
@@ -378,7 +378,6 @@ class BlackHoleSim {
         this.renderer.setSize(container.clientWidth, container.clientHeight);
         
         // MOBILE OPTIMIZATION: Cap Pixel Ratio at 1.0 for mobile devices to save battery/GPU
-        // On desktop, we still cap at 1.5 to avoid overheating 4K screens
         const maxPixelRatio = this.isMobile ? 1.0 : 1.5;
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio));
         
@@ -455,7 +454,6 @@ class BlackHoleSim {
     }
 
     initDebrisField() {
-        // MOBILE OPTIMIZATION: Drastically reduce particle count on mobile
         const PARTICLE_COUNT = this.isMobile ? 15000 : 45000; 
         
         const positions = [], colors = [];
@@ -532,7 +530,6 @@ class BlackHoleSim {
 
     initStarfield() {
         const geometry = new THREE.BufferGeometry();
-        // Reduce star count on mobile as well
         const count = this.isMobile ? 3000 : 8000; 
         const positions = [];
         const sizes = [];
@@ -585,7 +582,6 @@ class BlackHoleSim {
     }
 
     initPostProcessing(width: number, height: number) {
-        const maxPixelRatio = this.isMobile ? 1.0 : 1.5;
         const renderTarget = new THREE.WebGLRenderTarget(
             width, height,
             { type: THREE.HalfFloatType, format: THREE.RGBAFormat }
@@ -594,7 +590,6 @@ class BlackHoleSim {
         this.scene.add(this.backgroundScene);
         const lensingPass = new RenderPass(this.lensingScene, this.camera);
         this.composer.addPass(lensingPass);
-        // Initialize bloom with 0.1 strength to match React state
         this.bloomPass = new UnrealBloomPass(new THREE.Vector2(width, height), 0.1, 0.5, 0.85);
         this.composer.addPass(this.bloomPass);
         const outputPass = new OutputPass();
@@ -692,7 +687,6 @@ const SimLoader = () => {
 
     return (
         <div className="absolute inset-0 z-50 bg-black flex flex-col items-center justify-center text-white font-mono pointer-events-none">
-            {/* Central Ring Spinner */}
             <div className="relative w-32 h-32 mb-8 flex items-center justify-center">
                 <motion.div 
                     animate={{ rotate: 360 }}
@@ -720,7 +714,6 @@ const SimLoader = () => {
                  </div>
             </div>
 
-            {/* Random Hex Grid overlay for tech feel */}
             <div className="absolute inset-0 opacity-10 bg-[linear-gradient(0deg,transparent_24%,rgba(255,255,255,.5)_25%,rgba(255,255,255,.5)_26%,transparent_27%,transparent_74%,rgba(255,255,255,.5)_75%,rgba(255,255,255,.5)_76%,transparent_77%,transparent),linear-gradient(90deg,transparent_24%,rgba(255,255,255,.5)_25%,rgba(255,255,255,.5)_26%,transparent_27%,transparent_74%,rgba(255,255,255,.5)_75%,rgba(255,255,255,.5)_76%,transparent_77%,transparent)] bg-[length:30px_30px]"></div>
         </div>
     );
@@ -730,21 +723,21 @@ const BlackHoleSection: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const simRef = useRef<BlackHoleSim | null>(null);
   const { t, theme } = useThemeLanguage();
-  // Performance optimization: Check if in view
   const isInView = useInView(containerRef);
+  const shouldReduceMotion = useReducedMotion();
   
   const [isLoading, setIsLoading] = useState(true);
-  const [rotationSpeed, setRotationSpeed] = useState(0.3);
+  // A11y: Initialize with very slow rotation if motion reduction is requested
+  const [rotationSpeed, setRotationSpeed] = useState(shouldReduceMotion ? 0.05 : 0.3);
   const [bloomIntensity, setBloomIntensity] = useState(0.1); 
   const [lensingStrength, setLensingStrength] = useState(1.2);
   const [diskBrightness, setDiskBrightness] = useState(1.0); 
   const [temperature, setTemperature] = useState(1.0);
 
-  // Simulate loading delay
   useEffect(() => {
       const timer = setTimeout(() => {
           setIsLoading(false);
-      }, 2200); // 2.2s loading time
+      }, 2200); 
       return () => clearTimeout(timer);
   }, []);
 
@@ -764,7 +757,6 @@ const BlackHoleSection: React.FC = () => {
     const animate = () => {
         animationId = requestAnimationFrame(animate);
         
-        // Performance optimization: Skip loop if not visible
         if (!isInView && !isLoading) return;
 
         if (simRef.current) {
@@ -797,7 +789,7 @@ const BlackHoleSection: React.FC = () => {
             containerRef.current.innerHTML = '';
         }
     };
-  }, [isInView, isLoading]); // Re-bind if view changes
+  }, [isInView, isLoading]);
 
   const moveCamera = (position: 'orbit' | 'top' | 'side') => {
       if (!simRef.current) return;
@@ -805,7 +797,7 @@ const BlackHoleSection: React.FC = () => {
       if (position === 'orbit') {
           simRef.current.moveTo(0, 15, 90);
       } else if (position === 'top') {
-          simRef.current.moveTo(0, 100, 5); // Slightly offset to avoid gimbal lock
+          simRef.current.moveTo(0, 100, 5); 
       } else if (position === 'side') {
           simRef.current.moveTo(90, 0, 0);
       }
@@ -834,14 +826,12 @@ const BlackHoleSection: React.FC = () => {
   return (
     <motion.section 
       id="blackhole" 
-      // Removed top padding to fix gap issue
       className="pt-0 md:pt-0 pb-16 md:pb-24 max-w-[1800px] mx-auto px-4 md:px-12"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.8, ease: "easeOut" }}
     >
-        {/* Header - Full Width */}
         <div className="mb-12 border-l-4 border-black dark:border-white pl-6 -ml-4 md:ml-0">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white transition-colors">
               {t('bh_title')}
@@ -851,11 +841,9 @@ const BlackHoleSection: React.FC = () => {
             </p>
         </div>
 
-        {/* Simulation Frame - Full Width with Cinematic Aspect Ratio */}
         <div className="mb-12">
              <div className="relative rounded-[2rem] overflow-hidden bg-black border border-gray-200 dark:border-white/10 shadow-2xl w-full aspect-square md:aspect-[21/9] flex flex-col group">
                 
-                {/* Loader Overlay */}
                 <AnimatePresence>
                     {isLoading && (
                         <motion.div
@@ -869,7 +857,6 @@ const BlackHoleSection: React.FC = () => {
                     )}
                 </AnimatePresence>
 
-                {/* Frame Header / Status Bar */}
                 <div className="bg-white/5 p-4 border-b border-white/10 flex justify-between items-center backdrop-blur-md z-20 absolute top-0 left-0 w-full">
                     <div className="flex gap-2">
                         <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
@@ -877,7 +864,6 @@ const BlackHoleSection: React.FC = () => {
                         <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
                     </div>
                     <div className="flex items-center gap-4">
-                         {/* Camera Navigation Controls */}
                          <div className="hidden md:flex bg-black/50 rounded-full p-1 gap-1 border border-white/10">
                             <button onClick={() => moveCamera('orbit')} className="flex items-center gap-2 px-4 py-1.5 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-widest">
                                 <Navigation size={12} />
@@ -899,10 +885,8 @@ const BlackHoleSection: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Canvas Container */}
                 <div ref={containerRef} className="absolute inset-0 w-full h-full z-10" />
                 
-                {/* Overlay UI inside Frame */}
                 <div className="absolute bottom-0 left-0 w-full p-6 z-20 bg-gradient-to-t from-black/80 to-transparent pointer-events-none flex justify-between items-end">
                     <div>
                         <h3 className="text-3xl font-black text-white/20 uppercase tracking-tighter">Event Horizon</h3>
@@ -912,11 +896,9 @@ const BlackHoleSection: React.FC = () => {
                     </p>
                 </div>
 
-                {/* Decorative Grid Overlay */}
                 <div className="absolute inset-0 pointer-events-none opacity-[0.05] z-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
             </div>
             
-            {/* Mobile controls below frame */}
             <div className="flex md:hidden justify-center gap-4 mt-4">
                 <button onClick={() => moveCamera('orbit')} className="bg-gray-100 dark:bg-white/5 p-3 rounded-full text-black dark:text-white">
                     <Navigation size={20} />
@@ -930,7 +912,6 @@ const BlackHoleSection: React.FC = () => {
             </div>
         </div>
 
-        {/* Controls Panel - Below Simulation */}
         <div className="bg-gray-100 dark:bg-eh-gray p-8 rounded-[2rem] border border-gray-200 dark:border-white/5 relative overflow-hidden shadow-lg transition-colors duration-500 max-w-6xl mx-auto w-full">
              <div className="relative z-10">
                 <div className="flex justify-between items-center mb-8 border-b border-gray-200 dark:border-white/10 pb-4">
@@ -946,7 +927,6 @@ const BlackHoleSection: React.FC = () => {
                 </div>
              </div>
              
-             {/* Background Accent */}
              <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.05),transparent_50%)] pointer-events-none"></div>
         </div>
 

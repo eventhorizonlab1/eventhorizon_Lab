@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
         
         <div>
           <h2 className="text-2xl font-bold tracking-tighter uppercase mb-2">Event Horizon</h2>
-          <p className="text-gray-600 dark:text-gray-500 text-sm max-w-xs">
+          <p className="text-gray-600 dark:text-gray-400 text-sm max-w-xs">
             {t('footer_desc')}
           </p>
         </div>
@@ -25,7 +25,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-[1800px] mx-auto mt-16 pt-8 border-t border-gray-200 dark:border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-600 dark:text-gray-500 uppercase tracking-widest font-medium">
+      <div className="max-w-[1800px] mx-auto mt-16 pt-8 border-t border-gray-200 dark:border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-600 dark:text-gray-400 uppercase tracking-widest font-medium">
         <p>© 2026 Event Horizon. {t('footer_rights')}</p>
         <div className="flex gap-6">
             <a href="#" className="relative group hover:text-black dark:hover:text-white transition-colors duration-300">

@@ -76,7 +76,7 @@ const EcosystemSection: React.FC = () => {
         <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white">
           {t('ecosystem_title')}
         </h2>
-        <p className="text-gray-500 text-base md:text-lg">
+        <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg">
           {t('ecosystem_subtitle')}
         </p>
       </div>

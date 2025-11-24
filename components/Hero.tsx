@@ -1,6 +1,6 @@
 
 import React, { useRef, useEffect } from 'react';
-import { motion, useScroll, useTransform, Variants, useInView } from 'framer-motion';
+import { motion, useScroll, useTransform, Variants, useInView, useReducedMotion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import * as THREE from 'three';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
@@ -195,20 +195,14 @@ const FragmentShader = `
         col = smoothstep(0.0, 1.2, col); 
 
         // --- ORGANIC FILM GRAIN ---
-        // Calculate luminance (perceived brightness)
         float lum = dot(col, vec3(0.299, 0.587, 0.114));
         
         // High frequency noise (Fine grain for 4K/Retina compatibility)
-        // Increased multiplier from 2.5 to 6.0 for finer texture
         float grain = hash(uv * 6.0 + u_time * 20.0);
         
-        // Luminance Masking (Organic): 
-        // 1. Removes grain from deep blacks (keeps OLED black pure) 
-        // 2. Reduces grain in bright highlights to avoid clipping
-        // 3. Soft transition curves for more analog feel
+        // Luminance Masking (Organic)
         float grainMask = smoothstep(0.02, 0.3, lum) * (1.0 - smoothstep(0.85, 1.0, lum));
         
-        // Intensity Scaling
         float grainIntensity = 0.08; 
         
         col += (grain - 0.5) * grainIntensity * grainMask;
@@ -252,61 +246,68 @@ const titleContainerVariants: Variants = {
   }
 };
 
-const letterVariants: Variants = {
-  hidden: { 
-    opacity: 0,
-    scale: 8,
-    y: 100,
-    rotateX: -90,
-    rotateZ: -30,
-    filter: "blur(20px)",
-    transformOrigin: "50% 100%",
-  },
-  visible: { 
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    rotateX: 0,
-    rotateZ: 0,
-    filter: "blur(0px)",
-    transformOrigin: "50% 50%",
-    transition: {
-      duration: 1.4,
-      ease: [0.2, 0.8, 0.2, 1],
-    }
-  }
-};
+// Simplified AnimatedText for A11y/Motion Safety
+const AnimatedText = ({ text, className }: { text: string, className?: string }) => {
+  const shouldReduceMotion = useReducedMotion();
 
-const AnimatedText = ({ text, className }: { text: string, className?: string }) => (
-  <motion.div 
-    key={text} 
-    variants={titleContainerVariants}
-    initial="hidden"
-    animate="visible"
-    className={`flex flex-wrap justify-center gap-x-[0.3em] gap-y-2 ${className}`}
-    style={{ perspective: "1200px" }}
-  >
-    {text.split(" ").map((word, i) => (
-      <span key={i} className="inline-block whitespace-nowrap relative" style={{ transformStyle: "preserve-3d" }}>
-        {word.split("").map((char, j) => (
-          <motion.span 
-            key={j} 
-            variants={letterVariants} 
-            className="inline-block transform-gpu text-transparent bg-clip-text bg-gradient-to-b from-black via-black to-gray-600 dark:from-white dark:via-white dark:to-gray-400"
-            style={{ backfaceVisibility: "hidden" }} 
-          >
-            {char}
-          </motion.span>
-        ))}
-      </span>
-    ))}
-  </motion.div>
-);
+  const letterVariants: Variants = {
+    hidden: { 
+      opacity: 0,
+      // Disable complex transforms if reduced motion is requested
+      scale: shouldReduceMotion ? 1 : 8,
+      y: shouldReduceMotion ? 0 : 100,
+      rotateX: shouldReduceMotion ? 0 : -90,
+      rotateZ: shouldReduceMotion ? 0 : -30,
+      filter: shouldReduceMotion ? "blur(0px)" : "blur(20px)",
+      transformOrigin: "50% 100%",
+    },
+    visible: { 
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      rotateX: 0,
+      rotateZ: 0,
+      filter: "blur(0px)",
+      transformOrigin: "50% 50%",
+      transition: {
+        duration: shouldReduceMotion ? 0.5 : 1.4, // Faster/simpler transition
+        ease: [0.2, 0.8, 0.2, 1],
+      }
+    }
+  };
+
+  return (
+    <motion.div 
+      key={text} 
+      variants={titleContainerVariants}
+      initial="hidden"
+      animate="visible"
+      className={`flex flex-wrap justify-center gap-x-[0.3em] gap-y-2 ${className}`}
+      style={{ perspective: "1200px" }}
+    >
+      {text.split(" ").map((word, i) => (
+        <span key={i} className="inline-block whitespace-nowrap relative" style={{ transformStyle: "preserve-3d" }}>
+          {word.split("").map((char, j) => (
+            <motion.span 
+              key={j} 
+              variants={letterVariants} 
+              className="inline-block transform-gpu text-transparent bg-clip-text bg-gradient-to-b from-black via-black to-gray-600 dark:from-white dark:via-white dark:to-gray-400"
+              style={{ backfaceVisibility: "hidden" }} 
+            >
+              {char}
+            </motion.span>
+          ))}
+        </span>
+      ))}
+    </motion.div>
+  );
+};
 
 const BlackHoleBackground = ({ theme }: { theme: string }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
-  const isInView = useInView(containerRef); // Optimization: Detect visibility
+  const isInView = useInView(containerRef);
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -321,7 +322,6 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
     });
     
     renderer.setSize(container.clientWidth, container.clientHeight);
-    // Performance: Limit pixel ratio to 1.5 max to prevent overheating on Retina/4K
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     container.appendChild(renderer.domElement);
 
@@ -346,14 +346,20 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
     const animate = () => {
       animationId = requestAnimationFrame(animate);
       
-      // Stop rendering if not visible to save battery
       if (!isInView) return;
 
-      material.uniforms.u_time.value = clock.getElapsedTime();
+      // A11y: Slow down time significantly if reduced motion is requested
+      const timeMultiplier = shouldReduceMotion ? 0.1 : 1.0;
+      material.uniforms.u_time.value = clock.getElapsedTime() * timeMultiplier;
+
       const targetLight = theme === 'light' ? 1.0 : 0.0;
       material.uniforms.u_is_light.value += (targetLight - material.uniforms.u_is_light.value) * 0.05;
-      material.uniforms.u_mouse.value.x += (mouseRef.current.x - material.uniforms.u_mouse.value.x) * 0.05;
-      material.uniforms.u_mouse.value.y += (mouseRef.current.y - material.uniforms.u_mouse.value.y) * 0.05;
+      
+      // Reduce mouse influence if reduced motion
+      const mouseInfluence = shouldReduceMotion ? 0.01 : 0.05;
+      material.uniforms.u_mouse.value.x += (mouseRef.current.x - material.uniforms.u_mouse.value.x) * mouseInfluence;
+      material.uniforms.u_mouse.value.y += (mouseRef.current.y - material.uniforms.u_mouse.value.y) * mouseInfluence;
+      
       renderer.render(scene, camera);
     };
     animate();
@@ -379,12 +385,12 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
         cancelAnimationFrame(animationId);
         renderer.dispose();
         material.dispose();
-        geometry.dispose(); // Explicitly dispose geometry to prevent memory leaks
+        geometry.dispose();
         if (container && container.contains(renderer.domElement)) {
             container.removeChild(renderer.domElement);
         }
     };
-  }, [theme, isInView]);
+  }, [theme, isInView, shouldReduceMotion]);
 
   return <div ref={containerRef} className="absolute inset-0 w-full h-full z-0" />;
 };
@@ -392,18 +398,21 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
 const Hero: React.FC = () => {
   const ref = useRef<HTMLDivElement>(null);
   const { t, theme } = useThemeLanguage();
+  const shouldReduceMotion = useReducedMotion();
+  
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"]
   });
 
+  // A11y: Disable parallax effects if reduced motion is preferred
   const opacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
   const blur = useTransform(scrollYProgress, [0, 0.4], ["0px", "12px"]);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.15]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, shouldReduceMotion ? 1 : 1.15]);
 
-  const yTitle = useTransform(scrollYProgress, [0, 1], [0, 150]);
-  const ySubtitle = useTransform(scrollYProgress, [0, 1], [0, 250]);
-  const yCTA = useTransform(scrollYProgress, [0, 1], [0, 350]);
+  const yTitle = useTransform(scrollYProgress, [0, 1], [0, shouldReduceMotion ? 0 : 150]);
+  const ySubtitle = useTransform(scrollYProgress, [0, 1], [0, shouldReduceMotion ? 0 : 250]);
+  const yCTA = useTransform(scrollYProgress, [0, 1], [0, shouldReduceMotion ? 0 : 350]);
 
   return (
     <section ref={ref} className="relative h-[90vh] w-full bg-eh-black transition-colors duration-500">
@@ -415,12 +424,12 @@ const Hero: React.FC = () => {
 
         <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-white/90 dark:from-black/30 dark:via-transparent dark:to-black/80 z-10 pointer-events-none transition-colors duration-500"></div>
         
-        {/* Content Container - Added padding-top 32 (8rem) to force content down from header on iPhone SE */}
+        {/* Content Container */}
         <div className="absolute inset-0 flex flex-col items-center justify-start pt-32 md:justify-center md:pt-0 px-4 z-20 pointer-events-none">
            
            <div className="text-center max-w-[95vw] md:max-w-7xl flex flex-col items-center pointer-events-auto">
               
-              {/* TITLE LAYER - Reduced font size for mobile (text-4xl) to fix iPhone SE clipping */}
+              {/* TITLE LAYER */}
               <motion.div 
                 style={{ opacity, scale, filter: blur, y: yTitle }}
                 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.0] md:leading-[0.9] mb-8 md:mb-12 flex flex-col items-center w-full drop-shadow-lg text-black dark:text-white dark:mix-blend-overlay dark:opacity-90"
@@ -437,7 +446,7 @@ const Hero: React.FC = () => {
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.2, duration: 1, ease: "easeOut" }}
+                transition={{ delay: shouldReduceMotion ? 0.2 : 1.2, duration: 1, ease: "easeOut" }}
                 style={{ opacity, scale, filter: blur, y: ySubtitle }}
                 className="w-full"
               >
@@ -450,28 +459,30 @@ const Hero: React.FC = () => {
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.5, duration: 1, ease: "easeOut" }}
+                transition={{ delay: shouldReduceMotion ? 0.3 : 1.5, duration: 1, ease: "easeOut" }}
                 style={{ opacity, scale, filter: blur, y: yCTA }}
                 className="flex flex-col items-center mt-8 md:mt-12 gap-8"
               >
                 <motion.a 
                   href="#videos" 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
+                  whileTap={shouldReduceMotion ? {} : { scale: 0.95 }}
                   className="group flex items-center gap-3 px-8 py-4 bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 text-black dark:text-white rounded-full text-sm font-bold tracking-widest uppercase transition-colors duration-300 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black hover:shadow-[0_0_30px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] shadow-lg shadow-black/5 dark:shadow-white/5 z-30"
                 >
                   <span>{t('hero_cta')}</span>
                   <Play size={16} className="fill-current" />
                 </motion.a>
 
-                <motion.div 
-                  animate={{ y: [0, 10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="text-black/30 dark:text-white/30 text-xs font-bold uppercase tracking-widest flex flex-col items-center gap-2"
-                >
-                  <span>{t('hero_scroll')}</span>
-                  <div className="w-px h-12 bg-gradient-to-b from-black/20 to-transparent dark:from-white/50 dark:to-transparent"></div>
-                </motion.div>
+                {!shouldReduceMotion && (
+                    <motion.div 
+                    animate={{ y: [0, 10, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="text-black/30 dark:text-white/30 text-xs font-bold uppercase tracking-widest flex flex-col items-center gap-2"
+                    >
+                    <span>{t('hero_scroll')}</span>
+                    <div className="w-px h-12 bg-gradient-to-b from-black/20 to-transparent dark:from-white/50 dark:to-transparent"></div>
+                    </motion.div>
+                )}
               </motion.div>
            </div>
         </div>

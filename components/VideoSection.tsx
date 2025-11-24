@@ -23,7 +23,6 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
         setShouldLoadIframe(false);
         if (video) {
             // LAZY LOADING: Delay iframe injection to allow modal animation to start/complete
-            // This prevents heavy YouTube scripts from blocking the UI thread during transition
             const timer = setTimeout(() => setShouldLoadIframe(true), 600); 
             return () => clearTimeout(timer);
         }
@@ -117,8 +116,6 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10%" }}
       transition={{ duration: 0.5, delay: Math.min((index % 3) * 0.05, 0.2), ease: "easeOut" }}
-      // Responsive classes: Fixed width on mobile (for carousel), Auto width on desktop (for grid)
-      // transform-gpu forces GPU layer creation to prevent repaints during scroll
       className="group cursor-pointer snap-start shrink-0 w-[85vw] sm:w-[400px] md:w-auto transform-gpu"
       onClick={() => onPlay(video)}
       style={{ willChange: 'transform, opacity' }}
@@ -131,7 +128,7 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
               src={video.imageUrl} 
               alt={title} 
               loading="lazy"
-              decoding="async" // Async decoding prevents main thread blocking
+              decoding="async" 
               referrerPolicy="no-referrer"
               onError={(e) => {
                 e.currentTarget.src = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
@@ -167,7 +164,6 @@ const VideoSection: React.FC = () => {
   const { t } = useThemeLanguage();
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   
-  // Keep parallax only for the main featured video which is singular
   const { scrollYProgress } = useScroll({
     target: featuredRef,
     offset: ["start end", "end start"]
@@ -188,14 +184,14 @@ const VideoSection: React.FC = () => {
 
       <motion.section 
         id="videos" 
-        className="pt-24 pb-24" // Removed global padding here to handle mobile full-width banner
+        className="pt-24 pb-24" 
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         
-        {/* YouTube Channel Promotion Banner - Margin Bottom 12 for consistency */}
+        {/* YouTube Channel Promotion Banner */}
         <div className="max-w-[1800px] mx-auto md:px-12">
             <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -203,7 +199,6 @@ const VideoSection: React.FC = () => {
             viewport={{ once: true }}
             className="mb-12 relative overflow-hidden rounded-none md:rounded-3xl bg-gray-50 dark:bg-[#080808] text-black dark:text-white border-y md:border border-gray-200 dark:border-white/10 shadow-sm transition-colors duration-500"
             >
-            {/* Background Tech Grid */}
             <div className="absolute inset-0 z-0 pointer-events-none opacity-30">
                 <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.1)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
             </div>
@@ -211,7 +206,6 @@ const VideoSection: React.FC = () => {
             <div className="relative z-10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-8">
                 
                 <div className="flex flex-row items-center gap-6 w-full md:w-auto">
-                    {/* Technical Logo Placeholder */}
                     <div className="hidden md:flex w-16 h-16 border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 items-center justify-center rounded-lg">
                         <Radio className="w-6 h-6 text-black dark:text-white opacity-80" />
                     </div>
@@ -230,7 +224,6 @@ const VideoSection: React.FC = () => {
                     </div>
                 </div>
                 
-                {/* Right Side CTA */}
                 <a 
                     href="https://www.youtube.com/@EventHorizonLab-n9g" 
                     target="_blank" 
@@ -248,14 +241,14 @@ const VideoSection: React.FC = () => {
         </div>
 
 
-        {/* Section Header - Fixed Mobile Alignment */}
+        {/* Section Header */}
         <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-12">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-l-4 border-black dark:border-white pl-6 -ml-4 md:ml-0">
               <div>
                   <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white transition-colors duration-500">
                   {t('videos_title')}
                   </h2>
-                  <p className="text-gray-500 text-base md:text-lg max-w-md">
+                  <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg max-w-md">
                     {t('videos_subtitle')}
                   </p>
               </div>
@@ -265,7 +258,7 @@ const VideoSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Featured Video - Margin Bottom 12 for consistency */}
+        {/* Featured Video */}
         <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-12" ref={featuredRef}>
           <motion.div 
             initial={{ opacity: 0 }}
@@ -307,15 +300,14 @@ const VideoSection: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Grid Layout (Desktop) / Carousel (Mobile) - Optimized for scrolling performance */}
-        {/* touch-pan-x enables native browser handling of horizontal gestures without delay */}
+        {/* Grid Layout (Desktop) / Carousel (Mobile) */}
         <div className="max-w-[1800px] mx-auto px-4 md:px-12 flex overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-x-6 md:gap-y-12 snap-x snap-mandatory md:snap-none no-scrollbar pb-8 md:pb-0 touch-pan-x" style={{ WebkitOverflowScrolling: 'touch' }}>
           {VIDEOS.map((video, index) => (
             <VideoCard key={video.id} video={video} index={index} onPlay={setSelectedVideo} />
           ))}
         </div>
         
-        {/* Mobile Scroll Indicator - Only visible if carousel */}
+        {/* Mobile Scroll Indicator */}
         <div className="flex md:hidden justify-center gap-1 mt-2 mb-8">
              <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-50"></div>
              <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
