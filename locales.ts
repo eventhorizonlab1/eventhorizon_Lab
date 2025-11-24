@@ -1,9 +1,7 @@
 
 export type Language = 'fr' | 'en' | 'de' | 'es' | 'it';
 
-export interface TranslationSet {
-  [key: string]: string;
-}
+export type TranslationSet = Record<Language, string>;
 
 export interface Translations {
   [key: string]: TranslationSet;
