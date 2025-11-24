@@ -26,7 +26,7 @@ export const FEATURED_VIDEO: Video = {
   title: '🚀 Ariane 6 : Le Retour du Géant Européen',
   category: 'LANCEURS',
   duration: 'Live',
-  // Image mise à jour : lien spécifique vers le commit fourni par l'utilisateur (427e2b4)
+  // Utilisation du lien raw vers un commit spécifique pour garantir l'accès à l'image même si le dossier est supprimé du HEAD
   imageUrl: 'https://raw.githubusercontent.com/eventhorizonlab1/eventhorizon_Lab/427e2b4534d94a1ac7dbab3fc1af7b70f42e9586/images/vignette_ariane6.jpeg', 
   videoUrl: 'https://www.youtube.com/watch?v=ukoMgE_8heo'
 };
