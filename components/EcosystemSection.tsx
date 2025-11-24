@@ -73,7 +73,7 @@ const EcosystemSection: React.FC = () => {
       transition={{ duration: 0.8, ease: "easeOut" }}
     >
        <div className="px-4 md:px-12 max-w-[1800px] mx-auto mb-12">
-        <div className="border-l-4 border-black dark:border-white pl-6 -ml-4 md:ml-0">
+        <div className="border-l-4 border-black dark:border-white pl-6 -ml-4 md:-ml-7">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white">
             {t('ecosystem_title')}
             </h2>

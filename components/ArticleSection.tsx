@@ -257,8 +257,8 @@ const ArticleSection: React.FC = () => {
       viewport={{ once: true }}
     >
       <div className="px-4 md:px-12 max-w-[1800px] mx-auto mb-12">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border-l-4 border-black dark:border-white pl-6 -ml-4 md:ml-0">
-            <div>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
+            <div className="border-l-4 border-black dark:border-white pl-6 -ml-4 md:-ml-7">
                 <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white">
                     {t('articles_title')}
                 </h2>

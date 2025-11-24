@@ -913,7 +913,7 @@ const BlackHoleSection: React.FC = () => {
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.8, ease: "easeOut" }}
     >
-        <div className="mb-12 border-l-4 border-black dark:border-white pl-6 -ml-4 md:ml-0">
+        <div className="mb-12 border-l-4 border-black dark:border-white pl-6 -ml-4 md:-ml-7">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white transition-colors">
               {t('bh_title')}
             </h2>
