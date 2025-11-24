@@ -1,3 +1,4 @@
+
 import React, { Suspense, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -57,8 +58,8 @@ const App: React.FC = () => {
         <EcosystemSection />
         
         <Suspense fallback={
-          <div className="h-[600px] flex items-center justify-center bg-black">
-            <div className="flex flex-col items-center gap-4 text-white/50">
+          <div className="h-[600px] flex items-center justify-center bg-gray-50 dark:bg-black transition-colors duration-500">
+            <div className="flex flex-col items-center gap-4 text-gray-400 dark:text-white/50">
                <Loader2 className="animate-spin w-8 h-8" />
                <span className="text-xs font-mono tracking-widest uppercase">Initialisation de la Singularité...</span>
             </div>

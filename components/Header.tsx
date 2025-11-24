@@ -23,7 +23,7 @@ const Header: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
-      setIsLangMenuOpen(false);
+      // Removed setIsLangMenuOpen(false) to prevent annoying closure when scrolling slightly
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);

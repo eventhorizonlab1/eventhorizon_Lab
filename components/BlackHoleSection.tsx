@@ -696,7 +696,7 @@ const SimLoader = () => {
     }, []);
 
     return (
-        <div className="absolute inset-0 z-50 bg-black flex flex-col items-center justify-center text-white font-mono pointer-events-none">
+        <div className="absolute inset-0 z-50 bg-gray-50 dark:bg-black flex flex-col items-center justify-center text-gray-500 dark:text-white font-mono pointer-events-none transition-colors duration-500">
             <div className="relative w-32 h-32 mb-8 flex items-center justify-center">
                 <motion.div 
                     animate={{ rotate: 360 }}
@@ -708,7 +708,7 @@ const SimLoader = () => {
                     transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
                     className="absolute inset-2 border-b-2 border-r-2 border-purple-500 rounded-full opacity-70"
                 />
-                <div className="text-2xl font-bold tracking-tighter">{Math.floor(progress)}%</div>
+                <div className="text-2xl font-bold tracking-tighter text-black dark:text-white">{Math.floor(progress)}%</div>
             </div>
 
             <div className="flex flex-col items-center gap-2">
@@ -716,7 +716,7 @@ const SimLoader = () => {
                     <Cpu size={16} className="animate-pulse" />
                     <span className="text-xs font-bold tracking-[0.2em] uppercase">{status}</span>
                  </div>
-                 <div className="w-48 h-1 bg-gray-800 rounded-full overflow-hidden">
+                 <div className="w-48 h-1 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
                     <motion.div 
                         className="h-full bg-blue-500"
                         style={{ width: `${progress}%` }}
@@ -724,7 +724,7 @@ const SimLoader = () => {
                  </div>
             </div>
 
-            <div className="absolute inset-0 opacity-10 bg-[linear-gradient(0deg,transparent_24%,rgba(255,255,255,.5)_25%,rgba(255,255,255,.5)_26%,transparent_27%,transparent_74%,rgba(255,255,255,.5)_75%,rgba(255,255,255,.5)_76%,transparent_77%,transparent),linear-gradient(90deg,transparent_24%,rgba(255,255,255,.5)_25%,rgba(255,255,255,.5)_26%,transparent_27%,transparent_74%,rgba(255,255,255,.5)_75%,rgba(255,255,255,.5)_76%,transparent_77%,transparent)] bg-[length:30px_30px]"></div>
+            <div className="absolute inset-0 opacity-10 bg-[linear-gradient(0deg,transparent_24%,rgba(0,0,0,.5)_25%,rgba(0,0,0,.5)_26%,transparent_27%,transparent_74%,rgba(0,0,0,.5)_75%,rgba(0,0,0,.5)_76%,transparent_77%,transparent),linear-gradient(90deg,transparent_24%,rgba(0,0,0,.5)_25%,rgba(0,0,0,.5)_26%,transparent_27%,transparent_74%,rgba(0,0,0,.5)_75%,rgba(0,0,0,.5)_76%,transparent_77%,transparent)] dark:bg-[linear-gradient(0deg,transparent_24%,rgba(255,255,255,.5)_25%,rgba(255,255,255,.5)_26%,transparent_27%,transparent_74%,rgba(255,255,255,.5)_75%,rgba(255,255,255,.5)_76%,transparent_77%,transparent),linear-gradient(90deg,transparent_24%,rgba(255,255,255,.5)_25%,rgba(255,255,255,.5)_26%,transparent_27%,transparent_74%,rgba(255,255,255,.5)_75%,rgba(255,255,255,.5)_76%,transparent_77%,transparent)] bg-[length:30px_30px]"></div>
         </div>
     );
 }
@@ -865,7 +865,7 @@ const BlackHoleSection: React.FC = () => {
         </div>
 
         <div className="mb-12">
-             <div className="relative rounded-[2rem] overflow-hidden bg-black border border-gray-200 dark:border-white/10 shadow-2xl w-full aspect-square md:aspect-[21/9] flex flex-col group">
+             <div className="relative rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-black border border-gray-200 dark:border-white/10 shadow-2xl w-full aspect-square md:aspect-[21/9] flex flex-col group transition-colors duration-500">
                 
                 <AnimatePresence>
                     {isLoading && (
@@ -902,24 +902,24 @@ const BlackHoleSection: React.FC = () => {
                             </button>
                          </div>
                         <div className="flex items-center gap-2 opacity-70">
-                            <Globe size={14} className="text-white" />
-                            <span className="text-[10px] font-mono uppercase text-white tracking-widest">GARGANTUA_OBS // LIVE_FEED</span>
+                            <Globe size={14} className="text-black dark:text-white" />
+                            <span className="text-[10px] font-mono uppercase text-black dark:text-white tracking-widest">GARGANTUA_OBS // LIVE_FEED</span>
                         </div>
                     </div>
                 </div>
 
                 <div ref={containerRef} className="absolute inset-0 w-full h-full z-10" />
                 
-                <div className="absolute bottom-0 left-0 w-full p-6 z-20 bg-gradient-to-t from-black/80 to-transparent pointer-events-none flex justify-between items-end">
+                <div className="absolute bottom-0 left-0 w-full p-6 z-20 bg-gradient-to-t from-gray-200/90 dark:from-black/80 to-transparent pointer-events-none flex justify-between items-end">
                     <div>
-                        <h3 className="text-3xl font-black text-white/20 uppercase tracking-tighter">Event Horizon</h3>
+                        <h3 className="text-3xl font-black text-black/20 dark:text-white/20 uppercase tracking-tighter">Event Horizon</h3>
                     </div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/40 animate-pulse border border-white/10 px-3 py-1 rounded-full backdrop-blur-sm pointer-events-auto cursor-help" title="Interactive Simulation">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-black/40 dark:text-white/40 animate-pulse border border-black/10 dark:border-white/10 px-3 py-1 rounded-full backdrop-blur-sm pointer-events-auto cursor-help" title="Interactive Simulation">
                         {t('bh_interact')}
                     </p>
                 </div>
 
-                <div className="absolute inset-0 pointer-events-none opacity-[0.05] z-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+                <div className="absolute inset-0 pointer-events-none opacity-[0.05] z-0 bg-[linear-gradient(rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.1)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
             </div>
             
             <div className="flex md:hidden justify-center gap-4 mt-4">
