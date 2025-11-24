@@ -198,17 +198,18 @@ const FragmentShader = `
         // Calculate luminance (perceived brightness)
         float lum = dot(col, vec3(0.299, 0.587, 0.114));
         
-        // High frequency noise (Refined: Increased frequency for finer grain)
-        float grain = hash(uv * 2.5 + u_time * 20.0);
+        // High frequency noise (Fine grain for 4K/Retina compatibility)
+        // Increased multiplier from 2.5 to 6.0 for finer texture
+        float grain = hash(uv * 6.0 + u_time * 20.0);
         
         // Luminance Masking (Organic): 
-        // 1. Removes grain from deep blacks (keeps OLED black pure) -> smoothstep(0.05, 0.4, lum)
-        // 2. Reduces grain in bright highlights to avoid clipping artifacts -> (1.0 - smoothstep(0.6, 0.95, lum))
-        // 3. Result: Grain is concentrated in the mid-tones where film grain is naturally most visible
-        float grainMask = smoothstep(0.05, 0.4, lum) * (1.0 - smoothstep(0.6, 0.95, lum));
+        // 1. Removes grain from deep blacks (keeps OLED black pure) 
+        // 2. Reduces grain in bright highlights to avoid clipping
+        // 3. Soft transition curves for more analog feel
+        float grainMask = smoothstep(0.02, 0.3, lum) * (1.0 - smoothstep(0.85, 1.0, lum));
         
-        // Intensity Scaling (Refined for subtlety)
-        float grainIntensity = 0.07; 
+        // Intensity Scaling
+        float grainIntensity = 0.08; 
         
         col += (grain - 0.5) * grainIntensity * grainMask;
         
@@ -320,7 +321,7 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
     });
     
     renderer.setSize(container.clientWidth, container.clientHeight);
-    // Performance: Limit pixel ratio to 1.5 max for iPhone retina screens
+    // Performance: Limit pixel ratio to 1.5 max to prevent overheating on Retina/4K
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     container.appendChild(renderer.domElement);
 
@@ -335,7 +336,8 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
       fragmentShader: FragmentShader,
     });
 
-    const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+    const geometry = new THREE.PlaneGeometry(2, 2);
+    const quad = new THREE.Mesh(geometry, material);
     scene.add(quad);
     
     const clock = new THREE.Clock();
@@ -377,6 +379,7 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
         cancelAnimationFrame(animationId);
         renderer.dispose();
         material.dispose();
+        geometry.dispose(); // Explicitly dispose geometry to prevent memory leaks
         if (container && container.contains(renderer.domElement)) {
             container.removeChild(renderer.domElement);
         }
