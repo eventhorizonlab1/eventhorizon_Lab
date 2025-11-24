@@ -72,6 +72,13 @@ const App: React.FC = () => {
                     <span className="text-xs font-mono tracking-widest uppercase">{t('bh_loading')}</span>
                 </div>
             </div>
+
+            {/* Mobile Buttons Skeleton (Hidden on Desktop) to prevent CLS */}
+            <div className="flex md:hidden justify-center gap-4 mt-4 mb-8">
+                <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-white/5 animate-pulse"></div>
+                <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-white/5 animate-pulse"></div>
+                <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-white/5 animate-pulse"></div>
+            </div>
             
             {/* Controls Skeleton */}
             <div className="bg-white dark:bg-eh-gray p-8 rounded-[2rem] border border-gray-200 dark:border-white/5 h-64 animate-pulse"></div>

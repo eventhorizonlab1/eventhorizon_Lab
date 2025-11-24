@@ -51,6 +51,18 @@ const Header: React.FC = () => {
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
+    
+    // Special case for Logo/Home click which is just '#'
+    if (href === '#') {
+        animate(window.scrollY, 0, {
+            duration: 1.5,
+            ease: [0.22, 1, 0.36, 1],
+            onUpdate: (latest) => window.scrollTo(0, latest)
+        });
+        setIsMenuOpen(false);
+        return;
+    }
+
     const targetId = href.replace('#', '');
     const element = document.getElementById(targetId);
     
