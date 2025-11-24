@@ -1,3 +1,4 @@
+
 import React, { useRef, useState, useEffect } from 'react';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
 import { Play, Radio, ArrowUpRight, X, ExternalLink, Loader } from 'lucide-react';
@@ -49,7 +50,7 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-12"
+            className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-12"
             onClick={onClose}
         >
             <button 
@@ -68,6 +69,7 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
                 onClick={(e) => e.stopPropagation()}
                 role="dialog"
                 aria-modal="true"
+                aria-labelledby="video-modal-title"
             >
                 <motion.div
                     initial={{ scale: 0.9, y: 20 }}
@@ -119,7 +121,7 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
 
                 {/* Fallback & Info Bar */}
                 <div className="flex justify-between items-center text-white px-2">
-                    <h3 className="text-lg font-bold line-clamp-1 mr-4">{title}</h3>
+                    <h3 id="video-modal-title" className="text-lg font-bold line-clamp-1 mr-4">{title}</h3>
                     <a 
                         href={video.videoUrl} 
                         target="_blank" 

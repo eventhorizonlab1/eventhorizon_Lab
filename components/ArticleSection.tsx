@@ -1,3 +1,4 @@
+
 import React, { useRef, useState, useEffect } from 'react';
 import { ARTICLES } from '../constants';
 import { ArrowRight, ArrowLeft, FileText, X, Clock, Calendar } from 'lucide-react';
@@ -51,7 +52,7 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-end md:items-center justify-center bg-black/90 backdrop-blur-md p-0 md:p-6"
+            className="fixed inset-0 z-[10000] flex items-end md:items-center justify-center bg-black/90 backdrop-blur-md p-0 md:p-6"
             onClick={onClose}
         >
             <motion.div
@@ -59,10 +60,11 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className="bg-white dark:bg-[#0a0a0a] w-full max-w-4xl h-[95vh] md:h-[90vh] rounded-t-3xl md:rounded-3xl overflow-hidden flex flex-col shadow-2xl relative border border-gray-200 dark:border-white/10"
+                className="bg-white dark:bg-[#0a0a0a] w-full max-w-4xl h-[95dvh] md:h-[90dvh] rounded-t-3xl md:rounded-3xl overflow-hidden flex flex-col shadow-2xl relative border border-gray-200 dark:border-white/10"
                 onClick={(e) => e.stopPropagation()}
                 role="dialog"
                 aria-modal="true"
+                aria-labelledby="article-modal-title"
             >
                 <button 
                     onClick={onClose}
@@ -95,6 +97,7 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
                             Editorial
                         </motion.span>
                         <motion.h2 
+                            id="article-modal-title"
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
