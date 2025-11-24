@@ -193,10 +193,13 @@ const Header: React.FC = () => {
             </div>
           </div>
 
-          {/* Mobile Menu Trigger */}
-          <div 
-            className="md:hidden w-12 h-12 flex flex-col justify-center items-end gap-1.5 cursor-pointer z-50 p-1"
+          {/* Mobile Menu Trigger - Semantic Button for Accessibility */}
+          <button 
+            className="md:hidden w-12 h-12 flex flex-col justify-center items-end gap-1.5 cursor-pointer z-50 p-1 bg-transparent border-none outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? t('common_close') : "Menu"}
+            aria-expanded={isMenuOpen}
+            type="button"
           >
             {isMenuOpen ? (
                <X size={32} className={`${textColorClass}`} />
@@ -206,7 +209,7 @@ const Header: React.FC = () => {
                 <span className={`w-5 h-0.5 bg-current group-hover:w-8 transition-all ${textColorClass}`}></span>
               </>
             )}
-          </div>
+          </button>
         </div>
 
         {/* Scroll Progress Indicator */}
