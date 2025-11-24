@@ -13,12 +13,12 @@ export const NAV_LINKS = [
   GUIDE D'INTEGRATION DES IMAGES PERSONNALISÉES :
   Pour changer une vignette, remplacez la valeur 'imageUrl' par le lien de votre image.
   
-  Formats acceptés : 
-  1. URL Externe : 'https://mon-site.com/mon-image.jpg'
-  2. GitHub (IMPORTANT) : Utilisez le lien "Raw". 
-     Exemple : 'https://raw.githubusercontent.com/NomUtilisateur/Depot/main/dossier/image.jpg'
-     (Ne pas utiliser le lien 'github.com/...' qui est une page web, mais bien 'raw.githubusercontent.com/...')
-  3. Fichier Local : '/assets/images/mon-image.jpg' (Si vous hébergez le site vous-même)
+  IMPORTANT :
+  L'URL ci-dessous ('https://raw.githubusercontent.com/...') pointe directement vers l'image stockée
+  sur la branche 'main' de votre dépôt GitHub.
+  
+  NE SUPPRIMEZ PAS le dossier 'images' localement, sinon l'image disparaîtra de GitHub 
+  lors de votre prochain déploiement et ce lien deviendra brisé (Erreur 404).
 */
 
 export const FEATURED_VIDEO: Video = {
@@ -26,8 +26,8 @@ export const FEATURED_VIDEO: Video = {
   title: '🚀 Ariane 6 : Le Retour du Géant Européen',
   category: 'LANCEURS',
   duration: 'Live',
-  // Utilisation du lien raw vers un commit spécifique pour garantir l'accès à l'image même si le dossier est supprimé du HEAD
-  imageUrl: 'https://raw.githubusercontent.com/eventhorizonlab1/eventhorizon_Lab/427e2b4534d94a1ac7dbab3fc1af7b70f42e9586/images/vignette_ariane6.jpeg', 
+  // Lien direct vers le fichier brut sur GitHub (nécessite que le fichier existe sur la branche main)
+  imageUrl: 'https://raw.githubusercontent.com/eventhorizonlab1/eventhorizon_Lab/main/images/vignette_ariane6.jpeg', 
   videoUrl: 'https://www.youtube.com/watch?v=ukoMgE_8heo'
 };
 
