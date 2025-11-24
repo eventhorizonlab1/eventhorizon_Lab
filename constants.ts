@@ -8,12 +8,25 @@ export const NAV_LINKS = [
   { label: 'Écosystème', href: '#ecosystem', key: 'nav_ecosystem' },
 ];
 
+/* 
+  GUIDE D'INTEGRATION DES IMAGES PERSONNALISÉES :
+  Pour changer une vignette, remplacez la valeur 'imageUrl' par le lien de votre image.
+  
+  Formats acceptés : 
+  1. URL Externe : 'https://mon-site.com/mon-image.jpg'
+  2. GitHub (IMPORTANT) : Utilisez le lien "Raw". 
+     Exemple : 'https://raw.githubusercontent.com/NomUtilisateur/Depot/main/dossier/image.jpg'
+     (Ne pas utiliser le lien 'github.com/...' qui est une page web, mais bien 'raw.githubusercontent.com/...')
+  3. Fichier Local : '/assets/images/mon-image.jpg' (Si vous hébergez le site vous-même)
+*/
+
 export const FEATURED_VIDEO: Video = {
-  id: 'feat_1', // Correction: feat_1 (underscore) to match translation key
+  id: 'feat_1', 
   title: '🚀 Ariane 6 : Le Retour du Géant Européen',
   category: 'LANCEURS',
   duration: 'Live',
-  imageUrl: 'https://images.unsplash.com/photo-1517976487492-5750f3195933?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80', // Ariane 5/6 launch
+  // EXEMPLE : Changement vers une image style "Concept Art" haute résolution
+  imageUrl: 'https://images.unsplash.com/photo-1636819488530-1b1e87948835?q=80&w=1600&auto=format&fit=crop', 
   videoUrl: 'https://www.youtube.com/watch?v=ukoMgE_8heo'
 };
 
