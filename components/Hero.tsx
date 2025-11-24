@@ -329,24 +329,34 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
       powerPreference: "high-performance",
       antialias: false 
     });
-    
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    
-    // OPTIMIZATION: Limit Pixel Ratio to max 1.5 to prevent overheating on Retina displays
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-    
-    container.appendChild(renderer.domElement);
 
+    // Moved material definition BEFORE updateSize function to fix ReferenceError
     const material = new THREE.ShaderMaterial({
-      uniforms: {
-        u_time: { value: 0 },
-        u_resolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) },
-        u_mouse: { value: new THREE.Vector2(0, 0) },
-        u_is_light: { value: themeRef.current === 'light' ? 1.0 : 0.0 }
-      },
-      vertexShader: VertexShader,
-      fragmentShader: FragmentShader,
+        uniforms: {
+          u_time: { value: 0 },
+          u_resolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) },
+          u_mouse: { value: new THREE.Vector2(0, 0) },
+          u_is_light: { value: themeRef.current === 'light' ? 1.0 : 0.0 }
+        },
+        vertexShader: VertexShader,
+        fragmentShader: FragmentShader,
     });
+    
+    // Initial scaling function for Pixel Ratio
+    const updateSize = () => {
+        if (!container) return;
+        // OPTIMIZATION: Limit Pixel Ratio dynamically. 1.0 for mobile/tablets to save battery/perf, 1.5 max for Desktop.
+        const isMobile = window.innerWidth < 768;
+        const maxPixelRatio = isMobile ? 1.0 : 1.5;
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio));
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        if (material) {
+            material.uniforms.u_resolution.value.set(container.clientWidth, container.clientHeight);
+        }
+    };
+    
+    updateSize();
+    container.appendChild(renderer.domElement);
 
     const geometry = new THREE.PlaneGeometry(2, 2);
     const quad = new THREE.Mesh(geometry, material);
@@ -378,9 +388,7 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
     animate();
     
     const handleResize = () => {
-        if (!container) return;
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        material.uniforms.u_resolution.value.set(container.clientWidth, container.clientHeight);
+        updateSize();
     };
 
     const handleMouseMove = (e: MouseEvent) => {
