@@ -8,8 +8,8 @@ import { useThemeLanguage } from '../context/ThemeLanguageContext';
 
 // --- VIDEO UTILS ---
 const getYouTubeId = (url: string) => {
-    // Robust regex for YouTube ID extraction handling various formats
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    // Robust regex for YouTube ID extraction handling various formats including Shorts and Live
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/|live\/)([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
 };
