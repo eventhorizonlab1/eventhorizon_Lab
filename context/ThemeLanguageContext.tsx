@@ -144,22 +144,6 @@ const translations: Translations = {
   partner_p4_role: { fr: 'Excellence', en: 'Excellence', de: 'Exzellenz', es: 'Excelencia', it: 'Eccellenza' },
   partner_p5_role: { fr: 'Culture', en: 'Culture', de: 'Kultur', es: 'Cultura', it: 'Cultura' },
 
-  // --- TIMELINE ---
-  hero_history_title: { fr: 'Notre Histoire', en: 'Our History', de: 'Unsere Geschichte', es: 'Nuestra Historia', it: 'La Nostra Storia' },
-  hero_history_sub: { fr: "L'héritage de l'exploration spatiale européenne", en: "The legacy of European space exploration", de: "Das Erbe der europäischen Weltraumforschung", es: "El legado de la exploración espacial europea", it: "L'eredità dell'esplorazione spaziale europea" },
-  
-  milestone_0_title: { fr: "Création du CNES", en: "Creation of CNES", de: "Gründung des CNES", es: "Creación del CNES", it: "Creazione del CNES" },
-  milestone_0_desc: { fr: "Fondation de l'agence spatiale française par le Général de Gaulle.", en: "Foundation of the French space agency by General de Gaulle.", de: "Gründung der französischen Raumfahrtagentur durch General de Gaulle.", es: "Fundación de la agencia espacial francesa por el General de Gaulle.", it: "Fondazione dell'agenzia spaziale francese da parte del Generale de Gaulle." },
-  
-  milestone_1_title: { fr: "Premier vol Ariane", en: "First Ariane Flight", de: "Erster Ariane-Flug", es: "Primer vuelo de Ariane", it: "Primo volo Ariane" },
-  milestone_1_desc: { fr: "L'Europe gagne son accès indépendant à l'espace avec Ariane 1.", en: "Europe gains independent access to space with Ariane 1.", de: "Europa erhält mit Ariane 1 unabhängigen Zugang zum Weltraum.", es: "Europa obtiene acceso independiente al espacio con Ariane 1.", it: "L'Europa ottiene accesso indipendente allo spazio con Ariane 1." },
-  
-  milestone_2_title: { fr: "Mission Rosetta", en: "Rosetta Mission", de: "Rosetta-Mission", es: "Misión Rosetta", it: "Missione Rosetta" },
-  milestone_2_desc: { fr: "Première atterrissage sur une comète avec le robot Philae.", en: "First landing on a comet with the Philae lander.", de: "Erste Landung auf einem Kometen mit dem Lander Philae.", es: "Primer aterrizaje en un cometa con el módulo Philae.", it: "Primo atterraggio su una cometa con il lander Philae." },
-  
-  milestone_3_title: { fr: "Station Spatiale (ISS)", en: "Space Station (ISS)", de: "Raumstation (ISS)", es: "Estación Espacial (ISS)", it: "Stazione Spaziale (ISS)" },
-  milestone_3_desc: { fr: "Thomas Pesquet prend le commandement de l'ISS.", en: "Thomas Pesquet takes command of the ISS.", de: "Thomas Pesquet übernimmt das Kommando über die ISS.", es: "Thomas Pesquet asume el mando de la ISS.", it: "Thomas Pesquet assume il comando della ISS." },
-
   // --- BLACK HOLE SIM ---
   bh_title: { fr: 'Singularité', en: 'Singularity', de: 'Singularität', es: 'Singularidad', it: 'Singolarità' },
   bh_subtitle: { 
@@ -188,48 +172,6 @@ const translations: Translations = {
   footer_rights: { fr: 'Tous droits réservés.', en: 'All rights reserved.', de: 'Alle Rechte vorbehalten.', es: 'Todos los derechos reservados.', it: 'Tutti i diritti riservati.' },
   footer_legal: { fr: 'Mentions Légales', en: 'Legal Notice', de: 'Impressum', es: 'Aviso Legal', it: 'Note Legali' },
   footer_privacy: { fr: 'Confidentialité', en: 'Privacy Policy', de: 'Datenschutz', es: 'Privacidad', it: 'Privacy' },
-  
-  // --- STUDIO ---
-  studio_title: { fr: 'Studio de Conception', en: 'Design Studio', de: 'Designstudio', es: 'Estudio de Diseño', it: 'Studio di Design' },
-  studio_desc: { 
-    fr: "Générez des concepts de vaisseaux, de bases lunaires ou de phénomènes cosmiques grâce à l'IA.", 
-    en: "Generate concepts for ships, lunar bases, or cosmic phenomena using AI.",
-    de: "Generieren Sie Konzepte für Schiffe, Mondbasen oder kosmische Phänomene mit KI.",
-    es: "Genere conceptos de naves, bases lunares o fenómenos cósmicos con IA.",
-    it: "Genera concetti per navi, basi lunari o fenomeni cosmici utilizzando l'IA."
-  },
-  studio_label: { fr: 'Description du concept', en: 'Concept Description', de: 'Konzeptbeschreibung', es: 'Descripción del concepto', it: 'Descrizione del concetto' },
-  studio_placeholder: { 
-    fr: 'Ex: Une station spatiale futuriste en orbite autour de Mars, style cinématique, éclairage dramatique...', 
-    en: 'Ex: A futuristic space station orbiting Mars, cinematic style, dramatic lighting...',
-    de: 'Bsp: Eine futuristische Raumstation im Orbit um den Mars, kinematischer Stil, dramatische Beleuchtung...',
-    es: 'Ej: Una estación espacial futurista orbitando Marte, estilo cinematográfico, iluminación dramática...',
-    it: 'Es: Una stazione spaziale futuristica in orbita attorno a Marte, stile cinematografico, illuminazione drammatica...'
-  },
-  studio_btn_generate: { fr: 'Générer le concept', en: 'Generate Concept', de: 'Konzept generieren', es: 'Generar Concepto', it: 'Genera Concetto' },
-  studio_btn_generating: { fr: 'Initialisation des moteurs...', en: 'Initializing engines...', de: 'Motoren initialisieren...', es: 'Inicializando motores...', it: 'Inizializzazione motori...' },
-  studio_download: { fr: 'Télécharger', en: 'Download', de: 'Herunterladen', es: 'Descargar', it: 'Scarica' },
-  studio_empty: { fr: 'Le visualiseur est prêt. Entrez une description pour commencer.', en: 'The visualizer is ready. Enter a description to start.', de: 'Der Visualisierer ist bereit. Geben Sie eine Beschreibung ein, um zu beginnen.', es: 'El visualizador está listo. Ingrese una descripción para comenzar.', it: 'Il visualizzatore è pronto. Inserisci una descrizione per iniziare.' },
-  
-  studio_error_generic: { fr: 'Erreur de génération. Veuillez réessayer.', en: 'Generation error. Please try again.', de: 'Generierungsfehler. Bitte versuchen Sie es erneut.', es: 'Error de generación. Inténtelo de nuevo.', it: 'Errore di generazione. Riprova.' },
-  studio_error_safety: { fr: 'Contenu non autorisé détecté. Veuillez reformuler.', en: 'Unauthorized content detected. Please rephrase.', de: 'Unzulässiger Inhalt erkannt. Bitte umformulieren.', es: 'Contenido no autorizado detectado. Por favor reformule.', it: 'Contenuto non autorizzato rilevato. Per favore riformula.' },
-  studio_error_quota: { fr: 'Limite de requêtes atteinte. Réessayez plus tard.', en: 'Request limit reached. Try again later.', de: 'Anfragelimit erreicht. Versuchen Sie es später erneut.', es: 'Límite de solicitudes alcanzado. Inténtelo más tarde.', it: 'Limite di richieste raggiunto. Riprova più tardi.' },
-  studio_error_timeout: { fr: 'Le système ne répond pas. Réessayez.', en: 'System not responding. Try again.', de: 'System antwortet nicht. Versuchen Sie es erneut.', es: 'El sistema no responde. Inténtelo de nuevo.', it: 'Il sistema non risponde. Riprova.' },
-
-  // --- ORACLE (MISSION CONTROL) ---
-  oracle_title: { fr: 'Centre de Contrôle', en: 'Mission Control', de: 'Missionskontrolle', es: 'Control de Misión', it: 'Controllo Missione' },
-  oracle_desc: { 
-    fr: "Interrogez l'IA centrale sur l'histoire spatiale, les technologies de propulsion ou les missions en cours.",
-    en: "Query the central AI about space history, propulsion technologies, or ongoing missions.",
-    de: "Befragen Sie die zentrale KI zur Weltraumgeschichte, Antriebstechnologien oder laufenden Missionen.",
-    es: "Consulte a la IA central sobre historia espacial, tecnologías de propulsión o misiones en curso.",
-    it: "Interroga l'IA centrale sulla storia dello spazio, le tecnologie di propulsione o le missioni in corso."
-  },
-  oracle_placeholder: { fr: 'Entrez votre commande ou question ici...', en: 'Enter your command or question here...', de: 'Geben Sie Ihren Befehl oder Ihre Frage hier ein...', es: 'Ingrese su comando o pregunta aquí...', it: 'Inserisci il tuo comando o domanda qui...' },
-  oracle_quick_access: { fr: 'Accès Rapide', en: 'Quick Access', de: 'Schnellzugriff', es: 'Acceso Rápido', it: 'Accesso Rapido' },
-  oracle_sugg_1: { fr: "Explique-moi le fonctionnement d'un moteur Raptor", en: "Explain how a Raptor engine works", de: "Erkläre mir, wie ein Raptor-Triebwerk funktioniert", es: "Explícame cómo funciona un motor Raptor", it: "Spiegami come funziona un motore Raptor" },
-  oracle_sugg_2: { fr: "Quelle est la différence entre Ariane 5 et 6 ?", en: "What is the difference between Ariane 5 and 6?", de: "Was ist der Unterschied zwischen Ariane 5 und 6?", es: "¿Cuál es la diferencia entre Ariane 5 y 6?", it: "Qual è la differenza tra Ariane 5 e 6?" },
-  oracle_sugg_3: { fr: "Détails de la mission JUICE vers Jupiter", en: "Details of the JUICE mission to Jupiter", de: "Details der JUICE-Mission zum Jupiter", es: "Detalles de la misión JUICE a Júpiter", it: "Dettagli della missione JUICE su Giove" },
 };
 
 interface ThemeLanguageContextType {

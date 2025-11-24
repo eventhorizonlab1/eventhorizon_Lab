@@ -186,10 +186,3 @@ export const PARTNERS: Partner[] = [
     imageUrl: 'https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' // Space Exhibition
   },
 ];
-
-export const MILESTONES = [
-  { year: '1961' },
-  { year: '1979' },
-  { year: '2014' },
-  { year: '2021' },
-];
