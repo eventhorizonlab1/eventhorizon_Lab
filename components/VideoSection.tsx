@@ -1,7 +1,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
-import { Play, Radio, ArrowUpRight, X, ExternalLink, Loader } from 'lucide-react';
+import { Play, Radio, ArrowUpRight, X, ExternalLink } from 'lucide-react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Video } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';

@@ -772,6 +772,27 @@ const SimLoader = () => {
     );
 }
 
+// Extracted outside the component to prevent re-rendering and focus loss during interaction
+const ControlSlider = ({ label, value, min, max, step, onChange, icon: Icon }: any) => (
+  <div className="mb-6 group">
+      <div className="flex justify-between items-center mb-2">
+          <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 group-hover:text-black dark:group-hover:text-gray-200 transition-colors">
+              {Icon && <Icon size={14} />} {label}
+          </label>
+          <span className="text-xs font-mono text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded">{value}</span>
+      </div>
+      <input 
+          type="range" 
+          min={min} 
+          max={max} 
+          step={step} 
+          value={value} 
+          onChange={(e) => onChange(parseFloat(e.target.value))}
+          className="w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500 hover:[&::-webkit-slider-thumb]:bg-blue-400 transition-all [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+      />
+  </div>
+);
+
 const BlackHoleSection: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const simRef = useRef<BlackHoleSim | null>(null);
@@ -868,26 +889,6 @@ const BlackHoleSection: React.FC = () => {
           simRef.current.moveTo(90, 0, 0);
       }
   };
-
-  const ControlSlider = ({ label, value, min, max, step, onChange, icon: Icon }: any) => (
-    <div className="mb-6 group">
-        <div className="flex justify-between items-center mb-2">
-            <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 group-hover:text-black dark:group-hover:text-gray-200 transition-colors">
-                {Icon && <Icon size={14} />} {label}
-            </label>
-            <span className="text-xs font-mono text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded">{value}</span>
-        </div>
-        <input 
-            type="range" 
-            min={min} 
-            max={max} 
-            step={step} 
-            value={value} 
-            onChange={(e) => onChange(parseFloat(e.target.value))}
-            className="w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500 hover:[&::-webkit-slider-thumb]:bg-blue-400 transition-all [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
-        />
-    </div>
-  );
 
   return (
     <motion.section 
