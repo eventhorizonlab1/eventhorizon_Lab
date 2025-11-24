@@ -19,6 +19,16 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
     const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
     const { t } = useThemeLanguage();
 
+    // Lock body scroll when modal is open
+    useEffect(() => {
+        if (video) {
+            document.body.style.overflow = 'hidden';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [video]);
+
     useEffect(() => {
         setShouldLoadIframe(false);
         if (video) {
@@ -177,12 +187,25 @@ const VideoSection: React.FC = () => {
   const featuredTitle = t(`video_${FEATURED_VIDEO.id}_title`);
   const featuredCat = t(`video_${FEATURED_VIDEO.id}_cat`);
 
+  // Helper for title resolution
+  const getPageTitle = (v: Video) => {
+    const raw = t(`video_${v.id}_title`);
+    const title = raw.startsWith('video_') ? v.title : raw;
+    return `${title} | Event Horizon`;
+  };
+
+  const getPageDesc = (v: Video) => {
+    const raw = t(`video_${v.id}_title`);
+    const title = raw.startsWith('video_') ? v.title : raw;
+    return `Regardez ${title} sur Event Horizon.`;
+  };
+
   return (
     <>
       {selectedVideo && (
           <>
-            <title>{(t(`video_${selectedVideo.id}_title`).startsWith('video_') ? selectedVideo.title : t(`video_${selectedVideo.id}_title`)) + " | Event Horizon"}</title>
-            <meta name="description" content={`Regardez ${(t(`video_${selectedVideo.id}_title`).startsWith('video_') ? selectedVideo.title : t(`video_${selectedVideo.id}_title`))} sur Event Horizon.`} />
+            <title>{getPageTitle(selectedVideo)}</title>
+            <meta name="description" content={getPageDesc(selectedVideo)} />
           </>
       )}
       <AnimatePresence>
