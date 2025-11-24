@@ -25,8 +25,8 @@ export const FEATURED_VIDEO: Video = {
   title: '🚀 Ariane 6 : Le Retour du Géant Européen',
   category: 'LANCEURS',
   duration: 'Live',
-  // EXEMPLE : Changement vers une image style "Concept Art" haute résolution
-  imageUrl: 'https://images.unsplash.com/photo-1636819488530-1b1e87948835?q=80&w=1600&auto=format&fit=crop', 
+  // Image mise à jour depuis votre dépôt GitHub
+  imageUrl: 'https://github.com/eventhorizonlab1/eventhorizon_Lab/raw/2699f3d7da3e5d0201fd0cb51ca9c87691558158/images/vignette_ariane6.jpeg', 
   videoUrl: 'https://www.youtube.com/watch?v=ukoMgE_8heo'
 };
 
