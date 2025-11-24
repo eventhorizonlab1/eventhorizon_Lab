@@ -5,7 +5,6 @@ import { ArrowRight, ArrowLeft, FileText, X, Clock, Calendar } from 'lucide-reac
 import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion';
 import { Article } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
-import { Helmet } from 'react-helmet-async';
 
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -225,10 +224,10 @@ const ArticleSection: React.FC = () => {
   return (
     <>
     {selectedArticle && (
-        <Helmet>
+        <>
             <title>{t(`article_${selectedArticle.id}_title`) + " | Event Horizon"}</title>
             <meta name="description" content={t(`article_${selectedArticle.id}_summary`)} />
-        </Helmet>
+        </>
     )}
     
     <AnimatePresence>
