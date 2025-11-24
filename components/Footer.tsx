@@ -18,10 +18,10 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="flex gap-8">
-            <a href="https://www.youtube.com/@EventHorizonLab-n9g" target="_blank" rel="noreferrer" aria-label="YouTube Channel" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all duration-300 hover:scale-110"><Youtube size={24} strokeWidth={1.5} /></a>
-            <a href="#" aria-label="LinkedIn Profile" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all duration-300 hover:scale-110"><Linkedin size={24} strokeWidth={1.5} /></a>
-            <a href="https://x.com/LabEventHorizon" target="_blank" rel="noreferrer" aria-label="X (Twitter) Profile" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all duration-300 hover:scale-110"><X size={24} strokeWidth={1.5} /></a>
-            <a href="mailto:eventhorizonlab1@gmail.com" aria-label="Contact via Email" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all duration-300 hover:scale-110"><Mail size={24} strokeWidth={1.5} /></a>
+            <a href="https://www.youtube.com/@EventHorizonLab-n9g" target="_blank" rel="noreferrer" aria-label={t('footer_aria_youtube')} className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all duration-300 hover:scale-110"><Youtube size={24} strokeWidth={1.5} /></a>
+            <a href="#" aria-label={t('footer_aria_linkedin')} className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all duration-300 hover:scale-110"><Linkedin size={24} strokeWidth={1.5} /></a>
+            <a href="https://x.com/LabEventHorizon" target="_blank" rel="noreferrer" aria-label={t('footer_aria_x')} className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all duration-300 hover:scale-110"><X size={24} strokeWidth={1.5} /></a>
+            <a href="mailto:eventhorizonlab1@gmail.com" aria-label={t('footer_aria_mail')} className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all duration-300 hover:scale-110"><Mail size={24} strokeWidth={1.5} /></a>
         </div>
       </div>
 

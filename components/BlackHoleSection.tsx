@@ -730,7 +730,9 @@ const SimLoader = () => {
         let currentPhase = 0;
         const interval = setInterval(() => {
             setProgress((prev) => {
-                const next = prev + Math.random() * 5;
+                // Increase random increment range (was 5, now 15) to fill bar faster within the 2.2s timeout
+                // This ensures "Finalizing" and "Ready" states are visible before component mounts
+                const next = prev + Math.random() * 15;
                 if (currentPhase < phases.length && next > phases[currentPhase].t) {
                     setStatusKey(phases[currentPhase].key);
                     currentPhase++;

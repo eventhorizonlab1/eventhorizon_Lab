@@ -103,6 +103,10 @@ const fr: Record<string, string> = {
   footer_rights: 'Tous droits réservés.',
   footer_legal: 'Mentions Légales',
   footer_privacy: 'Confidentialité',
+  footer_aria_youtube: 'Chaîne YouTube',
+  footer_aria_linkedin: 'Profil LinkedIn',
+  footer_aria_x: 'Profil X (Twitter)',
+  footer_aria_mail: 'Contact par Email',
 };
 
 const en: Record<string, string> = {
@@ -192,6 +196,10 @@ const en: Record<string, string> = {
   footer_rights: 'All rights reserved.',
   footer_legal: 'Legal Notice',
   footer_privacy: 'Privacy Policy',
+  footer_aria_youtube: 'YouTube Channel',
+  footer_aria_linkedin: 'LinkedIn Profile',
+  footer_aria_x: 'X (Twitter) Profile',
+  footer_aria_mail: 'Contact via Email',
 };
 
 const de: Record<string, string> = {
@@ -281,6 +289,10 @@ const de: Record<string, string> = {
   footer_rights: 'Alle Rechte vorbehalten.',
   footer_legal: 'Impressum',
   footer_privacy: 'Datenschutz',
+  footer_aria_youtube: 'YouTube-Kanal',
+  footer_aria_linkedin: 'LinkedIn-Profil',
+  footer_aria_x: 'X (Twitter) Profil',
+  footer_aria_mail: 'Kontakt per E-Mail',
 };
 
 const es: Record<string, string> = {
@@ -370,6 +382,10 @@ const es: Record<string, string> = {
   footer_rights: 'Todos los derechos reservados.',
   footer_legal: 'Aviso Legal',
   footer_privacy: 'Privacidad',
+  footer_aria_youtube: 'Canal de YouTube',
+  footer_aria_linkedin: 'Perfil de LinkedIn',
+  footer_aria_x: 'Perfil de X (Twitter)',
+  footer_aria_mail: 'Contacto por Correo',
 };
 
 const it: Record<string, string> = {
@@ -459,6 +475,10 @@ const it: Record<string, string> = {
   footer_rights: 'Tutti i diritti riservati.',
   footer_legal: 'Note Legali',
   footer_privacy: 'Privacy',
+  footer_aria_youtube: 'Canale YouTube',
+  footer_aria_linkedin: 'Profilo LinkedIn',
+  footer_aria_x: 'Profilo X (Twitter)',
+  footer_aria_mail: 'Contatto via Email',
 };
 
 export const TRANSLATIONS: Record<Language, Record<string, string>> = {
