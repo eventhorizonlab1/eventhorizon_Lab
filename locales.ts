@@ -1,5 +1,5 @@
 
-export type Language = string;
+export type Language = 'fr' | 'en' | 'de' | 'es' | 'it';
 
 export interface TranslationSet {
   [key: string]: string;
@@ -9,8 +9,14 @@ export interface Translations {
   [key: string]: TranslationSet;
 }
 
+export interface LanguageOption {
+  code: Language;
+  name: string;
+  flag: string;
+}
+
 // Reduced to major European languages to ensure 100% translation coverage
-export const SUPPORTED_LANGUAGES = [
+export const SUPPORTED_LANGUAGES: LanguageOption[] = [
   { code: 'fr', name: 'Français', flag: '🇫🇷' },
   { code: 'en', name: 'English', flag: '🇬🇧' },
   { code: 'de', name: 'Deutsch', flag: '🇩🇪' },

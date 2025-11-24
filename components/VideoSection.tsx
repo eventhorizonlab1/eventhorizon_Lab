@@ -1,3 +1,4 @@
+
 import React, { useRef, useState, useEffect } from 'react';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
 import { Play, Radio, ArrowUpRight, X, ExternalLink, Loader } from 'lucide-react';
@@ -6,8 +7,7 @@ import { Video } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 
 // --- VIDEO UTILS ---
-const getYouTubeId = (url: string | undefined) => {
-    if (!url) return null;
+const getYouTubeId = (url: string) => {
     // Robust regex for YouTube ID extraction handling various formats
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
