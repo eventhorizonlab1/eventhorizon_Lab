@@ -213,22 +213,26 @@ const FragmentShader = `
         float gray = dot(col, vec3(0.299, 0.587, 0.114));
         gray = smoothstep(0.02, 0.9, gray);
         
-        vec3 finalColor = vec3(gray);
+        // --- THEME MIXING ---
+        // 1. Dark Mode Color (Black Hole)
+        vec3 darkColor = vec3(gray);
 
-        if (u_is_light > 0.5) {
-            vec3 paperColor = vec3(0.96, 0.96, 0.98); 
-            vec3 inkColor = vec3(0.1, 0.12, 0.18); 
-            
-            float inkMask = smoothstep(0.05, 0.8, gray); 
-            
-            finalColor = mix(paperColor, inkColor, inkMask);
-            
-            float grid = 0.0;
-            if (mod(vUv.x * 40.0, 1.0) < 0.05 || mod(vUv.y * 40.0 * (u_resolution.y/u_resolution.x), 1.0) < 0.05) {
-                grid = 0.1;
-            }
-            finalColor -= grid * 0.1;
+        // 2. Light Mode Color (Scientific Paper Style)
+        vec3 paperColor = vec3(0.96, 0.96, 0.98); 
+        vec3 inkColor = vec3(0.1, 0.12, 0.18); 
+        
+        float inkMask = smoothstep(0.05, 0.8, gray); 
+        
+        vec3 lightColor = mix(paperColor, inkColor, inkMask);
+        
+        float grid = 0.0;
+        if (mod(vUv.x * 40.0, 1.0) < 0.05 || mod(vUv.y * 40.0 * (u_resolution.y/u_resolution.x), 1.0) < 0.05) {
+            grid = 0.1;
         }
+        lightColor -= grid * 0.1;
+
+        // 3. Smooth Mix based on u_is_light uniform (interpolated in JS)
+        vec3 finalColor = mix(darkColor, lightColor, u_is_light);
 
         gl_FragColor = vec4(finalColor, 1.0);
     }

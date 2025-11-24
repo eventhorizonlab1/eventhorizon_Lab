@@ -1,4 +1,5 @@
 
+
 export type Language = 'fr' | 'en' | 'de' | 'es' | 'it';
 
 export interface LanguageOption {
@@ -342,7 +343,7 @@ const es: Record<string, string> = {
   article_a5_summary: 'Nuevas regulaciones para un espacio sostenible.',
   ecosystem_title: 'El Ecosistema de Toulouse',
   ecosystem_subtitle: 'Actores clave que dan forma al futuro.',
-  ecosystem_view: 'Profil ansehen',
+  ecosystem_view: 'Ver perfil',
   partner_p1_role: 'Agencia Espacial',
   partner_p2_role: 'Fabricante',
   partner_p3_role: 'Satélites',
@@ -419,7 +420,7 @@ const it: Record<string, string> = {
   article_read_more: 'Leggi articolo completo',
   article_a1_title: 'Perché Tolosa è la capitale dello spazio',
   article_a1_summary: "Analisi economica e strutturale dell'ecosistema Aerospace Valley.",
-  article_a1_content: "Tolosa non è conosciuta solo per i suoi mattoni rosa e il clima soleggiato. È il cuore pulsante dell'industria aerospaziale europea. \n\nCon oltre 124.000 posti di lavoro industriali, l'Aerospace Valley concentra una potenza tecnologica unica al mondo. Qui ha sede Airbus, il gigante globale dell'aviazione, così come la divisione spaziale di Airbus Defence and Space.\n\nMa Tolosa è anche la sede del Centro Spaziale di Tolosa (CST) del CNES. Fondato negli anni '60, è il più grande centro tecnico spaziale in Europa. È qui che vengono progettati i veicoli orbitali e operate missioni marziane come Curiosity o Perseverance.\n\nL'eccellenza di Tolosa si basa anche sul suo bacino di talenti. Istituzioni come ISAE-SUPAERO, ENAC e INSA formano ogni anno l'élite degli ingegneri spaziali. Questo ecosistema accademico nutre una miriade di startup NewSpace.\n\nInfine, la cultura spaziale è onnipresente. La Cité de l'Espace, un parco a tema scientifico unico in Europa, accoglie centinaia di migliaia di visitatori, ispirando le future generazioni di astronauti e ingegneri.",
+  article_a1_content: "Tolosa non è conosciuta solo per i suoi mattoni rosa e il clima soleggiato. È il cuore pulsante dell'industria aerospaziale europea. \n\nCon oltre 124.000 posti di lavoro industriali, l'Aerospace Valley concentra una potenza tecnologica unica al mondo. Qui ha sede Airbus, il gigante globale dell'aviazione, così come la divisione spaziale di Airbus Defence and Space.\n\nMa Tolosa è anche la sede del Centro Spaziale di Tolosa (CST) del CNES. Fondato negli anni '60, è il più grande centro tecnico spaziale in Europa. È qui che vengono progettati i veicoli orbitali e operate missioni marziane come Curiosity o Perseverance.\n\nL'eccellenza di Tolosa si basa anche sul suo bacino di talenti. Istituzioni come ISAE-SUPAERO, ENAC e INSA formano ogni anno l'élite degli ingegneri spaziali. Questo ecosistema accademico nutre una miriade di startup NewSpace.\n\nInfine, la cultura spaziale è onnipresente. La Cité de l'Espace, un parque a tema scientifico unico in Europa, accoglie centinaia di migliaia di visitatori, ispirando le future generazioni di astronauti e ingegneri.",
   article_placeholder_content: 'Il contenuto completo di questo articolo è attualmente in fase di redazione da parte dei nostri team editoriali. Torna presto.',
   article_a2_title: "Intervista esclusiva: DG dell'ESA",
   article_a2_summary: "Visione strategica per l'autonomia europea entro il 2030.",
