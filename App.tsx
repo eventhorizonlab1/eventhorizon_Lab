@@ -27,8 +27,13 @@ const App: React.FC = () => {
       <meta name="description" content={t('footer_desc')} />
       <meta name="theme-color" content="#0a0a0a" />
 
-      {/* Cinematic Noise Overlay */}
-      <div className="fixed inset-0 z-[9999] pointer-events-none opacity-[0.05] mix-blend-overlay">
+      {/* Cinematic Noise Overlay 
+          Z-INDEX STRATEGY: 
+          z-30: Placed above Background/Hero (z-0 to z-20) and Content (z-10), 
+          but BELOW Header (z-50) and Modals (z-10000).
+          This keeps the UI crisp and accessible while maintaining the film look on the atmosphere.
+      */}
+      <div className="fixed inset-0 z-30 pointer-events-none opacity-[0.05] mix-blend-overlay">
         <div 
           className="absolute inset-0 w-full h-full"
           style={{
@@ -44,6 +49,7 @@ const App: React.FC = () => {
       {/* 
         Adjusted negative margin to -mt-20 to pull the white/black card up over the 90vh Hero.
         This ensures consistent overlap and visual flow.
+        z-10 places content under the Noise (z-30) for cinematic integration.
       */}
       <div className="relative z-10 bg-white dark:bg-eh-black rounded-t-[3rem] -mt-20 shadow-[0_-20px_40px_rgba(0,0,0,0.05)] transition-colors duration-500">
         <VideoSection />

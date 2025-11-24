@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect } from 'react';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
 import { Play, Radio, ArrowUpRight, X, ExternalLink, Loader } from 'lucide-react';
@@ -18,6 +17,7 @@ const getYouTubeId = (url: string | undefined) => {
 // --- VIDEO PLAYER MODAL ---
 const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ video, onClose }) => {
     const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
+    const [iframeLoaded, setIframeLoaded] = useState(false);
     const { t } = useThemeLanguage();
 
     // Lock body scroll when modal is open
@@ -32,9 +32,11 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
 
     useEffect(() => {
         setShouldLoadIframe(false);
+        setIframeLoaded(false);
         if (video) {
-            // LAZY LOADING: Delay iframe injection to allow modal animation to start/complete
-            const timer = setTimeout(() => setShouldLoadIframe(true), 600); 
+            // LAZY LOADING: Delay iframe injection slightly to allow modal spring animation to settle
+            // Reduced to 450ms for snappier feel while still preventing jank
+            const timer = setTimeout(() => setShouldLoadIframe(true), 450); 
             return () => clearTimeout(timer);
         }
     }, [video]);
@@ -85,7 +87,7 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
                         </div>
                     ) : (
                         <>
-                            {/* Placeholder / Loader - Always rendered initially to prevent black flash */}
+                            {/* Placeholder / Loader - Remains visible behind iframe until iframe is fully opaque */}
                             <div className="absolute inset-0 w-full h-full bg-gray-900 flex items-center justify-center z-0">
                                 <img 
                                     src={video.imageUrl} 
@@ -98,12 +100,13 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
                                 </div>
                             </div>
 
-                            {/* Iframe - Loaded lazily and faded in */}
+                            {/* Iframe - Fades in ONLY when actual content is loaded via onLoad event */}
                             {shouldLoadIframe && (
                                 <motion.iframe
                                     initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ duration: 0.8 }}
+                                    animate={{ opacity: iframeLoaded ? 1 : 0 }}
+                                    transition={{ duration: 0.5 }}
+                                    onLoad={() => setIframeLoaded(true)}
                                     width="100%"
                                     height="100%"
                                     src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
