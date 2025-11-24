@@ -612,6 +612,7 @@ class BlackHoleSim {
         this.renderer.setSize(width, height);
         this.composer.setSize(width, height);
         const maxPixelRatio = this.isMobile ? 1.0 : 1.5;
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio));
         this.backgroundRenderTarget.setSize(width * Math.min(window.devicePixelRatio, maxPixelRatio), height * Math.min(window.devicePixelRatio, maxPixelRatio));
         if (this.lensingMaterial) this.lensingMaterial.uniforms.u_resolution.value.set(width, height);
     }
