@@ -657,12 +657,41 @@ class BlackHoleSim {
     }
 
     dispose() {
+        // 1. Clean up Controls (Event Listeners)
+        this.controls.dispose();
+
+        // 2. Dispose specific tracked assets
+        // This covers Geometries and Materials pushed during init methods
+        this.disposables.forEach(obj => {
+            if (obj && typeof obj.dispose === 'function') {
+                obj.dispose();
+            }
+        });
+        this.disposables = [];
+
+        // 3. Deep Clean Scenes (Safety Net)
+        // Iterates through scene graph to ensure no untracked meshes/geometries remain
+        const scenes = [this.scene, this.backgroundScene, this.lensingScene];
+        scenes.forEach(scene => {
+            scene.traverse((object) => {
+                if (object instanceof THREE.Mesh || object instanceof THREE.Points) {
+                    if (object.geometry) object.geometry.dispose();
+                    if (object.material) {
+                        if (Array.isArray(object.material)) {
+                            object.material.forEach((m: any) => m.dispose());
+                        } else {
+                            (object.material as any).dispose();
+                        }
+                    }
+                }
+            });
+            scene.clear();
+        });
+
+        // 4. Dispose Renderer Resources
         this.renderer.dispose();
         this.composer.dispose();
         this.backgroundRenderTarget.dispose();
-        this.disposables.forEach(obj => {
-            if (obj.dispose) obj.dispose();
-        });
     }
 }
 
