@@ -197,7 +197,7 @@ const Header: React.FC = () => {
           <button 
             className="md:hidden w-12 h-12 flex flex-col justify-center items-end gap-1.5 cursor-pointer z-50 p-1 bg-transparent border-none outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label={isMenuOpen ? t('common_close') : "Menu"}
+            aria-label={isMenuOpen ? t('common_close') : t('common_menu')}
             aria-expanded={isMenuOpen}
             type="button"
           >

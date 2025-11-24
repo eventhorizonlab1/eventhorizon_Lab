@@ -713,17 +713,18 @@ class BlackHoleSim {
 }
 
 const SimLoader = () => {
+    const { t } = useThemeLanguage();
     const [progress, setProgress] = useState(0);
-    const [status, setStatus] = useState("INITIALIZING SYSTEM");
+    const [statusKey, setStatusKey] = useState("bh_load_init");
 
     useEffect(() => {
         const phases = [
-            { t: 5, msg: "LOADING ASSETS" },
-            { t: 25, msg: "COMPILING SHADERS" },
-            { t: 50, msg: "CALIBRATING GRAVITY" },
-            { t: 75, msg: "ALIGNING OPTICS" },
-            { t: 90, msg: "FINALIZING" },
-            { t: 100, msg: "READY" }
+            { t: 5, key: "bh_load_assets" },
+            { t: 25, key: "bh_load_shaders" },
+            { t: 50, key: "bh_load_gravity" },
+            { t: 75, key: "bh_load_optics" },
+            { t: 90, key: "bh_load_final" },
+            { t: 100, key: "bh_load_ready" }
         ];
 
         let currentPhase = 0;
@@ -731,7 +732,7 @@ const SimLoader = () => {
             setProgress((prev) => {
                 const next = prev + Math.random() * 5;
                 if (currentPhase < phases.length && next > phases[currentPhase].t) {
-                    setStatus(phases[currentPhase].msg);
+                    setStatusKey(phases[currentPhase].key);
                     currentPhase++;
                 }
                 return next > 100 ? 100 : next;
@@ -760,7 +761,7 @@ const SimLoader = () => {
             <div className="flex flex-col items-center gap-2">
                  <div className="flex items-center gap-2 text-blue-400">
                     <Cpu size={16} className="animate-pulse" />
-                    <span className="text-xs font-bold tracking-[0.2em] uppercase">{status}</span>
+                    <span className="text-xs font-bold tracking-[0.2em] uppercase">{t(statusKey)}</span>
                  </div>
                  <div className="w-48 h-1 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
                     <motion.div 
