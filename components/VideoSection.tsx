@@ -32,7 +32,6 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
     const videoId = getYouTubeId(video.videoUrl);
     
     const translatedTitle = t(`video_${video.id}_title`);
-    // Fallback if translation key missing (e.g. for dynamic content not in dict, though current app uses static constants)
     const title = translatedTitle.startsWith('video_') ? video.title : translatedTitle;
 
     return (
@@ -43,10 +42,6 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-12"
             onClick={onClose}
         >
-            {/* React 19 Native Metadata Support */}
-            <title>{title} | Event Horizon Video</title>
-            <meta name="description" content={`Regardez ${title} sur Event Horizon.`} />
-
             <button 
                 onClick={onClose}
                 className="absolute top-6 right-6 p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-colors z-50"
@@ -184,6 +179,12 @@ const VideoSection: React.FC = () => {
 
   return (
     <>
+      {selectedVideo && (
+          <>
+            <title>{(t(`video_${selectedVideo.id}_title`).startsWith('video_') ? selectedVideo.title : t(`video_${selectedVideo.id}_title`)) + " | Event Horizon"}</title>
+            <meta name="description" content={`Regardez ${(t(`video_${selectedVideo.id}_title`).startsWith('video_') ? selectedVideo.title : t(`video_${selectedVideo.id}_title`))} sur Event Horizon.`} />
+          </>
+      )}
       <AnimatePresence>
           {selectedVideo && (
               <VideoModal video={selectedVideo} onClose={() => setSelectedVideo(null)} />

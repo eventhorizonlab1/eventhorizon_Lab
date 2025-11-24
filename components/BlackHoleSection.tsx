@@ -743,6 +743,23 @@ const BlackHoleSection: React.FC = () => {
   const [lensingStrength, setLensingStrength] = useState(1.2);
   const [diskBrightness, setDiskBrightness] = useState(1.0); 
   const [temperature, setTemperature] = useState(1.0);
+  
+  // Refs to avoid unnecessary re-renders in animation loop
+  const isInViewRef = useRef(isInView);
+  const isLoadingRef = useRef(isLoading);
+  const paramsRef = useRef({ rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme });
+
+  useEffect(() => {
+    isInViewRef.current = isInView;
+  }, [isInView]);
+
+  useEffect(() => {
+    isLoadingRef.current = isLoading;
+  }, [isLoading]);
+
+  useEffect(() => {
+    paramsRef.current = { rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme };
+  }, [rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme]);
 
   useEffect(() => {
       const timer = setTimeout(() => {
@@ -750,11 +767,6 @@ const BlackHoleSection: React.FC = () => {
       }, 2200); 
       return () => clearTimeout(timer);
   }, []);
-
-  const paramsRef = useRef({ rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme });
-  useEffect(() => {
-      paramsRef.current = { rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme };
-  }, [rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -767,7 +779,8 @@ const BlackHoleSection: React.FC = () => {
     const animate = () => {
         animationId = requestAnimationFrame(animate);
         
-        if (!isInView && !isLoading) return;
+        // Use Refs here to avoid dependency on state variables in the loop closure
+        if (!isInViewRef.current && !isLoadingRef.current) return;
 
         if (simRef.current) {
              simRef.current.update(sim.clock.getElapsedTime(), sim.clock.getDelta(), {
@@ -799,7 +812,7 @@ const BlackHoleSection: React.FC = () => {
             containerRef.current.innerHTML = '';
         }
     };
-  }, [isInView, isLoading]);
+  }, []); // Empty dependency array -> Init ONCE
 
   const moveCamera = (position: 'orbit' | 'top' | 'side') => {
       if (!simRef.current) return;
