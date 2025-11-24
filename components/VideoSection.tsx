@@ -51,8 +51,6 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-12"
             onClick={onClose}
-            role="dialog"
-            aria-modal="true"
         >
             <button 
                 onClick={(e) => {
@@ -65,7 +63,12 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
                 <X size={32} />
             </button>
 
-            <div className="flex flex-col w-full max-w-5xl gap-4" onClick={(e) => e.stopPropagation()}>
+            <div 
+                className="flex flex-col w-full max-w-5xl gap-4" 
+                onClick={(e) => e.stopPropagation()}
+                role="dialog"
+                aria-modal="true"
+            >
                 <motion.div
                     initial={{ scale: 0.9, y: 20 }}
                     animate={{ scale: 1, y: 0 }}
@@ -78,31 +81,39 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
                             <p className="text-lg font-bold mb-2">Vidéo non disponible</p>
                             <p className="text-sm text-gray-400 mb-6">L'URL de la vidéo semble incorrecte.</p>
                         </div>
-                    ) : shouldLoadIframe ? (
-                        <iframe
-                            width="100%"
-                            height="100%"
-                            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
-                            title={title}
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerPolicy="strict-origin-when-cross-origin"
-                            allowFullScreen
-                            className="absolute inset-0 w-full h-full animate-in fade-in duration-500"
-                        ></iframe>
                     ) : (
-                        <div className="absolute inset-0 w-full h-full bg-gray-900 flex items-center justify-center">
-                             {/* Optimized Placeholder */}
-                             <img 
-                                src={video.imageUrl} 
-                                alt={title} 
-                                className="absolute inset-0 w-full h-full object-cover opacity-40 blur-md scale-105" 
-                             />
-                             <div className="relative z-10 flex flex-col items-center gap-3">
-                                 <div className="w-16 h-16 rounded-full border-2 border-white/20 border-t-white flex items-center justify-center animate-spin"></div>
-                                 <span className="text-xs font-bold uppercase tracking-widest text-white/80">Chargement du flux...</span>
-                             </div>
-                        </div>
+                        <>
+                            {/* Placeholder / Loader - Always rendered initially to prevent black flash */}
+                            <div className="absolute inset-0 w-full h-full bg-gray-900 flex items-center justify-center z-0">
+                                <img 
+                                    src={video.imageUrl} 
+                                    alt={title} 
+                                    className="absolute inset-0 w-full h-full object-cover opacity-40 blur-md scale-105" 
+                                />
+                                <div className="relative z-10 flex flex-col items-center gap-3">
+                                    <div className="w-16 h-16 rounded-full border-2 border-white/20 border-t-white flex items-center justify-center animate-spin"></div>
+                                    <span className="text-xs font-bold uppercase tracking-widest text-white/80">Chargement...</span>
+                                </div>
+                            </div>
+
+                            {/* Iframe - Loaded lazily and faded in */}
+                            {shouldLoadIframe && (
+                                <motion.iframe
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.8 }}
+                                    width="100%"
+                                    height="100%"
+                                    src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+                                    title={title}
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerPolicy="strict-origin-when-cross-origin"
+                                    allowFullScreen
+                                    className="absolute inset-0 w-full h-full z-10"
+                                ></motion.iframe>
+                            )}
+                        </>
                     )}
                 </motion.div>
 

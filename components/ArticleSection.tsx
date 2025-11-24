@@ -53,8 +53,6 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] flex items-end md:items-center justify-center bg-black/90 backdrop-blur-md p-0 md:p-6"
             onClick={onClose}
-            role="dialog"
-            aria-modal="true"
         >
             <motion.div
                 initial={{ y: "100%" }}
@@ -63,6 +61,8 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
                 className="bg-white dark:bg-[#0a0a0a] w-full max-w-4xl h-[95vh] md:h-[90vh] rounded-t-3xl md:rounded-3xl overflow-hidden flex flex-col shadow-2xl relative border border-gray-200 dark:border-white/10"
                 onClick={(e) => e.stopPropagation()}
+                role="dialog"
+                aria-modal="true"
             >
                 <button 
                     onClick={onClose}
