@@ -14,129 +14,105 @@ const getYouTubeId = (url: string) => {
     return (match && match[2].length === 11) ? match[2] : null;
 };
 
-// --- VIDEO PLAYER MODAL ---
-const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ video, onClose }) => {
+// --- VIDEO MODAL CONTENT ---
+// Refactored to be a pure content component. The overlay animation is handled by the parent.
+const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
     const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
     const [iframeLoaded, setIframeLoaded] = useState(false);
     const { t } = useThemeLanguage();
 
     // Lock body scroll when modal is open
     useEffect(() => {
-        if (video) {
-            document.body.style.overflow = 'hidden';
-        }
+        document.body.style.overflow = 'hidden';
         return () => {
             document.body.style.overflow = 'unset';
         };
-    }, [video]);
+    }, []);
 
     useEffect(() => {
         setShouldLoadIframe(false);
         setIframeLoaded(false);
-        if (video) {
-            // LAZY LOADING: Delay iframe injection slightly to allow modal spring animation to settle
-            // Reduced to 450ms for snappier feel while still preventing jank
-            const timer = setTimeout(() => setShouldLoadIframe(true), 450); 
-            return () => clearTimeout(timer);
-        }
+        // LAZY LOADING: Delay iframe injection slightly to allow modal spring animation to settle
+        const timer = setTimeout(() => setShouldLoadIframe(true), 450); 
+        return () => clearTimeout(timer);
     }, [video]);
 
-    if (!video) return null;
     const videoId = getYouTubeId(video.videoUrl);
     
     const translatedTitle = t(`video_${video.id}_title`);
     const title = translatedTitle.startsWith('video_') ? video.title : translatedTitle;
 
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-12"
-            onClick={onClose}
+        <div 
+            className="flex flex-col w-full max-w-5xl gap-4" 
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="video-modal-title"
         >
-            <button 
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onClose();
-                }}
-                className="absolute top-6 right-6 p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-colors z-50"
-                aria-label={t('common_close')}
+            <motion.div
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 20 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10"
             >
-                <X size={32} />
-            </button>
-
-            <div 
-                className="flex flex-col w-full max-w-5xl gap-4" 
-                onClick={(e) => e.stopPropagation()}
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="video-modal-title"
-            >
-                <motion.div
-                    initial={{ scale: 0.9, y: 20 }}
-                    animate={{ scale: 1, y: 0 }}
-                    exit={{ scale: 0.9, y: 20 }}
-                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                    className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10"
-                >
-                    {!videoId ? (
-                        <div className="w-full h-full flex flex-col items-center justify-center text-white p-8 text-center bg-gray-900 relative z-10">
-                            <p className="text-lg font-bold mb-2">Vidéo non disponible</p>
-                            <p className="text-sm text-gray-400 mb-6">L'URL de la vidéo semble incorrecte.</p>
-                        </div>
-                    ) : (
-                        <>
-                            {/* Placeholder / Loader - Remains visible behind iframe until iframe is fully opaque */}
-                            <div className="absolute inset-0 w-full h-full bg-gray-900 flex items-center justify-center z-0">
-                                <img 
-                                    src={video.imageUrl} 
-                                    alt={title} 
-                                    className="absolute inset-0 w-full h-full object-cover opacity-40 blur-md scale-105" 
-                                />
-                                <div className="relative z-10 flex flex-col items-center gap-3">
-                                    <div className="w-16 h-16 rounded-full border-2 border-white/20 border-t-white flex items-center justify-center animate-spin"></div>
-                                    <span className="text-xs font-bold uppercase tracking-widest text-white/80">Chargement...</span>
-                                </div>
+                {!videoId ? (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-white p-8 text-center bg-gray-900 relative z-10">
+                        <p className="text-lg font-bold mb-2">Vidéo non disponible</p>
+                        <p className="text-sm text-gray-400 mb-6">L'URL de la vidéo semble incorrecte.</p>
+                    </div>
+                ) : (
+                    <>
+                        {/* Placeholder / Loader - Remains visible behind iframe until iframe is fully opaque */}
+                        <div className="absolute inset-0 w-full h-full bg-gray-900 flex items-center justify-center z-0">
+                            <img 
+                                src={video.imageUrl} 
+                                alt={title} 
+                                className="absolute inset-0 w-full h-full object-cover opacity-40 blur-md scale-105" 
+                            />
+                            <div className="relative z-10 flex flex-col items-center gap-3">
+                                <div className="w-16 h-16 rounded-full border-2 border-white/20 border-t-white flex items-center justify-center animate-spin"></div>
+                                <span className="text-xs font-bold uppercase tracking-widest text-white/80">Chargement...</span>
                             </div>
+                        </div>
 
-                            {/* Iframe - Fades in ONLY when actual content is loaded via onLoad event */}
-                            {shouldLoadIframe && (
-                                <motion.iframe
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: iframeLoaded ? 1 : 0 }}
-                                    transition={{ duration: 0.5 }}
-                                    onLoad={() => setIframeLoaded(true)}
-                                    width="100%"
-                                    height="100%"
-                                    src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
-                                    title={title}
-                                    frameBorder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    referrerPolicy="strict-origin-when-cross-origin"
-                                    allowFullScreen
-                                    className="absolute inset-0 w-full h-full z-10"
-                                ></motion.iframe>
-                            )}
-                        </>
-                    )}
-                </motion.div>
+                        {/* Iframe - Fades in ONLY when actual content is loaded via onLoad event */}
+                        {shouldLoadIframe && (
+                            <motion.iframe
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: iframeLoaded ? 1 : 0 }}
+                                transition={{ duration: 0.5 }}
+                                onLoad={() => setIframeLoaded(true)}
+                                width="100%"
+                                height="100%"
+                                src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+                                title={title}
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerPolicy="strict-origin-when-cross-origin"
+                                allowFullScreen
+                                className="absolute inset-0 w-full h-full z-10"
+                            ></motion.iframe>
+                        )}
+                    </>
+                )}
+            </motion.div>
 
-                {/* Fallback & Info Bar */}
-                <div className="flex justify-between items-center text-white px-2">
-                    <h3 id="video-modal-title" className="text-lg font-bold line-clamp-1 mr-4">{title}</h3>
-                    <a 
-                        href={video.videoUrl} 
-                        target="_blank" 
-                        rel="noreferrer"
-                        className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-xs font-bold uppercase tracking-widest transition-colors whitespace-nowrap"
-                    >
-                        <span>Ouvrir sur YouTube</span>
-                        <ExternalLink size={14} />
-                    </a>
-                </div>
+            {/* Fallback & Info Bar */}
+            <div className="flex justify-between items-center text-white px-2">
+                <h3 id="video-modal-title" className="text-lg font-bold line-clamp-1 mr-4">{title}</h3>
+                <a 
+                    href={video.videoUrl} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-xs font-bold uppercase tracking-widest transition-colors whitespace-nowrap"
+                >
+                    <span>Ouvrir sur YouTube</span>
+                    <ExternalLink size={14} />
+                </a>
             </div>
-        </motion.div>
+        </div>
     );
 };
 
@@ -230,9 +206,31 @@ const VideoSection: React.FC = () => {
             <meta name="description" content={getPageDesc(selectedVideo)} />
           </>
       )}
+
+      {/* Modal - Moved AnimatePresence here for robustness against React #525 */}
       <AnimatePresence>
           {selectedVideo && (
-              <VideoModal video={selectedVideo} onClose={() => setSelectedVideo(null)} />
+              <motion.div
+                key="video-modal-backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-12"
+                onClick={() => setSelectedVideo(null)}
+              >
+                  <button 
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedVideo(null);
+                    }}
+                    className="absolute top-6 right-6 p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-colors z-50"
+                    aria-label={t('common_close')}
+                  >
+                    <X size={32} />
+                  </button>
+                  
+                  <VideoModalContent video={selectedVideo} />
+              </motion.div>
           )}
       </AnimatePresence>
 

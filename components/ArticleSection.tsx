@@ -5,6 +5,7 @@ import { ArrowRight, ArrowLeft, FileText, X, Clock, Calendar } from 'lucide-reac
 import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion';
 import { Article } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
+import { Helmet } from 'react-helmet-async';
 
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -18,22 +19,17 @@ const cardVariants: Variants = {
   }
 };
 
-// --- ARTICLE MODAL COMPONENT ---
-const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> = ({ article, onClose }) => {
+// --- ARTICLE MODAL CONTENT ---
+const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> = ({ article, onClose }) => {
     const { t } = useThemeLanguage();
     
+    // Lock scroll when mounted
     useEffect(() => {
-        if (article) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
+        document.body.style.overflow = 'hidden';
         return () => {
             document.body.style.overflow = 'unset';
         };
-    }, [article]);
-
-    if (!article) return null;
+    }, []);
 
     const title = t(`article_${article.id}_title`);
     const date = article.date;
@@ -49,104 +45,96 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
 
     return (
         <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[10000] flex items-end md:items-center justify-center bg-black/90 backdrop-blur-md p-0 md:p-6"
-            onClick={onClose}
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="bg-white dark:bg-[#0a0a0a] w-full max-w-4xl h-[95dvh] md:h-[90dvh] rounded-t-3xl md:rounded-3xl overflow-hidden flex flex-col shadow-2xl relative border border-gray-200 dark:border-white/10"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="article-modal-title"
         >
-            <motion.div
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "100%" }}
-                transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className="bg-white dark:bg-[#0a0a0a] w-full max-w-4xl h-[95dvh] md:h-[90dvh] rounded-t-3xl md:rounded-3xl overflow-hidden flex flex-col shadow-2xl relative border border-gray-200 dark:border-white/10"
-                onClick={(e) => e.stopPropagation()}
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="article-modal-title"
+            <button 
+                onClick={onClose}
+                className="absolute top-4 right-4 md:top-6 md:right-6 z-50 p-2 bg-white/20 hover:bg-white/40 dark:bg-black/40 dark:hover:bg-black/60 backdrop-blur-md rounded-full text-black dark:text-white transition-colors border border-white/20"
+                aria-label={t('common_close')}
             >
-                <button 
-                    onClick={onClose}
-                    className="absolute top-4 right-4 md:top-6 md:right-6 z-50 p-2 bg-white/20 hover:bg-white/40 dark:bg-black/40 dark:hover:bg-black/60 backdrop-blur-md rounded-full text-black dark:text-white transition-colors border border-white/20"
-                    aria-label={t('common_close')}
-                >
-                    <X size={24} />
-                </button>
+                <X size={24} />
+            </button>
 
-                <div className="relative h-[35vh] md:h-[45vh] shrink-0 overflow-hidden">
-                    <motion.img 
-                        initial={{ scale: 1.1 }}
-                        animate={{ scale: 1 }}
-                        transition={{ duration: 1.5 }}
-                        src={article.imageUrl} 
-                        alt={title}
-                        decoding="async"
-                        className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#0a0a0a] via-transparent to-black/30"></div>
+            <div className="relative h-[35vh] md:h-[45vh] shrink-0 overflow-hidden">
+                <motion.img 
+                    initial={{ scale: 1.1 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 1.5 }}
+                    src={article.imageUrl} 
+                    alt={title}
+                    decoding="async"
+                    className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#0a0a0a] via-transparent to-black/30"></div>
+                
+                <div className="absolute bottom-0 left-0 w-full p-6 md:p-10">
+                    <motion.span 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="inline-flex items-center gap-2 px-3 py-1 bg-blue-600/90 text-white text-[10px] font-bold uppercase tracking-widest mb-4 rounded-full shadow-lg backdrop-blur-sm"
+                    >
+                        <FileText size={12} />
+                        Editorial
+                    </motion.span>
+                    <motion.h2 
+                        id="article-modal-title"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="text-3xl md:text-6xl font-sans font-black leading-[0.9] text-black dark:text-white drop-shadow-sm mb-4 max-w-3xl tracking-tight"
+                    >
+                        {title}
+                    </motion.h2>
                     
-                    <div className="absolute bottom-0 left-0 w-full p-6 md:p-10">
-                        <motion.span 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="inline-flex items-center gap-2 px-3 py-1 bg-blue-600/90 text-white text-[10px] font-bold uppercase tracking-widest mb-4 rounded-full shadow-lg backdrop-blur-sm"
-                        >
-                            <FileText size={12} />
-                            Editorial
-                        </motion.span>
-                        <motion.h2 
-                            id="article-modal-title"
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                            className="text-3xl md:text-6xl font-sans font-black leading-[0.9] text-black dark:text-white drop-shadow-sm mb-4 max-w-3xl tracking-tight"
-                        >
-                            {title}
-                        </motion.h2>
+                    <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.4 }}
+                            className="flex flex-wrap items-center gap-4 text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
+                            <div className="flex items-center gap-2 bg-white/50 dark:bg-black/50 px-3 py-1 rounded-full backdrop-blur-md border border-gray-200 dark:border-white/10">
+                            <Calendar size={14} />
+                            <span className="uppercase tracking-widest">{date}</span>
+                            </div>
+                            <div className="flex items-center gap-2 bg-white/50 dark:bg-black/50 px-3 py-1 rounded-full backdrop-blur-md border border-gray-200 dark:border-white/10">
+                            <Clock size={14} />
+                            <span>{readTime} min read</span>
+                            </div>
+                    </motion.div>
+                </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-6 md:px-12 py-8 custom-scrollbar bg-white dark:bg-[#0a0a0a]">
+                <div className="max-w-3xl mx-auto">
+                    <div className="prose prose-lg dark:prose-invert max-w-none">
+                        <p className="font-serif text-xl md:text-2xl leading-relaxed text-gray-900 dark:text-gray-100 mb-8 first-letter:text-6xl first-letter:font-bold first-letter:mr-3 first-letter:float-left first-letter:text-blue-600 dark:first-letter:text-blue-500">
+                            {paragraphs[0]}
+                        </p>
                         
-                        <motion.div 
-                             initial={{ opacity: 0 }}
-                             animate={{ opacity: 1 }}
-                             transition={{ delay: 0.4 }}
-                             className="flex flex-wrap items-center gap-4 text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300"
-                        >
-                             <div className="flex items-center gap-2 bg-white/50 dark:bg-black/50 px-3 py-1 rounded-full backdrop-blur-md border border-gray-200 dark:border-white/10">
-                                <Calendar size={14} />
-                                <span className="uppercase tracking-widest">{date}</span>
-                             </div>
-                             <div className="flex items-center gap-2 bg-white/50 dark:bg-black/50 px-3 py-1 rounded-full backdrop-blur-md border border-gray-200 dark:border-white/10">
-                                <Clock size={14} />
-                                <span>{readTime} min read</span>
-                             </div>
-                        </motion.div>
+                        {paragraphs.slice(1).map((para, idx) => (
+                            <p key={idx} className="font-serif text-lg leading-loose text-gray-700 dark:text-gray-300 mb-6 text-justify">
+                                {para}
+                            </p>
+                        ))}
+                    </div>
+
+                    <div className="mt-16 pt-12 border-t border-gray-100 dark:border-white/10 flex flex-col items-center gap-4">
+                        <div className="w-16 h-1 bg-blue-600 rounded-full"></div>
+                        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
+                            *** Fin de transmission ***
+                        </p>
                     </div>
                 </div>
-
-                <div className="flex-1 overflow-y-auto px-6 md:px-12 py-8 custom-scrollbar bg-white dark:bg-[#0a0a0a]">
-                    <div className="max-w-3xl mx-auto">
-                        <div className="prose prose-lg dark:prose-invert max-w-none">
-                            <p className="font-serif text-xl md:text-2xl leading-relaxed text-gray-900 dark:text-gray-100 mb-8 first-letter:text-6xl first-letter:font-bold first-letter:mr-3 first-letter:float-left first-letter:text-blue-600 dark:first-letter:text-blue-500">
-                                {paragraphs[0]}
-                            </p>
-                            
-                            {paragraphs.slice(1).map((para, idx) => (
-                                <p key={idx} className="font-serif text-lg leading-loose text-gray-700 dark:text-gray-300 mb-6 text-justify">
-                                    {para}
-                                </p>
-                            ))}
-                        </div>
-
-                        <div className="mt-16 pt-12 border-t border-gray-100 dark:border-white/10 flex flex-col items-center gap-4">
-                            <div className="w-16 h-1 bg-blue-600 rounded-full"></div>
-                            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
-                                *** Fin de transmission ***
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </motion.div>
+            </div>
         </motion.div>
     );
 };
@@ -237,14 +225,27 @@ const ArticleSection: React.FC = () => {
   return (
     <>
     {selectedArticle && (
-          <>
+        <Helmet>
             <title>{t(`article_${selectedArticle.id}_title`) + " | Event Horizon"}</title>
             <meta name="description" content={t(`article_${selectedArticle.id}_summary`)} />
-          </>
+        </Helmet>
     )}
+    
     <AnimatePresence>
         {selectedArticle && (
-            <ArticleModal article={selectedArticle} onClose={() => setSelectedArticle(null)} />
+            <motion.div
+                key="article-modal-backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[10000] flex items-end md:items-center justify-center bg-black/90 backdrop-blur-md p-0 md:p-6"
+                onClick={() => setSelectedArticle(null)}
+            >
+                <ArticleModalContent 
+                    article={selectedArticle} 
+                    onClose={() => setSelectedArticle(null)} 
+                />
+            </motion.div>
         )}
     </AnimatePresence>
 
@@ -266,29 +267,31 @@ const ArticleSection: React.FC = () => {
         </div>
         
         <div className="hidden md:flex gap-2 pb-2">
-          <button onClick={() => scroll('left')} className="p-3 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black text-black dark:text-white transition-colors rounded-full">
-            <ArrowLeft size={20} />
+          <button onClick={() => scroll('left')} className="p-3 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded-full transition-all active:scale-95 text-black dark:text-white">
+            <ArrowLeft size={24} />
           </button>
-          <button onClick={() => scroll('right')} className="p-3 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black text-black dark:text-white transition-colors rounded-full">
-            <ArrowRight size={20} />
+          <button onClick={() => scroll('right')} className="p-3 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded-full transition-all active:scale-95 text-black dark:text-white">
+            <ArrowRight size={24} />
           </button>
         </div>
       </div>
 
-      <div 
-        ref={scrollContainerRef}
-        className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-6 pb-12 touch-pan-x"
-        style={{ WebkitOverflowScrolling: 'touch' }}
-      >
-        {ARTICLES.map((article) => (
-          <ArticleCard key={article.id} article={article} onClick={setSelectedArticle} />
-        ))}
+      <div className="overflow-hidden">
+        <div 
+            ref={scrollContainerRef}
+            className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-8 pb-12"
+        >
+          {ARTICLES.map((article) => (
+            <ArticleCard key={article.id} article={article} onClick={setSelectedArticle} />
+          ))}
+        </div>
       </div>
       
-      <div className="flex md:hidden justify-center mt-4 gap-1">
-         <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-50"></div>
-         <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
-         <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+      {/* Mobile Scroll Indicator */}
+      <div className="flex md:hidden justify-center gap-1 mt-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-50"></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
       </div>
 
     </motion.section>
