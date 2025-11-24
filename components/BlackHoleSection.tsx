@@ -353,6 +353,9 @@ class BlackHoleSim {
     currentMode: number = 0; 
     isMobile: boolean = false;
     
+    // Track disposables
+    disposables: any[] = [];
+
     // Camera Animation Target
     targetCameraPosition: THREE.Vector3;
     isAnimatingCamera: boolean = false;
@@ -377,7 +380,7 @@ class BlackHoleSim {
         });
         this.renderer.setSize(container.clientWidth, container.clientHeight);
         
-        // MOBILE OPTIMIZATION: Cap Pixel Ratio at 1.0 for mobile devices to save battery/GPU
+        // MOBILE OPTIMIZATION & PIXEL RATIO CAP
         const maxPixelRatio = this.isMobile ? 1.0 : 1.5;
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio));
         
@@ -430,6 +433,7 @@ class BlackHoleSim {
         });
         const lensingQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.lensingMaterial);
         this.lensingScene.add(lensingQuad);
+        this.disposables.push(this.lensingMaterial, lensingQuad.geometry);
     }
 
     initAccretionDisk() {
@@ -451,6 +455,7 @@ class BlackHoleSim {
         const accretionDisk = new THREE.Mesh(diskGeometry, this.accretionDiskMaterial);
         accretionDisk.rotation.x = Math.PI / 2;
         this.scene.add(accretionDisk);
+        this.disposables.push(diskGeometry, this.accretionDiskMaterial);
     }
 
     initDebrisField() {
@@ -526,6 +531,7 @@ class BlackHoleSim {
 
         const debrisField = new THREE.Points(geometry, this.debrisMaterial);
         this.backgroundScene.add(debrisField);
+        this.disposables.push(geometry, this.debrisMaterial);
     }
 
     initStarfield() {
@@ -579,6 +585,7 @@ class BlackHoleSim {
         this.stars = new THREE.Points(geometry, this.starfieldMaterial);
         this.stars.renderOrder = -1; 
         this.backgroundScene.add(this.stars);
+        this.disposables.push(geometry, this.starfieldMaterial);
     }
 
     initPostProcessing(width: number, height: number) {
@@ -653,6 +660,9 @@ class BlackHoleSim {
         this.renderer.dispose();
         this.composer.dispose();
         this.backgroundRenderTarget.dispose();
+        this.disposables.forEach(obj => {
+            if (obj.dispose) obj.dispose();
+        });
     }
 }
 
@@ -806,7 +816,7 @@ const BlackHoleSection: React.FC = () => {
   const ControlSlider = ({ label, value, min, max, step, onChange, icon: Icon }: any) => (
     <div className="mb-6 group">
         <div className="flex justify-between items-center mb-2">
-            <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 group-hover:text-gray-200 transition-colors">
+            <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 group-hover:text-black dark:group-hover:text-gray-200 transition-colors">
                 {Icon && <Icon size={14} />} {label}
             </label>
             <span className="text-xs font-mono text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded">{value}</span>
@@ -818,7 +828,7 @@ const BlackHoleSection: React.FC = () => {
             step={step} 
             value={value} 
             onChange={(e) => onChange(parseFloat(e.target.value))}
-            className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500 hover:[&::-webkit-slider-thumb]:bg-blue-400 transition-all [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+            className="w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500 hover:[&::-webkit-slider-thumb]:bg-blue-400 transition-all [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
         />
     </div>
   );
@@ -912,7 +922,7 @@ const BlackHoleSection: React.FC = () => {
             </div>
         </div>
 
-        <div className="bg-gray-100 dark:bg-eh-gray p-8 rounded-[2rem] border border-gray-200 dark:border-white/5 relative overflow-hidden shadow-lg transition-colors duration-500 max-w-6xl mx-auto w-full">
+        <div className="bg-white dark:bg-eh-gray p-8 rounded-[2rem] border border-gray-200 dark:border-white/5 relative overflow-hidden shadow-lg transition-colors duration-500 max-w-6xl mx-auto w-full">
              <div className="relative z-10">
                 <div className="flex justify-between items-center mb-8 border-b border-gray-200 dark:border-white/10 pb-4">
                     <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">{t('bh_controls')}</h3>

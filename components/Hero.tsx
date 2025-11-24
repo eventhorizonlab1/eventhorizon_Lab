@@ -197,13 +197,13 @@ const FragmentShader = `
         // --- ORGANIC FILM GRAIN ---
         float lum = dot(col, vec3(0.299, 0.587, 0.114));
         
-        // High frequency noise (Fine grain for 4K/Retina compatibility)
-        float grain = hash(uv * 6.0 + u_time * 20.0);
+        // High frequency noise (Fine grain)
+        float grain = hash(vUv * 800.0 + u_time * 10.0);
         
-        // Luminance Masking (Organic)
-        float grainMask = smoothstep(0.02, 0.3, lum) * (1.0 - smoothstep(0.85, 1.0, lum));
+        // Luminance Masking (Organic) - concentrate in mid-tones
+        float grainMask = smoothstep(0.05, 0.4, lum) * (1.0 - smoothstep(0.7, 1.0, lum));
         
-        float grainIntensity = 0.08; 
+        float grainIntensity = 0.06; 
         
         col += (grain - 0.5) * grainIntensity * grainMask;
         
@@ -322,7 +322,10 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
     });
     
     renderer.setSize(container.clientWidth, container.clientHeight);
+    
+    // OPTIMIZATION: Limit Pixel Ratio to max 1.5 to prevent overheating on Retina displays
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    
     container.appendChild(renderer.domElement);
 
     const material = new THREE.ShaderMaterial({
@@ -383,9 +386,12 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
         window.removeEventListener('resize', handleResize);
         window.removeEventListener('mousemove', handleMouseMove);
         cancelAnimationFrame(animationId);
+        
+        // RESOURCE DISPOSAL (Prevent Memory Leaks)
         renderer.dispose();
         material.dispose();
         geometry.dispose();
+        
         if (container && container.contains(renderer.domElement)) {
             container.removeChild(renderer.domElement);
         }
