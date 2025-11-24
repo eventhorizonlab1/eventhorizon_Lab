@@ -59,7 +59,7 @@ const VideoModal: React.FC<{ video: Video | null; onClose: () => void }> = ({ vi
                     onClose();
                 }}
                 className="absolute top-6 right-6 p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-colors z-50"
-                aria-label="Fermer"
+                aria-label={t('common_close')}
             >
                 <X size={32} />
             </button>

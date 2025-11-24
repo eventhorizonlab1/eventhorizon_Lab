@@ -22,6 +22,9 @@ interface Translations {
 }
 
 const translations: Translations = {
+  // --- COMMON ---
+  common_close: { fr: 'Fermer', en: 'Close', de: 'Schließen', es: 'Cerrar', it: 'Chiudere' },
+
   // --- NAVIGATION ---
   nav_videos: { fr: 'Vidéos', en: 'Videos', de: 'Videos', es: 'Vídeos', it: 'Video' },
   nav_articles: { fr: 'Articles', en: 'Articles', de: 'Artikel', es: 'Artículos', it: 'Articoli' },

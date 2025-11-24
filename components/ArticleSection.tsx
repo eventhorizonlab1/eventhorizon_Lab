@@ -69,7 +69,7 @@ const ArticleModal: React.FC<{ article: Article | null; onClose: () => void }> =
                 <button 
                     onClick={onClose}
                     className="absolute top-4 right-4 md:top-6 md:right-6 z-50 p-2 bg-white/20 hover:bg-white/40 dark:bg-black/40 dark:hover:bg-black/60 backdrop-blur-md rounded-full text-black dark:text-white transition-colors border border-white/20"
-                    aria-label="Fermer"
+                    aria-label={t('common_close')}
                 >
                     <X size={24} />
                 </button>
