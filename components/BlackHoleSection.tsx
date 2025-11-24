@@ -688,7 +688,21 @@ class BlackHoleSim {
             scene.clear();
         });
 
-        // 4. Dispose Renderer Resources
+        // 4. Dispose Post-Processing Passes explicitly
+        // EffectComposer.dispose() cleans internal buffers but passes (like UnrealBloomPass) might hold their own targets
+        if (this.bloomPass && typeof this.bloomPass.dispose === 'function') {
+            this.bloomPass.dispose();
+        }
+        // Iterate over any other passes in composer
+        if (this.composer && this.composer.passes) {
+            this.composer.passes.forEach((pass: any) => {
+                if (pass && typeof pass.dispose === 'function') {
+                    pass.dispose();
+                }
+            });
+        }
+
+        // 5. Dispose Renderer Resources
         this.renderer.dispose();
         this.composer.dispose();
         this.backgroundRenderTarget.dispose();
