@@ -140,8 +140,8 @@ export const ARTICLES: Article[] = [
     title: 'Pourquoi Toulouse est la capitale du spatial', 
     summary: 'Analyse économique et structurelle de l\'écosystème Aerospace Valley.', 
     date: '10 OCT 2023', 
-    // Image : Toulouse Garonne/Pont Neuf (Unsplash Stable)
-    imageUrl: 'https://images.unsplash.com/photo-1563517987332-680456108151?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
+    // Place du Capitole - Wikimedia Commons (Stable & Authentic)
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Place_du_Capitole_Toulouse_2010.jpg/1280px-Place_du_Capitole_Toulouse_2010.jpg'
   },
   { 
     id: 'a2', 
@@ -194,16 +194,16 @@ export const PARTNERS: Partner[] = [
     id: 'p3', 
     name: 'Thales Alenia', 
     role: 'Satellites', 
-    // Satellite Technology / Clean Room (Unsplash Stable)
-    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    // Satellite / Orbit (Unsplash Stable)
+    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     websiteUrl: 'https://www.thalesgroup.com/en/global/activities/space'
   },
   { 
     id: 'p4', 
     name: 'ISAE-SUPAERO', 
     role: 'Excellence', 
-    // Engineering / Research / Robotics (Unsplash Stable)
-    imageUrl: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    // Engineering / Laboratory (Unsplash Stable)
+    imageUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     websiteUrl: 'https://www.isae-supaero.fr/fr/'
   },
   { 
