@@ -60,10 +60,10 @@ const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> =
                     <h2 className="text-3xl font-black text-white tracking-tighter leading-none">{partner.name}</h2>
                 </div>
 
-                {/* CLOSE BUTTON: Positioned lower (top-24) to avoid header overlap on mobile */}
+                {/* CLOSE BUTTON: Adjusted to top-12 (approx 48px) for better balance */}
                 <button 
                     onClick={onClose}
-                    className="absolute top-24 right-6 md:top-6 md:right-6 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
+                    className="absolute top-12 right-6 md:top-6 md:right-6 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
                 >
                     <X size={24} strokeWidth={2.5} />
                 </button>
@@ -218,7 +218,8 @@ const EcosystemSection: React.FC = () => {
 
         <motion.section 
         id="ecosystem" 
-        className="pt-24 md:pt-32 pb-12"
+        // STANDARDIZED SPACING: py-16 (mobile) md:py-24 (desktop)
+        className="py-16 md:py-24"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}

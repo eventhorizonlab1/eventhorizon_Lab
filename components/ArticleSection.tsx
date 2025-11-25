@@ -55,10 +55,10 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
             aria-modal="true"
             aria-labelledby="article-modal-title"
         >
-            {/* CLOSE BUTTON: Positioned lower (top-24) to avoid header overlap on mobile */}
+            {/* CLOSE BUTTON: Adjusted to top-12 (approx 48px) for better accessibility/visibility balance */}
             <button 
                 onClick={onClose}
-                className="absolute top-24 right-6 md:top-8 md:right-8 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
+                className="absolute top-12 right-6 md:top-8 md:right-8 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
                 aria-label={t('common_close')}
             >
                 <X size={24} strokeWidth={2.5} />
@@ -154,7 +154,6 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={cardVariants}
-      // UPDATE: Replaced fixed height with aspect-[4/5] to match ecosystem cards
       className="snap-start shrink-0 w-[85vw] md:w-[400px] aspect-[4/5] transform-gpu"
       onClick={() => onClick(article)}
       style={{ willChange: 'transform' }}
@@ -260,6 +259,7 @@ const ArticleSection: React.FC = () => {
 
     <motion.section 
       id="articles" 
+      // STANDARDIZED SPACING: py-16 (mobile) md:py-24 (desktop)
       className="py-16 md:py-24 bg-white dark:bg-eh-black relative border-t border-gray-100 dark:border-gray-800 transition-colors duration-500"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}

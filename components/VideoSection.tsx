@@ -1,4 +1,5 @@
 
+
 import React, { useRef, useState, useEffect } from 'react';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
 import { Play, Radio, ArrowUpRight, X, ExternalLink } from 'lucide-react';
@@ -226,7 +227,8 @@ const VideoSection: React.FC = () => {
 
       <motion.section 
         id="videos" 
-        className="pt-24 pb-24" 
+        // STANDARDIZED SPACING: py-16 (mobile) md:py-24 (desktop)
+        className="py-16 md:py-24" 
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
