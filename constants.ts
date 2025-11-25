@@ -21,8 +21,8 @@ export const getYouTubeThumbnail = (url: string): string => {
 
 /* 
   === GUIDES DES IMAGES ===
-  FEATURED_VIDEO : Utilisation d'une image Wikimedia publique (Ariane 6 First Flight)
-  pour garantir l'affichage quel que soit l'environnement (GitHub Privé/Public).
+  FEATURED_VIDEO : Utilisation du lien GitHub Raw vers la branche main.
+  Le dépôt étant public, cette image se chargera correctement et se mettra à jour automatiquement.
 */
 
 export const FEATURED_VIDEO: Video = {
@@ -30,8 +30,8 @@ export const FEATURED_VIDEO: Video = {
   title: '🚀 Ariane 6 : Le Retour du Géant Européen',
   category: 'LANCEURS',
   duration: 'Live',
-  // Photo officielle du vol inaugural (Wikimedia - Public Domain)
-  imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Ariane_6_first_flight_liftoff_%28VA262%29.jpg/1280px-Ariane_6_first_flight_liftoff_%28VA262%29.jpg', 
+  // Lien direct vers l'image brute sur GitHub (Branche Main)
+  imageUrl: 'https://raw.githubusercontent.com/eventhorizonlab1/eventhorizon_Lab/main/images/vignette_ariane6.jpeg', 
   videoUrl: 'https://www.youtube.com/watch?v=ukoMgE_8heo'
 };
 
