@@ -1,11 +1,12 @@
 
 
+
 import React, { useRef, useState, useEffect } from 'react';
 import { PARTNERS } from '../constants';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Partner } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
-import { X, Building2 } from 'lucide-react';
+import { X, Building2, ExternalLink } from 'lucide-react';
 
 const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> = ({ partner, onClose }) => {
     const { t } = useThemeLanguage();
@@ -30,40 +31,64 @@ const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> =
             className="bg-white dark:bg-[#111] w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl relative border border-gray-100 dark:border-white/10"
             onClick={(e) => e.stopPropagation()}
         >
-            <div className="relative h-48 md:h-64 overflow-hidden">
+            <div className="relative h-48 md:h-64 overflow-hidden bg-gray-50 dark:bg-white/5 flex items-center justify-center p-12">
                 <img 
                     src={partner.imageUrl} 
                     alt={partner.name} 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                 
                 <button 
                     onClick={onClose}
-                    className="absolute top-4 right-4 p-2 bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-full text-white transition-colors border border-white/10"
+                    className="absolute top-4 right-4 p-2 bg-black/10 dark:bg-black/40 hover:bg-black/20 dark:hover:bg-black/60 backdrop-blur-md rounded-full text-black dark:text-white transition-colors border border-black/5 dark:border-white/10"
                 >
                     <X size={20} />
                 </button>
-
-                <div className="absolute bottom-6 left-6 md:left-8">
-                     <span className="inline-block px-3 py-1 bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest mb-2 rounded-full shadow-lg">
-                        {role}
-                     </span>
-                     <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tighter">{partner.name}</h2>
-                </div>
             </div>
 
             <div className="p-6 md:p-8">
-                <div className="flex items-start gap-4 mb-6">
-                    <div className="bg-gray-100 dark:bg-white/5 p-3 rounded-xl">
-                        <Building2 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="flex flex-col gap-6">
+                    <div className="flex items-center justify-between">
+                         <div>
+                            <span className="inline-block px-3 py-1 bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest mb-2 rounded-full shadow-lg">
+                                {role}
+                            </span>
+                            <h2 className="text-2xl md:text-3xl font-bold text-black dark:text-white tracking-tighter">{partner.name}</h2>
+                         </div>
+                         
+                         <a 
+                            href={partner.websiteUrl} 
+                            target="_blank" 
+                            rel="noreferrer"
+                            className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 rounded-full text-xs font-bold uppercase tracking-widest text-black dark:text-white transition-colors"
+                         >
+                            <span>{t('ecosystem_website')}</span>
+                            <ExternalLink size={14} />
+                         </a>
                     </div>
-                    <div>
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-1">Profil Partenaire</h3>
-                        <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                            {description}
-                        </p>
+
+                    <div className="flex items-start gap-4">
+                        <div className="bg-gray-100 dark:bg-white/5 p-3 rounded-xl shrink-0">
+                            <Building2 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-1">Profil Partenaire</h3>
+                            <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-line">
+                                {description}
+                            </p>
+                        </div>
                     </div>
+                    
+                    {/* Mobile Only Button */}
+                    <a 
+                        href={partner.websiteUrl} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="md:hidden flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 rounded-xl text-xs font-bold uppercase tracking-widest text-black dark:text-white transition-colors w-full"
+                    >
+                        <span>{t('ecosystem_website')}</span>
+                        <ExternalLink size={14} />
+                    </a>
                 </div>
                 
                 <div className="mt-8 pt-6 border-t border-gray-100 dark:border-white/5 flex justify-end">
@@ -100,17 +125,15 @@ const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Part
         viewport={{ once: true, margin: "-30px" }}
         transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.1 }}
       >
-         {/* Card Visual */}
-         <div className="relative overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800 aspect-[4/5] mb-6 transition-colors duration-500 border border-gray-100 dark:border-white/10 shadow-sm">
-            <div className="absolute inset-0 flex items-center justify-center">
-                <img 
-                    src={partner.imageUrl} 
-                    alt={partner.name} 
-                    loading="lazy"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
-                />
-            </div>
+         {/* Card Visual - Updated for Logos */}
+         <div className="relative overflow-hidden rounded-xl bg-white dark:bg-white/90 aspect-[4/5] mb-6 transition-colors duration-500 border border-gray-100 dark:border-white/10 shadow-sm p-8 flex items-center justify-center">
+            <img 
+                src={partner.imageUrl} 
+                alt={partner.name} 
+                loading="lazy"
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 opacity-100"
+            />
             {/* Hover Overlay info */}
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-[2px]">
               <span className="text-white font-bold tracking-widest uppercase border border-white/50 rounded-full px-4 py-2 text-xs bg-black/50 backdrop-blur-md transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">

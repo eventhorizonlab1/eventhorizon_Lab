@@ -1,5 +1,4 @@
 
-
 import { Video, Article, Partner } from './types';
 
 // Navigation simplifiée : Vidéos, Articles, Écosystème
@@ -134,7 +133,8 @@ export const VIDEOS: Video[] = [
     title: 'ClearSpace-1 Mission Launch Update', 
     category: 'DURABILITÉ', 
     duration: '04:20', 
-    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=03ZZdJf2nDA'),
+    // Image manuelle : Débris spatiaux (Unsplash) pour garantir l'affichage
+    imageUrl: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80',
     videoUrl: 'https://www.youtube.com/watch?v=03ZZdJf2nDA'
   },
 ];
@@ -145,15 +145,14 @@ export const ARTICLES: Article[] = [
     title: 'Pourquoi Toulouse est la capitale du spatial', 
     summary: 'Analyse économique et structurelle de l\'écosystème Aerospace Valley.', 
     date: '10 OCT 2023', 
-    // Image pertinente : Place du Capitole (Toulouse)
-    imageUrl: 'https://images.unsplash.com/photo-1588934524456-6e542cb23354?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    // Image pertinente : Place du Capitole (Toulouse) - Lien Unsplash fiable
+    imageUrl: 'https://images.unsplash.com/photo-1563523588-4c627685600d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80'
   },
   { 
     id: 'a2', 
     title: 'Interview exclusive : Le DG de l\'ESA', 
     summary: 'Vision stratégique pour l\'autonomie européenne à l\'horizon 2030.', 
     date: '05 OCT 2023', 
-    // Stable Unsplash ID: Business / Leadership / Modern Office
     imageUrl: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   },
   { 
@@ -161,7 +160,6 @@ export const ARTICLES: Article[] = [
     title: 'Propulsion Ionique : Le dossier technique', 
     summary: 'Comment les moteurs électriques redéfinissent les voyages lointains.', 
     date: '28 SEP 2023', 
-    // Stable Unsplash ID: Blue Light / Tech / Thruster vibe
     imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   },
   { 
@@ -169,7 +167,6 @@ export const ARTICLES: Article[] = [
     title: 'Retour sur la Lune : Mission Argonaut', 
     summary: 'Les détails de l\'atterrisseur logistique européen lourd.', 
     date: '20 SEP 2023', 
-    // Stable Unsplash ID: Moon Surface / Space
     imageUrl: 'https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   },
   { 
@@ -177,8 +174,7 @@ export const ARTICLES: Article[] = [
     title: 'Loi Spatiale et Débris Orbitaux', 
     summary: 'Les nouvelles réglementations pour un espace durable (Zéro Débris).', 
     date: '15 SEP 2023', 
-    // Stable Unsplash ID: Earth Orbit / Satellite view
-    imageUrl: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   },
 ];
 
@@ -187,35 +183,40 @@ export const PARTNERS: Partner[] = [
     id: 'p1', 
     name: 'CNES', 
     role: 'Agence Spatiale', 
-    // CNES Toulouse : Tech / Control Room vibe
-    imageUrl: 'https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' 
+    // Logo Officiel CNES (SVG Direct)
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/fr/2/2a/Logo_CNES.svg',
+    websiteUrl: 'https://cnes.fr/fr'
   },
   { 
     id: 'p2', 
     name: 'Airbus', 
     role: 'Constructeur', 
-    // Airbus Defence & Space : Clean Room / Satellite Manufacturing
-    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' 
+    // Logo Officiel Airbus (SVG Direct)
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Airbus_logo_2017.svg',
+    websiteUrl: 'https://www.airbus.com/en/products-services/space'
   },
   { 
     id: 'p3', 
     name: 'Thales Alenia', 
     role: 'Satellites', 
-    // TAS : High Tech / Electronics / Chips
-    imageUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' 
+    // Logo Officiel TAS (SVG Direct)
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/93/Thales_Alenia_Space_Logo.svg',
+    websiteUrl: 'https://www.thalesgroup.com/en/global/activities/space'
   },
   { 
     id: 'p4', 
     name: 'ISAE-SUPAERO', 
     role: 'Excellence', 
-    // Campus / Students / Innovation
-    imageUrl: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' 
+    // Logo Officiel ISAE (SVG Direct)
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/fr/0/07/Logo_ISAE-SUPAERO.svg',
+    websiteUrl: 'https://www.isae-supaero.fr/fr/'
   },
   { 
     id: 'p5', 
     name: 'Cité de l\'Espace', 
     role: 'Culture', 
-    // Parc / Ariane 5 Mockup / Exhibition
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Cit%C3%A9_de_l%27Espace_Ariane_5.jpg/800px-Cit%C3%A9_de_l%27Espace_Ariane_5.jpg' 
+    // Logo Officiel Cité (SVG Direct)
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/fr/f/f1/Logo_Cit%C3%A9_de_l%27espace_2013.svg',
+    websiteUrl: 'https://www.cite-espace.com/'
   },
 ];

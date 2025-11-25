@@ -21,4 +21,5 @@ export interface Partner {
   name: string;
   role: string;
   imageUrl: string;
+  websiteUrl: string;
 }
