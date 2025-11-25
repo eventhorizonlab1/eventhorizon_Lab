@@ -60,10 +60,10 @@ const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> =
                     <h2 className="text-3xl font-black text-white tracking-tighter leading-none">{partner.name}</h2>
                 </div>
 
-                {/* CLOSE BUTTON: Lower position, high contrast */}
+                {/* CLOSE BUTTON: Positioned lower (top-24) to avoid header overlap on mobile */}
                 <button 
                     onClick={onClose}
-                    className="absolute top-6 right-6 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
+                    className="absolute top-24 right-6 md:top-6 md:right-6 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
                 >
                     <X size={24} strokeWidth={2.5} />
                 </button>

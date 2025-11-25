@@ -55,10 +55,10 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
             aria-modal="true"
             aria-labelledby="article-modal-title"
         >
-            {/* CLOSE BUTTON: Positioned lower (top-6/md:top-8) with high contrast background */}
+            {/* CLOSE BUTTON: Positioned lower (top-24) to avoid header overlap on mobile */}
             <button 
                 onClick={onClose}
-                className="absolute top-6 right-6 md:top-8 md:right-8 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
+                className="absolute top-24 right-6 md:top-8 md:right-8 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
                 aria-label={t('common_close')}
             >
                 <X size={24} strokeWidth={2.5} />
@@ -154,7 +154,8 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={cardVariants}
-      className="snap-start shrink-0 w-[85vw] md:w-[400px] h-[580px] transform-gpu"
+      // UPDATE: Replaced fixed height with aspect-[4/5] to match ecosystem cards
+      className="snap-start shrink-0 w-[85vw] md:w-[400px] aspect-[4/5] transform-gpu"
       onClick={() => onClick(article)}
       style={{ willChange: 'transform' }}
     >
