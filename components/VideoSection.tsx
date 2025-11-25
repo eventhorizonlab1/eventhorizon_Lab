@@ -351,12 +351,6 @@ const VideoSection: React.FC = () => {
              <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
         </div>
 
-        <div className="max-w-[1800px] mx-auto px-4 md:px-12 mt-4 text-center md:hidden">
-          <a href="#" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest border-b border-black dark:border-white pb-1">
-            {t('videos_subtitle')} <ArrowUpRight size={14} />
-          </a>
-        </div>
-
       </motion.section>
     </>
   );
