@@ -1,4 +1,5 @@
 
+
 import { Video, Article, Partner } from './types';
 
 // Navigation simplifiée : Vidéos, Articles, Écosystème
@@ -140,8 +141,8 @@ export const ARTICLES: Article[] = [
     title: 'Pourquoi Toulouse est la capitale du spatial', 
     summary: 'Analyse économique et structurelle de l\'écosystème Aerospace Valley.', 
     date: '10 OCT 2023', 
-    // Place du Capitole - Wikimedia Commons (Stable & Authentic)
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Place_du_Capitole_Toulouse_2010.jpg/1280px-Place_du_Capitole_Toulouse_2010.jpg'
+    // Place du Capitole (Nuit) - Wikimedia Commons (Alternative URL)
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Le_Capitole_Toulouse_nuit.jpg/1024px-Le_Capitole_Toulouse_nuit.jpg'
   },
   { 
     id: 'a2', 

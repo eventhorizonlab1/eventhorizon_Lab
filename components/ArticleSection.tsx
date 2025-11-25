@@ -1,4 +1,5 @@
 
+
 import React, { useRef, useState, useEffect } from 'react';
 import { ARTICLES } from '../constants';
 import { ArrowRight, ArrowLeft, FileText, X, Clock, Calendar } from 'lucide-react';
@@ -70,6 +71,9 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
                     src={article.imageUrl} 
                     alt={title}
                     decoding="async"
+                    onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1517976487492-5750f3195933?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80';
+                    }}
                     className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#0a0a0a] via-transparent to-black/30"></div>
@@ -163,6 +167,9 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
                 loading="lazy"
                 decoding="async" 
                 referrerPolicy="no-referrer"
+                onError={(e) => {
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1517976487492-5750f3195933?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+                }}
                 className="w-full h-full object-cover opacity-80 transition-opacity duration-500 group-hover:opacity-90"
              />
           </div>
