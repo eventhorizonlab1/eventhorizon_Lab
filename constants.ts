@@ -1,4 +1,5 @@
 
+
 import { Video, Article, Partner } from './types';
 
 // Navigation simplifiée : Vidéos, Articles, Écosystème
@@ -144,35 +145,40 @@ export const ARTICLES: Article[] = [
     title: 'Pourquoi Toulouse est la capitale du spatial', 
     summary: 'Analyse économique et structurelle de l\'écosystème Aerospace Valley.', 
     date: '10 OCT 2023', 
-    imageUrl: 'https://images.unsplash.com/photo-1517976547714-720226b864c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' // Cockpit/City
+    // Stable Unsplash ID: Toulouse / Cityscape
+    imageUrl: 'https://images.unsplash.com/photo-1542125574-d558b2979243?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   },
   { 
     id: 'a2', 
     title: 'Interview exclusive : Le DG de l\'ESA', 
     summary: 'Vision stratégique pour l\'autonomie européenne à l\'horizon 2030.', 
     date: '05 OCT 2023', 
-    imageUrl: 'https://images.unsplash.com/photo-1559526323-cb2f2fe2591b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' // Business/Tech
+    // Stable Unsplash ID: Business / Leadership / Modern Office
+    imageUrl: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   },
   { 
     id: 'a3', 
     title: 'Propulsion Ionique : Le dossier technique', 
     summary: 'Comment les moteurs électriques redéfinissent les voyages lointains.', 
     date: '28 SEP 2023', 
-    imageUrl: 'https://images.unsplash.com/photo-1581092162384-8987c1d64718?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' // Engineering
+    // Stable Unsplash ID: Blue Light / Tech / Thruster vibe
+    imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   },
   { 
     id: 'a4', 
     title: 'Retour sur la Lune : Mission Argonaut', 
     summary: 'Les détails de l\'atterrisseur logistique européen lourd.', 
     date: '20 SEP 2023', 
-    imageUrl: 'https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' // Moon surface
+    // Stable Unsplash ID: Moon Surface / Space
+    imageUrl: 'https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   },
   { 
     id: 'a5', 
     title: 'Loi Spatiale et Débris Orbitaux', 
     summary: 'Les nouvelles réglementations pour un espace durable (Zéro Débris).', 
     date: '15 SEP 2023', 
-    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' // Orbit
+    // Stable Unsplash ID: Earth Orbit / Satellite view
+    imageUrl: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   },
 ];
 
