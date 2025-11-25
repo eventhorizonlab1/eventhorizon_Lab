@@ -48,17 +48,16 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            // MOBILE OPTIMIZATION: h-[100dvh] for full screen immersion, rounded-none on mobile
-            className="bg-white dark:bg-[#0a0a0a] w-full md:max-w-4xl h-[100dvh] md:h-[90dvh] rounded-none md:rounded-3xl overflow-hidden flex flex-col shadow-2xl relative border-none md:border border-gray-200 dark:border-white/10"
+            className="bg-white dark:bg-[#0a0a0a] w-full max-w-4xl h-[95dvh] md:h-[90dvh] rounded-t-3xl md:rounded-3xl overflow-hidden flex flex-col shadow-2xl relative border border-gray-200 dark:border-white/10"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
             aria-labelledby="article-modal-title"
         >
-            {/* CLOSE BUTTON: Positioned safely for mobile touch targets */}
+            {/* CLOSE BUTTON: Adjusted to top-12 (approx 48px) for better accessibility/visibility balance */}
             <button 
                 onClick={onClose}
-                className="absolute top-6 right-6 md:top-8 md:right-8 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
+                className="absolute top-12 right-6 md:top-8 md:right-8 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
                 aria-label={t('common_close')}
             >
                 <X size={24} strokeWidth={2.5} />
@@ -118,7 +117,7 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
             </div>
 
             <div className="flex-1 overflow-y-auto px-6 md:px-12 py-8 custom-scrollbar bg-white dark:bg-[#0a0a0a]">
-                <div className="max-w-3xl mx-auto pb-20 md:pb-0">
+                <div className="max-w-3xl mx-auto">
                     <div className="prose prose-lg dark:prose-invert max-w-none">
                         <p className="font-serif text-xl md:text-2xl leading-relaxed text-gray-900 dark:text-gray-100 mb-8 first-letter:text-6xl first-letter:font-bold first-letter:mr-3 first-letter:float-left first-letter:text-blue-600 dark:first-letter:text-blue-500">
                             {paragraphs[0]}
@@ -154,7 +153,7 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={cardVariants}
-      // MOBILE OPTIMIZATION: w-[85vw] for standard comfortable swipe width
+      // Tablet Optimization: w-[45vw] for comfortable 2-card peek
       className="snap-start shrink-0 w-[85vw] md:w-[45vw] lg:w-[400px] aspect-[4/5] transform-gpu"
       onClick={() => onClick(article)}
       style={{ willChange: 'transform' }}
@@ -260,6 +259,7 @@ const ArticleSection: React.FC = () => {
 
     <motion.section 
       id="articles" 
+      // STANDARDIZED SPACING: py-16 (mobile) md:py-24 (desktop)
       className="py-16 md:py-24 bg-white dark:bg-eh-black relative border-t border-gray-100 dark:border-gray-800 transition-colors duration-500"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}

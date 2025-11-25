@@ -6,7 +6,7 @@ export interface Video {
   duration: string;
   imageUrl: string;
   videoUrl: string;
-  description?: string;
+  description: string;
 }
 
 export interface Article {

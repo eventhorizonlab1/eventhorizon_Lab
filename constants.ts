@@ -1,6 +1,4 @@
 
-
-
 import { Video, Article, Partner } from './types';
 
 // Navigation simplifiée : Vidéos, Articles, Écosystème
@@ -34,7 +32,7 @@ export const FEATURED_VIDEO: Video = {
   // Image depuis votre dépôt GitHub (Branche main)
   imageUrl: 'https://raw.githubusercontent.com/eventhorizonlab1/eventhorizon_Lab/main/images/vignette_ariane6.jpeg', 
   videoUrl: 'https://www.youtube.com/watch?v=ukoMgE_8heo',
-  description: "Revivez le lancement historique d'Ariane 6, marquant le retour de l'autonomie spatiale européenne. Une mission cruciale pour l'avenir du spatial en Europe."
+  description: "Revivez le moment historique du retour de l'Europe spatiale avec le décollage inaugural d'Ariane 6 depuis Kourou. Une étape cruciale pour l'autonomie stratégique du continent."
 };
 
 export const VIDEOS: Video[] = [
@@ -44,7 +42,8 @@ export const VIDEOS: Video[] = [
     category: 'ACTUALITÉ', 
     duration: '12:30', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=hCg8hox12C4'),
-    videoUrl: 'https://www.youtube.com/watch?v=hCg8hox12C4' 
+    videoUrl: 'https://www.youtube.com/watch?v=hCg8hox12C4',
+    description: "Analyse technique détaillée du dernier succès d'Ariane 6. Décryptage des performances du moteur Vinci et des implications pour les futurs lancements institutionnels."
   },
   { 
     id: 'v2', 
@@ -52,7 +51,8 @@ export const VIDEOS: Video[] = [
     category: 'STRATÉGIE', 
     duration: '10:15', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=0StUZuq0K5Y'),
-    videoUrl: 'https://www.youtube.com/watch?v=0StUZuq0K5Y'
+    videoUrl: 'https://www.youtube.com/watch?v=0StUZuq0K5Y',
+    description: "Une plongée dans la stratégie d'Arianespace pour maintenir sa place sur le marché commercial face à la domination écrasante du Falcon 9 de SpaceX."
   },
   { 
     id: 'v3', 
@@ -60,7 +60,8 @@ export const VIDEOS: Video[] = [
     category: 'NEWSPACE', 
     duration: '03:45', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=5nUehsleKQA'),
-    videoUrl: 'https://www.youtube.com/watch?v=5nUehsleKQA'
+    videoUrl: 'https://www.youtube.com/watch?v=5nUehsleKQA',
+    description: "Découverte de MaiaSpace, la filiale agile d'ArianeGroup qui développe un mini-lanceur réutilisable pour répondre aux besoins du marché des petits satellites."
   },
   { 
     id: 'v4', 
@@ -68,7 +69,8 @@ export const VIDEOS: Video[] = [
     category: 'TECH', 
     duration: '18:20', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=1sjA4krnCDY'),
-    videoUrl: 'https://www.youtube.com/watch?v=1sjA4krnCDY'
+    videoUrl: 'https://www.youtube.com/watch?v=1sjA4krnCDY',
+    description: "Focus technologique sur les solutions de réutilisabilité développées en Europe. Comment rattraper le retard technologique sur les atterrissages verticaux ?"
   },
   { 
     id: 'v5', 
@@ -76,7 +78,8 @@ export const VIDEOS: Video[] = [
     category: 'STARTUP', 
     duration: '15:10', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=4akJfQCpsFA'),
-    videoUrl: 'https://www.youtube.com/watch?v=4akJfQCpsFA'
+    videoUrl: 'https://www.youtube.com/watch?v=4akJfQCpsFA',
+    description: "Tour d'horizon des startups françaises les plus prometteuses (Latitude, Sirius, HyPrSpace) qui ambitionnent de devenir les futurs champions du NewSpace européen."
   },
   { 
     id: 'v6', 
@@ -84,7 +87,8 @@ export const VIDEOS: Video[] = [
     category: 'CARGO', 
     duration: '08:45', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=XP4VjQBPlqQ'),
-    videoUrl: 'https://www.youtube.com/watch?v=XP4VjQBPlqQ'
+    videoUrl: 'https://www.youtube.com/watch?v=XP4VjQBPlqQ',
+    description: "Zoom sur The Exploration Company et son véhicule cargo Nyx. Présentation des dernières levées de fonds et de la feuille de route vers le vol habité."
   },
   { 
     id: 'v7', 
@@ -92,7 +96,8 @@ export const VIDEOS: Video[] = [
     category: 'OPINION', 
     duration: '11:30', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=nvEMhxTceQs'),
-    videoUrl: 'https://www.youtube.com/watch?v=nvEMhxTceQs'
+    videoUrl: 'https://www.youtube.com/watch?v=nvEMhxTceQs',
+    description: "Analyse des opportunités pour l'Europe de fournir des solutions de transport logistique vers l'ISS et la Lune en complément des programmes américains."
   },
   { 
     id: 'v8', 
@@ -100,7 +105,8 @@ export const VIDEOS: Video[] = [
     category: 'SCIENCE', 
     duration: '01:15', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=pyCw_fhSndI'),
-    videoUrl: 'https://www.youtube.com/watch?v=pyCw_fhSndI'
+    videoUrl: 'https://www.youtube.com/watch?v=pyCw_fhSndI',
+    description: "Découverte majeure du télescope Euclid : observation d'un anneau d'Einstein parfait, une lentille gravitationnelle révélant la distribution de la matière noire."
   },
   { 
     id: 'v9', 
@@ -108,7 +114,8 @@ export const VIDEOS: Video[] = [
     category: 'DOCUMENTAIRE', 
     duration: '22:00', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=N1AY3iCYkGs'),
-    videoUrl: 'https://www.youtube.com/watch?v=N1AY3iCYkGs'
+    videoUrl: 'https://www.youtube.com/watch?v=N1AY3iCYkGs',
+    description: "Les premières images époustouflantes de l'univers sombre capturées par la mission Euclid. Comprendre l'énergie noire grâce à la cartographie 3D du cosmos."
   },
   { 
     id: 'v10', 
@@ -116,7 +123,8 @@ export const VIDEOS: Video[] = [
     category: 'ASTRONOMIE', 
     duration: '14:50', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=35lR0Wg5FII'),
-    videoUrl: 'https://www.youtube.com/watch?v=35lR0Wg5FII'
+    videoUrl: 'https://www.youtube.com/watch?v=35lR0Wg5FII',
+    description: "Le télescope James Webb remonte le temps et observe la lumière des toutes premières étoiles formées juste après le Big Bang."
   },
   { 
     id: 'v11', 
@@ -124,7 +132,8 @@ export const VIDEOS: Video[] = [
     category: 'MYSTÈRE', 
     duration: '12:10', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=CQUs61L3xko'),
-    videoUrl: 'https://www.youtube.com/watch?v=CQUs61L3xko'
+    videoUrl: 'https://www.youtube.com/watch?v=CQUs61L3xko',
+    description: "Enquête sur le mystère des 'petits points rouges' découverts par le JWST qui intriguent les astrophysiciens et remettent en cause nos modèles de formation des galaxies."
   },
   { 
     id: 'v12', 
@@ -133,7 +142,8 @@ export const VIDEOS: Video[] = [
     duration: '04:20', 
     // Image Unsplash Stable (Débris/Terre)
     imageUrl: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80',
-    videoUrl: 'https://www.youtube.com/watch?v=03ZZdJf2nDA'
+    videoUrl: 'https://www.youtube.com/watch?v=03ZZdJf2nDA',
+    description: "Le point sur ClearSpace-1, la première mission mondiale de nettoyage de débris spatiaux. Comment l'ESA compte désorbiter un étage de fusée Vega."
   },
 ];
 

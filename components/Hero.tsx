@@ -140,7 +140,7 @@ const FragmentShader = `
         float stepSize = 0.06; // Slightly increased step size for performance
         
         // Loop count reduced for mobile performance
-        for(int i=0; i<60; i++) {
+        for(int i=0; i<90; i++) {
             float r = length(p);
             
             vec3 force = -normalize(p) * (2.5 / (r * r + 0.01)); 
@@ -447,10 +447,10 @@ const Hero: React.FC = () => {
            
            <div className="text-center max-w-[95vw] md:max-w-7xl flex flex-col items-center pointer-events-auto">
               
-              {/* Responsive Text Sizing: Optimized for smaller mobiles (3xl start) */}
+              {/* Responsive Text Sizing: Smaller on mobile to prevent overflow */}
               <motion.div 
                 style={{ opacity, scale, filter: blur, y: yTitle }}
-                className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.0] md:leading-[0.9] mb-8 md:mb-12 flex flex-col items-center w-full drop-shadow-lg text-black dark:text-white dark:mix-blend-overlay dark:opacity-90"
+                className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.0] md:leading-[0.9] mb-8 md:mb-12 flex flex-col items-center w-full drop-shadow-lg text-black dark:text-white dark:mix-blend-overlay dark:opacity-90"
               >
                 <div className="block w-full">
                   <AnimatedText text={t('hero_line1')} />
