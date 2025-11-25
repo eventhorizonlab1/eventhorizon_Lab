@@ -1,3 +1,4 @@
+
 import { Video, Article, Partner } from './types';
 
 // Navigation simplifiée : Vidéos, Articles, Écosystème
@@ -10,19 +11,18 @@ export const NAV_LINKS = [
 /* 
   === UTILITAIRE AUTOMATIQUE ===
   Cette fonction permet de récupérer automatiquement l'image "maxres" (HD) de YouTube.
-  Plus besoin de gérer des fichiers images pour les vidéos classiques !
 */
 export const getYouTubeThumbnail = (url: string): string => {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
   const id = (match && match[2].length === 11) ? match[2] : null;
-  // Retourne l'image HD si l'ID est trouvé, sinon une image vide (le composant gérera le fallback)
   return id ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg` : '';
 };
 
 /* 
   === GUIDES DES IMAGES ===
-  1. Pour la vidéo "À LA UNE" (Hero) : Utilisez une image très haute définition sans texte.
+  FEATURED_VIDEO : Utilisation d'une image Wikimedia publique (Ariane 6 First Flight)
+  pour garantir l'affichage quel que soit l'environnement (GitHub Privé/Public).
 */
 
 export const FEATURED_VIDEO: Video = {
@@ -30,8 +30,8 @@ export const FEATURED_VIDEO: Video = {
   title: '🚀 Ariane 6 : Le Retour du Géant Européen',
   category: 'LANCEURS',
   duration: 'Live',
-  // Vignette personnalisée (Lien GitHub Raw spécifique demandé par l'utilisateur)
-  imageUrl: 'https://github.com/eventhorizonlab1/eventhorizon_Lab/raw/1b23f67e40a4b23acf6ef2b73014f4da76370473/images/vignette_ariane6.jpeg', 
+  // Photo officielle du vol inaugural (Wikimedia - Public Domain)
+  imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Ariane_6_first_flight_liftoff_%28VA262%29.jpg/1280px-Ariane_6_first_flight_liftoff_%28VA262%29.jpg', 
   videoUrl: 'https://www.youtube.com/watch?v=ukoMgE_8heo'
 };
 
@@ -41,7 +41,6 @@ export const VIDEOS: Video[] = [
     title: 'Ariane 6 : la fusée européenne a réussi son 3ème envol', 
     category: 'ACTUALITÉ', 
     duration: '12:30', 
-    // Utilisation automatique de la miniature YouTube :
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=hCg8hox12C4'),
     videoUrl: 'https://www.youtube.com/watch?v=hCg8hox12C4' 
   },
@@ -130,7 +129,7 @@ export const VIDEOS: Video[] = [
     title: 'ClearSpace-1 Mission Launch Update', 
     category: 'DURABILITÉ', 
     duration: '04:20', 
-    // Image : Débris orbitaux / Terre (Unsplash - Stable)
+    // Image Unsplash Stable (Débris/Terre)
     imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80',
     videoUrl: 'https://www.youtube.com/watch?v=03ZZdJf2nDA'
   },
@@ -142,7 +141,7 @@ export const ARTICLES: Article[] = [
     title: 'Pourquoi Toulouse est la capitale du spatial', 
     summary: 'Analyse économique et structurelle de l\'écosystème Aerospace Valley.', 
     date: '10 OCT 2023', 
-    // Image : Place du Capitole, Toulouse (Unsplash - Stable)
+    // Image : Place du Capitole (Unsplash)
     imageUrl: 'https://images.unsplash.com/photo-1563523588-4c627685600d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80'
   },
   { 
@@ -180,7 +179,7 @@ export const PARTNERS: Partner[] = [
     id: 'p1', 
     name: 'CNES', 
     role: 'Agence Spatiale', 
-    // Logo Officiel CNES (SVG Direct - Wikimedia)
+    // Logo SVG Wikimedia
     imageUrl: 'https://upload.wikimedia.org/wikipedia/fr/2/2a/Logo_CNES.svg',
     websiteUrl: 'https://cnes.fr/fr'
   },
@@ -188,7 +187,7 @@ export const PARTNERS: Partner[] = [
     id: 'p2', 
     name: 'Airbus', 
     role: 'Constructeur', 
-    // Logo Officiel Airbus (SVG Direct - Wikimedia)
+    // Logo SVG Wikimedia
     imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Airbus_logo_2017.svg',
     websiteUrl: 'https://www.airbus.com/en/products-services/space'
   },
@@ -196,7 +195,7 @@ export const PARTNERS: Partner[] = [
     id: 'p3', 
     name: 'Thales Alenia', 
     role: 'Satellites', 
-    // Logo Officiel TAS (SVG Direct - Wikimedia)
+    // Logo SVG Wikimedia
     imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/93/Thales_Alenia_Space_Logo.svg',
     websiteUrl: 'https://www.thalesgroup.com/en/global/activities/space'
   },
@@ -204,7 +203,7 @@ export const PARTNERS: Partner[] = [
     id: 'p4', 
     name: 'ISAE-SUPAERO', 
     role: 'Excellence', 
-    // Logo Officiel ISAE (SVG Direct - Wikimedia)
+    // Logo SVG Wikimedia
     imageUrl: 'https://upload.wikimedia.org/wikipedia/fr/0/07/Logo_ISAE-SUPAERO.svg',
     websiteUrl: 'https://www.isae-supaero.fr/fr/'
   },
@@ -212,7 +211,7 @@ export const PARTNERS: Partner[] = [
     id: 'p5', 
     name: 'Cité de l\'Espace', 
     role: 'Culture', 
-    // Logo Officiel Cité (SVG Direct - Wikimedia)
+    // Logo SVG Wikimedia
     imageUrl: 'https://upload.wikimedia.org/wikipedia/fr/f/f1/Logo_Cit%C3%A9_de_l%27espace_2013.svg',
     websiteUrl: 'https://www.cite-espace.com/'
   },

@@ -1,5 +1,4 @@
 
-
 import React, { useRef, useState, useEffect } from 'react';
 import { PARTNERS } from '../constants';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
@@ -30,7 +29,7 @@ const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> =
             className="bg-white dark:bg-[#111] w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl relative border border-gray-100 dark:border-white/10"
             onClick={(e) => e.stopPropagation()}
         >
-            <div className="relative h-48 md:h-64 overflow-hidden bg-white border-b border-gray-100 flex items-center justify-center p-10">
+            <div className="relative h-48 md:h-64 overflow-hidden bg-white border-b border-gray-100 flex items-center justify-center p-12">
                 <img 
                     src={partner.imageUrl} 
                     alt={partner.name} 
@@ -39,7 +38,7 @@ const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> =
                 
                 <button 
                     onClick={onClose}
-                    className="absolute top-4 right-4 p-2 bg-black/10 hover:bg-black/20 backdrop-blur-md rounded-full text-black transition-colors"
+                    className="absolute top-4 right-4 p-2 bg-black/5 hover:bg-black/10 backdrop-blur-md rounded-full text-black transition-colors"
                 >
                     <X size={20} />
                 </button>
@@ -108,14 +107,14 @@ const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Part
     offset: ["start end", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const y = useTransform(scrollYProgress, [0, 1], [30, -30]);
   const role = t(`partner_${partner.id}_role`);
 
   return (
     <motion.div 
        ref={ref}
        style={{ y }}
-       className="snap-start shrink-0 w-[60vw] md:w-[20vw] group relative cursor-pointer"
+       className="snap-start shrink-0 w-[70vw] md:w-[22vw] group relative cursor-pointer"
        onClick={() => onClick(partner)}
     >
       <motion.div
@@ -125,28 +124,33 @@ const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Part
         transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.1 }}
       >
          {/* Card Visual - Updated for Logos with solid white background */}
-         <div className="relative overflow-hidden rounded-xl bg-white aspect-[4/5] mb-6 transition-all duration-500 border border-gray-100 dark:border-white/10 shadow-sm p-6 flex items-center justify-center group-hover:shadow-lg">
+         <div className="relative overflow-hidden rounded-3xl bg-white aspect-[4/5] mb-6 transition-all duration-500 border border-gray-200 dark:border-white/5 shadow-sm group-hover:shadow-2xl flex items-center justify-center p-12">
             <img 
                 src={partner.imageUrl} 
                 alt={partner.name} 
                 loading="lazy"
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 opacity-100"
+                className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
             />
+            
             {/* Hover Overlay info */}
-            <div className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-sm">
-              <span className="text-white font-bold tracking-widest uppercase border border-white/50 rounded-full px-5 py-2.5 text-xs bg-black/40 backdrop-blur-md transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 shadow-lg">
-                {t('ecosystem_view')}
-              </span>
+            <div className="absolute inset-0 flex items-center justify-center bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-[2px]">
+              <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                  <span className="text-white font-bold tracking-[0.2em] uppercase border border-white/30 rounded-full px-6 py-3 text-xs bg-white/10 hover:bg-white hover:text-black transition-colors shadow-xl">
+                    {t('ecosystem_view')}
+                  </span>
+              </div>
             </div>
          </div>
 
          {/* Text Under Card */}
-         <div className="text-center md:text-left">
-           <h3 className="text-xl font-bold uppercase tracking-tight mb-1 text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+         <div className="text-center md:text-left px-2">
+           <h3 className="text-xl md:text-2xl font-bold uppercase tracking-tight mb-2 text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
              {partner.name}
            </h3>
-           <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block border-t border-gray-200 dark:border-gray-800 pt-2 inline-block min-w-[50px]">{role}</span>
+           <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block border-t-2 border-gray-100 dark:border-white/10 pt-3 inline-block">
+             {role}
+           </span>
          </div>
       </motion.div>
     </motion.div>
@@ -180,26 +184,25 @@ const EcosystemSection: React.FC = () => {
 
         <motion.section 
         id="ecosystem" 
-        className="pt-16 md:pt-24 pb-0"
+        className="pt-24 md:pt-32 pb-12"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         >
-        <div className="px-4 md:px-12 max-w-[1800px] mx-auto mb-12">
+        <div className="px-4 md:px-12 max-w-[1800px] mx-auto mb-16">
             <div className="border-l-4 border-black dark:border-white pl-3 md:pl-6 -ml-4 md:-ml-7">
                 <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white">
                 {t('ecosystem_title')}
                 </h2>
-                <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg">
+                <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg max-w-xl">
                 {t('ecosystem_subtitle')}
                 </p>
             </div>
         </div>
 
         <div className="overflow-hidden">
-            {/* Reduced bottom padding from pb-12 to pb-6 */}
-            <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-6 pb-6">
+            <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-8 pb-12">
             {PARTNERS.map((partner, index) => (
                 <PartnerCard 
                     key={partner.id} 
