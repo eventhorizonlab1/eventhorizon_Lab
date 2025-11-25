@@ -1,6 +1,6 @@
 
 import React, { useRef, useEffect } from 'react';
-import { motion, useScroll, useTransform, Variants, useInView, useReducedMotion } from 'framer-motion';
+import { motion, useScroll, useTransform, Variants, useInView, useReducedMotion, MotionValue } from 'framer-motion';
 import { Play } from 'lucide-react';
 import * as THREE from 'three';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
@@ -20,6 +20,7 @@ const FragmentShader = `
     uniform vec2 u_resolution;
     uniform vec2 u_mouse;
     uniform float u_is_light; // 0.0 = Dark Mode, 1.0 = Light Mode
+    uniform float u_scroll;   // Scroll progress 0.0 to 1.0
     
     varying vec2 vUv;
 
@@ -114,7 +115,8 @@ const FragmentShader = `
         vec2 uv = (vUv - 0.5) * 2.0;
         uv.x *= u_resolution.x / u_resolution.y;
 
-        vec3 ro = vec3(0.0, 0.08, -12.0); 
+        // PARALLAX EFFECT: Move camera Y position based on scroll
+        vec3 ro = vec3(0.0, 0.08 + u_scroll * 3.0, -12.0); 
         
         vec3 target = vec3(0.0, -0.5, 0.0);
         vec3 forward = normalize(target - ro);
@@ -309,7 +311,7 @@ const AnimatedText = ({ text, className }: { text: string, className?: string })
   );
 };
 
-const BlackHoleBackground = ({ theme }: { theme: string }) => {
+const BlackHoleBackground = ({ theme, scrollYProgress }: { theme: string, scrollYProgress: MotionValue<number> }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
   const isInView = useInView(containerRef);
@@ -338,7 +340,8 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
           u_time: { value: 0 },
           u_resolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) },
           u_mouse: { value: new THREE.Vector2(0, 0) },
-          u_is_light: { value: themeRef.current === 'light' ? 1.0 : 0.0 }
+          u_is_light: { value: themeRef.current === 'light' ? 1.0 : 0.0 },
+          u_scroll: { value: 0 }
         },
         vertexShader: VertexShader,
         fragmentShader: FragmentShader,
@@ -376,6 +379,11 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
 
       const targetLight = themeRef.current === 'light' ? 1.0 : 0.0;
       material.uniforms.u_is_light.value += (targetLight - material.uniforms.u_is_light.value) * 0.05;
+
+      // Update scroll uniform for parallax
+      if (scrollYProgress) {
+        material.uniforms.u_scroll.value = scrollYProgress.get();
+      }
       
       const mouseInfluence = shouldReduceMotion ? 0.01 : 0.05;
       material.uniforms.u_mouse.value.x += (mouseRef.current.x - material.uniforms.u_mouse.value.x) * mouseInfluence;
@@ -439,7 +447,7 @@ const Hero: React.FC = () => {
       
       <div className="sticky top-0 h-screen w-full overflow-hidden z-0">
         
-        <BlackHoleBackground theme={theme} />
+        <BlackHoleBackground theme={theme} scrollYProgress={scrollYProgress} />
 
         <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-white/90 dark:from-black/30 dark:via-transparent dark:to-black/80 z-10 pointer-events-none transition-colors duration-500"></div>
         

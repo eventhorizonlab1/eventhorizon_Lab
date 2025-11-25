@@ -1,7 +1,7 @@
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
-import { Play, Radio, ArrowUpRight, X, ExternalLink } from 'lucide-react';
+import { Play, Radio, ArrowUpRight, X, ExternalLink, Filter, Clock, Hash } from 'lucide-react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Video } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
@@ -12,6 +12,7 @@ const getYouTubeId = (url: string) => {
     return (match && match[2].length === 11) ? match[2] : null;
 };
 
+// --- YOUTUBE-STYLE: RICH CONTENT MODAL ---
 const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
     const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
     const [iframeLoaded, setIframeLoaded] = useState(false);
@@ -35,21 +36,25 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
     
     const translatedTitle = t(`video_${video.id}_title`);
     const title = translatedTitle.startsWith('video_') ? video.title : translatedTitle;
+    
+    // Fallback for description if not in constants yet (though we added it)
+    const description = video.description || t(`video_${video.id}_desc`) || "Aucune description disponible pour cette vidéo.";
 
     return (
         <div 
-            className="flex flex-col w-full max-w-5xl gap-4" 
+            className="flex flex-col w-full max-w-5xl gap-6 h-full md:h-auto" 
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
             aria-labelledby="video-modal-title"
         >
+            {/* VIDEO PLAYER CONTAINER */}
             <motion.div
-                initial={{ scale: 0.9, y: 20 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.9, y: 20 }}
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+                className="relative w-full aspect-video bg-black rounded-none md:rounded-2xl overflow-hidden shadow-2xl border-0 md:border border-white/10 shrink-0"
             >
                 {!videoId ? (
                     <div className="w-full h-full flex flex-col items-center justify-center text-white p-8 text-center bg-gray-900 relative z-10">
@@ -91,18 +96,44 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
                 )}
             </motion.div>
 
-            <div className="flex justify-between items-center text-white px-2">
-                <h3 id="video-modal-title" className="text-lg font-bold line-clamp-1 mr-4">{title}</h3>
-                <a 
-                    href={video.videoUrl} 
-                    target="_blank" 
-                    rel="noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-xs font-bold uppercase tracking-widest transition-colors whitespace-nowrap"
-                >
-                    <span>Ouvrir sur YouTube</span>
-                    <ExternalLink size={14} />
-                </a>
-            </div>
+            {/* YOUTUBE-STYLE INFO SECTION */}
+            <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="flex flex-col gap-4 text-white px-4 md:px-0 overflow-y-auto md:overflow-visible pb-10 md:pb-0"
+            >
+                <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+                    <h3 id="video-modal-title" className="text-xl md:text-2xl font-bold leading-tight">{title}</h3>
+                    
+                    <a 
+                        href={video.videoUrl} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 bg-[#ff0000] hover:bg-[#cc0000] text-white rounded-full text-xs font-bold uppercase tracking-widest transition-colors whitespace-nowrap shadow-lg shrink-0"
+                    >
+                        <span>YouTube</span>
+                        <ExternalLink size={14} />
+                    </a>
+                </div>
+
+                <div className="flex items-center gap-4 text-sm text-gray-400 border-b border-white/10 pb-4">
+                    <div className="flex items-center gap-1.5 bg-white/10 px-2 py-1 rounded text-white text-xs font-bold uppercase tracking-wider">
+                        <Hash size={12} />
+                        {video.category}
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <Clock size={14} />
+                        {video.duration}
+                    </div>
+                </div>
+
+                <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                    <p className="text-gray-300 text-sm md:text-base leading-relaxed whitespace-pre-line">
+                        {description}
+                    </p>
+                </div>
+            </motion.div>
         </div>
     );
 };
@@ -114,18 +145,18 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-10%" }}
-      transition={{ duration: 0.5, delay: Math.min((index % 3) * 0.05, 0.2), ease: "easeOut" }}
-      // Optimization: w-[80vw] on mobile, w-[45vw] on tablet to show a peek of the next card
+      layout
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ duration: 0.4 }}
       className="group cursor-pointer snap-start shrink-0 w-[80vw] md:w-[45vw] lg:w-auto transform-gpu"
       onClick={() => onPlay(video)}
-      style={{ willChange: 'transform, opacity' }}
     >
       <div className="block h-full">
         <div>
-          <div className="relative overflow-hidden rounded-xl bg-gray-200 dark:bg-gray-800 aspect-video mb-4 transition-colors duration-500 border border-black/5 dark:border-white/5">
+          {/* Thumbnail Container */}
+          <div className="relative overflow-hidden rounded-xl bg-gray-200 dark:bg-gray-800 aspect-video mb-3 transition-colors duration-500 border border-black/5 dark:border-white/5 shadow-sm group-hover:shadow-lg">
              <img 
               src={video.imageUrl} 
               alt={title} 
@@ -137,23 +168,30 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
               }}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
             />
-            <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm text-white text-[10px] font-mono px-2 py-0.5 rounded-md border border-white/10">
+            
+            {/* YouTube-style Duration Badge */}
+            <div className="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] tracking-wide">
               {video.duration}
             </div>
+
+            {/* Play Button Overlay */}
              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20">
-                <div className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                  <Play className="w-4 h-4 text-black fill-black ml-0.5" />
+                <div className="w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <Play className="w-5 h-5 text-black fill-black ml-0.5" />
                 </div>
              </div>
           </div>
           
-          <div className="pr-2 whitespace-normal">
-            <div className="flex justify-between items-start mb-2">
-                <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest border border-blue-600/20 dark:border-blue-400/20 px-2 py-0.5 rounded-full">{category}</span>
-            </div>
-            <h4 className="text-base md:text-lg font-bold leading-tight transition-colors duration-300 text-black dark:text-white group-hover:text-gray-600 dark:group-hover:text-gray-300 line-clamp-2">
+          {/* Meta Data */}
+          <div className="pr-2">
+            <h4 className="text-base md:text-lg font-bold leading-tight transition-colors duration-300 text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 line-clamp-2 mb-1">
               {title}
             </h4>
+            <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{category}</span>
+                <span className="w-0.5 h-0.5 bg-gray-400 rounded-full"></span>
+                <span className="text-[10px] text-gray-400">Event Horizon</span>
+            </div>
           </div>
         </div>
       </div>
@@ -165,6 +203,7 @@ const VideoSection: React.FC = () => {
   const featuredRef = useRef<HTMLDivElement>(null);
   const { t } = useThemeLanguage();
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>('ALL');
   
   const { scrollYProgress } = useScroll({
     target: featuredRef,
@@ -176,27 +215,20 @@ const VideoSection: React.FC = () => {
   const featuredTitle = t(`video_${FEATURED_VIDEO.id}_title`);
   const featuredCat = t(`video_${FEATURED_VIDEO.id}_cat`);
 
-  const getPageTitle = (v: Video) => {
-    const raw = t(`video_${v.id}_title`);
-    const title = raw.startsWith('video_') ? v.title : raw;
-    return `${title} | Event Horizon`;
-  };
+  // Extract unique categories for the filter list
+  const categories = useMemo(() => {
+    const cats = new Set(VIDEOS.map(v => v.category));
+    return ['ALL', ...Array.from(cats)];
+  }, []);
 
-  const getPageDesc = (v: Video) => {
-    const raw = t(`video_${v.id}_title`);
-    const title = raw.startsWith('video_') ? v.title : raw;
-    return `Regardez ${title} sur Event Horizon.`;
-  };
+  // Filter videos based on selection
+  const filteredVideos = useMemo(() => {
+    if (activeCategory === 'ALL') return VIDEOS;
+    return VIDEOS.filter(v => v.category === activeCategory);
+  }, [activeCategory]);
 
   return (
     <>
-      {selectedVideo && (
-          <>
-            <title>{getPageTitle(selectedVideo)}</title>
-            <meta name="description" content={getPageDesc(selectedVideo)} />
-          </>
-      )}
-
       <AnimatePresence>
           {selectedVideo && (
               <motion.div
@@ -205,7 +237,7 @@ const VideoSection: React.FC = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-12"
+                className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-xl p-0 md:p-12"
                 onClick={() => setSelectedVideo(null)}
               >
                   <button 
@@ -213,7 +245,7 @@ const VideoSection: React.FC = () => {
                         e.stopPropagation();
                         setSelectedVideo(null);
                     }}
-                    className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-50 backdrop-blur-md"
+                    className="absolute top-4 right-4 md:top-6 md:right-6 p-2 md:p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-50 backdrop-blur-md"
                     aria-label={t('common_close')}
                   >
                     <X size={24} />
@@ -226,7 +258,6 @@ const VideoSection: React.FC = () => {
 
       <motion.section 
         id="videos" 
-        // STANDARDIZED SPACING: py-16 (mobile) md:py-24 (desktop)
         className="py-16 md:py-24" 
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -234,6 +265,7 @@ const VideoSection: React.FC = () => {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         
+        {/* TRANSMISSION HEADER */}
         <div className="max-w-[1800px] mx-auto md:px-12">
             <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -282,23 +314,42 @@ const VideoSection: React.FC = () => {
             </motion.div>
         </div>
 
+        {/* SECTION TITLE & FILTERS */}
+        <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-8">
+            <div className="flex flex-col gap-6">
+                <div className="border-l-4 border-black dark:border-white pl-3 md:pl-6 -ml-4 md:-ml-7">
+                    <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white transition-colors duration-500">
+                    {t('videos_title')}
+                    </h2>
+                    <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg max-w-md">
+                        {t('videos_subtitle')}
+                    </p>
+                </div>
 
-        <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-12">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-              <div className="border-l-4 border-black dark:border-white pl-3 md:pl-6 -ml-4 md:-ml-7">
-                  <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white transition-colors duration-500">
-                  {t('videos_title')}
-                  </h2>
-                  <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg max-w-md">
-                    {t('videos_subtitle')}
-                  </p>
-              </div>
-              <a href="#" className="hidden md:flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:text-blue-500 transition-colors pb-1">
-                Voir tout <ArrowUpRight size={14} />
-              </a>
-          </div>
+                {/* YOUTUBE-STYLE CHIPS (FILTERS) */}
+                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mask-linear-fade">
+                    <div className="flex items-center justify-center w-8 h-8 shrink-0 text-gray-400">
+                        <Filter size={16} />
+                    </div>
+                    {categories.map((cat) => (
+                        <button
+                            key={cat}
+                            onClick={() => setActiveCategory(cat)}
+                            className={`
+                                px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide whitespace-nowrap transition-all duration-300 border
+                                ${activeCategory === cat 
+                                    ? 'bg-black text-white dark:bg-white dark:text-black border-black dark:border-white shadow-md transform scale-105' 
+                                    : 'bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 border-transparent hover:bg-gray-200 dark:hover:bg-white/10'}
+                            `}
+                        >
+                            {cat === 'ALL' ? 'Tout' : cat}
+                        </button>
+                    ))}
+                </div>
+            </div>
         </div>
 
+        {/* FEATURED VIDEO */}
         <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-12" ref={featuredRef}>
           <motion.div 
             initial={{ opacity: 0 }}
@@ -321,31 +372,44 @@ const VideoSection: React.FC = () => {
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
                 />
               </motion.div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
               
               <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 flex flex-col md:flex-row justify-between items-end gap-6">
                   <div>
-                      <span className="inline-block px-3 py-1 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest mb-3 rounded-full">{t('videos_featured')}</span>
-                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tighter uppercase text-white mb-2">
+                      <span className="inline-block px-3 py-1 bg-[#ff0000] text-white text-[10px] font-bold uppercase tracking-widest mb-3 rounded-full shadow-lg">{t('videos_featured')}</span>
+                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tighter uppercase text-white mb-2 max-w-3xl">
                           {featuredTitle}
                       </h3>
-                      <p className="text-white/70 text-xs md:text-sm font-mono">{featuredCat} // {FEATURED_VIDEO.duration}</p>
+                      <p className="text-white/80 text-xs md:text-sm font-medium max-w-2xl line-clamp-2 md:line-clamp-none">
+                          {FEATURED_VIDEO.description}
+                      </p>
                   </div>
                   
-                  <button className="w-12 h-12 md:w-14 md:h-14 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.3)]">
-                      <Play className="w-5 h-5 fill-current ml-1" />
+                  <button className="w-14 h-14 md:w-16 md:h-16 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.3)] shrink-0">
+                      <Play className="w-6 h-6 fill-current ml-1" />
                   </button>
               </div>
             </div>
           </motion.div>
         </div>
 
-        <div className="max-w-[1800px] mx-auto px-4 md:px-12 flex overflow-x-auto lg:grid lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-x-6 md:gap-y-12 snap-x snap-mandatory lg:snap-none no-scrollbar pb-8 md:pb-0 touch-pan-x" style={{ WebkitOverflowScrolling: 'touch' }}>
-          {VIDEOS.map((video, index) => (
-            <VideoCard key={video.id} video={video} index={index} onPlay={setSelectedVideo} />
-          ))}
+        {/* VIDEOS GRID/LIST */}
+        <div className="max-w-[1800px] mx-auto px-4 md:px-12 flex overflow-x-auto lg:grid lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-x-6 md:gap-y-12 snap-x snap-mandatory lg:snap-none no-scrollbar pb-8 md:pb-0 touch-pan-x min-h-[300px]" style={{ WebkitOverflowScrolling: 'touch' }}>
+          <AnimatePresence mode="popLayout">
+            {filteredVideos.map((video, index) => (
+                <VideoCard key={video.id} video={video} index={index} onPlay={setSelectedVideo} />
+            ))}
+          </AnimatePresence>
+          
+          {filteredVideos.length === 0 && (
+              <div className="col-span-full flex flex-col items-center justify-center py-20 text-gray-500">
+                  <p className="text-lg">Aucune vidéo dans cette catégorie.</p>
+                  <button onClick={() => setActiveCategory('ALL')} className="mt-4 text-blue-500 hover:underline">Voir tout</button>
+              </div>
+          )}
         </div>
         
+        {/* SCROLL INDICATOR (Mobile/Tablet) */}
         <div className="flex lg:hidden justify-center gap-1 mt-2 mb-8">
              <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-50"></div>
              <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
