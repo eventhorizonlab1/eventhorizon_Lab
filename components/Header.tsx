@@ -109,14 +109,15 @@ const Header: React.FC = () => {
   return (
     <>
       <header 
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out px-4 md:px-12 ${headerBgClass}`}
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out px-4 md:px-8 lg:px-12 ${headerBgClass}`}
       >
         <div className="max-w-[1800px] mx-auto flex justify-between items-center">
           <a href="#" onClick={(e) => handleLinkClick(e, '#')} className={`text-xl md:text-2xl font-bold tracking-tighter uppercase z-50 relative transition-colors duration-300 ${textColorClass}`}>
             Event Horizon
           </a>
 
-          <div className="hidden md:flex items-center gap-10">
+          {/* TABLET/DESKTOP MENU: Hidden on mobile AND tablet portrait (< 1024px) */}
+          <div className="hidden lg:flex items-center gap-10">
             <nav className="flex gap-10">
               {NAV_LINKS.map((link) => (
                 <a 
@@ -187,9 +188,9 @@ const Header: React.FC = () => {
             </div>
           </div>
 
-          {/* Mobile Menu Trigger - Large touch area */}
+          {/* MOBILE/TABLET MENU TRIGGER - Visible below 1024px */}
           <button 
-            className="md:hidden w-12 h-12 flex flex-col justify-center items-end gap-1.5 cursor-pointer z-50 p-1 bg-transparent border-none outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg"
+            className="lg:hidden w-12 h-12 flex flex-col justify-center items-end gap-1.5 cursor-pointer z-50 p-1 bg-transparent border-none outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label={isMenuOpen ? t('common_close') : t('common_menu')}
             aria-expanded={isMenuOpen}
@@ -212,7 +213,7 @@ const Header: React.FC = () => {
         />
       </header>
 
-      {/* Mobile Fullscreen Menu */}
+      {/* Fullscreen Menu (Mobile & Tablet) */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -220,11 +221,11 @@ const Header: React.FC = () => {
             animate={{ opacity: 1, height: "100dvh" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed top-0 left-0 w-full z-40 bg-white dark:bg-eh-black flex flex-col md:hidden overflow-hidden"
+            className="fixed top-0 left-0 w-full z-40 bg-white dark:bg-eh-black flex flex-col lg:hidden overflow-hidden"
           >
-            {/* Scrollable Container with optimized padding for iPhone SE */}
-            <div className="flex-1 overflow-y-auto flex flex-col px-6 pt-28 pb-10 scrollbar-hide">
-                <nav className="flex flex-col gap-6 items-center mb-auto">
+            {/* Scrollable Container */}
+            <div className="flex-1 overflow-y-auto flex flex-col px-6 pt-28 pb-10 scrollbar-hide items-center justify-center md:justify-start">
+                <nav className="flex flex-col gap-6 md:gap-8 items-center mb-auto md:mt-20">
                 {NAV_LINKS.map((link, index) => (
                     <motion.a
                     key={link.href}
@@ -233,7 +234,7 @@ const Header: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 + index * 0.1 }}
                     onClick={(e) => handleLinkClick(e, link.href)}
-                    className="text-3xl sm:text-4xl font-bold uppercase tracking-tighter hover:text-gray-500 transition-colors text-black dark:text-white"
+                    className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-tighter hover:text-gray-500 transition-colors text-black dark:text-white"
                     >
                     {t(link.key)}
                     </motion.a>
@@ -250,16 +251,16 @@ const Header: React.FC = () => {
                     {/* Theme Toggle - Large Touch Target */}
                     <button 
                         onClick={toggleTheme} 
-                        className="w-full max-w-xs p-4 rounded-xl bg-gray-100 dark:bg-white/10 text-black dark:text-white flex items-center justify-center gap-3 font-bold uppercase text-sm tracking-widest transition-all active:scale-95"
+                        className="w-full max-w-xs md:max-w-sm p-4 rounded-xl bg-gray-100 dark:bg-white/10 text-black dark:text-white flex items-center justify-center gap-3 font-bold uppercase text-sm tracking-widest transition-all active:scale-95"
                     >
                         {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
                         <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
                     </button>
 
-                    {/* Mobile Language Grid - Optimized for Touch (Larger targets) */}
-                    <div className="w-full max-w-xs">
+                    {/* Language Grid */}
+                    <div className="w-full max-w-xs md:max-w-sm">
                         <p className="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Language</p>
-                        <div className="grid grid-cols-5 gap-2">
+                        <div className="grid grid-cols-5 gap-2 md:gap-4">
                             {SUPPORTED_LANGUAGES.map(lang => (
                                 <button 
                                 key={lang.code}

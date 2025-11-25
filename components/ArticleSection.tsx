@@ -1,5 +1,4 @@
 
-
 import React, { useRef, useState, useEffect } from 'react';
 import { ARTICLES } from '../constants';
 import { ArrowRight, ArrowLeft, FileText, X, Clock, Calendar } from 'lucide-react';
@@ -94,7 +93,7 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
-                        className="text-3xl md:text-6xl font-sans font-black leading-[0.9] text-black dark:text-white drop-shadow-sm mb-4 max-w-3xl tracking-tight"
+                        className="text-3xl md:text-5xl lg:text-6xl font-sans font-black leading-[0.9] text-black dark:text-white drop-shadow-sm mb-4 max-w-3xl tracking-tight"
                     >
                         {title}
                     </motion.h2>
@@ -154,7 +153,8 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={cardVariants}
-      className="snap-start shrink-0 w-[85vw] md:w-[400px] aspect-[4/5] transform-gpu"
+      // Tablet Optimization: w-[45vw] for comfortable 2-card peek
+      className="snap-start shrink-0 w-[85vw] md:w-[45vw] lg:w-[400px] aspect-[4/5] transform-gpu"
       onClick={() => onClick(article)}
       style={{ willChange: 'transform' }}
     >
@@ -194,7 +194,7 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
                     </span>
                 </div>
 
-                <h3 className="text-3xl md:text-5xl font-sans font-black leading-[0.95] md:leading-[0.9] mb-6 text-white drop-shadow-xl line-clamp-4 group-hover:line-clamp-none transition-all tracking-tighter">
+                <h3 className="text-3xl md:text-4xl lg:text-5xl font-sans font-black leading-[0.95] md:leading-[0.9] mb-6 text-white drop-shadow-xl line-clamp-4 group-hover:line-clamp-none transition-all tracking-tighter">
                   {title}
                 </h3>
                 
@@ -276,7 +276,7 @@ const ArticleSection: React.FC = () => {
                 </p>
             </div>
             
-            <div className="hidden md:flex gap-2 pb-2">
+            <div className="hidden lg:flex gap-2 pb-2">
                 <button onClick={() => scroll('left')} className="p-3 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded-full transition-all active:scale-95 text-black dark:text-white">
                     <ArrowLeft size={24} />
                 </button>
@@ -298,8 +298,8 @@ const ArticleSection: React.FC = () => {
         </div>
       </div>
       
-      {/* Mobile Scroll Indicator */}
-      <div className="flex md:hidden justify-center gap-1 mt-2">
+      {/* Scroll Indicator for Mobile/Tablet */}
+      <div className="flex lg:hidden justify-center gap-1 mt-2">
             <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-50"></div>
             <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
             <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>

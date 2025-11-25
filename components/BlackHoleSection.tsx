@@ -359,7 +359,8 @@ class BlackHoleSim {
     isAnimatingCamera: boolean = false;
 
     constructor(container: HTMLElement) {
-        this.isMobile = window.innerWidth < 768;
+        // OPTIMIZATION: Include tablets (iPads < 1024px) in mobile check to safe battery/GPU
+        this.isMobile = window.innerWidth < 1024;
         
         this.backgroundScene = new THREE.Scene();
         this.scene = new THREE.Scene();
@@ -601,7 +602,7 @@ class BlackHoleSim {
     }
 
     resize(width: number, height: number) {
-        this.isMobile = width < 768;
+        this.isMobile = width < 1024;
         
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();

@@ -1,5 +1,4 @@
 
-
 import React, { useRef, useState, useEffect } from 'react';
 import { PARTNERS } from '../constants';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
@@ -143,7 +142,8 @@ const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Part
     <motion.div 
        ref={ref}
        style={{ y }}
-       className="snap-start shrink-0 w-[70vw] md:w-[22vw] group relative cursor-pointer"
+       // Tablet Optimization: w-[35vw] for comfortable browsing
+       className="snap-start shrink-0 w-[70vw] md:w-[35vw] lg:w-[22vw] group relative cursor-pointer"
        onClick={() => onClick(partner)}
     >
       <motion.div

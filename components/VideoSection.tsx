@@ -1,5 +1,4 @@
 
-
 import React, { useRef, useState, useEffect } from 'react';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
 import { Play, Radio, ArrowUpRight, X, ExternalLink } from 'lucide-react';
@@ -119,8 +118,8 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10%" }}
       transition={{ duration: 0.5, delay: Math.min((index % 3) * 0.05, 0.2), ease: "easeOut" }}
-      // Optimization: w-[80vw] on mobile to show a peek of the next card, encouraging swipe
-      className="group cursor-pointer snap-start shrink-0 w-[80vw] sm:w-[400px] md:w-auto transform-gpu"
+      // Optimization: w-[80vw] on mobile, w-[45vw] on tablet to show a peek of the next card
+      className="group cursor-pointer snap-start shrink-0 w-[80vw] md:w-[45vw] lg:w-auto transform-gpu"
       onClick={() => onPlay(video)}
       style={{ willChange: 'transform, opacity' }}
     >
@@ -327,7 +326,7 @@ const VideoSection: React.FC = () => {
               <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 flex flex-col md:flex-row justify-between items-end gap-6">
                   <div>
                       <span className="inline-block px-3 py-1 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest mb-3 rounded-full">{t('videos_featured')}</span>
-                      <h3 className="text-2xl md:text-4xl font-black tracking-tighter uppercase text-white mb-2">
+                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tighter uppercase text-white mb-2">
                           {featuredTitle}
                       </h3>
                       <p className="text-white/70 text-xs md:text-sm font-mono">{featuredCat} // {FEATURED_VIDEO.duration}</p>
@@ -341,13 +340,13 @@ const VideoSection: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="max-w-[1800px] mx-auto px-4 md:px-12 flex overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-x-6 md:gap-y-12 snap-x snap-mandatory md:snap-none no-scrollbar pb-8 md:pb-0 touch-pan-x" style={{ WebkitOverflowScrolling: 'touch' }}>
+        <div className="max-w-[1800px] mx-auto px-4 md:px-12 flex overflow-x-auto lg:grid lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-x-6 md:gap-y-12 snap-x snap-mandatory lg:snap-none no-scrollbar pb-8 md:pb-0 touch-pan-x" style={{ WebkitOverflowScrolling: 'touch' }}>
           {VIDEOS.map((video, index) => (
             <VideoCard key={video.id} video={video} index={index} onPlay={setSelectedVideo} />
           ))}
         </div>
         
-        <div className="flex md:hidden justify-center gap-1 mt-2 mb-8">
+        <div className="flex lg:hidden justify-center gap-1 mt-2 mb-8">
              <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-50"></div>
              <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
              <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
