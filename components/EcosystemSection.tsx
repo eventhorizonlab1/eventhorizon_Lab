@@ -1,4 +1,5 @@
 
+
 import React, { useRef, useState, useEffect } from 'react';
 import { PARTNERS } from '../constants';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
@@ -59,11 +60,12 @@ const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> =
                     <h2 className="text-3xl font-black text-white tracking-tighter leading-none">{partner.name}</h2>
                 </div>
 
+                {/* CLOSE BUTTON: Lower position, high contrast */}
                 <button 
                     onClick={onClose}
-                    className="absolute top-4 right-4 md:left-4 md:right-auto p-2 bg-black/30 hover:bg-black/50 backdrop-blur-md rounded-full text-white transition-colors z-30 border border-white/10"
+                    className="absolute top-6 right-6 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
                 >
-                    <X size={20} />
+                    <X size={24} strokeWidth={2.5} />
                 </button>
             </div>
 

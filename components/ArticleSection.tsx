@@ -55,12 +55,13 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
             aria-modal="true"
             aria-labelledby="article-modal-title"
         >
+            {/* CLOSE BUTTON: Positioned lower (top-6/md:top-8) with high contrast background */}
             <button 
                 onClick={onClose}
-                className="absolute top-4 right-4 md:top-6 md:right-6 z-50 p-2 bg-white/20 hover:bg-white/40 dark:bg-black/40 dark:hover:bg-black/60 backdrop-blur-md rounded-full text-black dark:text-white transition-colors border border-white/20"
+                className="absolute top-6 right-6 md:top-8 md:right-8 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
                 aria-label={t('common_close')}
             >
-                <X size={24} />
+                <X size={24} strokeWidth={2.5} />
             </button>
 
             <div className="relative h-[35vh] md:h-[45vh] shrink-0 overflow-hidden">
