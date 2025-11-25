@@ -49,7 +49,7 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.9, y: 20 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+                className="relative w-full aspect-video bg-black rounded-none md:rounded-2xl overflow-hidden shadow-2xl border-none md:border border-white/10"
             >
                 {!videoId ? (
                     <div className="w-full h-full flex flex-col items-center justify-center text-white p-8 text-center bg-gray-900 relative z-10">
@@ -91,7 +91,7 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
                 )}
             </motion.div>
 
-            <div className="flex justify-between items-center text-white px-2">
+            <div className="flex justify-between items-center text-white px-4 md:px-2 pb-4 md:pb-0">
                 <h3 id="video-modal-title" className="text-lg font-bold line-clamp-1 mr-4">{title}</h3>
                 <a 
                     href={video.videoUrl} 
@@ -205,7 +205,8 @@ const VideoSection: React.FC = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-12"
+                // MOBILE OPTIMIZATION: reduced padding (p-0) on mobile for wider player
+                className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-xl p-0 md:p-12"
                 onClick={() => setSelectedVideo(null)}
               >
                   <button 
@@ -213,7 +214,7 @@ const VideoSection: React.FC = () => {
                         e.stopPropagation();
                         setSelectedVideo(null);
                     }}
-                    className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-50 backdrop-blur-md"
+                    className="absolute top-4 right-4 md:top-6 md:right-6 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-50 backdrop-blur-md"
                     aria-label={t('common_close')}
                   >
                     <X size={24} />
@@ -226,7 +227,6 @@ const VideoSection: React.FC = () => {
 
       <motion.section 
         id="videos" 
-        // STANDARDIZED SPACING: py-16 (mobile) md:py-24 (desktop)
         className="py-16 md:py-24" 
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -330,6 +330,7 @@ const VideoSection: React.FC = () => {
                           {featuredTitle}
                       </h3>
                       <p className="text-white/70 text-xs md:text-sm font-mono">{featuredCat} // {FEATURED_VIDEO.duration}</p>
+                      <p className="text-white/60 text-xs md:text-sm mt-2 max-w-lg line-clamp-2 md:line-clamp-none">{FEATURED_VIDEO.description}</p>
                   </div>
                   
                   <button className="w-12 h-12 md:w-14 md:h-14 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.3)]">

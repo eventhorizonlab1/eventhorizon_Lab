@@ -37,7 +37,8 @@ const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> =
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="bg-white dark:bg-[#0a0a0a] w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl relative border border-gray-100 dark:border-white/10 flex flex-col md:flex-row h-[85vh] md:h-[600px]"
+            // MOBILE OPTIMIZATION: h-[100dvh] and rounded-none for full screen immersion
+            className="bg-white dark:bg-[#0a0a0a] w-full md:max-w-4xl rounded-none md:rounded-3xl overflow-hidden shadow-2xl relative border-none md:border border-gray-100 dark:border-white/10 flex flex-col md:flex-row h-[100dvh] md:h-[600px]"
             onClick={(e) => e.stopPropagation()}
         >
             {/* LEFT: Immersive Image (Mobile Top) */}
@@ -59,10 +60,10 @@ const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> =
                     <h2 className="text-3xl font-black text-white tracking-tighter leading-none">{partner.name}</h2>
                 </div>
 
-                {/* CLOSE BUTTON: Adjusted to top-12 (approx 48px) for better balance */}
+                {/* CLOSE BUTTON: Positioned safely for mobile touch targets */}
                 <button 
                     onClick={onClose}
-                    className="absolute top-12 right-6 md:top-6 md:right-6 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
+                    className="absolute top-6 right-6 md:top-6 md:right-6 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
                 >
                     <X size={24} strokeWidth={2.5} />
                 </button>
@@ -142,8 +143,8 @@ const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Part
     <motion.div 
        ref={ref}
        style={{ y }}
-       // Tablet Optimization: w-[35vw] for comfortable browsing
-       className="snap-start shrink-0 w-[70vw] md:w-[35vw] lg:w-[22vw] group relative cursor-pointer"
+       // MOBILE OPTIMIZATION: w-[85vw] for standard consistency with Article cards
+       className="snap-start shrink-0 w-[85vw] md:w-[35vw] lg:w-[22vw] group relative cursor-pointer"
        onClick={() => onClick(partner)}
     >
       <motion.div
@@ -205,7 +206,7 @@ const EcosystemSection: React.FC = () => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-md p-4"
+                    className="fixed inset-0 z-[10000] flex items-end md:items-center justify-center bg-black/80 backdrop-blur-md p-0 md:p-4"
                     onClick={() => setSelectedPartner(null)}
                 >
                     <PartnerModalContent 
@@ -218,7 +219,6 @@ const EcosystemSection: React.FC = () => {
 
         <motion.section 
         id="ecosystem" 
-        // STANDARDIZED SPACING: py-16 (mobile) md:py-24 (desktop)
         className="py-16 md:py-24"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}

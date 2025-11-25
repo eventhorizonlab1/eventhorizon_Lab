@@ -1,5 +1,6 @@
 
 
+
 import { Video, Article, Partner } from './types';
 
 // Navigation simplifiée : Vidéos, Articles, Écosystème
@@ -32,7 +33,8 @@ export const FEATURED_VIDEO: Video = {
   duration: 'Live',
   // Image depuis votre dépôt GitHub (Branche main)
   imageUrl: 'https://raw.githubusercontent.com/eventhorizonlab1/eventhorizon_Lab/main/images/vignette_ariane6.jpeg', 
-  videoUrl: 'https://www.youtube.com/watch?v=ukoMgE_8heo'
+  videoUrl: 'https://www.youtube.com/watch?v=ukoMgE_8heo',
+  description: "Revivez le lancement historique d'Ariane 6, marquant le retour de l'autonomie spatiale européenne. Une mission cruciale pour l'avenir du spatial en Europe."
 };
 
 export const VIDEOS: Video[] = [
