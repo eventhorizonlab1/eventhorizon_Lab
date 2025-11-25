@@ -1,5 +1,6 @@
 
 import React, { useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ARTICLES } from '../constants';
 import { ArrowRight, ArrowLeft, FileText, X, Clock, Calendar } from 'lucide-react';
 import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion';
@@ -239,7 +240,7 @@ const ArticleSection: React.FC = () => {
     )}
     
     <AnimatePresence>
-        {selectedArticle && (
+        {selectedArticle && createPortal(
             <motion.div
                 key="article-modal-backdrop"
                 initial={{ opacity: 0 }}
@@ -253,7 +254,8 @@ const ArticleSection: React.FC = () => {
                     article={selectedArticle} 
                     onClose={() => setSelectedArticle(null)} 
                 />
-            </motion.div>
+            </motion.div>,
+            document.body
         )}
     </AnimatePresence>
 

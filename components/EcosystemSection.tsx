@@ -1,5 +1,6 @@
 
 import React, { useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { PARTNERS } from '../constants';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Partner } from '../types';
@@ -198,7 +199,7 @@ const EcosystemSection: React.FC = () => {
   return (
     <>
         <AnimatePresence>
-            {selectedPartner && (
+            {selectedPartner && createPortal(
                 <motion.div
                     key="partner-modal-backdrop"
                     initial={{ opacity: 0 }}
@@ -212,7 +213,8 @@ const EcosystemSection: React.FC = () => {
                         partner={selectedPartner} 
                         onClose={() => setSelectedPartner(null)} 
                     />
-                </motion.div>
+                </motion.div>,
+                document.body
             )}
         </AnimatePresence>
 
