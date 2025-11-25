@@ -29,16 +29,17 @@ const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> =
             className="bg-white dark:bg-[#111] w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl relative border border-gray-100 dark:border-white/10"
             onClick={(e) => e.stopPropagation()}
         >
-            <div className="relative h-48 md:h-64 overflow-hidden bg-white border-b border-gray-100 flex items-center justify-center p-12">
+            <div className="relative h-48 md:h-64 overflow-hidden bg-gray-100 border-b border-gray-100 flex items-center justify-center group">
                 <img 
                     src={partner.imageUrl} 
                     alt={partner.name} 
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
+                <div className="absolute inset-0 bg-black/10"></div>
                 
                 <button 
                     onClick={onClose}
-                    className="absolute top-4 right-4 p-2 bg-black/5 hover:bg-black/10 backdrop-blur-md rounded-full text-black transition-colors"
+                    className="absolute top-4 right-4 p-2 bg-black/20 hover:bg-black/40 backdrop-blur-md rounded-full text-white transition-colors z-10"
                 >
                     <X size={20} />
                 </button>
@@ -123,18 +124,21 @@ const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Part
         viewport={{ once: true, margin: "-30px" }}
         transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.1 }}
       >
-         {/* Card Visual - Updated for Logos with solid white background */}
-         <div className="relative overflow-hidden rounded-3xl bg-white aspect-[4/5] mb-6 transition-all duration-500 border border-gray-200 dark:border-white/5 shadow-sm group-hover:shadow-2xl flex items-center justify-center p-12">
+         {/* Card Visual - Updated for Full Coverage Images */}
+         <div className="relative overflow-hidden rounded-3xl bg-gray-200 dark:bg-gray-900 aspect-[4/5] mb-6 transition-all duration-500 border border-gray-200 dark:border-white/5 shadow-sm group-hover:shadow-2xl">
             <img 
                 src={partner.imageUrl} 
                 alt={partner.name} 
                 loading="lazy"
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
             />
             
+            {/* Gradient Overlay for text readability if needed, though text is below */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+
             {/* Hover Overlay info */}
-            <div className="absolute inset-0 flex items-center justify-center bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-[2px]">
+            <div className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-[2px]">
               <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                   <span className="text-white font-bold tracking-[0.2em] uppercase border border-white/30 rounded-full px-6 py-3 text-xs bg-white/10 hover:bg-white hover:text-black transition-colors shadow-xl">
                     {t('ecosystem_view')}

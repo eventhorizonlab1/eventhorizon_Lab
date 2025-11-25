@@ -1,3 +1,4 @@
+
 import { Video, Article, Partner } from './types';
 
 // Navigation simplifiée : Vidéos, Articles, Écosystème
@@ -20,7 +21,7 @@ export const getYouTubeThumbnail = (url: string): string => {
 
 /* 
   === IMAGES ===
-  FEATURED_VIDEO : Utilise maintenant le lien direct vers votre dépôt GitHub PUBLIC via raw.githubusercontent.com
+  FEATURED_VIDEO : Utilise le lien direct vers votre dépôt GitHub PUBLIC via raw.githubusercontent.com
 */
 
 export const FEATURED_VIDEO: Video = {
@@ -177,40 +178,40 @@ export const PARTNERS: Partner[] = [
     id: 'p1', 
     name: 'CNES', 
     role: 'Agence Spatiale', 
-    // Logo PNG Wikimedia (Version Thumbnail) - Plus robuste que le SVG direct
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/fr/thumb/2/2a/Logo_CNES.svg/1200px-Logo_CNES.svg.png',
+    // Image : Salle de contrôle / Opérations (Unsplash)
+    imageUrl: 'https://images.unsplash.com/photo-1540573133985-000295e551f8?q=80&w=1000&auto=format&fit=crop',
     websiteUrl: 'https://cnes.fr/fr'
   },
   { 
     id: 'p2', 
     name: 'Airbus', 
     role: 'Constructeur', 
-    // Logo PNG Wikimedia
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Airbus_logo_2017.svg/1200px-Airbus_logo_2017.svg.png',
+    // Image : Salle blanche / Intégration satellite (Unsplash)
+    imageUrl: 'https://images.unsplash.com/photo-1581092921461-eab62e97a782?q=80&w=1000&auto=format&fit=crop',
     websiteUrl: 'https://www.airbus.com/en/products-services/space'
   },
   { 
     id: 'p3', 
     name: 'Thales Alenia', 
     role: 'Satellites', 
-    // Logo PNG Wikimedia
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Thales_Alenia_Space_Logo.svg/1200px-Thales_Alenia_Space_Logo.svg.png',
+    // Image : Ingénierie de précision (Unsplash)
+    imageUrl: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=1000&auto=format&fit=crop',
     websiteUrl: 'https://www.thalesgroup.com/en/global/activities/space'
   },
   { 
     id: 'p4', 
     name: 'ISAE-SUPAERO', 
     role: 'Excellence', 
-    // Logo PNG Wikimedia
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/fr/thumb/0/07/Logo_ISAE-SUPAERO.svg/1200px-Logo_ISAE-SUPAERO.svg.png',
+    // Image : Laboratoire / Recherche (Unsplash)
+    imageUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26f9a09d0?q=80&w=1000&auto=format&fit=crop',
     websiteUrl: 'https://www.isae-supaero.fr/fr/'
   },
   { 
     id: 'p5', 
     name: 'Cité de l\'Espace', 
     role: 'Culture', 
-    // Logo PNG Wikimedia
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/fr/thumb/f/f1/Logo_Cit%C3%A9_de_l%27espace_2013.svg/1200px-Logo_Cit%C3%A9_de_l%27espace_2013.svg.png',
+    // Image : Maquette Ariane 5 / Parc (Unsplash)
+    imageUrl: 'https://images.unsplash.com/photo-1517976487492-5750f3195933?q=80&w=1000&auto=format&fit=crop',
     websiteUrl: 'https://www.cite-espace.com/'
   },
 ];
