@@ -129,7 +129,7 @@ export const VIDEOS: Video[] = [
     category: 'DURABILITÉ', 
     duration: '04:20', 
     // Image Unsplash Stable (Débris/Terre)
-    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80',
     videoUrl: 'https://www.youtube.com/watch?v=03ZZdJf2nDA'
   },
 ];
@@ -178,40 +178,40 @@ export const PARTNERS: Partner[] = [
     id: 'p1', 
     name: 'CNES', 
     role: 'Agence Spatiale', 
-    // Image : Salle de contrôle / Opérations (Unsplash)
-    imageUrl: 'https://images.unsplash.com/photo-1540573133985-000295e551f8?q=80&w=1000&auto=format&fit=crop',
+    // Mission Control / Antennas - High Tech
+    imageUrl: 'https://images.unsplash.com/photo-1541873676-a18131494184?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     websiteUrl: 'https://cnes.fr/fr'
   },
   { 
     id: 'p2', 
     name: 'Airbus', 
     role: 'Constructeur', 
-    // Image : Salle blanche / Intégration satellite (Unsplash)
-    imageUrl: 'https://images.unsplash.com/photo-1581092921461-eab62e97a782?q=80&w=1000&auto=format&fit=crop',
+    // Clean Room / Satellite - Industrial
+    imageUrl: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     websiteUrl: 'https://www.airbus.com/en/products-services/space'
   },
   { 
     id: 'p3', 
     name: 'Thales Alenia', 
     role: 'Satellites', 
-    // Image : Ingénierie de précision (Unsplash)
-    imageUrl: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=1000&auto=format&fit=crop',
+    // Earth Orbit / Tech - Futuristic
+    imageUrl: 'https://images.unsplash.com/photo-1454789548728-85d2696cf293?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     websiteUrl: 'https://www.thalesgroup.com/en/global/activities/space'
   },
   { 
     id: 'p4', 
     name: 'ISAE-SUPAERO', 
     role: 'Excellence', 
-    // Image : Laboratoire / Recherche (Unsplash)
-    imageUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26f9a09d0?q=80&w=1000&auto=format&fit=crop',
+    // Lab / Research / Engineer - Academic
+    imageUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26f9a09d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     websiteUrl: 'https://www.isae-supaero.fr/fr/'
   },
   { 
     id: 'p5', 
     name: 'Cité de l\'Espace', 
     role: 'Culture', 
-    // Image : Maquette Ariane 5 / Parc (Unsplash)
-    imageUrl: 'https://images.unsplash.com/photo-1517976487492-5750f3195933?q=80&w=1000&auto=format&fit=crop',
+    // Rocket Model / Museum - Public
+    imageUrl: 'https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     websiteUrl: 'https://www.cite-espace.com/'
   },
 ];

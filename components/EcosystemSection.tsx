@@ -4,7 +4,7 @@ import { PARTNERS } from '../constants';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Partner } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
-import { X, Building2, ExternalLink } from 'lucide-react';
+import { X, Building2, ExternalLink, Globe, Award, Zap } from 'lucide-react';
 
 const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> = ({ partner, onClose }) => {
     const { t } = useThemeLanguage();
@@ -20,80 +20,106 @@ const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> =
     const role = t(`partner_${partner.id}_role`);
     const description = t(`partner_${partner.id}_desc`);
 
+    // Generate visual tags based on role for aesthetics
+    const getTags = (id: string) => {
+        if (id === 'p1') return ['Souveraineté', 'Innovation', 'Opérations'];
+        if (id === 'p2') return ['Intégration', 'Défense', 'Export'];
+        if (id === 'p3') return ['Orbital', 'Télécoms', 'Navigation'];
+        if (id === 'p4') return ['Recherche', 'Formation', 'Ingénierie'];
+        return ['Médiation', 'Culture', 'Grand Public'];
+    };
+
+    const tags = getTags(partner.id);
+
     return (
         <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="bg-white dark:bg-[#111] w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl relative border border-gray-100 dark:border-white/10"
+            className="bg-white dark:bg-[#0a0a0a] w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl relative border border-gray-100 dark:border-white/10 flex flex-col md:flex-row h-[85vh] md:h-[600px]"
             onClick={(e) => e.stopPropagation()}
         >
-            <div className="relative h-48 md:h-64 overflow-hidden bg-gray-100 border-b border-gray-100 flex items-center justify-center group">
-                <img 
-                    src={partner.imageUrl} 
-                    alt={partner.name} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-black/10"></div>
+            {/* LEFT: Immersive Image (Mobile Top) */}
+            <div className="relative w-full md:w-5/12 h-1/3 md:h-full shrink-0 group">
+                <div className="absolute inset-0 bg-gray-900">
+                     <img 
+                        src={partner.imageUrl} 
+                        alt={partner.name} 
+                        className="w-full h-full object-cover opacity-80 transition-transform duration-1000 group-hover:scale-105"
+                    />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent md:bg-gradient-to-r md:from-transparent md:to-black/80"></div>
                 
+                {/* Mobile Title Overlay */}
+                <div className="absolute bottom-0 left-0 p-6 md:hidden z-20">
+                    <span className="inline-block px-3 py-1 bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest mb-2 rounded-full shadow-lg">
+                        {role}
+                    </span>
+                    <h2 className="text-3xl font-black text-white tracking-tighter leading-none">{partner.name}</h2>
+                </div>
+
                 <button 
                     onClick={onClose}
-                    className="absolute top-4 right-4 p-2 bg-black/20 hover:bg-black/40 backdrop-blur-md rounded-full text-white transition-colors z-10"
+                    className="absolute top-4 right-4 md:left-4 md:right-auto p-2 bg-black/30 hover:bg-black/50 backdrop-blur-md rounded-full text-white transition-colors z-30 border border-white/10"
                 >
                     <X size={20} />
                 </button>
             </div>
 
-            <div className="p-6 md:p-8">
-                <div className="flex flex-col gap-6">
-                    <div className="flex items-center justify-between">
-                         <div>
-                            <span className="inline-block px-3 py-1 bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest mb-2 rounded-full shadow-lg">
-                                {role}
-                            </span>
-                            <h2 className="text-2xl md:text-3xl font-bold text-black dark:text-white tracking-tighter">{partner.name}</h2>
-                         </div>
-                         
-                         <a 
-                            href={partner.websiteUrl} 
-                            target="_blank" 
-                            rel="noreferrer"
-                            className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 rounded-full text-xs font-bold uppercase tracking-widest text-black dark:text-white transition-colors"
-                         >
-                            <span>{t('ecosystem_website')}</span>
-                            <ExternalLink size={14} />
-                         </a>
+            {/* RIGHT: Content (Mobile Bottom) */}
+            <div className="flex-1 p-6 md:p-10 flex flex-col h-2/3 md:h-full overflow-y-auto custom-scrollbar bg-white dark:bg-[#0a0a0a]">
+                
+                {/* Desktop Header */}
+                <div className="hidden md:block mb-6">
+                    <div className="flex items-center gap-3 mb-3">
+                        <span className="px-3 py-1 bg-blue-600/10 text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase tracking-widest rounded-full border border-blue-600/20">
+                            {role}
+                        </span>
+                        <div className="h-px flex-1 bg-gray-100 dark:bg-white/10"></div>
                     </div>
+                    <h2 className="text-5xl font-black text-black dark:text-white tracking-tighter leading-none mb-1">
+                        {partner.name}
+                    </h2>
+                </div>
 
-                    <div className="flex items-start gap-4">
-                        <div className="bg-gray-100 dark:bg-white/5 p-3 rounded-xl shrink-0">
-                            <Building2 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                {/* Tags Grid */}
+                <div className="flex flex-wrap gap-2 mb-8">
+                    {tags.map((tag, i) => (
+                        <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-white/5 rounded-lg border border-gray-100 dark:border-white/5">
+                            <Award size={12} className="text-blue-500" />
+                            <span className="text-[10px] font-bold uppercase tracking-wide text-gray-600 dark:text-gray-300">{tag}</span>
                         </div>
-                        <div>
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-1">Profil Partenaire</h3>
-                            <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                                {description}
-                            </p>
+                    ))}
+                </div>
+
+                {/* Description */}
+                <div className="prose prose-sm dark:prose-invert max-w-none mb-auto">
+                    <div className="flex items-start gap-4 mb-4">
+                        <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-2xl text-blue-600 dark:text-blue-400 shrink-0">
+                            <Building2 size={24} strokeWidth={1.5} />
                         </div>
+                        <p className="text-base md:text-lg leading-relaxed text-gray-600 dark:text-gray-300 font-serif whitespace-pre-line text-justify">
+                            {description}
+                        </p>
                     </div>
-                    
-                    {/* Mobile Only Button */}
-                    <a 
+                </div>
+
+                {/* Footer Action */}
+                <div className="mt-8 pt-6 border-t border-gray-100 dark:border-white/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
+                     <div className="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-widest font-medium">
+                        <Globe size={14} />
+                        <span>Partenaire Officiel</span>
+                     </div>
+                     <a 
                         href={partner.websiteUrl} 
                         target="_blank" 
                         rel="noreferrer"
-                        className="md:hidden flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 rounded-xl text-xs font-bold uppercase tracking-widest text-black dark:text-white transition-colors w-full"
-                    >
+                        className="flex items-center justify-center gap-2 px-6 py-3 bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black rounded-full text-xs font-bold uppercase tracking-widest transition-all w-full sm:w-auto shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                     >
                         <span>{t('ecosystem_website')}</span>
                         <ExternalLink size={14} />
-                    </a>
-                </div>
-                
-                <div className="mt-8 pt-6 border-t border-gray-100 dark:border-white/5 flex justify-end">
-                    <button onClick={onClose} className="text-sm font-bold uppercase tracking-widest text-gray-500 hover:text-black dark:hover:text-white transition-colors">
-                        Fermer
-                    </button>
+                     </a>
                 </div>
             </div>
         </motion.div>
@@ -124,23 +150,25 @@ const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Part
         viewport={{ once: true, margin: "-30px" }}
         transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.1 }}
       >
-         {/* Card Visual - Updated for Full Coverage Images */}
+         {/* Card Visual - Full Coverage Images */}
          <div className="relative overflow-hidden rounded-3xl bg-gray-200 dark:bg-gray-900 aspect-[4/5] mb-6 transition-all duration-500 border border-gray-200 dark:border-white/5 shadow-sm group-hover:shadow-2xl">
+            {/* Loading placeholder */}
+            <div className="absolute inset-0 bg-gray-800 animate-pulse z-0" />
+            
             <img 
                 src={partner.imageUrl} 
                 alt={partner.name} 
                 loading="lazy"
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                className="relative z-10 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
             />
             
-            {/* Gradient Overlay for text readability if needed, though text is below */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none z-20"></div>
 
             {/* Hover Overlay info */}
-            <div className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-[2px]">
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-[2px] z-30">
               <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                  <span className="text-white font-bold tracking-[0.2em] uppercase border border-white/30 rounded-full px-6 py-3 text-xs bg-white/10 hover:bg-white hover:text-black transition-colors shadow-xl">
+                  <span className="text-white font-bold tracking-[0.2em] uppercase border border-white/30 rounded-full px-6 py-3 text-xs bg-white/10 hover:bg-white hover:text-black transition-colors shadow-xl backdrop-blur-md">
                     {t('ecosystem_view')}
                   </span>
               </div>
@@ -175,7 +203,7 @@ const EcosystemSection: React.FC = () => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+                    className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-md p-4"
                     onClick={() => setSelectedPartner(null)}
                 >
                     <PartnerModalContent 
