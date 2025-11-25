@@ -140,8 +140,8 @@ export const ARTICLES: Article[] = [
     title: 'Pourquoi Toulouse est la capitale du spatial', 
     summary: 'Analyse économique et structurelle de l\'écosystème Aerospace Valley.', 
     date: '10 OCT 2023', 
-    // Image : Place du Capitole de nuit (Wikimedia Commons - Stable)
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Toulouse_Capitole_Night_Wikimedia_Commons.jpg/1200px-Toulouse_Capitole_Night_Wikimedia_Commons.jpg'
+    // Image : Toulouse Garonne/Pont Neuf (Unsplash Stable)
+    imageUrl: 'https://images.unsplash.com/photo-1563517987332-680456108151?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
   },
   { 
     id: 'a2', 
@@ -194,16 +194,16 @@ export const PARTNERS: Partner[] = [
     id: 'p3', 
     name: 'Thales Alenia', 
     role: 'Satellites', 
-    // Image authentique : Iridium NEXT en salle blanche Thales (Wikimedia)
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Iridium-NEXT_satellites_in_cleanroom.jpg/1280px-Iridium-NEXT_satellites_in_cleanroom.jpg',
+    // Satellite Technology / Clean Room (Unsplash Stable)
+    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     websiteUrl: 'https://www.thalesgroup.com/en/global/activities/space'
   },
   { 
     id: 'p4', 
     name: 'ISAE-SUPAERO', 
     role: 'Excellence', 
-    // Etudiants/Ingénierie Aérospatiale (Unsplash stable)
-    imageUrl: 'https://images.unsplash.com/photo-1581094794329-cd56b507d1f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    // Engineering Students / Lab (Unsplash Stable)
+    imageUrl: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     websiteUrl: 'https://www.isae-supaero.fr/fr/'
   },
   { 
