@@ -353,10 +353,8 @@ class BlackHoleSim {
     currentMode: number = 0; 
     isMobile: boolean = false;
     
-    // Track disposables
     disposables: any[] = [];
 
-    // Camera Animation Target
     targetCameraPosition: THREE.Vector3;
     isAnimatingCamera: boolean = false;
 
@@ -380,7 +378,6 @@ class BlackHoleSim {
         });
         this.renderer.setSize(container.clientWidth, container.clientHeight);
         
-        // MOBILE OPTIMIZATION & PIXEL RATIO CAP
         const maxPixelRatio = this.isMobile ? 1.0 : 1.5;
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio));
         
@@ -604,7 +601,6 @@ class BlackHoleSim {
     }
 
     resize(width: number, height: number) {
-        // Update isMobile dynamic status in case of window resize/orientation change
         this.isMobile = width < 768;
         
         this.camera.aspect = width / height;
@@ -642,12 +638,11 @@ class BlackHoleSim {
         if (this.starfieldMaterial) this.starfieldMaterial.uniforms.u_time.value = time;
         if (this.stars) this.stars.rotation.y = time * 0.008;
 
-        // Camera Animation Logic
         if (this.isAnimatingCamera) {
             this.camera.position.lerp(this.targetCameraPosition, 0.05);
             if (this.camera.position.distanceTo(this.targetCameraPosition) < 0.1) {
                 this.isAnimatingCamera = false;
-                this.controls.update(); // Re-sync controls
+                this.controls.update(); 
             }
         }
         
@@ -661,11 +656,8 @@ class BlackHoleSim {
     }
 
     dispose() {
-        // 1. Clean up Controls (Event Listeners)
         this.controls.dispose();
 
-        // 2. Dispose specific tracked assets
-        // This covers Geometries and Materials pushed during init methods
         this.disposables.forEach(obj => {
             if (obj && typeof obj.dispose === 'function') {
                 obj.dispose();
@@ -673,8 +665,6 @@ class BlackHoleSim {
         });
         this.disposables = [];
 
-        // 3. Deep Clean Scenes (Safety Net)
-        // Iterates through scene graph to ensure no untracked meshes/geometries remain
         const scenes = [this.scene, this.backgroundScene, this.lensingScene];
         scenes.forEach(scene => {
             scene.traverse((object) => {
@@ -692,12 +682,9 @@ class BlackHoleSim {
             scene.clear();
         });
 
-        // 4. Dispose Post-Processing Passes explicitly
-        // EffectComposer.dispose() cleans internal buffers but passes (like UnrealBloomPass) might hold their own targets
         if (this.bloomPass && typeof this.bloomPass.dispose === 'function') {
             this.bloomPass.dispose();
         }
-        // Iterate over any other passes in composer
         if (this.composer && this.composer.passes) {
             this.composer.passes.forEach((pass: any) => {
                 if (pass && typeof pass.dispose === 'function') {
@@ -706,7 +693,6 @@ class BlackHoleSim {
             });
         }
 
-        // 5. Dispose Renderer Resources
         this.renderer.dispose();
         this.composer.dispose();
         this.backgroundRenderTarget.dispose();
@@ -731,8 +717,6 @@ const SimLoader = () => {
         let currentPhase = 0;
         const interval = setInterval(() => {
             setProgress((prev) => {
-                // Increase random increment range (was 5, now 15) to fill bar faster within the 2.2s timeout
-                // This ensures "Finalizing" and "Ready" states are visible before component mounts
                 const next = prev + Math.random() * 15;
                 if (currentPhase < phases.length && next > phases[currentPhase].t) {
                     setStatusKey(phases[currentPhase].key);
@@ -779,7 +763,6 @@ const SimLoader = () => {
     );
 }
 
-// Interface for props typing
 interface ControlSliderProps {
     label: string;
     value: number;
@@ -790,7 +773,6 @@ interface ControlSliderProps {
     icon?: React.ElementType;
 }
 
-// Extracted outside the component and Memoized to prevent re-rendering during state updates in parent
 const ControlSlider = React.memo<ControlSliderProps>(({ label, value, min, max, step, onChange, icon: Icon }) => (
   <div className="mb-6 group">
       <div className="flex justify-between items-center mb-2">
@@ -799,6 +781,7 @@ const ControlSlider = React.memo<ControlSliderProps>(({ label, value, min, max, 
           </label>
           <span className="text-xs font-mono text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded">{value}</span>
       </div>
+      {/* Optimization: Increased height (h-4) of slider thumb target for mobile touch */}
       <input 
           type="range" 
           min={min} 
@@ -806,7 +789,7 @@ const ControlSlider = React.memo<ControlSliderProps>(({ label, value, min, max, 
           step={step} 
           value={value} 
           onChange={(e) => onChange(parseFloat(e.target.value))}
-          className="w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500 hover:[&::-webkit-slider-thumb]:bg-blue-400 transition-all [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+          className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500 hover:[&::-webkit-slider-thumb]:bg-blue-400 transition-all [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
       />
   </div>
 ));
@@ -819,14 +802,12 @@ const BlackHoleSection: React.FC = () => {
   const shouldReduceMotion = useReducedMotion();
   
   const [isLoading, setIsLoading] = useState(true);
-  // A11y: Initialize with very slow rotation if motion reduction is requested
   const [rotationSpeed, setRotationSpeed] = useState(shouldReduceMotion ? 0.05 : 0.3);
   const [bloomIntensity, setBloomIntensity] = useState(0.1); 
   const [lensingStrength, setLensingStrength] = useState(1.2);
   const [diskBrightness, setDiskBrightness] = useState(1.0); 
   const [temperature, setTemperature] = useState(1.0);
   
-  // Refs to avoid unnecessary re-renders in animation loop
   const isInViewRef = useRef(isInView);
   const isLoadingRef = useRef(isLoading);
   const paramsRef = useRef({ rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme });
@@ -861,7 +842,6 @@ const BlackHoleSection: React.FC = () => {
     const animate = () => {
         animationId = requestAnimationFrame(animate);
         
-        // Use Refs here to avoid dependency on state variables in the loop closure
         if (!isInViewRef.current && !isLoadingRef.current) return;
 
         if (simRef.current) {
@@ -894,7 +874,7 @@ const BlackHoleSection: React.FC = () => {
             containerRef.current.innerHTML = '';
         }
     };
-  }, []); // Empty dependency array -> Init ONCE
+  }, []); 
 
   const moveCamera = (position: 'orbit' | 'top' | 'side') => {
       if (!simRef.current) return;

@@ -6,22 +6,17 @@ import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { Video } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 
-// --- VIDEO UTILS ---
 const getYouTubeId = (url: string) => {
-    // Robust regex for YouTube ID extraction handling various formats including Shorts and Live
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/|live\/)([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
 };
 
-// --- VIDEO MODAL CONTENT ---
-// Refactored to be a pure content component. The overlay animation is handled by the parent.
 const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
     const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
     const [iframeLoaded, setIframeLoaded] = useState(false);
     const { t } = useThemeLanguage();
 
-    // Lock body scroll when modal is open
     useEffect(() => {
         document.body.style.overflow = 'hidden';
         return () => {
@@ -32,7 +27,6 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
     useEffect(() => {
         setShouldLoadIframe(false);
         setIframeLoaded(false);
-        // LAZY LOADING: Delay iframe injection slightly to allow modal spring animation to settle
         const timer = setTimeout(() => setShouldLoadIframe(true), 450); 
         return () => clearTimeout(timer);
     }, [video]);
@@ -64,7 +58,6 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
                     </div>
                 ) : (
                     <>
-                        {/* Placeholder / Loader - Remains visible behind iframe until iframe is fully opaque */}
                         <div className="absolute inset-0 w-full h-full bg-gray-900 flex items-center justify-center z-0">
                             <img 
                                 src={video.imageUrl} 
@@ -77,7 +70,6 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
                             </div>
                         </div>
 
-                        {/* Iframe - Fades in ONLY when actual content is loaded via onLoad event */}
                         {shouldLoadIframe && (
                             <motion.iframe
                                 initial={{ opacity: 0 }}
@@ -99,7 +91,6 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
                 )}
             </motion.div>
 
-            {/* Fallback & Info Bar */}
             <div className="flex justify-between items-center text-white px-2">
                 <h3 id="video-modal-title" className="text-lg font-bold line-clamp-1 mr-4">{title}</h3>
                 <a 
@@ -127,13 +118,13 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10%" }}
       transition={{ duration: 0.5, delay: Math.min((index % 3) * 0.05, 0.2), ease: "easeOut" }}
-      className="group cursor-pointer snap-start shrink-0 w-[85vw] sm:w-[400px] md:w-auto transform-gpu"
+      // Optimization: w-[80vw] on mobile to show a peek of the next card, encouraging swipe
+      className="group cursor-pointer snap-start shrink-0 w-[80vw] sm:w-[400px] md:w-auto transform-gpu"
       onClick={() => onPlay(video)}
       style={{ willChange: 'transform, opacity' }}
     >
       <div className="block h-full">
         <div>
-          {/* Card Image Container */}
           <div className="relative overflow-hidden rounded-xl bg-gray-200 dark:bg-gray-800 aspect-video mb-4 transition-colors duration-500 border border-black/5 dark:border-white/5">
              <img 
               src={video.imageUrl} 
@@ -185,7 +176,6 @@ const VideoSection: React.FC = () => {
   const featuredTitle = t(`video_${FEATURED_VIDEO.id}_title`);
   const featuredCat = t(`video_${FEATURED_VIDEO.id}_cat`);
 
-  // Helper for title resolution
   const getPageTitle = (v: Video) => {
     const raw = t(`video_${v.id}_title`);
     const title = raw.startsWith('video_') ? v.title : raw;
@@ -207,7 +197,6 @@ const VideoSection: React.FC = () => {
           </>
       )}
 
-      {/* Modal - Moved AnimatePresence here for robustness against React #525 */}
       <AnimatePresence>
           {selectedVideo && (
               <motion.div
@@ -224,10 +213,10 @@ const VideoSection: React.FC = () => {
                         e.stopPropagation();
                         setSelectedVideo(null);
                     }}
-                    className="absolute top-6 right-6 p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-colors z-50"
+                    className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-50 backdrop-blur-md"
                     aria-label={t('common_close')}
                   >
-                    <X size={32} />
+                    <X size={24} />
                   </button>
                   
                   <VideoModalContent video={selectedVideo} />
@@ -244,7 +233,6 @@ const VideoSection: React.FC = () => {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         
-        {/* YouTube Channel Promotion Banner */}
         <div className="max-w-[1800px] mx-auto md:px-12">
             <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -294,7 +282,6 @@ const VideoSection: React.FC = () => {
         </div>
 
 
-        {/* Section Header */}
         <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-12">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
               <div className="border-l-4 border-black dark:border-white pl-3 md:pl-6 -ml-4 md:-ml-7">
@@ -311,7 +298,6 @@ const VideoSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Featured Video */}
         <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-12" ref={featuredRef}>
           <motion.div 
             initial={{ opacity: 0 }}
@@ -353,14 +339,12 @@ const VideoSection: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Grid Layout (Desktop) / Carousel (Mobile) */}
         <div className="max-w-[1800px] mx-auto px-4 md:px-12 flex overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-x-6 md:gap-y-12 snap-x snap-mandatory md:snap-none no-scrollbar pb-8 md:pb-0 touch-pan-x" style={{ WebkitOverflowScrolling: 'touch' }}>
           {VIDEOS.map((video, index) => (
             <VideoCard key={video.id} video={video} index={index} onPlay={setSelectedVideo} />
           ))}
         </div>
         
-        {/* Mobile Scroll Indicator */}
         <div className="flex md:hidden justify-center gap-1 mt-2 mb-8">
              <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-50"></div>
              <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>

@@ -23,13 +23,11 @@ const Header: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
-      // Removed setIsLangMenuOpen(false) to prevent annoying closure when scrolling slightly
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close lang menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
@@ -40,7 +38,6 @@ const Header: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -52,7 +49,6 @@ const Header: React.FC = () => {
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     
-    // Special case for Logo/Home click which is just '#'
     if (href === '#') {
         animate(window.scrollY, 0, {
             duration: 1.5,
@@ -67,13 +63,12 @@ const Header: React.FC = () => {
     const element = document.getElementById(targetId);
     
     if (element) {
-      // Calculate target position
       const headerOffset = 0; 
       const targetPosition = element.getBoundingClientRect().top + window.scrollY - headerOffset;
 
       animate(window.scrollY, targetPosition, {
         duration: 1.5,
-        ease: [0.22, 1, 0.36, 1], // Custom cubic bezier for smooth, premium slide effect
+        ease: [0.22, 1, 0.36, 1], 
         onUpdate: (latest) => window.scrollTo(0, latest)
       });
     }
@@ -81,35 +76,27 @@ const Header: React.FC = () => {
     setIsMenuOpen(false);
   };
 
-  // Logic: Adapt text color based on Scroll position AND Theme
   let textColorClass = '';
   let navHoverClass = '';
   let separatorClass = '';
   
   if (isScrolled) {
-    // Scrolled down: Solid background (White in Light, Black in Dark)
     textColorClass = 'text-black dark:text-white';
     navHoverClass = 'bg-black dark:bg-white';
     separatorClass = 'border-gray-200 dark:border-gray-700';
   } else {
-    // At top: Transparent background over Hero
     if (theme === 'light') {
-       // Light Mode Hero is bright Paper style -> Black Text
        textColorClass = 'text-black';
        navHoverClass = 'bg-black';
        separatorClass = 'border-black/10';
     } else {
-       // Dark Mode Hero is dark Black Hole -> White Text
        textColorClass = 'text-white';
        navHoverClass = 'bg-white';
        separatorClass = 'border-white/20';
     }
   }
 
-  // Override if menu is open (Mobile)
   if (isMenuOpen) {
-    // In mobile menu (which is white or black depending on theme), we need contrasting text
-    // The menu background is handled in the mobile menu div below
     textColorClass = 'text-black dark:text-white'; 
   }
 
@@ -129,7 +116,6 @@ const Header: React.FC = () => {
             Event Horizon
           </a>
 
-          {/* Desktop Nav & Controls */}
           <div className="hidden md:flex items-center gap-10">
             <nav className="flex gap-10">
               {NAV_LINKS.map((link) => (
@@ -139,14 +125,12 @@ const Header: React.FC = () => {
                   onClick={(e) => handleLinkClick(e, link.href)}
                   className={`text-sm font-medium uppercase tracking-widest hover:opacity-50 transition-opacity relative group ${textColorClass}`}
                 >
-                  {/* Dynamic translation using the key provided in NAV_LINKS */}
                   {t(link.key)}
                   <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full ${navHoverClass}`}></span>
                 </a>
               ))}
             </nav>
 
-            {/* Toggles */}
             <div className={`flex items-center gap-4 border-l pl-6 transition-colors duration-300 ${separatorClass}`}>
               <button 
                 onClick={toggleTheme}
@@ -156,7 +140,6 @@ const Header: React.FC = () => {
                 {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
               </button>
               
-              {/* Language Dropdown Trigger */}
               <div className="relative" ref={langMenuRef}>
                 <button 
                   onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
@@ -168,7 +151,6 @@ const Header: React.FC = () => {
                    <ChevronDown size={12} className={`transition-transform ${isLangMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
 
-                {/* Language Dropdown Menu */}
                 <AnimatePresence>
                   {isLangMenuOpen && (
                     <motion.div
@@ -205,7 +187,7 @@ const Header: React.FC = () => {
             </div>
           </div>
 
-          {/* Mobile Menu Trigger - Semantic Button for Accessibility */}
+          {/* Mobile Menu Trigger - Large touch area */}
           <button 
             className="md:hidden w-12 h-12 flex flex-col justify-center items-end gap-1.5 cursor-pointer z-50 p-1 bg-transparent border-none outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -224,7 +206,6 @@ const Header: React.FC = () => {
           </button>
         </div>
 
-        {/* Scroll Progress Indicator */}
         <motion.div 
           className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-purple-500 to-blue-400 origin-left"
           style={{ scaleX }}
@@ -275,7 +256,7 @@ const Header: React.FC = () => {
                         <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
                     </button>
 
-                    {/* Mobile Language Grid - Optimized for Touch */}
+                    {/* Mobile Language Grid - Optimized for Touch (Larger targets) */}
                     <div className="w-full max-w-xs">
                         <p className="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Language</p>
                         <div className="grid grid-cols-5 gap-2">
@@ -283,14 +264,14 @@ const Header: React.FC = () => {
                                 <button 
                                 key={lang.code}
                                 onClick={() => setLanguage(lang.code)}
-                                className={`flex flex-col items-center justify-center p-2 rounded-lg aspect-square transition-all active:scale-95 ${
+                                className={`flex flex-col items-center justify-center p-3 rounded-lg aspect-square transition-all active:scale-95 ${
                                     language === lang.code 
                                     ? 'bg-black text-white dark:bg-white dark:text-black shadow-lg ring-2 ring-offset-2 ring-black dark:ring-white scale-105' 
                                     : 'bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10'
                                 }`}
                                 >
                                 <span className="text-xl leading-none mb-1">{lang.flag}</span>
-                                <span className="text-[9px] font-bold uppercase">{lang.code}</span>
+                                <span className="text-[10px] font-bold uppercase">{lang.code}</span>
                                 </button>
                             ))}
                         </div>

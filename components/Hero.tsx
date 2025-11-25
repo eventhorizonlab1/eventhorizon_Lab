@@ -14,6 +14,7 @@ const VertexShader = `
     }
 `;
 
+// OPTIMIZATION: Reduced loop count from 120 to 90 for better mobile performance
 const FragmentShader = `
     uniform float u_time;
     uniform vec2 u_resolution;
@@ -136,9 +137,10 @@ const FragmentShader = `
         float accum = 0.0; 
         float trans = 1.0; 
         
-        float stepSize = 0.05; 
+        float stepSize = 0.06; // Slightly increased step size for performance
         
-        for(int i=0; i<120; i++) {
+        // Loop count reduced for mobile performance
+        for(int i=0; i<90; i++) {
             float r = length(p);
             
             vec3 force = -normalize(p) * (2.5 / (r * r + 0.01)); 
@@ -286,7 +288,7 @@ const AnimatedText = ({ text, className }: { text: string, className?: string })
       variants={titleContainerVariants}
       initial="hidden"
       animate="visible"
-      className={`flex flex-wrap justify-center gap-x-[0.3em] gap-y-2 ${className}`}
+      className={`flex flex-wrap justify-center gap-x-[0.2em] gap-y-2 ${className}`}
       style={{ perspective: "1200px" }}
     >
       {text.split(" ").map((word, i) => (
@@ -313,9 +315,6 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
   const isInView = useInView(containerRef);
   const shouldReduceMotion = useReducedMotion();
   
-  // PERFORMANCE OPTIMIZATION:
-  // Use a Ref to track theme changes. This avoids re-running the main useEffect and 
-  // destroying/recreating the WebGL context every time the user toggles the theme.
   const themeRef = useRef(theme);
 
   useEffect(() => {
@@ -334,7 +333,6 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
       antialias: false 
     });
 
-    // Moved material definition BEFORE updateSize function to fix ReferenceError
     const material = new THREE.ShaderMaterial({
         uniforms: {
           u_time: { value: 0 },
@@ -346,11 +344,10 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
         fragmentShader: FragmentShader,
     });
     
-    // Initial scaling function for Pixel Ratio
     const updateSize = () => {
         if (!container) return;
-        // OPTIMIZATION: Limit Pixel Ratio dynamically. 1.0 for mobile/tablets to save battery/perf, 1.5 max for Desktop.
         const isMobile = window.innerWidth < 768;
+        // Cap at 1.0 for mobile to ensure smooth fps
         const maxPixelRatio = isMobile ? 1.0 : 1.5;
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio));
         renderer.setSize(container.clientWidth, container.clientHeight);
@@ -374,15 +371,12 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
       
       if (!isInView) return;
 
-      // A11y: Slow down time significantly if reduced motion is requested
       const timeMultiplier = shouldReduceMotion ? 0.1 : 1.0;
       material.uniforms.u_time.value = clock.getElapsedTime() * timeMultiplier;
 
-      // Update theme uniform smoothly using the Ref value
       const targetLight = themeRef.current === 'light' ? 1.0 : 0.0;
       material.uniforms.u_is_light.value += (targetLight - material.uniforms.u_is_light.value) * 0.05;
       
-      // Reduce mouse influence if reduced motion
       const mouseInfluence = shouldReduceMotion ? 0.01 : 0.05;
       material.uniforms.u_mouse.value.x += (mouseRef.current.x - material.uniforms.u_mouse.value.x) * mouseInfluence;
       material.uniforms.u_mouse.value.y += (mouseRef.current.y - material.uniforms.u_mouse.value.y) * mouseInfluence;
@@ -409,7 +403,6 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
         window.removeEventListener('mousemove', handleMouseMove);
         cancelAnimationFrame(animationId);
         
-        // RESOURCE DISPOSAL (Prevent Memory Leaks)
         renderer.dispose();
         material.dispose();
         geometry.dispose();
@@ -418,7 +411,7 @@ const BlackHoleBackground = ({ theme }: { theme: string }) => {
             container.removeChild(renderer.domElement);
         }
     };
-  }, [isInView, shouldReduceMotion]); // Removed 'theme' from dependency array to allow persistent WebGL context
+  }, [isInView, shouldReduceMotion]);
 
   return <div ref={containerRef} className="absolute inset-0 w-full h-full z-0" />;
 };
@@ -433,7 +426,6 @@ const Hero: React.FC = () => {
     offset: ["start start", "end start"]
   });
 
-  // A11y: Disable parallax effects if reduced motion is preferred
   const opacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
   const blur = useTransform(scrollYProgress, [0, 0.4], ["0px", "12px"]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, shouldReduceMotion ? 1 : 1.15]);
@@ -445,19 +437,17 @@ const Hero: React.FC = () => {
   return (
     <section ref={ref} className="relative h-[90vh] w-full bg-eh-black transition-colors duration-500">
       
-      {/* Sticky Background Visual */}
       <div className="sticky top-0 h-screen w-full overflow-hidden z-0">
         
         <BlackHoleBackground theme={theme} />
 
         <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-white/90 dark:from-black/30 dark:via-transparent dark:to-black/80 z-10 pointer-events-none transition-colors duration-500"></div>
         
-        {/* Content Container */}
         <div className="absolute inset-0 flex flex-col items-center justify-start pt-32 md:justify-center md:pt-0 px-4 z-20 pointer-events-none">
            
            <div className="text-center max-w-[95vw] md:max-w-7xl flex flex-col items-center pointer-events-auto">
               
-              {/* TITLE LAYER */}
+              {/* Responsive Text Sizing: Smaller on mobile to prevent overflow */}
               <motion.div 
                 style={{ opacity, scale, filter: blur, y: yTitle }}
                 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.0] md:leading-[0.9] mb-8 md:mb-12 flex flex-col items-center w-full drop-shadow-lg text-black dark:text-white dark:mix-blend-overlay dark:opacity-90"
@@ -470,7 +460,6 @@ const Hero: React.FC = () => {
                 </div>
               </motion.div>
 
-              {/* SUBTITLE LAYER */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -478,12 +467,11 @@ const Hero: React.FC = () => {
                 style={{ opacity, scale, filter: blur, y: ySubtitle }}
                 className="w-full"
               >
-                <p className="text-base md:text-xl text-gray-600 dark:text-gray-300 max-w-lg mx-auto font-bold drop-shadow-md mix-blend-multiply dark:mix-blend-screen px-4">
+                <p className="text-sm md:text-xl text-gray-600 dark:text-gray-300 max-w-lg mx-auto font-bold drop-shadow-md mix-blend-multiply dark:mix-blend-screen px-4">
                   {t('hero_subtitle')}
                 </p>
               </motion.div>
               
-              {/* CTA & SCROLL LAYER */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
