@@ -1,6 +1,4 @@
 
-
-
 import { Video, Article, Partner } from './types';
 
 // Navigation simplifiée : Vidéos, Articles, Écosystème
@@ -11,9 +9,23 @@ export const NAV_LINKS = [
 ];
 
 /* 
-  GUIDE D'INTEGRATION DES IMAGES :
-  Pour éviter que les images ne disparaissent lors des redémarrages de l'environnement Cloud,
-  nous utilisons des URLs externes fiables (Wikimedia, Unsplash, etc.).
+  === UTILITAIRE AUTOMATIQUE ===
+  Cette fonction permet de récupérer automatiquement l'image "maxres" (HD) de YouTube.
+  Plus besoin de gérer des fichiers images pour les vidéos classiques !
+*/
+export const getYouTubeThumbnail = (url: string): string => {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  const id = (match && match[2].length === 11) ? match[2] : null;
+  // Retourne l'image HD si l'ID est trouvé, sinon une image vide (le composant gérera le fallback)
+  return id ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg` : '';
+};
+
+/* 
+  === GUIDES DES IMAGES ===
+  1. Pour la vidéo "À LA UNE" (Hero) : Utilisez une image très haute définition sans texte (Wikimedia, Unsplash).
+     Évitez les miniatures YouTube automatiques ici car elles contiennent du texte qui jure avec le design.
+  2. Pour la liste "VIDEOS" : Utilisez `getYouTubeThumbnail(url)` pour la simplicité.
 */
 
 export const FEATURED_VIDEO: Video = {
@@ -21,8 +33,7 @@ export const FEATURED_VIDEO: Video = {
   title: '🚀 Ariane 6 : Le Retour du Géant Européen',
   category: 'LANCEURS',
   duration: 'Live',
-  // Photo officielle du décollage d'Ariane 6 (Source: ESA/CNES/Arianespace via Wikimedia)
-  // Cette URL est stable et ne sera pas supprimée par l'environnement.
+  // URL Stable (Wikimedia Commons) - Ne disparaîtra pas.
   imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Ariane_6_first_flight_%28VA262%29_liftoff.jpg/1280px-Ariane_6_first_flight_%28VA262%29_liftoff.jpg', 
   videoUrl: 'https://www.youtube.com/watch?v=ukoMgE_8heo'
 };
@@ -33,7 +44,8 @@ export const VIDEOS: Video[] = [
     title: 'Ariane 6 : la fusée européenne a réussi son 3ème envol', 
     category: 'ACTUALITÉ', 
     duration: '12:30', 
-    imageUrl: 'https://images.unsplash.com/photo-1614728853970-3027b9cb323d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Rocket on pad
+    // Utilisation automatique de la miniature YouTube :
+    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=hCg8hox12C4'),
     videoUrl: 'https://www.youtube.com/watch?v=hCg8hox12C4' 
   },
   { 
@@ -41,7 +53,7 @@ export const VIDEOS: Video[] = [
     title: 'Pourquoi Ariane s\'acharne face à SpaceX ?', 
     category: 'STRATÉGIE', 
     duration: '10:15', 
-    imageUrl: 'https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Satellite/Orbit
+    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=0StUZuq0K5Y'),
     videoUrl: 'https://www.youtube.com/watch?v=0StUZuq0K5Y'
   },
   { 
@@ -49,7 +61,7 @@ export const VIDEOS: Video[] = [
     title: 'MaiaSpace, l\'entreprise française qui veut rivaliser avec SpaceX', 
     category: 'NEWSPACE', 
     duration: '03:45', 
-    imageUrl: 'https://images.unsplash.com/photo-1596522509172-e1d88a183dc1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Rocket Engine
+    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=5nUehsleKQA'),
     videoUrl: 'https://www.youtube.com/watch?v=5nUehsleKQA'
   },
   { 
@@ -57,7 +69,7 @@ export const VIDEOS: Video[] = [
     title: 'Enfin une FUSÉE RÉUTILISABLE en EUROPE ! MAIA SPACE', 
     category: 'TECH', 
     duration: '18:20', 
-    imageUrl: 'https://images.unsplash.com/photo-1569420587217-0c7da790757d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Clean room/Tech
+    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=1sjA4krnCDY'),
     videoUrl: 'https://www.youtube.com/watch?v=1sjA4krnCDY'
   },
   { 
@@ -65,7 +77,7 @@ export const VIDEOS: Video[] = [
     title: 'La France a ENFIN son SpaceX ( Baguette One, Latitude.. ) ?', 
     category: 'STARTUP', 
     duration: '15:10', 
-    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Lab/Engineers
+    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=4akJfQCpsFA'),
     videoUrl: 'https://www.youtube.com/watch?v=4akJfQCpsFA'
   },
   { 
@@ -73,7 +85,7 @@ export const VIDEOS: Video[] = [
     title: 'Space Startup News: The Exploration Company Nyx Crew Vehicle', 
     category: 'CARGO', 
     duration: '08:45', 
-    imageUrl: 'https://images.unsplash.com/photo-1454789548728-85d2696cf667?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Space station view
+    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=XP4VjQBPlqQ'),
     videoUrl: 'https://www.youtube.com/watch?v=XP4VjQBPlqQ'
   },
   { 
@@ -81,7 +93,7 @@ export const VIDEOS: Video[] = [
     title: 'NASA should use The Exploration Company Nyx to backup Starship!', 
     category: 'OPINION', 
     duration: '11:30', 
-    imageUrl: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Earth/Capsule
+    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=nvEMhxTceQs'),
     videoUrl: 'https://www.youtube.com/watch?v=nvEMhxTceQs'
   },
   { 
@@ -89,7 +101,7 @@ export const VIDEOS: Video[] = [
     title: 'Euclid discovers a stunning Einstein ring', 
     category: 'SCIENCE', 
     duration: '01:15', 
-    imageUrl: 'https://images.unsplash.com/photo-1484589065579-248aad0d8b13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Spiral Galaxy
+    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=pyCw_fhSndI'),
     videoUrl: 'https://www.youtube.com/watch?v=pyCw_fhSndI'
   },
   { 
@@ -97,7 +109,7 @@ export const VIDEOS: Video[] = [
     title: 'The Telescope Images Scientists Have Been Waiting 12 Years For | Euclid', 
     category: 'DOCUMENTAIRE', 
     duration: '22:00', 
-    imageUrl: 'https://images.unsplash.com/photo-1614726365723-498aa67c5f7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Telescope mirrors
+    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=N1AY3iCYkGs'),
     videoUrl: 'https://www.youtube.com/watch?v=N1AY3iCYkGs'
   },
   { 
@@ -105,7 +117,7 @@ export const VIDEOS: Video[] = [
     title: 'Incroyable ! JAMES WEBB détecte les toutes premières étoiles de l\'univers !', 
     category: 'ASTRONOMIE', 
     duration: '14:50', 
-    imageUrl: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Starfield
+    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=35lR0Wg5FII'),
     videoUrl: 'https://www.youtube.com/watch?v=35lR0Wg5FII'
   },
   { 
@@ -113,7 +125,7 @@ export const VIDEOS: Video[] = [
     title: 'James Webb observe des points rouges que personne ne comprend !', 
     category: 'MYSTÈRE', 
     duration: '12:10', 
-    imageUrl: 'https://images.unsplash.com/photo-1543722530-d2c3201371e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Deep Red Space/Nebula
+    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=CQUs61L3xko'),
     videoUrl: 'https://www.youtube.com/watch?v=CQUs61L3xko'
   },
   { 
@@ -121,7 +133,7 @@ export const VIDEOS: Video[] = [
     title: 'ClearSpace-1 Mission Launch Update', 
     category: 'DURABILITÉ', 
     duration: '04:20', 
-    imageUrl: 'https://images.unsplash.com/photo-1579935110378-8cb1d5c07b6c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Abstract Tech/Space
+    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=03ZZdJf2nDA'),
     videoUrl: 'https://www.youtube.com/watch?v=03ZZdJf2nDA'
   },
 ];
