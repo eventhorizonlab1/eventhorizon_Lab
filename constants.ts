@@ -145,8 +145,8 @@ export const ARTICLES: Article[] = [
     title: 'Pourquoi Toulouse est la capitale du spatial', 
     summary: 'Analyse économique et structurelle de l\'écosystème Aerospace Valley.', 
     date: '10 OCT 2023', 
-    // Stable Unsplash ID: Toulouse / Cityscape
-    imageUrl: 'https://images.unsplash.com/photo-1542125574-d558b2979243?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    // Image pertinente : Place du Capitole (Toulouse)
+    imageUrl: 'https://images.unsplash.com/photo-1588934524456-6e542cb23354?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   },
   { 
     id: 'a2', 
@@ -187,30 +187,35 @@ export const PARTNERS: Partner[] = [
     id: 'p1', 
     name: 'CNES', 
     role: 'Agence Spatiale', 
-    imageUrl: 'https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' // Satellite
+    // CNES Toulouse : Tech / Control Room vibe
+    imageUrl: 'https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' 
   },
   { 
     id: 'p2', 
     name: 'Airbus', 
     role: 'Constructeur', 
-    imageUrl: 'https://images.unsplash.com/photo-1559087316-6b2633ccfd92?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' // Plane/Industry
+    // Airbus Defence & Space : Clean Room / Satellite Manufacturing
+    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' 
   },
   { 
     id: 'p3', 
     name: 'Thales Alenia', 
     role: 'Satellites', 
-    imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' // Chip/Tech
+    // TAS : High Tech / Electronics / Chips
+    imageUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' 
   },
   { 
     id: 'p4', 
     name: 'ISAE-SUPAERO', 
     role: 'Excellence', 
-    imageUrl: 'https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' // Campus/Modern
+    // Campus / Students / Innovation
+    imageUrl: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' 
   },
   { 
     id: 'p5', 
     name: 'Cité de l\'Espace', 
     role: 'Culture', 
-    imageUrl: 'https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' // Space Exhibition
+    // Parc / Ariane 5 Mockup / Exhibition
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Cit%C3%A9_de_l%27Espace_Ariane_5.jpg/800px-Cit%C3%A9_de_l%27Espace_Ariane_5.jpg' 
   },
 ];

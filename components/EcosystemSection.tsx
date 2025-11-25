@@ -1,11 +1,82 @@
 
-import React, { useRef } from 'react';
+
+import React, { useRef, useState, useEffect } from 'react';
 import { PARTNERS } from '../constants';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Partner } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
+import { X, Building2 } from 'lucide-react';
 
-const PartnerCard: React.FC<{ partner: Partner; index: number }> = React.memo(({ partner, index }) => {
+const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> = ({ partner, onClose }) => {
+    const { t } = useThemeLanguage();
+    
+    // Lock scroll
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, []);
+
+    const role = t(`partner_${partner.id}_role`);
+    const description = t(`partner_${partner.id}_desc`);
+
+    return (
+        <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="bg-white dark:bg-[#111] w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl relative border border-gray-100 dark:border-white/10"
+            onClick={(e) => e.stopPropagation()}
+        >
+            <div className="relative h-48 md:h-64 overflow-hidden">
+                <img 
+                    src={partner.imageUrl} 
+                    alt={partner.name} 
+                    className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                
+                <button 
+                    onClick={onClose}
+                    className="absolute top-4 right-4 p-2 bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-full text-white transition-colors border border-white/10"
+                >
+                    <X size={20} />
+                </button>
+
+                <div className="absolute bottom-6 left-6 md:left-8">
+                     <span className="inline-block px-3 py-1 bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest mb-2 rounded-full shadow-lg">
+                        {role}
+                     </span>
+                     <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tighter">{partner.name}</h2>
+                </div>
+            </div>
+
+            <div className="p-6 md:p-8">
+                <div className="flex items-start gap-4 mb-6">
+                    <div className="bg-gray-100 dark:bg-white/5 p-3 rounded-xl">
+                        <Building2 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-1">Profil Partenaire</h3>
+                        <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-line">
+                            {description}
+                        </p>
+                    </div>
+                </div>
+                
+                <div className="mt-8 pt-6 border-t border-gray-100 dark:border-white/5 flex justify-end">
+                    <button onClick={onClose} className="text-sm font-bold uppercase tracking-widest text-gray-500 hover:text-black dark:hover:text-white transition-colors">
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        </motion.div>
+    );
+};
+
+const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Partner) => void }> = React.memo(({ partner, index, onClick }) => {
   const ref = useRef<HTMLDivElement>(null);
   const { t } = useThemeLanguage();
   const { scrollYProgress } = useScroll({
@@ -13,7 +84,6 @@ const PartnerCard: React.FC<{ partner: Partner; index: number }> = React.memo(({
     offset: ["start end", "end start"]
   });
 
-  // Reduced parallax effect to minimize gap below the section
   const y = useTransform(scrollYProgress, [0, 1], [20, -20]);
   const role = t(`partner_${partner.id}_role`);
 
@@ -22,6 +92,7 @@ const PartnerCard: React.FC<{ partner: Partner; index: number }> = React.memo(({
        ref={ref}
        style={{ y }}
        className="snap-start shrink-0 w-[60vw] md:w-[20vw] group relative cursor-pointer"
+       onClick={() => onClick(partner)}
     >
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -29,20 +100,20 @@ const PartnerCard: React.FC<{ partner: Partner; index: number }> = React.memo(({
         viewport={{ once: true, margin: "-30px" }}
         transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.1 }}
       >
-         {/* Card Visual - Full Color */}
-         <div className="relative overflow-hidden rounded-xl bg-white dark:bg-white/5 aspect-[4/5] mb-6 transition-colors duration-500 border border-gray-100 dark:border-white/10 shadow-sm">
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+         {/* Card Visual */}
+         <div className="relative overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800 aspect-[4/5] mb-6 transition-colors duration-500 border border-gray-100 dark:border-white/10 shadow-sm">
+            <div className="absolute inset-0 flex items-center justify-center">
                 <img 
-                src={partner.imageUrl} 
-                alt={partner.name} 
-                loading="lazy"
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                    src={partner.imageUrl} 
+                    alt={partner.name} 
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
                 />
             </div>
             {/* Hover Overlay info */}
-            <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-sm">
-              <span className="text-white font-bold tracking-widest uppercase border border-white/50 rounded-full px-4 py-2 text-xs bg-black/50">
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-[2px]">
+              <span className="text-white font-bold tracking-widest uppercase border border-white/50 rounded-full px-4 py-2 text-xs bg-black/50 backdrop-blur-md transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                 {t('ecosystem_view')}
               </span>
             </div>
@@ -62,36 +133,63 @@ const PartnerCard: React.FC<{ partner: Partner; index: number }> = React.memo(({
 
 const EcosystemSection: React.FC = () => {
   const { t } = useThemeLanguage();
+  const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
   
   return (
-    <motion.section 
-      id="ecosystem" 
-      className="pt-16 md:pt-24 pb-0"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-    >
-       <div className="px-4 md:px-12 max-w-[1800px] mx-auto mb-12">
-        <div className="border-l-4 border-black dark:border-white pl-3 md:pl-6 -ml-4 md:-ml-7">
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white">
-            {t('ecosystem_title')}
-            </h2>
-            <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg">
-            {t('ecosystem_subtitle')}
-            </p>
-        </div>
-      </div>
+    <>
+        <AnimatePresence>
+            {selectedPartner && (
+                <motion.div
+                    key="partner-modal-backdrop"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+                    onClick={() => setSelectedPartner(null)}
+                >
+                    <PartnerModalContent 
+                        partner={selectedPartner} 
+                        onClose={() => setSelectedPartner(null)} 
+                    />
+                </motion.div>
+            )}
+        </AnimatePresence>
 
-      <div className="overflow-hidden">
-        {/* Reduced bottom padding from pb-12 to pb-6 */}
-        <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-6 pb-6">
-           {PARTNERS.map((partner, index) => (
-             <PartnerCard key={partner.id} partner={partner} index={index} />
-           ))}
+        <motion.section 
+        id="ecosystem" 
+        className="pt-16 md:pt-24 pb-0"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+        <div className="px-4 md:px-12 max-w-[1800px] mx-auto mb-12">
+            <div className="border-l-4 border-black dark:border-white pl-3 md:pl-6 -ml-4 md:-ml-7">
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white">
+                {t('ecosystem_title')}
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg">
+                {t('ecosystem_subtitle')}
+                </p>
+            </div>
         </div>
-      </div>
-    </motion.section>
+
+        <div className="overflow-hidden">
+            {/* Reduced bottom padding from pb-12 to pb-6 */}
+            <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-6 pb-6">
+            {PARTNERS.map((partner, index) => (
+                <PartnerCard 
+                    key={partner.id} 
+                    partner={partner} 
+                    index={index} 
+                    onClick={setSelectedPartner}
+                />
+            ))}
+            </div>
+        </div>
+        </motion.section>
+    </>
   );
 };
 
