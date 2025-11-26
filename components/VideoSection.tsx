@@ -1,6 +1,5 @@
 
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import { createPortal } from 'react-dom';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
 import { Play, Radio, ArrowUpRight, X, ExternalLink, Filter, Clock, Hash } from 'lucide-react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
@@ -231,7 +230,7 @@ const VideoSection: React.FC = () => {
   return (
     <>
       <AnimatePresence>
-          {selectedVideo && createPortal(
+          {selectedVideo && (
               <motion.div
                 key="video-modal-backdrop"
                 initial={{ opacity: 0 }}
@@ -253,8 +252,7 @@ const VideoSection: React.FC = () => {
                   </button>
                   
                   <VideoModalContent video={selectedVideo} />
-              </motion.div>,
-              document.body
+              </motion.div>
           )}
       </AnimatePresence>
 

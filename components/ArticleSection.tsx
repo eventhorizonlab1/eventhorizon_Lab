@@ -1,11 +1,11 @@
 
 import React, { useRef, useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import { ARTICLES } from '../constants';
 import { ArrowRight, ArrowLeft, FileText, X, Clock, Calendar } from 'lucide-react';
 import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion';
 import { Article } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
+import { createPortal } from 'react-dom';
 
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -49,22 +49,23 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="bg-white dark:bg-[#0a0a0a] w-full max-w-4xl h-[95dvh] md:h-[90dvh] rounded-t-3xl md:rounded-3xl overflow-hidden flex flex-col shadow-2xl relative border border-gray-200 dark:border-white/10"
+            className="bg-white dark:bg-[#0a0a0a] w-full max-w-5xl h-[95dvh] md:h-[90dvh] rounded-t-3xl md:rounded-3xl overflow-hidden flex flex-col shadow-2xl relative border border-gray-200 dark:border-white/10"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
             aria-labelledby="article-modal-title"
         >
-            {/* CLOSE BUTTON: Adjusted to top-12 (approx 48px) for better accessibility/visibility balance */}
+            {/* CLOSE BUTTON: Improved visibility and interaction */}
             <button 
                 onClick={onClose}
-                className="absolute top-12 right-6 md:top-8 md:right-8 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
+                className="absolute top-6 right-6 md:top-8 md:right-8 z-50 p-3 bg-black/40 hover:bg-black/60 backdrop-blur-xl rounded-full text-white transition-all border border-white/20 shadow-2xl hover:scale-110 group"
                 aria-label={t('common_close')}
             >
-                <X size={24} strokeWidth={2.5} />
+                <X size={28} strokeWidth={2} className="group-hover:rotate-90 transition-transform duration-300" />
             </button>
 
-            <div className="relative h-[35vh] md:h-[45vh] shrink-0 overflow-hidden">
+            {/* HERO IMAGE: Increased height for more impact (45vh mobile / 55vh desktop) */}
+            <div className="relative h-[45vh] md:h-[55vh] shrink-0 overflow-hidden group">
                 <motion.img 
                     initial={{ scale: 1.1 }}
                     animate={{ scale: 1 }}
@@ -75,16 +76,16 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
                     onError={(e) => {
                         e.currentTarget.src = 'https://images.unsplash.com/photo-1517976487492-5750f3195933?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80';
                     }}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#0a0a0a] via-transparent to-black/30"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#0a0a0a] via-transparent to-black/40"></div>
                 
-                <div className="absolute bottom-0 left-0 w-full p-6 md:p-10">
+                <div className="absolute bottom-0 left-0 w-full p-6 md:p-12">
                     <motion.span 
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="inline-flex items-center gap-2 px-3 py-1 bg-blue-600/90 text-white text-[10px] font-bold uppercase tracking-widest mb-4 rounded-full shadow-lg backdrop-blur-sm"
+                        className="inline-flex items-center gap-2 px-3 py-1 bg-blue-600/90 text-white text-[10px] font-bold uppercase tracking-widest mb-6 rounded-full shadow-lg backdrop-blur-sm"
                     >
                         <FileText size={12} />
                         Editorial
@@ -94,7 +95,7 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
-                        className="text-3xl md:text-5xl lg:text-6xl font-sans font-black leading-[0.9] text-black dark:text-white drop-shadow-sm mb-4 max-w-3xl tracking-tight"
+                        className="text-4xl md:text-6xl lg:text-7xl font-sans font-black leading-[0.9] text-black dark:text-white drop-shadow-lg mb-6 max-w-4xl tracking-tight"
                     >
                         {title}
                     </motion.h2>
@@ -105,34 +106,34 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
                             transition={{ delay: 0.4 }}
                             className="flex flex-wrap items-center gap-4 text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300"
                     >
-                            <div className="flex items-center gap-2 bg-white/50 dark:bg-black/50 px-3 py-1 rounded-full backdrop-blur-md border border-gray-200 dark:border-white/10">
-                            <Calendar size={14} />
-                            <span className="uppercase tracking-widest">{date}</span>
+                            <div className="flex items-center gap-2 bg-white/50 dark:bg-black/50 px-4 py-1.5 rounded-full backdrop-blur-md border border-gray-200 dark:border-white/10">
+                                <Calendar size={14} />
+                                <span className="uppercase tracking-widest">{date}</span>
                             </div>
-                            <div className="flex items-center gap-2 bg-white/50 dark:bg-black/50 px-3 py-1 rounded-full backdrop-blur-md border border-gray-200 dark:border-white/10">
-                            <Clock size={14} />
-                            <span>{readTime} min read</span>
+                            <div className="flex items-center gap-2 bg-white/50 dark:bg-black/50 px-4 py-1.5 rounded-full backdrop-blur-md border border-gray-200 dark:border-white/10">
+                                <Clock size={14} />
+                                <span>{readTime} min read</span>
                             </div>
                     </motion.div>
                 </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-6 md:px-12 py-8 custom-scrollbar bg-white dark:bg-[#0a0a0a]">
+            <div className="flex-1 overflow-y-auto px-6 md:px-12 py-10 custom-scrollbar bg-white dark:bg-[#0a0a0a]">
                 <div className="max-w-3xl mx-auto">
-                    <div className="prose prose-lg dark:prose-invert max-w-none">
-                        <p className="font-serif text-xl md:text-2xl leading-relaxed text-gray-900 dark:text-gray-100 mb-8 first-letter:text-6xl first-letter:font-bold first-letter:mr-3 first-letter:float-left first-letter:text-blue-600 dark:first-letter:text-blue-500">
+                    <div className="prose prose-lg md:prose-xl dark:prose-invert max-w-none">
+                        <p className="font-serif text-2xl md:text-3xl leading-relaxed text-gray-900 dark:text-gray-100 mb-10 first-letter:text-7xl first-letter:font-bold first-letter:mr-4 first-letter:float-left first-letter:text-blue-600 dark:first-letter:text-blue-500">
                             {paragraphs[0]}
                         </p>
                         
                         {paragraphs.slice(1).map((para, idx) => (
-                            <p key={idx} className="font-serif text-lg leading-loose text-gray-700 dark:text-gray-300 mb-6 text-justify">
+                            <p key={idx} className="font-serif text-lg md:text-xl leading-loose text-gray-700 dark:text-gray-300 mb-8 text-justify">
                                 {para}
                             </p>
                         ))}
                     </div>
 
-                    <div className="mt-16 pt-12 border-t border-gray-100 dark:border-white/10 flex flex-col items-center gap-4">
-                        <div className="w-16 h-1 bg-blue-600 rounded-full"></div>
+                    <div className="mt-20 pt-12 border-t border-gray-100 dark:border-white/10 flex flex-col items-center gap-4">
+                        <div className="w-20 h-1.5 bg-blue-600 rounded-full"></div>
                         <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
                             *** Fin de transmission ***
                         </p>
@@ -151,8 +152,7 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
   return (
     <motion.div 
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-50px" }}
+      animate="visible"
       variants={cardVariants}
       // Tablet Optimization: w-[45vw] for comfortable 2-card peek
       className="snap-start shrink-0 w-[85vw] md:w-[45vw] lg:w-[400px] aspect-[4/5] transform-gpu"
@@ -240,22 +240,24 @@ const ArticleSection: React.FC = () => {
     )}
     
     <AnimatePresence>
-        {selectedArticle && createPortal(
-            <motion.div
-                key="article-modal-backdrop"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="fixed inset-0 z-[10000] flex items-end md:items-center justify-center bg-black/90 backdrop-blur-md p-0 md:p-6"
-                onClick={() => setSelectedArticle(null)}
-            >
-                <ArticleModalContent 
-                    article={selectedArticle} 
-                    onClose={() => setSelectedArticle(null)} 
-                />
-            </motion.div>,
-            document.body
+        {selectedArticle && (
+             createPortal(
+                <motion.div
+                    key="article-modal-backdrop"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="fixed inset-0 z-[10000] flex items-end md:items-center justify-center bg-black/90 backdrop-blur-md p-0 md:p-6"
+                    onClick={() => setSelectedArticle(null)}
+                >
+                    <ArticleModalContent 
+                        article={selectedArticle} 
+                        onClose={() => setSelectedArticle(null)} 
+                    />
+                </motion.div>,
+                document.body
+             )
         )}
     </AnimatePresence>
 
@@ -264,8 +266,8 @@ const ArticleSection: React.FC = () => {
       // STANDARDIZED SPACING: py-16 (mobile) md:py-24 (desktop)
       className="py-16 md:py-24 bg-white dark:bg-eh-black relative border-t border-gray-100 dark:border-gray-800 transition-colors duration-500"
       initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
     >
       <div className="px-4 md:px-12 max-w-[1800px] mx-auto mb-12">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
