@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform, Variants, useInView, useReducedMotion, MotionValue } from 'framer-motion';
 import { Play } from 'lucide-react';
 import * as THREE from 'three';
@@ -254,19 +254,34 @@ const titleContainerVariants: Variants = {
   }
 };
 
-// Simplified AnimatedText for A11y/Motion Safety
+// Simplified AnimatedText for A11y/Motion Safety AND Tablet Performance
 const AnimatedText = ({ text, className }: { text: string, className?: string }) => {
   const shouldReduceMotion = useReducedMotion();
+  const [isOptimized, setIsOptimized] = useState(false);
+
+  // Detect Mobile/Tablet to simplify animations (remove heavy blur/3D)
+  useEffect(() => {
+    const checkOptimization = () => {
+       // Optimize for devices smaller than typical laptops (iPads are often 768-1024 or 834-1194)
+       setIsOptimized(window.innerWidth < 1280);
+    };
+    checkOptimization();
+    window.addEventListener('resize', checkOptimization);
+    return () => window.removeEventListener('resize', checkOptimization);
+  }, []);
 
   const letterVariants: Variants = React.useMemo(() => ({
     hidden: { 
       opacity: 0,
-      // Disable complex transforms if reduced motion is requested
-      scale: shouldReduceMotion ? 1 : 8,
-      y: shouldReduceMotion ? 0 : 100,
-      rotateX: shouldReduceMotion ? 0 : -90,
-      rotateZ: shouldReduceMotion ? 0 : -30,
-      filter: shouldReduceMotion ? "blur(0px)" : "blur(20px)",
+      // iPad/Tablet Optimization:
+      // 1. Reduce scale (avoid huge texture re-draws)
+      // 2. Remove 3D rotation (expensive on mobile GPUs)
+      // 3. Remove Blur filter (major performance killer on Retina screens)
+      scale: shouldReduceMotion ? 1 : (isOptimized ? 1.2 : 8),
+      y: shouldReduceMotion ? 0 : (isOptimized ? 50 : 100),
+      rotateX: shouldReduceMotion || isOptimized ? 0 : -90,
+      rotateZ: shouldReduceMotion || isOptimized ? 0 : -30,
+      filter: shouldReduceMotion || isOptimized ? "blur(0px)" : "blur(20px)",
       transformOrigin: "50% 100%",
     },
     visible: { 
@@ -278,11 +293,11 @@ const AnimatedText = ({ text, className }: { text: string, className?: string })
       filter: "blur(0px)",
       transformOrigin: "50% 50%",
       transition: {
-        duration: shouldReduceMotion ? 0.5 : 1.4, // Faster/simpler transition
+        duration: shouldReduceMotion ? 0.5 : (isOptimized ? 0.9 : 1.4), // Slightly faster on tablet
         ease: [0.2, 0.8, 0.2, 1],
       }
     }
-  }), [shouldReduceMotion]);
+  }), [shouldReduceMotion, isOptimized]);
 
   return (
     <motion.div 
@@ -291,16 +306,17 @@ const AnimatedText = ({ text, className }: { text: string, className?: string })
       initial="hidden"
       animate="visible"
       className={`flex flex-wrap justify-center gap-x-[0.2em] gap-y-2 ${className}`}
-      style={{ perspective: "1200px" }}
+      // Remove perspective on optimized devices to avoid creating a 3D context
+      style={{ perspective: isOptimized ? "none" : "1200px" }}
     >
       {text.split(" ").map((word, i) => (
-        <span key={i} className="inline-block whitespace-nowrap relative" style={{ transformStyle: "preserve-3d" }}>
+        <span key={i} className="inline-block whitespace-nowrap relative" style={{ transformStyle: isOptimized ? "flat" : "preserve-3d" }}>
           {word.split("").map((char, j) => (
             <motion.span 
               key={j} 
               variants={letterVariants} 
               className="inline-block transform-gpu text-transparent bg-clip-text bg-gradient-to-b from-black via-black to-gray-600 dark:from-white dark:via-white dark:to-gray-400"
-              style={{ backfaceVisibility: "hidden" }} 
+              style={{ backfaceVisibility: isOptimized ? "visible" : "hidden" }} 
             >
               {char}
             </motion.span>
