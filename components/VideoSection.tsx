@@ -5,7 +5,6 @@ import { Play, Radio, ArrowUpRight, X, ExternalLink, Filter, Clock, Hash } from 
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Video } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
-import { createPortal } from 'react-dom';
 
 const getYouTubeId = (url: string) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/|live\/)([^#&?]*).*/;
@@ -26,11 +25,10 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
         };
     }, []);
 
-    // Optimized delay: 300ms matches the entrance animation, ensuring smooth UI before heavy load
     useEffect(() => {
         setShouldLoadIframe(false);
         setIframeLoaded(false);
-        const timer = setTimeout(() => setShouldLoadIframe(true), 300); 
+        const timer = setTimeout(() => setShouldLoadIframe(true), 450); 
         return () => clearTimeout(timer);
     }, [video]);
 
@@ -39,6 +37,7 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
     const translatedTitle = t(`video_${video.id}_title`);
     const title = translatedTitle.startsWith('video_') ? video.title : translatedTitle;
     
+    // Fallback for description if not in constants yet (though we added it)
     const description = video.description || t(`video_${video.id}_desc`) || "Aucune description disponible pour cette vidéo.";
 
     return (
@@ -64,17 +63,15 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
                     </div>
                 ) : (
                     <>
-                        {/* Placeholder with High-Res Thumbnail for immediate feedback */}
                         <div className="absolute inset-0 w-full h-full bg-gray-900 flex items-center justify-center z-0">
                             <img 
                                 src={video.imageUrl} 
                                 alt={title} 
-                                className="absolute inset-0 w-full h-full object-cover opacity-100" 
+                                className="absolute inset-0 w-full h-full object-cover opacity-40 blur-md scale-105" 
                             />
-                            <div className="absolute inset-0 bg-black/50 z-10"></div>
-                            
-                            <div className="relative z-20 flex flex-col items-center gap-3">
-                                <div className="w-12 h-12 rounded-full border-2 border-white/20 border-t-white flex items-center justify-center animate-spin"></div>
+                            <div className="relative z-10 flex flex-col items-center gap-3">
+                                <div className="w-16 h-16 rounded-full border-2 border-white/20 border-t-white flex items-center justify-center animate-spin"></div>
+                                <span className="text-xs font-bold uppercase tracking-widest text-white/80">Chargement...</span>
                             </div>
                         </div>
 
@@ -89,11 +86,10 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
                                 src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
                                 title={title}
                                 frameBorder="0"
-                                loading="lazy"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                 referrerPolicy="strict-origin-when-cross-origin"
                                 allowFullScreen
-                                className="absolute inset-0 w-full h-full z-30"
+                                className="absolute inset-0 w-full h-full z-10"
                             ></motion.iframe>
                         )}
                     </>
@@ -105,10 +101,10 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="flex flex-col gap-4 text-white px-4 md:px-0 overflow-y-auto md:overflow-visible pb-24 md:pb-0"
+                className="flex flex-col gap-4 text-white px-4 md:px-0 overflow-y-auto md:overflow-visible pb-10 md:pb-0"
             >
                 <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-                    <h3 id="video-modal-title" className="text-xl md:text-2xl font-bold leading-tight pr-12 md:pr-0">{title}</h3>
+                    <h3 id="video-modal-title" className="text-xl md:text-2xl font-bold leading-tight">{title}</h3>
                     
                     <a 
                         href={video.videoUrl} 
@@ -173,10 +169,12 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
             />
             
+            {/* YouTube-style Duration Badge */}
             <div className="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] tracking-wide">
               {video.duration}
             </div>
 
+            {/* Play Button Overlay */}
              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20">
                 <div className="w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                   <Play className="w-5 h-5 text-black fill-black ml-0.5" />
@@ -184,6 +182,7 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
              </div>
           </div>
           
+          {/* Meta Data */}
           <div className="pr-2">
             <h4 className="text-base md:text-lg font-bold leading-tight transition-colors duration-300 text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 line-clamp-2 mb-1">
               {title}
@@ -214,11 +213,15 @@ const VideoSection: React.FC = () => {
   const imageY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
 
   const featuredTitle = t(`video_${FEATURED_VIDEO.id}_title`);
+  const featuredCat = t(`video_${FEATURED_VIDEO.id}_cat`);
+
+  // Extract unique categories for the filter list
   const categories = useMemo(() => {
     const cats = new Set(VIDEOS.map(v => v.category));
     return ['ALL', ...Array.from(cats)];
   }, []);
 
+  // Filter videos based on selection
   const filteredVideos = useMemo(() => {
     if (activeCategory === 'ALL') return VIDEOS;
     return VIDEOS.filter(v => v.category === activeCategory);
@@ -227,7 +230,7 @@ const VideoSection: React.FC = () => {
   return (
     <>
       <AnimatePresence>
-          {selectedVideo && createPortal(
+          {selectedVideo && (
               <motion.div
                 key="video-modal-backdrop"
                 initial={{ opacity: 0 }}
@@ -242,15 +245,14 @@ const VideoSection: React.FC = () => {
                         e.stopPropagation();
                         setSelectedVideo(null);
                     }}
-                    className="absolute top-4 right-4 md:top-8 md:right-8 z-[10001] p-3 bg-black/50 hover:bg-black/70 text-white rounded-full transition-all border border-white/10 backdrop-blur-md group shadow-2xl"
+                    className="absolute top-4 right-4 md:top-6 md:right-6 p-2 md:p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-50 backdrop-blur-md"
                     aria-label={t('common_close')}
                   >
-                    <X size={28} className="group-hover:rotate-90 transition-transform duration-300" />
+                    <X size={24} />
                   </button>
                   
                   <VideoModalContent video={selectedVideo} />
-              </motion.div>,
-              document.body
+              </motion.div>
           )}
       </AnimatePresence>
 
@@ -262,6 +264,8 @@ const VideoSection: React.FC = () => {
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
+        
+        {/* TRANSMISSION HEADER */}
         <div className="max-w-[1800px] mx-auto md:px-12">
             <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -310,6 +314,7 @@ const VideoSection: React.FC = () => {
             </motion.div>
         </div>
 
+        {/* SECTION TITLE & FILTERS */}
         <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-8">
             <div className="flex flex-col gap-6">
                 <div className="border-l-4 border-black dark:border-white pl-3 md:pl-6 -ml-4 md:-ml-7">
@@ -321,6 +326,7 @@ const VideoSection: React.FC = () => {
                     </p>
                 </div>
 
+                {/* YOUTUBE-STYLE CHIPS (FILTERS) */}
                 <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mask-linear-fade">
                     <div className="flex items-center justify-center w-8 h-8 shrink-0 text-gray-400">
                         <Filter size={16} />
@@ -343,6 +349,7 @@ const VideoSection: React.FC = () => {
             </div>
         </div>
 
+        {/* FEATURED VIDEO */}
         <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-12" ref={featuredRef}>
           <motion.div 
             initial={{ opacity: 0 }}
@@ -386,6 +393,7 @@ const VideoSection: React.FC = () => {
           </motion.div>
         </div>
 
+        {/* VIDEOS GRID/LIST */}
         <div className="max-w-[1800px] mx-auto px-4 md:px-12 flex overflow-x-auto lg:grid lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-x-6 md:gap-y-12 snap-x snap-mandatory lg:snap-none no-scrollbar pb-8 md:pb-0 touch-pan-x min-h-[300px]" style={{ WebkitOverflowScrolling: 'touch' }}>
           <AnimatePresence mode="popLayout">
             {filteredVideos.map((video, index) => (
@@ -401,6 +409,7 @@ const VideoSection: React.FC = () => {
           )}
         </div>
         
+        {/* SCROLL INDICATOR (Mobile/Tablet) */}
         <div className="flex lg:hidden justify-center gap-1 mt-2 mb-8">
              <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-50"></div>
              <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
