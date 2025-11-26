@@ -1,4 +1,5 @@
 
+
 import { Video, Article, Partner } from './types';
 
 // Navigation simplifiée : Vidéos, Articles, Écosystème
@@ -180,7 +181,7 @@ export const VIDEOS: Video[] = [
     duration: '00:45', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/shorts/7-r6yEgORes'),
     videoUrl: 'https://www.youtube.com/shorts/7-r6yEgORes',
-    description: "Mise à jour rapide sur le développement du lanceur espagnol Miura 5."
+    description: "Mise à jour rapide sur le desarrollo del lanzador español Miura 5."
   },
   { 
     id: 'v_new_17', 
@@ -225,7 +226,8 @@ export const VIDEOS: Video[] = [
     title: 'Ariane 6 : la fusée européenne a réussi son 3ème envol', 
     category: 'ACTUALITÉ', 
     duration: '10:15', 
-    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=O1f8s9jV_hY'),
+    // Image illustrative Ariane 6 (Wikimedia) car thumbnail YouTube manquant
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/e8/Ariane_6_flight_VA262_liftoff.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=O1f8s9jV_hY',
     description: "Retour en détail sur le troisième vol de qualification d'Ariane 6 et ses implications pour le marché."
   },
