@@ -288,7 +288,8 @@ export const VIDEOS: Video[] = [
     title: 'Euclid discovers a stunning Einstein ring', 
     category: 'SCIENCE', 
     duration: '06:40', 
-    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=UqQcceJd5B8'),
+    // Image illustrative Galaxie/Nebula (Unsplash) car thumbnail YouTube manquant
+    imageUrl: 'https://images.unsplash.com/photo-1543722530-d181f913d6b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     videoUrl: 'https://www.youtube.com/watch?v=UqQcceJd5B8',
     description: "Les premières découvertes majeures du télescope spatial européen Euclid sur la matière noire."
   },
@@ -297,7 +298,8 @@ export const VIDEOS: Video[] = [
     title: 'The Telescope Images Scientists Have Been Waiting 12 Years For | Euclid', 
     category: 'DOCUMENTAIRE', 
     duration: '15:00', 
-    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=L25sX_XW_2U'),
+    // Image illustrative Champ d'étoiles (Unsplash)
+    imageUrl: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     videoUrl: 'https://www.youtube.com/watch?v=L25sX_XW_2U',
     description: "Documentaire sur la genèse et les objectifs scientifiques de la mission Euclid."
   },
@@ -306,7 +308,8 @@ export const VIDEOS: Video[] = [
     title: "Incroyable ! JAMES WEBB détecte les toutes premières étoiles de l'univers !", 
     category: 'ASTRONOMIE', 
     duration: '10:30', 
-    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=1C_zV77G8e4'),
+    // Image officielle JWST Deep Field (Wikimedia)
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/e2/Webb%27s_First_Deep_Field.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=1C_zV77G8e4',
     description: "Les dernières observations du JWST bouleversent notre compréhension du Big Bang."
   },
@@ -315,7 +318,8 @@ export const VIDEOS: Video[] = [
     title: 'James Webb observe des points rouges que personne ne comprend !', 
     category: 'MYSTÈRE', 
     duration: '12:45', 
-    imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=yi8kK0_yXzU'),
+    // Image illustrative Nebula (Unsplash)
+    imageUrl: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     videoUrl: 'https://www.youtube.com/watch?v=yi8kK0_yXzU',
     description: "Enigme cosmique : ces galaxies primitives qui ne devraient pas exister selon nos modèles."
   },
