@@ -1,4 +1,3 @@
-
 {
   "name": "event-horizon",
   "private": true,
@@ -23,6 +22,7 @@
     "@types/react-dom": "^19.0.3",
     "@types/three": "^0.173.0",
     "@vitejs/plugin-react": "^5.1.1",
+    "grunt": "^1.6.1",
     "typescript": "^5.2.2",
     "vite": "^7.2.4"
   }
