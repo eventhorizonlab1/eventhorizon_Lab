@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
 import { Play, Radio, ArrowUpRight, X, ExternalLink, Filter, Clock, Hash } from 'lucide-react';
@@ -327,24 +326,27 @@ const VideoSection: React.FC = () => {
                 </div>
 
                 {/* YOUTUBE-STYLE CHIPS (FILTERS) */}
-                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mask-linear-fade">
-                    <div className="flex items-center justify-center w-8 h-8 shrink-0 text-gray-400">
-                        <Filter size={16} />
+                <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
+                         <Filter size={14} />
+                         <span>{t('video_subcategories')}</span>
                     </div>
-                    {categories.map((cat) => (
-                        <button
-                            key={cat}
-                            onClick={() => setActiveCategory(cat)}
-                            className={`
-                                px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide whitespace-nowrap transition-all duration-300 border
-                                ${activeCategory === cat 
-                                    ? 'bg-black text-white dark:bg-white dark:text-black border-black dark:border-white shadow-md transform scale-105' 
-                                    : 'bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 border-transparent hover:bg-gray-200 dark:hover:bg-white/10'}
-                            `}
-                        >
-                            {cat === 'ALL' ? 'Tout' : cat}
-                        </button>
-                    ))}
+                    <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mask-linear-fade">
+                        {categories.map((cat) => (
+                            <button
+                                key={cat}
+                                onClick={() => setActiveCategory(cat)}
+                                className={`
+                                    px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide whitespace-nowrap transition-all duration-300 border
+                                    ${activeCategory === cat 
+                                        ? 'bg-black text-white dark:bg-white dark:text-black border-black dark:border-white shadow-md transform scale-105' 
+                                        : 'bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 border-transparent hover:bg-gray-200 dark:hover:bg-white/10'}
+                                `}
+                            >
+                                {cat === 'ALL' ? 'Tout' : cat}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,7 +1,3 @@
-
-
-
-
 export type Language = 'fr' | 'en' | 'de' | 'es' | 'it';
 
 export interface LanguageOption {
@@ -35,6 +31,7 @@ const fr: Record<string, string> = {
   videos_channel_desc: 'Reportages, Lancements et Directs du CNES.',
   videos_access: 'Accéder au flux',
   videos_featured: 'À la une',
+  video_subcategories: 'Sous-catégories',
   video_feat_1_title: '🚀 Ariane 6 : Le Retour du Géant Européen',
   video_feat_1_cat: 'LANCEURS',
   video_v1_title: 'Ariane 6 : la fusée européenne a réussi son 3ème envol',
@@ -153,6 +150,7 @@ const en: Record<string, string> = {
   videos_channel_desc: 'Reports, Launches and Live streams from CNES.',
   videos_access: 'Access Feed',
   videos_featured: 'Featured',
+  video_subcategories: 'Sub-categories',
   video_feat_1_title: '🚀 Ariane 6: The Return of the European Giant',
   video_feat_1_cat: 'LAUNCHERS',
   video_v1_title: 'Ariane 6: European Rocket Succeeds 3rd Flight',
@@ -258,6 +256,7 @@ const de: Record<string, string> = {
   videos_channel_desc: 'Berichte, Starts und Livestreams vom CNES.',
   videos_access: 'Zum Feed',
   videos_featured: 'Vorgestellt',
+  video_subcategories: 'Unterkategorien',
   video_feat_1_title: '🚀 Ariane 6: Die Rückkehr des europäischen Giganten',
   video_feat_1_cat: 'TRÄGERRAKETEN',
   video_v1_title: 'Ariane 6: Erfolgreicher dritter Flug',
@@ -313,7 +312,7 @@ const de: Record<string, string> = {
   partner_p1_desc: 'Das CNES (Nationale Zentrum für Raumfahrtstudien) gestaltet Frankreichs Raumfahrtpolitik. In Toulouse befindet sich das größte Technikzentrum.',
   partner_p2_role: 'Hersteller',
   partner_p2_desc: 'Airbus Defence and Space baut in seinen Reinräumen in Toulouse wichtige Satelliten für Telekommunikation und Erdbeobachtung.',
-  partner_p3_role: 'Satelliten',
+  partner_p3_role: 'Satellites',
   partner_p3_desc: 'Thales Alenia Space ist führend bei Navigationssatelliten und baut Module für die ISS und das Lunar Gateway.',
   partner_p4_role: 'Exzellenz',
   partner_p4_desc: 'Die ISAE-SUPAERO ist eine weltweit führende Hochschule für Luft- und Raumfahrttechnik und bildet die Elite der Branche aus.',
@@ -363,6 +362,7 @@ const es: Record<string, string> = {
   videos_channel_desc: 'Informes, Lanzamientos y Transmisiones en vivo del CNES.',
   videos_access: 'Acceder al feed',
   videos_featured: 'Destacado',
+  video_subcategories: 'Subcategorías',
   video_feat_1_title: '🚀 Ariane 6: El Regreso del Gigante Europeo',
   video_feat_1_cat: 'LANZADORES',
   video_v1_title: 'Ariane 6: El cohete europeo logra su tercer vuelo',
@@ -468,6 +468,7 @@ const it: Record<string, string> = {
   videos_channel_desc: 'Reportage, Lanci e Dirette dal CNES.',
   videos_access: 'Accedi al feed',
   videos_featured: 'In evidenza',
+  video_subcategories: 'Sottocategorie',
   video_feat_1_title: '🚀 Ariane 6: Il Ritorno del Gigante Europeo',
   video_feat_1_cat: 'LANCIATORI',
   video_v1_title: 'Ariane 6: Il razzo europeo riesce il terzo volo',
@@ -530,7 +531,7 @@ const it: Record<string, string> = {
   partner_p5_role: 'Cultura',
   partner_p5_desc: 'Cité de l\'Espace è il principale parco a tema spaziale in Europa, con veri razzi ed esposizioni.',
   bh_title: 'Singolarità',
-  bh_subtitle: 'Simulazione astrofisica in tempo reale di un buco nero di Kerr.',
+  bh_subtitle: 'Simulazione astrofísica in tempo reale di un buco nero di Kerr.',
   bh_controls: 'Parametri di Simulazione',
   bh_rotation: 'Velocità di Rotazione',
   bh_bloom: 'Intensità Luminosa',
