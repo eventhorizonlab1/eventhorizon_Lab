@@ -1,328 +1,233 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { ARTICLES } from '../constants';
-import { ArrowRight, ArrowLeft, FileText, X, Clock, Calendar } from 'lucide-react';
-import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion';
 import { Article } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
-import { createPortal } from 'react-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, ArrowLeft, X, Calendar } from 'lucide-react';
 
-const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: { 
-      duration: 0.6, 
-      ease: "easeOut"
-    }
-  }
-};
-
-// --- ARTICLE MODAL CONTENT ---
+// --- MODAL COMPONENT (Basé sur le modèle Ecosystem) ---
 const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> = ({ article, onClose }) => {
     const { t } = useThemeLanguage();
     
-    // Lock scroll when mounted
+    // Bloquer le scroll d'arrière-plan
     useEffect(() => {
         document.body.style.overflow = 'hidden';
-        return () => {
-            document.body.style.overflow = 'unset';
-        };
+        return () => { document.body.style.overflow = 'unset'; };
     }, []);
 
     const title = t(`article_${article.id}_title`);
-    const date = article.date;
     
+    // Logique de contenu par défaut si la traduction manque
     let contentText = t(`article_${article.id}_content`);
     if (contentText === `article_${article.id}_content`) {
         contentText = t('article_placeholder_content');
     }
-
     const paragraphs = contentText.split('\n\n');
-    const wordCount = contentText.split(/\s+/).length;
-    const readTime = Math.max(1, Math.ceil(wordCount / 200));
 
     return (
         <motion.div
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="bg-white dark:bg-[#0a0a0a] w-full max-w-5xl h-[95dvh] md:h-[90dvh] rounded-t-3xl md:rounded-3xl overflow-hidden flex flex-col shadow-2xl relative border border-gray-200 dark:border-white/10"
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="bg-white dark:bg-[#0a0a0a] w-full max-w-5xl h-[90vh] md:h-[85vh] rounded-3xl overflow-hidden shadow-2xl relative border border-gray-100 dark:border-white/10 flex flex-col md:flex-row"
             onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="article-modal-title"
         >
-            {/* CLOSE BUTTON: Improved visibility and interaction */}
             <button 
                 onClick={onClose}
-                className="absolute top-6 right-6 md:top-8 md:right-8 z-50 p-3 bg-black/40 hover:bg-black/60 backdrop-blur-xl rounded-full text-white transition-all border border-white/20 shadow-2xl hover:scale-110 group cursor-pointer"
+                className="absolute top-4 right-4 z-50 p-2 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20"
                 aria-label={t('common_close')}
             >
-                <X size={28} strokeWidth={2} className="group-hover:rotate-90 transition-transform duration-300" />
+                <X size={24} />
             </button>
 
-            {/* HERO IMAGE: Increased height for more impact (45vh mobile / 55vh desktop) */}
-            <div className="relative h-[45vh] md:h-[55vh] shrink-0 overflow-hidden group">
-                <motion.img 
-                    initial={{ scale: 1.1 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 1.5 }}
+            {/* Gauche: Image */}
+            <div className="w-full md:w-5/12 h-1/3 md:h-full relative shrink-0">
+                <img 
                     src={article.imageUrl} 
-                    alt={title}
-                    decoding="async"
-                    onError={(e) => {
-                        e.currentTarget.src = 'https://images.unsplash.com/photo-1517976487492-5750f3195933?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80';
-                    }}
-                    className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
+                    alt={title} 
+                    className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#0a0a0a] via-transparent to-black/40"></div>
-                
-                <div className="absolute bottom-0 left-0 w-full p-6 md:p-12">
-                    <motion.span 
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="inline-flex items-center gap-2 px-3 py-1 bg-blue-600/90 text-white text-[10px] font-bold uppercase tracking-widest mb-6 rounded-full shadow-lg backdrop-blur-sm"
-                    >
-                        <FileText size={12} />
-                        Editorial
-                    </motion.span>
-                    <motion.h2 
-                        id="article-modal-title"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="text-4xl md:text-6xl lg:text-7xl font-sans font-black leading-[0.9] text-black dark:text-white drop-shadow-lg mb-6 max-w-4xl tracking-tight"
-                    >
-                        {title}
-                    </motion.h2>
-                    
-                    <motion.div 
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.4 }}
-                            className="flex flex-wrap items-center gap-4 text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300"
-                    >
-                            <div className="flex items-center gap-2 bg-white/50 dark:bg-black/50 px-4 py-1.5 rounded-full backdrop-blur-md border border-gray-200 dark:border-white/10">
-                                <Calendar size={14} />
-                                <span className="uppercase tracking-widest">{date}</span>
-                            </div>
-                            <div className="flex items-center gap-2 bg-white/50 dark:bg-black/50 px-4 py-1.5 rounded-full backdrop-blur-md border border-gray-200 dark:border-white/10">
-                                <Clock size={14} />
-                                <span>{readTime} min read</span>
-                            </div>
-                    </motion.div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent md:bg-gradient-to-r" />
+                <div className="absolute bottom-6 left-6 text-white md:hidden">
+                    <div className="flex items-center gap-2 mb-2 text-xs font-bold uppercase tracking-widest opacity-80">
+                        <Calendar size={12} />
+                        <span>{article.date}</span>
+                    </div>
+                    <h2 className="text-2xl font-black leading-tight">{title}</h2>
                 </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-6 md:px-12 py-10 custom-scrollbar bg-white dark:bg-[#0a0a0a]">
-                <div className="max-w-3xl mx-auto">
-                    <div className="prose prose-lg md:prose-xl dark:prose-invert max-w-none">
-                        <p className="font-serif text-2xl md:text-3xl leading-relaxed text-gray-900 dark:text-gray-100 mb-10 first-letter:text-7xl first-letter:font-bold first-letter:mr-4 first-letter:float-left first-letter:text-blue-600 dark:first-letter:text-blue-500">
-                            {paragraphs[0]}
-                        </p>
-                        
-                        {paragraphs.slice(1).map((para, idx) => (
-                            <p key={idx} className="font-serif text-lg md:text-xl leading-loose text-gray-700 dark:text-gray-300 mb-8 text-justify">
-                                {para}
-                            </p>
-                        ))}
+            {/* Droite: Contenu */}
+            <div className="flex-1 p-6 md:p-10 overflow-y-auto custom-scrollbar bg-white dark:bg-[#0a0a0a]">
+                <div className="hidden md:block mb-8">
+                    <div className="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">
+                        <Calendar size={14} />
+                        <span>{article.date}</span>
                     </div>
+                    <h2 className="text-4xl lg:text-5xl font-black text-black dark:text-white leading-none tracking-tight">
+                        {title}
+                    </h2>
+                </div>
 
-                    <div className="mt-20 pt-12 border-t border-gray-100 dark:border-white/10 flex flex-col items-center gap-4">
-                        <div className="w-20 h-1.5 bg-blue-600 rounded-full"></div>
-                        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
-                            *** Fin de transmission ***
+                <div className="prose prose-lg dark:prose-invert max-w-none">
+                     {paragraphs.map((para, idx) => (
+                        <p key={idx} className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed font-serif text-justify">
+                            {para}
                         </p>
-                    </div>
+                    ))}
+                </div>
+                
+                <div className="mt-12 pt-8 border-t border-gray-100 dark:border-white/10 flex justify-center">
+                    <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Event Horizon Lab</p>
                 </div>
             </div>
         </motion.div>
     );
 };
 
-const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => void }> = React.memo(({ article, onClick }) => {
-  const { t } = useThemeLanguage();
-  const title = t(`article_${article.id}_title`);
-  const summary = t(`article_${article.id}_summary`);
+// --- COMPOSANT CARTE (Structure identique à PartnerCard) ---
+const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Article) => void }> = React.memo(({ article, index, onClick }) => {
+    const { t } = useThemeLanguage();
+    const title = t(`article_${article.id}_title`);
+    const summary = t(`article_${article.id}_summary`);
 
-  return (
-    <motion.div 
-      initial="hidden"
-      animate="visible"
-      variants={cardVariants}
-      // Added 'group' here to handle hover states
-      className="group relative snap-start shrink-0 w-[85vw] md:w-[45vw] lg:w-[400px] aspect-[4/5] transform-gpu"
-    >
-        {/* CLICK OVERLAY: High Z-Index Button to guarantee click capture on all devices */}
-        <button 
-             onClick={() => onClick(article)}
-             className="absolute inset-0 z-50 w-full h-full cursor-pointer focus:outline-none rounded-[2rem] outline-none"
-             aria-label={`Lire l'article: ${title}`}
-        />
-
-        {/* VISUAL CONTAINER: Passive events to prevent interference */}
-        <div className="h-full w-full relative overflow-hidden rounded-[2rem] bg-black shadow-lg hover:shadow-3xl transition-all duration-500 border border-white/10">
-          
-          <div className="absolute inset-0 w-full h-full transform transition-transform duration-1000 group-hover:scale-105">
-             <div className="absolute inset-0 bg-gray-900 animate-pulse" /> 
-             <img 
-                src={article.imageUrl} 
-                alt={title} 
-                loading="lazy"
-                decoding="async" 
-                referrerPolicy="no-referrer"
-                onError={(e) => {
-                    e.currentTarget.src = 'https://images.unsplash.com/photo-1517976487492-5750f3195933?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
-                }}
-                className="w-full h-full object-cover opacity-80 transition-opacity duration-500 group-hover:opacity-90"
-             />
-          </div>
-          
-          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-100"></div>
-
-          <div className="absolute top-8 left-8 z-20 pointer-events-none">
-             <div className="flex items-center gap-3 text-white/80 group-hover:text-white transition-colors">
-                <span className="w-8 h-[3px] bg-white/60 group-hover:bg-blue-500 transition-colors duration-300"></span>
-                <span className="text-[11px] font-black uppercase tracking-[0.25em] shadow-black drop-shadow-md">{article.date}</span>
-             </div>
-          </div>
-
-          <div className="absolute bottom-0 left-0 w-full p-8 md:p-10 z-20 flex flex-col justify-end h-full pointer-events-none">
-             {/* CONTENT ANIMATION:
-                 On Desktop (md+): Content is hidden (-translate) and slides up on hover.
-                 On Mobile (max-md): Content is ALWAYS visible (translate-y-0), removing the need for double-tap.
-             */}
-             <div className="transform transition-transform duration-500 translate-y-12 md:translate-y-12 group-hover:translate-y-0 max-md:translate-y-0">
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            className="snap-start shrink-0 w-[85vw] md:w-[400px] cursor-pointer group"
+            onClick={() => onClick(article)}
+        >
+            {/* Conteneur Visuel */}
+            <div className="relative overflow-hidden rounded-[2rem] bg-gray-900 aspect-[4/5] mb-4 border border-white/10 shadow-lg transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
                 
-                <div className="mb-4 opacity-100 md:opacity-0 group-hover:opacity-100 max-md:opacity-100 transition-all duration-500 -translate-y-2 group-hover:translate-y-0 max-md:translate-y-0">
-                    <span className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest text-white border border-white/20">
-                        <FileText size={10} /> 
-                        <span>Article</span>
-                    </span>
-                </div>
-
-                <h3 className="text-3xl md:text-4xl lg:text-5xl font-sans font-black leading-[0.95] md:leading-[0.9] mb-6 text-white drop-shadow-xl line-clamp-none md:line-clamp-4 group-hover:line-clamp-none transition-all tracking-tighter">
-                  {title}
-                </h3>
+                {/* Image */}
+                <img 
+                    src={article.imageUrl} 
+                    alt={title}
+                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                />
                 
-                <div className="grid grid-rows-[1fr] md:grid-rows-[0fr] group-hover:grid-rows-[1fr] max-md:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out">
-                    <div className="overflow-hidden opacity-100 md:opacity-0 group-hover:opacity-100 max-md:opacity-100 transition-opacity duration-500 delay-100">
-                        <p className="text-gray-300 text-base font-medium leading-relaxed border-t border-white/20 pt-4 mb-6 max-w-[90%]">
-                        {summary}
-                        </p>
-                        <span className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-white transition-colors bg-white/10 px-4 py-3 rounded-full w-fit backdrop-blur-sm">
-                            {t('article_read_more')} 
-                            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform duration-300" />
+                {/* Overlay Dégradé */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+
+                {/* Overlay Interaction (Le "Bouton Fantôme") */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30 backdrop-blur-[2px] z-20">
+                    <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <span className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black rounded-full text-xs font-bold uppercase tracking-widest shadow-xl">
+                            {t('article_read_more')}
+                            <ArrowRight size={14} />
                         </span>
                     </div>
                 </div>
-             </div>
-          </div>
-        </div>
-    </motion.div>
-  );
+
+                {/* Contenu Texte (Toujours visible, pointer-events-none pour laisser passer le clic au parent) */}
+                <div className="absolute inset-0 p-8 flex flex-col justify-end z-10 pointer-events-none">
+                    <div className="flex items-center gap-2 mb-3">
+                        <span className="px-2 py-1 bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-md shadow-sm">
+                            Article
+                        </span>
+                        <span className="text-white/80 text-[10px] font-bold uppercase tracking-widest border-l border-white/20 pl-2">
+                            {article.date}
+                        </span>
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold text-white leading-tight mb-2 group-hover:text-blue-300 transition-colors">
+                        {title}
+                    </h3>
+                    
+                    <p className="text-gray-300 text-sm line-clamp-2 leading-relaxed">
+                        {summary}
+                    </p>
+                </div>
+            </div>
+        </motion.div>
+    );
 });
 
+// --- SECTION PRINCIPALE ---
 const ArticleSection: React.FC = () => {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const { t } = useThemeLanguage();
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+    const { t } = useThemeLanguage();
+    const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollContainerRef.current) {
-      const { current } = scrollContainerRef;
-      const scrollAmount = direction === 'left' ? -400 : 400;
-      current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  };
+    const scroll = (direction: 'left' | 'right') => {
+        if (scrollContainerRef.current) {
+            const amount = direction === 'left' ? -400 : 400;
+            scrollContainerRef.current.scrollBy({ left: amount, behavior: 'smooth' });
+        }
+    };
 
-  return (
-    <>
-    {selectedArticle && (
+    return (
         <>
-            <title>{t(`article_${selectedArticle.id}_title`) + " | Event Horizon"}</title>
-            <meta name="description" content={t(`article_${selectedArticle.id}_summary`)} />
+            <AnimatePresence>
+                {selectedArticle && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
+                        onClick={() => setSelectedArticle(null)}
+                    >
+                        <ArticleModalContent 
+                            article={selectedArticle} 
+                            onClose={() => setSelectedArticle(null)} 
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <section id="articles" className="py-16 md:py-24 bg-white dark:bg-eh-black border-t border-gray-100 dark:border-white/5 transition-colors duration-500">
+                <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-12 flex flex-col md:flex-row justify-between items-end gap-6">
+                    <div className="border-l-4 border-black dark:border-white pl-4 -ml-4 md:-ml-7">
+                        <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white">
+                            {t('articles_title')}
+                        </h2>
+                        <p className="text-gray-500 dark:text-gray-400 text-lg max-w-xl">
+                            {t('articles_subtitle')}
+                        </p>
+                    </div>
+
+                    <div className="hidden md:flex gap-4">
+                        <button onClick={() => scroll('left')} className="p-4 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all" aria-label="Scroll Left">
+                            <ArrowLeft size={20} />
+                        </button>
+                        <button onClick={() => scroll('right')} className="p-4 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all" aria-label="Scroll Right">
+                            <ArrowRight size={20} />
+                        </button>
+                    </div>
+                </div>
+
+                <div className="overflow-hidden">
+                    <div 
+                        ref={scrollContainerRef}
+                        className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-8 pb-12"
+                    >
+                        {ARTICLES.map((article, index) => (
+                            <ArticleCard 
+                                key={article.id} 
+                                article={article} 
+                                index={index} 
+                                onClick={setSelectedArticle} 
+                            />
+                        ))}
+                    </div>
+                </div>
+
+                <div className="flex md:hidden justify-center gap-1.5 mt-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-60"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+                </div>
+            </section>
         </>
-    )}
-    
-    <AnimatePresence>
-        {selectedArticle && (
-             createPortal(
-                <motion.div
-                    key="article-modal-backdrop"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="fixed inset-0 z-[10000] flex items-end md:items-center justify-center bg-black/90 backdrop-blur-md p-0 md:p-6"
-                    onClick={() => setSelectedArticle(null)}
-                >
-                    <ArticleModalContent 
-                        article={selectedArticle} 
-                        onClose={() => setSelectedArticle(null)} 
-                    />
-                </motion.div>,
-                document.body
-             )
-        )}
-    </AnimatePresence>
-
-    <motion.section 
-      id="articles" 
-      // STANDARDIZED SPACING: py-16 (mobile) md:py-24 (desktop)
-      className="py-16 md:py-24 bg-white dark:bg-eh-black relative border-t border-gray-100 dark:border-gray-800 transition-colors duration-500"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
-    >
-      <div className="px-4 md:px-12 max-w-[1800px] mx-auto mb-12">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
-            <div className="border-l-4 border-black dark:border-white pl-3 md:pl-6 -ml-4 md:-ml-7">
-                <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white">
-                    {t('articles_title')}
-                </h2>
-                <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg max-w-md">
-                    {t('articles_subtitle')}
-                </p>
-            </div>
-            
-            {/* ENABLE SCROLL BUTTONS ON TABLET (md) AND UP */}
-            <div className="hidden md:flex gap-2 pb-2">
-                <button onClick={() => scroll('left')} className="p-3 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded-full transition-all active:scale-95 text-black dark:text-white" aria-label="Scroll left">
-                    <ArrowLeft size={24} />
-                </button>
-                <button onClick={() => scroll('right')} className="p-3 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded-full transition-all active:scale-95 text-black dark:text-white" aria-label="Scroll right">
-                    <ArrowRight size={24} />
-                </button>
-            </div>
-        </div>
-      </div>
-
-      <div className="overflow-hidden">
-        <div 
-            ref={scrollContainerRef}
-            className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-8 pb-12"
-        >
-          {ARTICLES.map((article) => (
-            <ArticleCard key={article.id} article={article} onClick={setSelectedArticle} />
-          ))}
-        </div>
-      </div>
-      
-      {/* Scroll Indicator for Mobile */}
-      <div className="flex md:hidden justify-center gap-1 mt-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-50"></div>
-            <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
-            <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
-      </div>
-
-    </motion.section>
-    </>
-  );
+    );
 };
 
 export default ArticleSection;
