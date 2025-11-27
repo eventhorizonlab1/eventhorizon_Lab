@@ -36,7 +36,7 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
         >
             <button 
                 onClick={onClose}
-                className="absolute top-4 right-4 z-50 p-2 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20"
+                className="absolute top-12 right-6 md:top-6 md:right-6 z-50 p-2 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
                 aria-label={t('common_close')}
             >
                 <X size={24} />
