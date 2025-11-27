@@ -1,6 +1,8 @@
+
 import React, { useRef, useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
-import { Play, Radio, ArrowUpRight, X, ExternalLink, Filter, Clock, Hash } from 'lucide-react';
+import { Play, Radio, ArrowUpRight, X, ExternalLink, Filter, Clock, Hash, Tag } from 'lucide-react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Video } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
@@ -121,6 +123,12 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
                         <Hash size={12} />
                         {video.category}
                     </div>
+                    {video.subcategory && (
+                        <div className="flex items-center gap-1.5 bg-white/5 px-2 py-1 rounded text-white/80 text-xs font-bold uppercase tracking-wider">
+                            <Tag size={12} />
+                            {video.subcategory}
+                        </div>
+                    )}
                     <div className="flex items-center gap-1.5">
                         <Clock size={14} />
                         {video.duration}
@@ -165,7 +173,7 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
               onError={(e) => {
                 e.currentTarget.src = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
               }}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
             />
             
             {/* YouTube-style Duration Badge */}
@@ -186,10 +194,14 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
             <h4 className="text-base md:text-lg font-bold leading-tight transition-colors duration-300 text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 line-clamp-2 mb-1">
               {title}
             </h4>
-            <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{category}</span>
-                <span className="w-0.5 h-0.5 bg-gray-400 rounded-full"></span>
-                <span className="text-[10px] text-gray-400">Event Horizon</span>
+            <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{video.category}</span>
+                {video.subcategory && (
+                    <>
+                        <span className="w-0.5 h-0.5 bg-gray-400 rounded-full"></span>
+                        <span className="text-[10px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-wider">{video.subcategory}</span>
+                    </>
+                )}
             </div>
           </div>
         </div>
@@ -203,6 +215,7 @@ const VideoSection: React.FC = () => {
   const { t } = useThemeLanguage();
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('ALL');
+  const [activeSubCategory, setActiveSubCategory] = useState<string>('ALL');
   
   const { scrollYProgress } = useScroll({
     target: featuredRef,
@@ -212,48 +225,63 @@ const VideoSection: React.FC = () => {
   const imageY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
 
   const featuredTitle = t(`video_${FEATURED_VIDEO.id}_title`);
-  const featuredCat = t(`video_${FEATURED_VIDEO.id}_cat`);
 
-  // Extract unique categories for the filter list
+  // Extract unique categories (Main)
   const categories = useMemo(() => {
     const cats = new Set(VIDEOS.map(v => v.category));
     return ['ALL', ...Array.from(cats)];
   }, []);
 
+  // Extract unique subcategories (Sub)
+  const subCategories = useMemo(() => {
+    // Collect all subcategories
+    const subs = new Set<string>();
+    VIDEOS.forEach(v => {
+        if (v.subcategory) subs.add(v.subcategory);
+    });
+    return ['ALL', ...Array.from(subs)];
+  }, []);
+
   // Filter videos based on selection
   const filteredVideos = useMemo(() => {
-    if (activeCategory === 'ALL') return VIDEOS;
-    return VIDEOS.filter(v => v.category === activeCategory);
-  }, [activeCategory]);
+    return VIDEOS.filter(v => {
+        const matchCat = activeCategory === 'ALL' || v.category === activeCategory;
+        const matchSub = activeSubCategory === 'ALL' || v.subcategory === activeSubCategory;
+        return matchCat && matchSub;
+    });
+  }, [activeCategory, activeSubCategory]);
 
   return (
     <>
-      <AnimatePresence>
-          {selectedVideo && (
-              <motion.div
-                key="video-modal-backdrop"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-xl p-0 md:p-12"
-                onClick={() => setSelectedVideo(null)}
-              >
-                  <button 
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedVideo(null);
-                    }}
-                    className="absolute top-4 right-4 md:top-6 md:right-6 p-2 md:p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-50 backdrop-blur-md"
-                    aria-label={t('common_close')}
-                  >
-                    <X size={24} />
-                  </button>
-                  
-                  <VideoModalContent video={selectedVideo} />
-              </motion.div>
-          )}
-      </AnimatePresence>
+      {createPortal(
+        <AnimatePresence>
+            {selectedVideo && (
+                <motion.div
+                  key="video-modal-backdrop"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-xl p-0 md:p-12"
+                  onClick={() => setSelectedVideo(null)}
+                >
+                    <button 
+                      onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedVideo(null);
+                      }}
+                      className="absolute top-4 right-4 md:top-6 md:right-6 p-2 md:p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-50 backdrop-blur-md"
+                      aria-label={t('common_close')}
+                    >
+                      <X size={24} />
+                    </button>
+                    
+                    <VideoModalContent video={selectedVideo} />
+                </motion.div>
+            )}
+        </AnimatePresence>,
+        document.body
+      )}
 
       <motion.section 
         id="videos" 
@@ -315,7 +343,7 @@ const VideoSection: React.FC = () => {
 
         {/* SECTION TITLE & FILTERS */}
         <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-8">
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-8">
                 <div className="border-l-4 border-black dark:border-white pl-3 md:pl-6 -ml-4 md:-ml-7">
                     <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white transition-colors duration-500">
                     {t('videos_title')}
@@ -325,27 +353,47 @@ const VideoSection: React.FC = () => {
                     </p>
                 </div>
 
-                {/* YOUTUBE-STYLE CHIPS (FILTERS) */}
-                <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
-                         <Filter size={14} />
-                         <span>{t('video_subcategories')}</span>
-                    </div>
+                <div className="flex flex-col gap-6">
+                    {/* MAIN CATEGORIES */}
                     <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mask-linear-fade">
                         {categories.map((cat) => (
                             <button
                                 key={cat}
                                 onClick={() => setActiveCategory(cat)}
                                 className={`
-                                    px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide whitespace-nowrap transition-all duration-300 border
+                                    px-5 py-2 rounded-lg text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300 border-2
                                     ${activeCategory === cat 
-                                        ? 'bg-black text-white dark:bg-white dark:text-black border-black dark:border-white shadow-md transform scale-105' 
-                                        : 'bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 border-transparent hover:bg-gray-200 dark:hover:bg-white/10'}
+                                        ? 'bg-black text-white dark:bg-white dark:text-black border-black dark:border-white shadow-lg' 
+                                        : 'bg-transparent text-gray-500 dark:text-gray-400 border-gray-200 dark:border-white/10 hover:border-black dark:hover:border-white hover:text-black dark:hover:text-white'}
                                 `}
                             >
-                                {cat === 'ALL' ? 'Tout' : cat}
+                                {cat === 'ALL' ? 'Tous les sujets' : cat}
                             </button>
                         ))}
+                    </div>
+
+                    {/* SUB CATEGORIES */}
+                    <div className="flex flex-col gap-3">
+                         <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                             <Filter size={12} />
+                             <span>{t('video_subcategories')}</span>
+                        </div>
+                        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
+                            {subCategories.map((sub) => (
+                                <button
+                                    key={sub}
+                                    onClick={() => setActiveSubCategory(sub)}
+                                    className={`
+                                        px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wide whitespace-nowrap transition-all duration-300
+                                        ${activeSubCategory === sub 
+                                            ? 'bg-blue-600 text-white shadow-md' 
+                                            : 'bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10'}
+                                    `}
+                                >
+                                    {sub === 'ALL' ? 'Tous les formats' : sub}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -378,7 +426,12 @@ const VideoSection: React.FC = () => {
               
               <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 flex flex-col md:flex-row justify-between items-end gap-6">
                   <div>
-                      <span className="inline-block px-3 py-1 bg-[#ff0000] text-white text-[10px] font-bold uppercase tracking-widest mb-3 rounded-full shadow-lg">{t('videos_featured')}</span>
+                      <div className="flex gap-2 mb-3">
+                        <span className="inline-block px-3 py-1 bg-[#ff0000] text-white text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg">{t('videos_featured')}</span>
+                        {FEATURED_VIDEO.subcategory && (
+                            <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg">{FEATURED_VIDEO.subcategory}</span>
+                        )}
+                      </div>
                       <h3 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tighter uppercase text-white mb-2 max-w-3xl">
                           {featuredTitle}
                       </h3>
@@ -405,8 +458,8 @@ const VideoSection: React.FC = () => {
           
           {filteredVideos.length === 0 && (
               <div className="col-span-full flex flex-col items-center justify-center py-20 text-gray-500">
-                  <p className="text-lg">Aucune vidéo dans cette catégorie.</p>
-                  <button onClick={() => setActiveCategory('ALL')} className="mt-4 text-blue-500 hover:underline">Voir tout</button>
+                  <p className="text-lg mb-2">Aucune vidéo ne correspond à ces critères.</p>
+                  <button onClick={() => {setActiveCategory('ALL'); setActiveSubCategory('ALL');}} className="text-blue-500 hover:underline text-sm font-bold uppercase tracking-widest">Réinitialiser les filtres</button>
               </div>
           )}
         </div>

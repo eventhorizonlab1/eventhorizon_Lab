@@ -3,6 +3,7 @@ export interface Video {
   id: string;
   title: string;
   category: string;
+  subcategory?: string;
   duration: string;
   imageUrl: string;
   videoUrl: string;

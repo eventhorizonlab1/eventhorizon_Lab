@@ -1,5 +1,6 @@
 
 
+
 import { Video, Article, Partner } from './types';
 
 // Navigation simplifiée : Vidéos, Articles, Écosystème
@@ -30,6 +31,7 @@ export const FEATURED_VIDEO: Video = {
   id: 'feat_1', 
   title: '🚀 Ariane 6 : Le Retour du Géant Européen',
   category: 'LANCEURS',
+  subcategory: 'LIVE',
   duration: 'Live',
   // Image depuis votre dépôt GitHub (Branche main)
   imageUrl: 'https://raw.githubusercontent.com/eventhorizonlab1/eventhorizon_Lab/main/images/vignette_ariane6.jpeg', 
@@ -42,7 +44,8 @@ export const VIDEOS: Video[] = [
   { 
     id: 'v_new_1', 
     title: 'Ariane 6 - Le Vol Inaugural (Replay)', 
-    category: 'LANCEURS', 
+    category: 'LANCEURS',
+    subcategory: 'REPLAY',
     duration: '03:45:00', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=B5mDezzc74M'),
     videoUrl: 'https://www.youtube.com/watch?v=B5mDezzc74M',
@@ -51,7 +54,8 @@ export const VIDEOS: Video[] = [
   { 
     id: 'v_new_2', 
     title: 'Ariane 6 : Un succès (presque) complet !', 
-    category: 'ANALYSE', 
+    category: 'LANCEURS', 
+    subcategory: 'ANALYSE',
     duration: '18:20', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=Tiqfj7QhKyI'),
     videoUrl: 'https://www.youtube.com/watch?v=Tiqfj7QhKyI',
@@ -60,7 +64,8 @@ export const VIDEOS: Video[] = [
   { 
     id: 'v_new_3', 
     title: 'Lancement Inaugural Ariane 6 commenté', 
-    category: 'LIVE', 
+    category: 'LANCEURS', 
+    subcategory: 'LIVE',
     duration: '04:12:00', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=MRGid8lylLc'),
     videoUrl: 'https://www.youtube.com/watch?v=MRGid8lylLc',
@@ -70,6 +75,7 @@ export const VIDEOS: Video[] = [
     id: 'v_new_4', 
     title: 'Décollage Ariane 6 - Vol VA265 / Sentinel-1D', 
     category: 'FUTUR', 
+    subcategory: 'SIMULATION',
     duration: '02:30', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=FDKbEavYCVk'),
     videoUrl: 'https://www.youtube.com/watch?v=FDKbEavYCVk',
@@ -78,7 +84,8 @@ export const VIDEOS: Video[] = [
   { 
     id: 'v_new_5', 
     title: 'Rêves d\'Espace : Décollage Ariane 6 VA265', 
-    category: 'REPORTAGE', 
+    category: 'LANCEURS', 
+    subcategory: 'REPORTAGE',
     duration: '15:10', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=ELTmiLg7gLw'),
     videoUrl: 'https://www.youtube.com/watch?v=ELTmiLg7gLw',
@@ -88,6 +95,7 @@ export const VIDEOS: Video[] = [
     id: 'v_new_6', 
     title: 'ESA Open Day 2025 (ESRIN)', 
     category: 'ÉVÉNEMENT', 
+    subcategory: 'VISITE',
     duration: '05:45', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=LsX01klFlpU'),
     videoUrl: 'https://www.youtube.com/watch?v=LsX01klFlpU',
@@ -96,7 +104,8 @@ export const VIDEOS: Video[] = [
   { 
     id: 'v_new_7', 
     title: 'Hélène Huby (The Exploration Company) à BIG 2025', 
-    category: 'INTERVIEW', 
+    category: 'NEWSPACE', 
+    subcategory: 'INTERVIEW',
     duration: '25:30', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=jUQ3qZNLXNg'),
     videoUrl: 'https://www.youtube.com/watch?v=jUQ3qZNLXNg',
@@ -106,6 +115,7 @@ export const VIDEOS: Video[] = [
     id: 'v_new_8', 
     title: 'The Exploration Company : Présentation Capsule Nyx', 
     category: 'TECH', 
+    subcategory: 'PRÉSENTATION',
     duration: '03:15', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=tqRHR6u2MpQ'),
     videoUrl: 'https://www.youtube.com/watch?v=tqRHR6u2MpQ',
@@ -115,6 +125,7 @@ export const VIDEOS: Video[] = [
     id: 'v_new_9', 
     title: 'MaiaSpace : Allocutions officielles (Juin 2025)', 
     category: 'NEWSPACE', 
+    subcategory: 'CONFÉRENCE',
     duration: '12:45', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=C4BdQ5n34Wo'),
     videoUrl: 'https://www.youtube.com/watch?v=C4BdQ5n34Wo',
@@ -123,7 +134,8 @@ export const VIDEOS: Video[] = [
   { 
     id: 'v_new_10', 
     title: 'Yohann Leroy (CEO MaiaSpace) - Interview', 
-    category: 'INTERVIEW', 
+    category: 'NEWSPACE', 
+    subcategory: 'INTERVIEW',
     duration: '10:20', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=GvL919qYTSY'),
     videoUrl: 'https://www.youtube.com/watch?v=GvL919qYTSY',
@@ -132,7 +144,8 @@ export const VIDEOS: Video[] = [
   { 
     id: 'v_new_11', 
     title: 'Latitude : Stanislas Maximin (CEO) - Interview', 
-    category: 'INTERVIEW', 
+    category: 'STARTUP', 
+    subcategory: 'INTERVIEW',
     duration: '14:10', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=E0eVosJGnjA'),
     videoUrl: 'https://www.youtube.com/watch?v=E0eVosJGnjA',
@@ -141,7 +154,8 @@ export const VIDEOS: Video[] = [
   { 
     id: 'v_new_12', 
     title: 'Latitude à VivaTech 2025', 
-    category: 'SHORT', 
+    category: 'TECH', 
+    subcategory: 'SHORT', 
     duration: '00:59', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/shorts/5ImuM68aN5c'),
     videoUrl: 'https://www.youtube.com/shorts/5ImuM68aN5c',
@@ -150,7 +164,8 @@ export const VIDEOS: Video[] = [
   { 
     id: 'v_new_13', 
     title: 'Isar Aerospace : Premier vol Spectrum', 
-    category: 'LANCEURS', 
+    category: 'LANCEURS',
+    subcategory: 'TEST',
     duration: '04:50', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=yAxzKhxqdWg'),
     videoUrl: 'https://www.youtube.com/watch?v=yAxzKhxqdWg',
@@ -159,7 +174,8 @@ export const VIDEOS: Video[] = [
   { 
     id: 'v_new_14', 
     title: 'Analyse du crash Isar Aerospace', 
-    category: 'ANALYSE', 
+    category: 'LANCEURS', 
+    subcategory: 'ANALYSE',
     duration: '08:30', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=LxC-BvAW5G4'),
     videoUrl: 'https://www.youtube.com/watch?v=LxC-BvAW5G4',
@@ -168,7 +184,8 @@ export const VIDEOS: Video[] = [
   { 
     id: 'v_new_15', 
     title: 'HyImpulse : Premier tir (Mai 2024)', 
-    category: 'TEST', 
+    category: 'NEWSPACE', 
+    subcategory: 'TEST',
     duration: '02:15', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=IaxMjVpdAsY'),
     videoUrl: 'https://www.youtube.com/watch?v=IaxMjVpdAsY',
@@ -177,7 +194,8 @@ export const VIDEOS: Video[] = [
   { 
     id: 'v_new_16', 
     title: 'PLD Space : Miura 5 Update', 
-    category: 'SHORT', 
+    category: 'NEWSPACE',
+    subcategory: 'SHORT',
     duration: '00:45', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/shorts/7-r6yEgORes'),
     videoUrl: 'https://www.youtube.com/shorts/7-r6yEgORes',
@@ -187,6 +205,7 @@ export const VIDEOS: Video[] = [
     id: 'v_new_17', 
     title: 'Hugo Lisoir : Perspectives et défis 2025', 
     category: 'ANALYSE', 
+    subcategory: 'OPINION',
     duration: '22:00', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=86ufZvtsj8M'),
     videoUrl: 'https://www.youtube.com/watch?v=86ufZvtsj8M',
@@ -195,7 +214,8 @@ export const VIDEOS: Video[] = [
   { 
     id: 'v_new_18', 
     title: 'Latitude : A French Space Startup', 
-    category: 'DOCUMENTAIRE', 
+    category: 'STARTUP', 
+    subcategory: 'DOCUMENTAIRE', 
     duration: '11:45', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=1jA1c7PyBDk'),
     videoUrl: 'https://www.youtube.com/watch?v=1jA1c7PyBDk',
@@ -205,6 +225,7 @@ export const VIDEOS: Video[] = [
     id: 'v_new_19', 
     title: 'Comprendre MaiaSpace en 30 secondes', 
     category: 'ÉDU', 
+    subcategory: 'SHORT',
     duration: '00:30', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=7tyJPJkFvM8'),
     videoUrl: 'https://www.youtube.com/watch?v=7tyJPJkFvM8',
@@ -213,7 +234,8 @@ export const VIDEOS: Video[] = [
   { 
     id: 'v_new_20', 
     title: 'ESA Living Planet Symposium 2025', 
-    category: 'CONFÉRENCE', 
+    category: 'SCIENCE', 
+    subcategory: 'CONFÉRENCE', 
     duration: '01:30:00', 
     imageUrl: getYouTubeThumbnail('https://www.youtube.com/watch?v=qhOfIy6PpH8'),
     videoUrl: 'https://www.youtube.com/watch?v=qhOfIy6PpH8',
