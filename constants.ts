@@ -338,41 +338,69 @@ export const VIDEOS: Video[] = [
 
 export const ARTICLES: Article[] = [
   { 
-    id: 'a1', 
-    title: 'Pourquoi Toulouse est la capitale du spatial', 
-    summary: 'Analyse économique et structurelle de l\'écosystème Aerospace Valley.', 
-    date: '10 OCT 2023', 
-    // Toulouse Pont Neuf / Garonne (Unsplash) - Stable and high quality
-    imageUrl: 'https://images.unsplash.com/photo-1592861956120-e524fc739696?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+    id: 'a_asterix', 
+    title: 'Astérix : 60 ans en orbite pour le premier satellite français', 
+    summary: "Retour sur l'histoire du premier satellite français lancé en 1965.", 
+    date: '26 NOV 2025', 
+    // Satellite/Space historic feel
+    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
   },
   { 
-    id: 'a2', 
-    title: 'Interview exclusive : Le DG de l\'ESA', 
-    summary: 'Vision stratégique pour l\'autonomie européenne à l\'horizon 2030.', 
-    date: '05 OCT 2023', 
-    imageUrl: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    id: 'a_adenot', 
+    title: "L'astronaute Sophie Adenot sereine avant son départ pour l'ISS", 
+    summary: "Interview exclusive avant la mission spatiale historique.", 
+    date: '20 NOV 2025', 
+    // Astronaut / Space suit
+    imageUrl: 'https://images.unsplash.com/photo-1541873676-a18131494184?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
   },
   { 
-    id: 'a3', 
-    title: 'Propulsion Ionique : Le dossier technique', 
-    summary: 'Comment les moteurs électriques redéfinissent les voyages lointains.', 
-    date: '28 SEP 2023', 
-    imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    id: 'a_exobio', 
+    title: "De la vie ailleurs ? Le grand livre de l'exobiologie", 
+    summary: "Exploration des possibilités de vie extraterrestre à travers un nouvel ouvrage de référence.", 
+    date: '15 NOV 2025', 
+    // DNA / Abstract Space / Biology
+    imageUrl: 'https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
   },
   { 
-    id: 'a4', 
-    title: 'Retour sur la Lune : Mission Argonaut', 
-    summary: 'Les détails de l\'atterrisseur logistique européen lourd.', 
-    date: '20 SEP 2023', 
-    imageUrl: 'https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    id: 'a_nasa_moon', 
+    title: "La NASA accélère son retour sur la Lune", 
+    summary: "Le programme Artemis passe à la vitesse supérieure.", 
+    date: '10 NOV 2025', 
+    // Moon / Astronaut / Artemis
+    imageUrl: 'https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
   },
   { 
-    id: 'a5', 
-    title: 'Loi Spatiale et Débris Orbitaux', 
-    summary: 'Les nouvelles réglementations pour un espace durable (Zéro Débris).', 
-    date: '15 SEP 2023', 
-    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    id: 'a_galileo', 
+    title: "Lancement de deux satellites Galileo le 17 décembre", 
+    summary: "Arianespace prépare le déploiement de la constellation européenne.", 
+    date: '05 NOV 2025', 
+    // Rocket Launch / Satellite
+    imageUrl: 'https://images.unsplash.com/photo-1517976487492-5750f3195933?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
   },
+  { 
+    id: 'a_geminides', 
+    title: "Carte du ciel : Le retour des Géminides", 
+    summary: "Tout ce qu'il faut savoir pour observer la pluie d'étoiles filantes de décembre.", 
+    date: '01 DEC 2025', 
+    // Starry Sky / Meteors - Plus spectaculaire
+    imageUrl: 'https://images.unsplash.com/photo-1518175510793-195b08493019?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+  },
+  { 
+    id: 'a_exoplanet', 
+    title: "Première carte 3D d'une atmosphère d'exoplanète", 
+    summary: "Une percée scientifique majeure dans l'étude des mondes lointains.", 
+    date: '28 OCT 2025', 
+    // Exoplanet Atmosphere / Hot Surface - Plus scientifique
+    imageUrl: 'https://images.unsplash.com/photo-1614314913007-2b4ae8ce32d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+  },
+  { 
+    id: 'a_toulouse', 
+    title: "Pourquoi Toulouse est la capitale du spatial", 
+    summary: "Découverte de l'écosystème unique de la ville rose.", 
+    date: '05 OCT 2025', 
+    // Toulouse / Space City (Pont Neuf / Garonne)
+    imageUrl: 'https://images.unsplash.com/photo-1563539824683-149f705a2254?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+  }
 ];
 
 export const PARTNERS: Partner[] = [
