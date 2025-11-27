@@ -1,6 +1,6 @@
 
 import React, { useRef, useEffect, useState } from 'react';
-import { motion, useScroll, useTransform, useInView, useReducedMotion, MotionValue } from 'framer-motion';
+import { motion, useScroll, useTransform, Variants, useInView, useReducedMotion, MotionValue } from 'framer-motion';
 import { Play } from 'lucide-react';
 import * as THREE from 'three';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
@@ -242,22 +242,88 @@ const FragmentShader = `
     }
 `;
 
-// STATIC TEXT - No animation effects
+const titleContainerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.3,
+      staggerDirection: 1
+    }
+  }
+};
+
+// Simplified AnimatedText for A11y/Motion Safety AND Tablet Performance
 const AnimatedText = ({ text, className }: { text: string, className?: string }) => {
+  const shouldReduceMotion = useReducedMotion();
+  const [isOptimized, setIsOptimized] = useState(false);
+
+  // Detect Mobile/Tablet to simplify animations (remove heavy blur/3D)
+  useEffect(() => {
+    const checkOptimization = () => {
+       // Optimize for devices smaller than typical laptops (iPads are often 768-1024 or 834-1194)
+       setIsOptimized(window.innerWidth < 1280);
+    };
+    checkOptimization();
+    window.addEventListener('resize', checkOptimization);
+    return () => window.removeEventListener('resize', checkOptimization);
+  }, []);
+
+  const letterVariants: Variants = React.useMemo(() => ({
+    hidden: { 
+      opacity: 0,
+      // iPad/Tablet Optimization:
+      // 1. Reduce scale (avoid huge texture re-draws)
+      // 2. Remove 3D rotation (expensive on mobile GPUs)
+      // 3. Remove Blur filter (major performance killer on Retina screens)
+      scale: shouldReduceMotion ? 1 : (isOptimized ? 1.2 : 8),
+      y: shouldReduceMotion ? 0 : (isOptimized ? 50 : 100),
+      rotateX: shouldReduceMotion || isOptimized ? 0 : -90,
+      rotateZ: shouldReduceMotion || isOptimized ? 0 : -30,
+      filter: shouldReduceMotion || isOptimized ? "blur(0px)" : "blur(20px)",
+      transformOrigin: "50% 100%",
+    },
+    visible: { 
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      rotateX: 0,
+      rotateZ: 0,
+      filter: "blur(0px)",
+      transformOrigin: "50% 50%",
+      transition: {
+        duration: shouldReduceMotion ? 0.5 : (isOptimized ? 0.9 : 1.4), // Slightly faster on tablet
+        ease: [0.2, 0.8, 0.2, 1],
+      }
+    }
+  }), [shouldReduceMotion, isOptimized]);
+
   return (
-    <div 
+    <motion.div 
+      key={text} 
+      variants={titleContainerVariants}
+      initial="hidden"
+      animate="visible"
       className={`flex flex-wrap justify-center gap-x-[0.2em] gap-y-2 ${className}`}
+      // Remove perspective on optimized devices to avoid creating a 3D context
+      style={{ perspective: isOptimized ? "none" : "1200px" }}
     >
       {text.split(" ").map((word, i) => (
-        <span key={i} className="inline-block whitespace-nowrap">
-            <span 
-              className="inline-block text-transparent bg-clip-text bg-gradient-to-b from-black via-black to-gray-600 dark:from-white dark:via-white dark:to-gray-400"
+        <span key={i} className="inline-block whitespace-nowrap relative" style={{ transformStyle: isOptimized ? "flat" : "preserve-3d" }}>
+          {word.split("").map((char, j) => (
+            <motion.span 
+              key={j} 
+              variants={letterVariants} 
+              className="inline-block transform-gpu text-transparent bg-clip-text bg-gradient-to-b from-black via-black to-gray-600 dark:from-white dark:via-white dark:to-gray-400"
+              style={{ backfaceVisibility: isOptimized ? "visible" : "hidden" }} 
             >
-              {word}
-            </span>
+              {char}
+            </motion.span>
+          ))}
         </span>
       ))}
-    </div>
+    </motion.div>
   );
 };
 
@@ -421,7 +487,7 @@ const Hero: React.FC = () => {
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: shouldReduceMotion ? 0.2 : 0.5, duration: 1, ease: "easeOut" }}
+                transition={{ delay: shouldReduceMotion ? 0.2 : 1.2, duration: 1, ease: "easeOut" }}
                 style={{ opacity, scale, filter: blur, y: ySubtitle }}
                 className="w-full"
               >
@@ -433,7 +499,7 @@ const Hero: React.FC = () => {
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: shouldReduceMotion ? 0.3 : 0.8, duration: 1, ease: "easeOut" }}
+                transition={{ delay: shouldReduceMotion ? 0.3 : 1.5, duration: 1, ease: "easeOut" }}
                 style={{ opacity, scale, filter: blur, y: yCTA }}
                 className="flex flex-col items-center mt-8 md:mt-12 gap-8"
               >

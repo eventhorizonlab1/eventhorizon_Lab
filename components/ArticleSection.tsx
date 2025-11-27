@@ -58,7 +58,7 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
             {/* CLOSE BUTTON: Improved visibility and interaction */}
             <button 
                 onClick={onClose}
-                className="absolute top-6 right-6 md:top-8 md:right-8 z-50 p-3 bg-black/40 hover:bg-black/60 backdrop-blur-xl rounded-full text-white transition-all border border-white/20 shadow-2xl hover:scale-110 group"
+                className="absolute top-6 right-6 md:top-8 md:right-8 z-50 p-3 bg-black/40 hover:bg-black/60 backdrop-blur-xl rounded-full text-white transition-all border border-white/20 shadow-2xl hover:scale-110 group cursor-pointer"
                 aria-label={t('common_close')}
             >
                 <X size={28} strokeWidth={2} className="group-hover:rotate-90 transition-transform duration-300" />
@@ -155,11 +155,11 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
       animate="visible"
       variants={cardVariants}
       // Tablet Optimization: w-[45vw] for comfortable 2-card peek
-      className="snap-start shrink-0 w-[85vw] md:w-[45vw] lg:w-[400px] aspect-[4/5] transform-gpu"
+      className="snap-start shrink-0 w-[85vw] md:w-[45vw] lg:w-[400px] aspect-[4/5] transform-gpu cursor-pointer"
       onClick={() => onClick(article)}
       style={{ willChange: 'transform' }}
     >
-        <div className="group cursor-pointer h-full relative overflow-hidden rounded-[2rem] bg-black shadow-lg hover:shadow-3xl transition-all duration-500 border border-white/10">
+        <div className="group h-full relative overflow-hidden rounded-[2rem] bg-black shadow-lg hover:shadow-3xl transition-all duration-500 border border-white/10">
           
           <div className="absolute inset-0 w-full h-full transform transition-transform duration-1000 group-hover:scale-105">
              <div className="absolute inset-0 bg-gray-900 animate-pulse" /> 
@@ -185,7 +185,8 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
              </div>
           </div>
 
-          <div className="absolute bottom-0 left-0 w-full p-8 md:p-10 z-20 flex flex-col justify-end h-full pointer-events-none">
+          {/* FIX: Removed pointer-events-none to ensure clicks register reliably on the whole card area on all devices */}
+          <div className="absolute bottom-0 left-0 w-full p-8 md:p-10 z-20 flex flex-col justify-end h-full">
              <div className="transform transition-transform duration-500 translate-y-12 group-hover:translate-y-0">
                 
                 <div className="mb-4 opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-y-2 group-hover:translate-y-0">
@@ -204,7 +205,7 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
                         <p className="text-gray-300 text-base font-medium leading-relaxed border-t border-white/20 pt-4 mb-6 max-w-[90%]">
                         {summary}
                         </p>
-                        <button className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-white group/btn hover:text-blue-400 transition-colors pointer-events-auto bg-white/10 hover:bg-white/20 px-4 py-3 rounded-full w-fit backdrop-blur-sm">
+                        <button className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-white group/btn hover:text-blue-400 transition-colors bg-white/10 hover:bg-white/20 px-4 py-3 rounded-full w-fit backdrop-blur-sm">
                             {t('article_read_more')} 
                             <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform duration-300" />
                         </button>
@@ -280,11 +281,12 @@ const ArticleSection: React.FC = () => {
                 </p>
             </div>
             
-            <div className="hidden lg:flex gap-2 pb-2">
-                <button onClick={() => scroll('left')} className="p-3 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded-full transition-all active:scale-95 text-black dark:text-white">
+            {/* ENABLE SCROLL BUTTONS ON TABLET (md) AND UP */}
+            <div className="hidden md:flex gap-2 pb-2">
+                <button onClick={() => scroll('left')} className="p-3 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded-full transition-all active:scale-95 text-black dark:text-white" aria-label="Scroll left">
                     <ArrowLeft size={24} />
                 </button>
-                <button onClick={() => scroll('right')} className="p-3 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded-full transition-all active:scale-95 text-black dark:text-white">
+                <button onClick={() => scroll('right')} className="p-3 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded-full transition-all active:scale-95 text-black dark:text-white" aria-label="Scroll right">
                     <ArrowRight size={24} />
                 </button>
             </div>
@@ -302,8 +304,8 @@ const ArticleSection: React.FC = () => {
         </div>
       </div>
       
-      {/* Scroll Indicator for Mobile/Tablet */}
-      <div className="flex lg:hidden justify-center gap-1 mt-2">
+      {/* Scroll Indicator for Mobile */}
+      <div className="flex md:hidden justify-center gap-1 mt-2">
             <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-50"></div>
             <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
             <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
