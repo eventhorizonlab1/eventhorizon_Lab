@@ -392,14 +392,6 @@ export const ARTICLES: Article[] = [
     date: '28 OCT 2025', 
     // Exoplanet Atmosphere / Hot Surface - Plus scientifique (Abstract planet surface)
     imageUrl: 'https://images.unsplash.com/photo-1545156521-77bd85671d30?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
-  },
-  { 
-    id: 'a_toulouse', 
-    title: "Pourquoi Toulouse est la capitale du spatial", 
-    summary: "Découverte de l'écosystème unique de la ville rose.", 
-    date: '05 OCT 2025', 
-    // Toulouse / Space City (Pont Neuf / Garonne)
-    imageUrl: 'https://images.unsplash.com/photo-1563539824683-149f705a2254?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
   }
 ];
 
