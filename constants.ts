@@ -342,8 +342,8 @@ export const ARTICLES: Article[] = [
     title: 'Pourquoi Toulouse est la capitale du spatial', 
     summary: 'Analyse économique et structurelle de l\'écosystème Aerospace Valley.', 
     date: '10 OCT 2023', 
-    // Place du Capitole (Nuit) - Wikimedia Commons
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Le_Capitole_Toulouse_nuit.jpg/1024px-Le_Capitole_Toulouse_nuit.jpg'
+    // Toulouse Pont Neuf / Garonne (Unsplash) - Stable and high quality
+    imageUrl: 'https://images.unsplash.com/photo-1592861956120-e524fc739696?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
   },
   { 
     id: 'a2', 
