@@ -154,12 +154,18 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
       initial="hidden"
       animate="visible"
       variants={cardVariants}
-      // Tablet Optimization: w-[45vw] for comfortable 2-card peek
-      className="snap-start shrink-0 w-[85vw] md:w-[45vw] lg:w-[400px] aspect-[4/5] transform-gpu cursor-pointer"
-      onClick={() => onClick(article)}
-      style={{ willChange: 'transform' }}
+      // Added 'group' here to handle hover states
+      className="group relative snap-start shrink-0 w-[85vw] md:w-[45vw] lg:w-[400px] aspect-[4/5] transform-gpu"
     >
-        <div className="group h-full relative overflow-hidden rounded-[2rem] bg-black shadow-lg hover:shadow-3xl transition-all duration-500 border border-white/10">
+        {/* CLICK OVERLAY: High Z-Index Button to guarantee click capture on all devices */}
+        <button 
+             onClick={() => onClick(article)}
+             className="absolute inset-0 z-50 w-full h-full cursor-pointer focus:outline-none rounded-[2rem] outline-none"
+             aria-label={`Lire l'article: ${title}`}
+        />
+
+        {/* VISUAL CONTAINER: Passive events to prevent interference */}
+        <div className="h-full w-full relative overflow-hidden rounded-[2rem] bg-black shadow-lg hover:shadow-3xl transition-all duration-500 border border-white/10">
           
           <div className="absolute inset-0 w-full h-full transform transition-transform duration-1000 group-hover:scale-105">
              <div className="absolute inset-0 bg-gray-900 animate-pulse" /> 
@@ -178,37 +184,40 @@ const ArticleCard: React.FC<{ article: Article; onClick: (article: Article) => v
           
           <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-100"></div>
 
-          <div className="absolute top-8 left-8 z-20">
+          <div className="absolute top-8 left-8 z-20 pointer-events-none">
              <div className="flex items-center gap-3 text-white/80 group-hover:text-white transition-colors">
                 <span className="w-8 h-[3px] bg-white/60 group-hover:bg-blue-500 transition-colors duration-300"></span>
                 <span className="text-[11px] font-black uppercase tracking-[0.25em] shadow-black drop-shadow-md">{article.date}</span>
              </div>
           </div>
 
-          {/* FIX: Removed pointer-events-none to ensure clicks register reliably on the whole card area on all devices */}
-          <div className="absolute bottom-0 left-0 w-full p-8 md:p-10 z-20 flex flex-col justify-end h-full">
-             <div className="transform transition-transform duration-500 translate-y-12 group-hover:translate-y-0">
+          <div className="absolute bottom-0 left-0 w-full p-8 md:p-10 z-20 flex flex-col justify-end h-full pointer-events-none">
+             {/* CONTENT ANIMATION:
+                 On Desktop (md+): Content is hidden (-translate) and slides up on hover.
+                 On Mobile (max-md): Content is ALWAYS visible (translate-y-0), removing the need for double-tap.
+             */}
+             <div className="transform transition-transform duration-500 translate-y-12 md:translate-y-12 group-hover:translate-y-0 max-md:translate-y-0">
                 
-                <div className="mb-4 opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-y-2 group-hover:translate-y-0">
+                <div className="mb-4 opacity-100 md:opacity-0 group-hover:opacity-100 max-md:opacity-100 transition-all duration-500 -translate-y-2 group-hover:translate-y-0 max-md:translate-y-0">
                     <span className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest text-white border border-white/20">
                         <FileText size={10} /> 
                         <span>Article</span>
                     </span>
                 </div>
 
-                <h3 className="text-3xl md:text-4xl lg:text-5xl font-sans font-black leading-[0.95] md:leading-[0.9] mb-6 text-white drop-shadow-xl line-clamp-4 group-hover:line-clamp-none transition-all tracking-tighter">
+                <h3 className="text-3xl md:text-4xl lg:text-5xl font-sans font-black leading-[0.95] md:leading-[0.9] mb-6 text-white drop-shadow-xl line-clamp-none md:line-clamp-4 group-hover:line-clamp-none transition-all tracking-tighter">
                   {title}
                 </h3>
                 
-                <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out">
-                    <div className="overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                <div className="grid grid-rows-[1fr] md:grid-rows-[0fr] group-hover:grid-rows-[1fr] max-md:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out">
+                    <div className="overflow-hidden opacity-100 md:opacity-0 group-hover:opacity-100 max-md:opacity-100 transition-opacity duration-500 delay-100">
                         <p className="text-gray-300 text-base font-medium leading-relaxed border-t border-white/20 pt-4 mb-6 max-w-[90%]">
                         {summary}
                         </p>
-                        <button className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-white group/btn hover:text-blue-400 transition-colors bg-white/10 hover:bg-white/20 px-4 py-3 rounded-full w-fit backdrop-blur-sm">
+                        <span className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-white transition-colors bg-white/10 px-4 py-3 rounded-full w-fit backdrop-blur-sm">
                             {t('article_read_more')} 
-                            <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform duration-300" />
-                        </button>
+                            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform duration-300" />
+                        </span>
                     </div>
                 </div>
              </div>
