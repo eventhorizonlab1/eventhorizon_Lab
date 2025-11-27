@@ -382,16 +382,16 @@ export const ARTICLES: Article[] = [
     title: "Carte du ciel : Le retour des Géminides", 
     summary: "Tout ce qu'il faut savoir pour observer la pluie d'étoiles filantes de décembre.", 
     date: '01 DEC 2025', 
-    // Starry Sky / Meteors - Plus spectaculaire
-    imageUrl: 'https://images.unsplash.com/photo-1518175510793-195b08493019?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+    // Starry Sky / Meteors - Plus spectaculaire (Milky Way / Shooting stars vibe)
+    imageUrl: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
   },
   { 
     id: 'a_exoplanet', 
     title: "Première carte 3D d'une atmosphère d'exoplanète", 
     summary: "Une percée scientifique majeure dans l'étude des mondes lointains.", 
     date: '28 OCT 2025', 
-    // Exoplanet Atmosphere / Hot Surface - Plus scientifique
-    imageUrl: 'https://images.unsplash.com/photo-1614314913007-2b4ae8ce32d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+    // Exoplanet Atmosphere / Hot Surface - Plus scientifique (Abstract planet surface)
+    imageUrl: 'https://images.unsplash.com/photo-1545156521-77bd85671d30?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
   },
   { 
     id: 'a_toulouse', 
