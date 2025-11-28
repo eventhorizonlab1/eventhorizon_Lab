@@ -195,7 +195,9 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
                             {title}
                         </h4>
                         <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{video.category}</span>
+                            <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                {t(`video_${video.id}_cat`) === `video_${video.id}_cat` ? video.category : t(`video_${video.id}_cat`)}
+                            </span>
                             {video.subcategory && (
                                 <>
                                     <span className="w-0.5 h-0.5 bg-gray-400 rounded-full"></span>
