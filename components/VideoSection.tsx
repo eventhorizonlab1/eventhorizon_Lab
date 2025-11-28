@@ -2,7 +2,7 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { FEATURED_VIDEO, VIDEOS } from '../constants';
-import { Play, Radio, ArrowUpRight, X, ExternalLink, Filter, Clock, Hash, Tag } from 'lucide-react';
+import { Play, Radio, ArrowUpRight, X, ExternalLink, Clock, Hash, Tag } from 'lucide-react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Video } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
@@ -217,7 +217,7 @@ const VideoSection: React.FC = () => {
     const { t } = useThemeLanguage();
     const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
     const [activeCategory, setActiveCategory] = useState<string>('ALL');
-    const [activeSubCategory, setActiveSubCategory] = useState<string>('ALL');
+
 
     const { scrollYProgress } = useScroll({
         target: featuredRef,
@@ -234,24 +234,15 @@ const VideoSection: React.FC = () => {
         return ['ALL', ...Array.from(cats)];
     }, []);
 
-    // Extract unique subcategories (Sub)
-    const subCategories = useMemo(() => {
-        // Collect all subcategories
-        const subs = new Set<string>();
-        VIDEOS.forEach(v => {
-            if (v.subcategory) subs.add(v.subcategory);
-        });
-        return ['ALL', ...Array.from(subs)];
-    }, []);
 
+
+    // Filter videos based on selection
     // Filter videos based on selection
     const filteredVideos = useMemo(() => {
         return VIDEOS.filter(v => {
-            const matchCat = activeCategory === 'ALL' || v.category === activeCategory;
-            const matchSub = activeSubCategory === 'ALL' || v.subcategory === activeSubCategory;
-            return matchCat && matchSub;
+            return activeCategory === 'ALL' || v.category === activeCategory;
         });
-    }, [activeCategory, activeSubCategory]);
+    }, [activeCategory]);
 
     return (
         <>
@@ -374,29 +365,7 @@ const VideoSection: React.FC = () => {
                                 ))}
                             </div>
 
-                            {/* SUB CATEGORIES */}
-                            <div className="flex flex-col gap-3">
-                                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
-                                    <Filter size={14} />
-                                    <span>{t('video_subcategories')}</span>
-                                </div>
-                                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
-                                    {subCategories.map((sub) => (
-                                        <button
-                                            key={sub}
-                                            onClick={() => setActiveSubCategory(sub)}
-                                            className={`
-                                        px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide whitespace-nowrap transition-all duration-300
-                                        ${activeSubCategory === sub
-                                                    ? 'bg-blue-600 text-white shadow-md'
-                                                    : 'bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10'}
-                                    `}
-                                        >
-                                            {sub === 'ALL' ? 'Tous les formats' : sub}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -461,7 +430,7 @@ const VideoSection: React.FC = () => {
                     {filteredVideos.length === 0 && (
                         <div className="col-span-full flex flex-col items-center justify-center py-20 text-gray-500">
                             <p className="text-lg mb-2">Aucune vidéo ne correspond à ces critères.</p>
-                            <button onClick={() => { setActiveCategory('ALL'); setActiveSubCategory('ALL'); }} className="text-blue-500 hover:underline text-sm font-bold uppercase tracking-widest">Réinitialiser les filtres</button>
+                            <button onClick={() => { setActiveCategory('ALL'); }} className="text-blue-500 hover:underline text-sm font-bold uppercase tracking-widest">Réinitialiser les filtres</button>
                         </div>
                     )}
                 </div>
