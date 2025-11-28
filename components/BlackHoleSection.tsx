@@ -242,13 +242,12 @@ const BlackHoleSection: React.FC = () => {
     return (
         <motion.section
             id="blackhole"
-            className="pt-0 md:pt-0 pb-16 md:pb-24 max-w-[1800px] mx-auto px-4 md:px-12"
+            className={`pt-0 md:pt-0 pb-16 md:pb-24 max-w-[1800px] mx-auto px-4 md:px-12 ${isCinematic ? 'relative z-[9999]' : ''}`}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             style={{
-                zIndex: isCinematic ? 9999 : undefined,
                 transform: isCinematic ? 'none' : undefined
             }}
         >
@@ -278,7 +277,7 @@ const BlackHoleSection: React.FC = () => {
                     </AnimatePresence>
 
                     {/* HEADER CONTROLS */}
-                    <div className={`bg-white/5 p-4 border-b border-white/10 flex justify-between items-center backdrop-blur-md z-20 absolute top-0 left-0 w-full transition-opacity duration-300 ${isCinematic ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}>
+                    <div className={`bg-white/5 p-4 border-b border-white/10 flex justify-between items-center backdrop-blur-md z-20 absolute top-0 left-0 w-full transition-opacity duration-300 ${isCinematic ? 'opacity-100' : 'opacity-100'}`}>
                         <div className="flex gap-2">
                             <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
                             <div className="w-3 h-3 rounded-full bg-orange-500/50"></div>
