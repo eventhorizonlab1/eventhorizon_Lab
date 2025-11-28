@@ -106,47 +106,58 @@ export const BlackHoleFragmentShader = `
                 float angle = atan(p.z, p.x);
                 float rad = length(p.xz);
                 
-                // Densité de base (plus dense près du centre, mais décroissance plus lente)
-                float density = exp(-(rad - isco) * 0.3) * 2.0;
+                // Densité de base : Courbe très piquée pour le "Photon Ring" (bord net)
+                float density = exp(-(rad - isco) * 2.0) * 4.0; // Bord intérieur très net
+                density += exp(-(rad - isco) * 0.2) * 0.5; // Queue diffuse vers l'extérieur
                 
-                // Vitesse de rotation (Keplerienne : plus vite au centre)
-                float rotSpeed = 12.0 / (rad + 0.1);
+                // Vitesse de rotation
+                float rotSpeed = 14.0 / (rad + 0.1);
                 
-                // Texture gazeuse qui tourne
-                float gas = fbm(vec3(rad * 3.0, angle * 4.0 + u_time * rotSpeed * 0.3, p.y * 6.0));
+                // Texture gazeuse : Bruit plus fin pour les stries
+                float gas = fbm(vec3(rad * 8.0, angle * 6.0 + u_time * rotSpeed * 0.2, p.y * 12.0));
+                gas = pow(gas, 1.5); // Contraste du gaz
                 
-                // Structure en anneaux
-                float rings = 0.5 + 0.5 * sin(rad * 15.0 + gas * 3.0);
+                // Structure en anneaux fins
+                float rings = 0.5 + 0.5 * sin(rad * 30.0 + gas * 5.0);
+                rings = pow(rings, 2.0); // Anneaux plus marqués
                 
                 density *= rings * gas;
                 
-                // Affinement vertical (le disque est plat)
-                density *= smoothstep(1.0, 0.0, distToPlane / 0.5);
+                // Affinement vertical très strict (disque fin)
+                density *= smoothstep(0.8, 0.0, distToPlane / 0.2);
                 
-                // BEAMING DOPPLER (Effet Relativiste)
-                // Le côté qui vient vers nous est plus brillant et bleu
-                // Le côté qui s'éloigne est plus sombre et rouge
-                vec3 tangent = normalize(vec3(-p.z, 0.0, p.x)); // Vecteur vitesse du gaz
-                float doppler = dot(rd, tangent); // Produit scalaire avec la vue
-                // On adoucit l'effet pour ne pas rendre le côté sombre totalement invisible
-                float beam = smoothstep(-1.0, 1.0, doppler + 0.5);
-                beam = 0.3 + 0.7 * beam; // Luminosité minimale de 30%
+                // BEAMING DOPPLER
+                vec3 tangent = normalize(vec3(-p.z, 0.0, p.x));
+                float doppler = dot(rd, tangent);
+                float beam = smoothstep(-1.0, 1.0, doppler + 0.2);
+                beam = pow(beam, 1.5); // Beaming plus progressif
+                beam = 0.1 + 0.9 * beam; // Contraste fort mais pas noir total
                 
-                // Calcul de la couleur à ce point
-                // Palette "Gargantua" : Orange Brûlé -> Jaune -> Blanc
-                vec3 hotColor = vec3(1.5, 1.2, 1.0); // Blanc très éclatant (HDR)
-                vec3 coldColor = vec3(1.0, 0.4, 0.1); // Orange vibrant
+                // PALETTE DE COULEURS "INTERSTELLAR"
+                // Centre : Blanc pur / Bleu très pâle (chaleur extrême)
+                // Milieu : Jaune doré
+                // Bord : Rouge profond / Orange brûlé
                 
-                // Mélange basé sur la température et le Doppler
-                vec3 localColor = mix(coldColor, hotColor, density * beam * u_temp);
+                vec3 colCenter = vec3(1.0, 0.95, 0.9); // Blanc chaud
+                vec3 colMid = vec3(1.0, 0.6, 0.1);     // Orange doré
+                vec3 colEdge = vec3(0.6, 0.1, 0.01);   // Rouge sombre
                 
-                // Accumulation de la lumière (Alpha Blending additif)
-                // On booste l'accumulation pour un rendu plus "solide"
-                float stepDens = density * stepSize * 2.5 * u_disk_density;
-                accum += stepDens; // Ajout à la luminosité globale
-                col += localColor * stepDens * beam; // Ajout à la couleur
+                // Gradient basé sur la distance et la densité
+                float t = smoothstep(isco, diskRad * 0.6, rad);
+                vec3 localColor = mix(colCenter, colMid, t);
+                localColor = mix(localColor, colEdge, smoothstep(0.4, 1.0, t));
                 
-                // Si c'est trop opaque, on arrête (optimisation)
+                // Boost de luminosité au centre (Photon Ring)
+                localColor += vec3(0.5) * exp(-(rad - isco) * 4.0);
+                
+                // Mélange final
+                vec3 finalColor = localColor * u_temp;
+                
+                // Accumulation
+                float stepDens = density * stepSize * 2.0 * u_disk_density;
+                accum += stepDens;
+                col += finalColor * stepDens * beam;
+                
                 if(accum > 1.0) break;
             }
             
