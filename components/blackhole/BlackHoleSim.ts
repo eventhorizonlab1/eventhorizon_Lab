@@ -77,32 +77,31 @@ export class BlackHoleSim {
     }
 
     initBlackHoleVolume() {
-        // DEBUG: "Hello World" Test
-        // 1. Main Box with Basic Material (DoubleSide to ensure visibility)
+        // Revenir au ShaderMaterial avec les correctifs validés
         const geometry = new THREE.BoxGeometry(200, 200, 200);
-        this.blackHoleMaterial = new THREE.MeshBasicMaterial({
-            color: 0x00ff00, // Bright Green
-            side: THREE.DoubleSide,
-            wireframe: true, // Wireframe to see structure
+
+        this.blackHoleMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                u_time: { value: 0.0 },
+                u_resolution: { value: new THREE.Vector2(1, 1) },
+                u_cameraPos: { value: new THREE.Vector3(0, 8, 55) },
+                u_bloom: { value: 1.0 },
+                u_lensing: { value: 1.0 },
+                u_disk_density: { value: 1.0 },
+                u_temp: { value: 1.0 }
+            },
+            vertexShader: BlackHoleVertexShader,
+            fragmentShader: BlackHoleFragmentShader,
+            side: THREE.BackSide, // Important pour être "dans" la boîte si besoin, ou voir le fond
             transparent: true,
-            opacity: 0.5
-        }) as any; // Cast to any to bypass ShaderMaterial type for now
+            blending: THREE.NormalBlending,
+        });
 
         const box = new THREE.Mesh(geometry, this.blackHoleMaterial);
         this.scene.add(box);
         this.disposables.push(geometry, this.blackHoleMaterial);
 
-        // 2. Reference Cube (Spinning)
-        const refGeo = new THREE.BoxGeometry(10, 10, 10);
-        const refMat = new THREE.MeshBasicMaterial({ color: 0xff00ff }); // Magenta
-        const refCube = new THREE.Mesh(refGeo, refMat);
-        refCube.position.set(0, 0, 0);
-        this.scene.add(refCube);
-
-        // Animate reference cube
-        (this as any).refCube = refCube;
-
-        console.log("BlackHoleSim: Basic Materials added (Green Box + Magenta Cube).");
+        console.log("BlackHoleSim: ShaderMaterial restored with robust settings.");
     }
 
     initStarfield() {
@@ -196,15 +195,8 @@ export class BlackHoleSim {
     }
 
     update(time: number, delta: number, params: any) {
-        // Rotate reference cube if it exists
-        if ((this as any).refCube) {
-            (this as any).refCube.rotation.x += 0.01;
-            (this as any).refCube.rotation.y += 0.01;
-        }
-
         if (this.blackHoleMaterial) {
-            // Skip shader uniforms update since we are using MeshBasicMaterial
-            // this.blackHoleMaterial.uniforms.u_time.value = time * params.rotationSpeed;
+            this.blackHoleMaterial.uniforms.u_time.value = time * params.rotationSpeed;
 
             // Ajustement des paramètres selon le mode sombre/clair pour garder la lisibilité
             const brightnessMod = params.isLightMode ? 1.5 : 1.0;
