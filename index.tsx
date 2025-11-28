@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { ThemeLanguageProvider } from './context/ThemeLanguageContext';
+import { CinematicProvider } from './context/CinematicContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -12,7 +13,9 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <ThemeLanguageProvider>
-      <App />
+      <CinematicProvider>
+        <App />
+      </CinematicProvider>
     </ThemeLanguageProvider>
   </React.StrictMode>
 );

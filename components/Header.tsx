@@ -4,6 +4,7 @@ import { NAV_LINKS } from '../constants';
 import { motion, AnimatePresence, useScroll, useSpring, animate } from 'framer-motion';
 import { X, Moon, Sun, ChevronDown } from 'lucide-react';
 import { useThemeLanguage, SUPPORTED_LANGUAGES } from '../context/ThemeLanguageContext';
+import { useCinematic } from '../context/CinematicContext';
 
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -12,6 +13,7 @@ const Header: React.FC = () => {
   const langMenuRef = useRef<HTMLDivElement>(null);
 
   const { theme, toggleTheme, language, setLanguage, t } = useThemeLanguage();
+  const { isCinematic } = useCinematic();
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -109,7 +111,7 @@ const Header: React.FC = () => {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out px-4 md:px-8 lg:px-12 ${headerBgClass}`}
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out px-4 md:px-8 lg:px-12 ${headerBgClass} ${isCinematic ? '-translate-y-full opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}`}
       >
         <div className="max-w-[1800px] mx-auto flex justify-between items-center">
           <a href="#" onClick={(e) => handleLinkClick(e, '#')} className={`text-xl md:text-2xl font-bold tracking-tighter uppercase z-50 relative transition-colors duration-300 ${textColorClass}`}>
@@ -169,8 +171,8 @@ const Header: React.FC = () => {
                             setIsLangMenuOpen(false);
                           }}
                           className={`flex items-center gap-3 p-3 rounded-xl transition-all text-left ${language === lang.code
-                              ? 'bg-black text-white dark:bg-white dark:text-black shadow-md'
-                              : 'hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-200'
+                            ? 'bg-black text-white dark:bg-white dark:text-black shadow-md'
+                            : 'hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-200'
                             }`}
                         >
                           <span className="text-xl">{lang.flag}</span>
@@ -265,8 +267,8 @@ const Header: React.FC = () => {
                         key={lang.code}
                         onClick={() => setLanguage(lang.code)}
                         className={`flex flex-col items-center justify-center p-3 rounded-xl aspect-square transition-all active:scale-95 ${language === lang.code
-                            ? 'bg-black text-white dark:bg-white dark:text-black shadow-lg ring-2 ring-offset-2 ring-black dark:ring-white scale-105'
-                            : 'bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10'
+                          ? 'bg-black text-white dark:bg-white dark:text-black shadow-lg ring-2 ring-offset-2 ring-black dark:ring-white scale-105'
+                          : 'bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10'
                           }`}
                       >
                         <span className="text-2xl leading-none mb-1">{lang.flag}</span>

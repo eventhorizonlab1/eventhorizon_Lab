@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { RefreshCw, Eye, Thermometer, Activity, Sun, Navigation, Layers, ZoomIn, Cpu, Maximize2, Minimize2, Camera, Sliders } from 'lucide-react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
+import { useCinematic } from '../context/CinematicContext';
 import { BlackHoleSim } from './blackhole/BlackHoleSim';
 
 const SimLoader = () => {
@@ -112,7 +113,7 @@ const BlackHoleSection: React.FC = () => {
     const [lensingStrength, setLensingStrength] = useState(1.2);
     const [diskBrightness, setDiskBrightness] = useState(1.0);
     const [temperature, setTemperature] = useState(1.0);
-    const [isCinematic, setIsCinematic] = useState(false);
+    const { isCinematic, setIsCinematic } = useCinematic();
 
     const isInViewRef = useRef(isInView);
     const isLoadingRef = useRef(isLoading);
