@@ -108,6 +108,7 @@ const BlackHoleSection: React.FC = () => {
     const shouldReduceMotion = useReducedMotion();
 
     const [isLoading, setIsLoading] = useState(true);
+    const [renderFallback, setRenderFallback] = useState(false);
     const [rotationSpeed, setRotationSpeed] = useState(shouldReduceMotion ? 0.05 : 0.3);
     const [bloomIntensity, setBloomIntensity] = useState(0.1);
     const [lensingStrength, setLensingStrength] = useState(1.2);
@@ -149,10 +150,19 @@ const BlackHoleSection: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (!containerRef.current) return;
+        const container = containerRef.current;
+        if (!container) return;
 
-        const sim = new BlackHoleSim(containerRef.current);
-        simRef.current = sim;
+        let sim: BlackHoleSim;
+        try {
+            sim = new BlackHoleSim(container);
+            simRef.current = sim;
+        } catch (error) {
+            console.error("WebGL initialization failed:", error);
+            setRenderFallback(true);
+            setIsLoading(false);
+            return;
+        }
 
         let animationId: number;
 
@@ -323,14 +333,29 @@ const BlackHoleSection: React.FC = () => {
 
                     <div ref={containerRef} className="absolute inset-0 w-full h-full z-10" />
 
+                    {renderFallback && (
+                        <div className="absolute inset-0 z-40 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center p-6">
+                            <div className="text-center max-w-md">
+                                <div className="w-16 h-16 mx-auto mb-4 text-red-500/50 border-2 border-red-500/30 rounded-full flex items-center justify-center">
+                                    <Activity size={32} />
+                                </div>
+                                <p className="text-white/60 text-sm md:text-base font-mono">
+                                    {t('bh_webgl_unsupported')}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
                     {/* FOOTER INFO */}
                     <div className={`absolute bottom-0 left-0 w-full p-6 z-20 bg-gradient-to-t from-gray-200/90 dark:from-black/80 to-transparent pointer-events-none flex justify-between items-end transition-opacity duration-300 ${isCinematic ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}>
                         <div>
                             <h3 className="text-3xl font-black text-black/20 dark:text-white/20 uppercase tracking-tighter">Event Horizon</h3>
                         </div>
-                        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-black/40 dark:text-white/40 animate-pulse border border-black/10 dark:border-white/10 px-3 py-1 rounded-full backdrop-blur-sm pointer-events-auto cursor-help" title="Interactive Simulation">
-                            {t('bh_interact')}
-                        </p>
+                        {!renderFallback && (
+                            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-black/40 dark:text-white/40 animate-pulse border border-black/10 dark:border-white/10 px-3 py-1 rounded-full backdrop-blur-sm pointer-events-auto cursor-help" title="Interactive Simulation">
+                                {t('bh_interact')}
+                            </p>
+                        )}
                     </div>
 
                     <div className="absolute inset-0 pointer-events-none opacity-[0.05] z-0 bg-[linear-gradient(rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.1)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:40px_40px]"></div>

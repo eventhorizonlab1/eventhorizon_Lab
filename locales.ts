@@ -173,6 +173,10 @@ const fr: Record<string, string> = {
   footer_aria_linkedin: 'Profil LinkedIn',
   footer_aria_x: 'Profil X (Twitter)',
   footer_aria_mail: 'Contact par Email',
+  bh_webgl_unsupported: "Votre navigateur ne supporte pas WebGL, nécessaire pour la simulation du trou noir.",
+  meta_title: "Event Horizon - Plongée au cœur de l'industrie spatiale européenne",
+  meta_description: "Reportages exclusifs, lancements en direct et analyses approfondies sur l'actualité spatiale européenne.",
+  meta_og_title: "Event Horizon - L'actualité spatiale européenne",
 };
 
 const en: Record<string, string> = {
@@ -321,6 +325,10 @@ const en: Record<string, string> = {
   footer_aria_linkedin: 'LinkedIn Profile',
   footer_aria_x: 'X (Twitter) Profile',
   footer_aria_mail: 'Contact via Email',
+  bh_webgl_unsupported: "Your browser does not support WebGL, which is required for the black hole simulation.",
+  meta_title: "Event Horizon - Deep dive into the European space industry",
+  meta_description: "Exclusive reports, live launches, and in-depth analysis of European space news.",
+  meta_og_title: "Event Horizon - European Space News",
 };
 
 const de: Record<string, string> = {
@@ -469,6 +477,10 @@ const de: Record<string, string> = {
   footer_aria_linkedin: 'LinkedIn-Profil',
   footer_aria_x: 'X (Twitter) Profil',
   footer_aria_mail: 'Kontakt per E-Mail',
+  bh_webgl_unsupported: "Ihr Browser unterstützt kein WebGL, das für die Schwarze-Loch-Simulation erforderlich ist.",
+  meta_title: "Event Horizon - Ein tiefer Einblick in die europäische Raumfahrtindustrie",
+  meta_description: "Exklusive Berichte, Live-Starts und eingehende Analysen der europäischen Raumfahrtnachrichten.",
+  meta_og_title: "Event Horizon - Europäische Raumfahrtnachrichten",
 };
 
 const es: Record<string, string> = {
@@ -617,6 +629,10 @@ const es: Record<string, string> = {
   footer_aria_linkedin: 'Perfil de LinkedIn',
   footer_aria_x: 'Perfil de X (Twitter)',
   footer_aria_mail: 'Contacto por Correo',
+  bh_webgl_unsupported: "Su navegador no soporta WebGL, necesario para la simulación del agujero negro.",
+  meta_title: "Event Horizon - Inmersión en la industria espacial europea",
+  meta_description: "Informes exclusivos, lanzamientos en vivo y análisis en profundidad de las noticias espaciales europeas.",
+  meta_og_title: "Event Horizon - Noticias Espaciales Europeas",
 };
 
 const it: Record<string, string> = {
@@ -765,6 +781,10 @@ const it: Record<string, string> = {
   footer_aria_linkedin: 'Profilo LinkedIn',
   footer_aria_x: 'Profilo X (Twitter)',
   footer_aria_mail: 'Contatto via Email',
+  bh_webgl_unsupported: "Il tuo browser non supporta WebGL, necessario per la simulazione del buco nero.",
+  meta_title: "Event Horizon - Immersione nell'industria spaziale europea",
+  meta_description: "Reportage esclusivi, lanci in diretta e analisi approfondite delle notizie spaziali europee.",
+  meta_og_title: "Event Horizon - Notizie Spaziali Europee",
 };
 
 export const TRANSLATIONS: Record<Language, Record<string, string>> = {
