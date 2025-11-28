@@ -17,7 +17,7 @@ const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> =
         };
     }, []);
 
-    const role = t(`partner_${partner.id}_role`);
+    const role = partner.role;
     const description = t(`partner_${partner.id}_desc`);
 
     // Generate visual tags based on role for aesthetics
@@ -136,7 +136,7 @@ const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Part
     });
 
     const y = useTransform(scrollYProgress, [0, 1], [30, -30]);
-    const role = t(`partner_${partner.id}_role`);
+    const role = partner.role;
 
     return (
         <motion.div

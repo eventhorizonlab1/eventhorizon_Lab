@@ -147,8 +147,8 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
 
 const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => void }> = React.memo(({ video, index, onPlay }) => {
     const { t } = useThemeLanguage();
-    const title = t(`video_${video.id}_title`);
-    const category = t(`video_${video.id}_cat`);
+    // Use title directly from constants as it's now the source of truth (synced with YouTube)
+    const title = video.title;
 
     return (
         <motion.div
