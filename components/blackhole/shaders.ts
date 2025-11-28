@@ -75,7 +75,7 @@ export const BlackHoleFragmentShader = `
         // Gravité renforcée pour bien voir le disque "derrière" le trou noir
         float gravityStrength = 0.12 * u_lensing; 
 
-        for(int i = 0; i < 100; i++) {
+        for(int i = 0; i < 300; i++) {
             float r = length(p);
             
             // --- 1. LENTILLE GRAVITATIONNELLE (Newtonien approximé) ---
