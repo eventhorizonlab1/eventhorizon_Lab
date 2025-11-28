@@ -1,1 +1,0 @@
-export default function ImageGenSection() { return null; }
