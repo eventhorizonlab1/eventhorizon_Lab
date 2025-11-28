@@ -106,8 +106,8 @@ export const BlackHoleFragmentShader = `
                 float angle = atan(p.z, p.x);
                 float rad = length(p.xz);
                 
-                // Densité de base (plus dense près du centre)
-                float density = exp(-(rad - isco) * 0.5);
+                // Densité de base (plus dense près du centre, mais décroissance plus lente)
+                float density = exp(-(rad - isco) * 0.3) * 2.0;
                 
                 // Vitesse de rotation (Keplerienne : plus vite au centre)
                 float rotSpeed = 12.0 / (rad + 0.1);
@@ -128,23 +128,26 @@ export const BlackHoleFragmentShader = `
                 // Le côté qui s'éloigne est plus sombre et rouge
                 vec3 tangent = normalize(vec3(-p.z, 0.0, p.x)); // Vecteur vitesse du gaz
                 float doppler = dot(rd, tangent); // Produit scalaire avec la vue
-                float beam = pow(smoothstep(-1.0, 1.0, doppler + 0.4), 2.0);
+                // On adoucit l'effet pour ne pas rendre le côté sombre totalement invisible
+                float beam = smoothstep(-1.0, 1.0, doppler + 0.5);
+                beam = 0.3 + 0.7 * beam; // Luminosité minimale de 30%
                 
                 // Calcul de la couleur à ce point
                 // Palette "Gargantua" : Orange Brûlé -> Jaune -> Blanc
-                vec3 hotColor = vec3(1.0, 0.9, 0.8); // Blanc chaud
-                vec3 coldColor = vec3(1.0, 0.3, 0.05); // Orange profond
+                vec3 hotColor = vec3(1.5, 1.2, 1.0); // Blanc très éclatant (HDR)
+                vec3 coldColor = vec3(1.0, 0.4, 0.1); // Orange vibrant
                 
                 // Mélange basé sur la température et le Doppler
                 vec3 localColor = mix(coldColor, hotColor, density * beam * u_temp);
                 
                 // Accumulation de la lumière (Alpha Blending additif)
-                float stepDens = density * stepSize * 0.8 * u_disk_density;
-                accum += stepDens * beam; // Ajout à la luminosité globale
+                // On booste l'accumulation pour un rendu plus "solide"
+                float stepDens = density * stepSize * 2.5 * u_disk_density;
+                accum += stepDens; // Ajout à la luminosité globale
                 col += localColor * stepDens * beam; // Ajout à la couleur
                 
                 // Si c'est trop opaque, on arrête (optimisation)
-                if(accum > 1.5) break;
+                if(accum > 1.0) break;
             }
             
             // Pas adaptatif : on avance plus vite loin du trou noir pour optimiser
