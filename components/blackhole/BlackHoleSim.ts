@@ -38,21 +38,23 @@ export class BlackHoleSim {
 
         // Caméra
         this.camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-        // Position initiale type "Interstellar" (légèrement au-dessus du plan)
-        this.camera.position.set(0, 5, 45);
-        this.targetCameraPosition = new THREE.Vector3(0, 5, 45);
+        // Position ajustée pour un angle "cinématique"
+        // Y=8 permet de voir le disque passer "par dessus" l'ombre
+        this.camera.position.set(0, 8, 55);
+        this.targetCameraPosition = new THREE.Vector3(0, 8, 55);
 
         // Renderer
         this.renderer = new THREE.WebGLRenderer({
-            antialias: false,
+            antialias: false, // L'AA est géré par le post-processing ou inutile avec le Raymarching
             powerPreference: "high-performance",
             alpha: true,
             stencil: false,
-            depth: true // Important pour le cube volumétrique
+            depth: true
         });
         this.renderer.setSize(container.clientWidth, container.clientHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.isMobile ? 1.0 : 1.5));
-        this.renderer.toneMapping = THREE.ACESFilmicToneMapping; // Look cinéma
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 1.0;
         container.appendChild(this.renderer.domElement);
 
         this.clock = new THREE.Clock();
@@ -61,27 +63,26 @@ export class BlackHoleSim {
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.05;
-        this.controls.minDistance = 15; // Ne pas entrer dans le trou noir
-        this.controls.maxDistance = 100;
+        this.controls.minDistance = 20;
+        this.controls.maxDistance = 120;
         this.controls.enablePan = false;
+        // Limiter l'angle vertical pour éviter de casser l'illusion volumétrique trop facilement
+        this.controls.maxPolarAngle = Math.PI * 0.85;
+        this.controls.minPolarAngle = Math.PI * 0.15;
 
-        // Initialisation des objets
         this.initStarfield();
-        this.initBlackHoleVolume(); // Le nouveau coeur du système
+        this.initBlackHoleVolume();
         this.initPostProcessing(container.clientWidth, container.clientHeight);
     }
 
     initBlackHoleVolume() {
-        // Au lieu d'un plan ou d'un anneau, on crée un cube invisible
-        // Le shader va "dessiner" le trou noir à l'intérieur de ce cube
-        // Cela permet de tourner autour en 3D
-        const geometry = new THREE.BoxGeometry(60, 60, 60); // Assez grand pour contenir le disque
+        const geometry = new THREE.BoxGeometry(70, 70, 70);
 
         this.blackHoleMaterial = new THREE.ShaderMaterial({
             uniforms: {
                 u_time: { value: 0.0 },
                 u_resolution: { value: new THREE.Vector2(1, 1) },
-                u_cameraPos: { value: new THREE.Vector3() }, // Important pour le raymarching
+                u_cameraPos: { value: new THREE.Vector3() },
                 u_bloom: { value: 1.0 },
                 u_lensing: { value: 1.0 },
                 u_disk_density: { value: 1.0 },
@@ -89,8 +90,9 @@ export class BlackHoleSim {
             },
             vertexShader: BlackHoleVertexShader,
             fragmentShader: BlackHoleFragmentShader,
-            side: THREE.BackSide, // On rend l'intérieur du cube
+            side: THREE.BackSide,
             transparent: true,
+            // Additive blending pour que le disque brille bien
             blending: THREE.NormalBlending,
         });
 
@@ -100,16 +102,15 @@ export class BlackHoleSim {
     }
 
     initStarfield() {
-        // Fond étoilé simple mais dense pour le contraste
         const geometry = new THREE.BufferGeometry();
-        const count = 3000;
+        const count = 4000;
         const positions = [];
         const sizes = [];
         const opacities = [];
         const speeds = [];
 
         for (let i = 0; i < count; i++) {
-            const r = 400; // Loin derrière
+            const r = 400 + Math.random() * 200;
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
 
@@ -118,7 +119,7 @@ export class BlackHoleSim {
                 r * Math.sin(phi) * Math.sin(theta),
                 r * Math.cos(phi)
             );
-            sizes.push(Math.random() * 2.0);
+            sizes.push(Math.random() * 2.5); // Étoiles un peu plus grosses
             opacities.push(Math.random());
             speeds.push(Math.random());
         }
@@ -148,12 +149,14 @@ export class BlackHoleSim {
         const renderPass = new RenderPass(this.scene, this.camera);
         this.composer.addPass(renderPass);
 
-        // Bloom intense pour l'effet "Glow" d'Interstellar
+        // CONFIGURATION BLOOM TYPE "INTERSTELLAR"
+        // Le seuil (threshold) doit être bas pour que l'orange brille, pas juste le blanc
+        // Le rayon (radius) doit être large pour l'effet onirique
         this.bloomPass = new UnrealBloomPass(
             new THREE.Vector2(width, height),
-            1.5, // Force
-            0.4, // Rayon
-            0.85 // Seuil
+            1.2,  // Force (Strength)
+            0.8,  // Rayon (Radius) - Augmenté pour un halo plus large
+            0.15  // Seuil (Threshold) - Baissé pour que tout le disque émette de la lumière
         );
         this.composer.addPass(this.bloomPass);
 
@@ -178,15 +181,16 @@ export class BlackHoleSim {
     }
 
     update(time: number, delta: number, params: any) {
-        // Mise à jour des uniformes
         if (this.blackHoleMaterial) {
             this.blackHoleMaterial.uniforms.u_time.value = time * params.rotationSpeed;
-            this.blackHoleMaterial.uniforms.u_bloom.value = params.diskBrightness; // Intensité de la couleur
+
+            // Ajustement des paramètres selon le mode sombre/clair pour garder la lisibilité
+            const brightnessMod = params.isLightMode ? 1.5 : 1.0;
+
+            this.blackHoleMaterial.uniforms.u_bloom.value = params.diskBrightness * brightnessMod;
             this.blackHoleMaterial.uniforms.u_lensing.value = params.lensingStrength;
             this.blackHoleMaterial.uniforms.u_disk_density.value = params.diskBrightness;
             this.blackHoleMaterial.uniforms.u_temp.value = params.temperature;
-
-            // Mise à jour critique pour le raymarching : la position de la caméra
             this.blackHoleMaterial.uniforms.u_cameraPos.value.copy(this.camera.position);
         }
 
@@ -194,12 +198,10 @@ export class BlackHoleSim {
             this.starfieldMaterial.uniforms.u_time.value = time;
         }
 
-        // Contrôle du Bloom via les params UI
         if (this.bloomPass) {
             this.bloomPass.strength = params.bloomIntensity;
         }
 
-        // Animation de la caméra (boutons UI)
         if (this.isAnimatingCamera) {
             this.camera.position.lerp(this.targetCameraPosition, 0.05);
             if (this.camera.position.distanceTo(this.targetCameraPosition) < 0.1) {

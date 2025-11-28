@@ -1,6 +1,5 @@
 // components/blackhole/shaders.ts
 
-// Vertex Shader générique pour une boîte englobante (Bounding Box)
 export const BlackHoleVertexShader = `
     varying vec3 vViewPosition;
     varying vec3 vWorldPosition;
@@ -16,7 +15,6 @@ export const BlackHoleVertexShader = `
     }
 `;
 
-// Le cœur du moteur graphique : Raymarching Volumétrique Relativiste
 export const BlackHoleFragmentShader = `
     uniform float u_time;
     uniform vec2 u_resolution;
@@ -28,11 +26,10 @@ export const BlackHoleFragmentShader = `
     
     varying vec3 vWorldPosition;
 
-    // --- BRUIT ET MATHS ---
-    // Fonction de bruit pseudo-aléatoire rapide
+    // --- NOISE FUNCTIONS ---
     float hash(float n) { return fract(sin(n) * 43758.5453123); }
     
-    // Bruit 3D pour la texture du disque
+    // Bruit 3D optimisé
     float noise(vec3 x) {
         vec3 p = floor(x);
         vec3 f = fract(x);
@@ -44,143 +41,142 @@ export const BlackHoleFragmentShader = `
                        mix(hash(n + 170.0), hash(n + 171.0), f.x), f.y), f.z);
     }
 
-    // Fractal Brownian Motion pour les détails gazeux
+    // Fractal Brownian Motion modifié pour créer des stries
     float fbm(vec3 p) {
         float f = 0.0;
         float w = 0.5;
-        for (int i = 0; i < 4; i++) { // 4 octaves pour la performance/qualité
+        // On modifie l'échelle pour étirer le bruit tangentiellement
+        // Cela crée l'effet de "motion blur" circulaire typique d'Interstellar
+        for (int i = 0; i < 5; i++) { 
             f += w * noise(p);
-            p *= 2.0;
+            p.xz *= 2.0; // Plus de détails sur le plan horizontal
+            p.y *= 1.5;  // Moins de détails verticaux
             w *= 0.5;
         }
         return f;
     }
 
-    // --- PHYSIQUE DU TROU NOIR ---
-    
     void main() {
-        // Configuration du Raymarching
-        vec3 ro = u_cameraPos; // Origine du rayon (Caméra)
-        vec3 rd = normalize(vWorldPosition - u_cameraPos); // Direction du rayon
+        vec3 ro = u_cameraPos;
+        vec3 rd = normalize(vWorldPosition - u_cameraPos);
         
         vec3 p = ro;
         vec3 col = vec3(0.0);
-        float accum = 0.0; // Accumulation de lumière (volumétrie)
+        float accum = 0.0;
         
-        // Paramètres physiques
-        float rs = 2.5; // Rayon de Schwarzschild (Horizon des événements)
-        float isco = rs * 1.5; // Orbite stable la plus proche (bord intérieur du disque)
-        float diskRad = 18.0; // Rayon externe du disque
+        // Paramètres "Interstellar"
+        float rs = 3.0; // Rayon de l'horizon (plus gros pour être imposant)
+        float isco = rs * 1.5; // Innermost Stable Circular Orbit
+        float diskRad = 22.0; // Disque plus large
         
-        // Optimisation : Pas de calcul si on regarde loin du centre
-        // (Simple bounding sphere check pourrait être ajouté ici)
+        // Step adaptatif pour optimiser les FPS tout en gardant la qualité au centre
+        float stepSize = 0.2; 
+        
+        // Gravité renforcée pour bien voir le disque "derrière" le trou noir
+        float gravityStrength = 0.12 * u_lensing; 
 
-        float stepSize = 0.15; // Pas de base pour l'avancée du rayon
-        float gravity = 0.08 * u_lensing; // Force de la courbure
-
-        // BOUCLE DE RENDU (RAYMARCHING)
-        // On limite à 120 itérations pour garder 60fps
-        for(int i = 0; i < 120; i++) {
-            float r = length(p); // Distance au centre du trou noir
+        for(int i = 0; i < 100; i++) {
+            float r = length(p);
             
-            // 1. Gravité (Lentille Gravitationnelle)
-            // On courbe le rayon vers le centre (0,0,0)
-            // Plus on est près, plus ça courbe (1/r^2 approximé)
-            vec3 force = -normalize(p) * (gravity / (r * r + 0.1));
-            rd += force * stepSize; 
-            rd = normalize(rd); // Renormaliser la direction après courbure
+            // --- 1. LENTILLE GRAVITATIONNELLE (Newtonien approximé) ---
+            // Courbure plus forte près du centre (1.0 / (r*r))
+            vec3 force = -normalize(p) * (gravityStrength / (r * r * 0.05 + 0.01));
+            rd += force * stepSize;
+            rd = normalize(rd);
             
-            // 2. Horizon des événements (L'Ombre)
+            // --- 2. HORIZON DES ÉVÉNEMENTS ---
             if(r < rs) {
-                // Le rayon est tombé dans le trou noir
-                accum += 0.0; 
-                break; // Stop le calcul
+                accum += 0.0; // Noir total
+                break;
             }
             
-            // 3. Disque d'Accrétion (Volumétrie)
-            float distToPlane = abs(p.y); // Distance au plan équatorial
+            // --- 3. DISQUE D'ACCRÉTION ---
+            float distToPlane = abs(p.y);
             
-            // Si le rayon traverse la zone du disque
-            if(distToPlane < 1.5 && r > isco && r < diskRad) {
-                // Coordonnées polaires pour la texture
+            // On élargit un peu la zone de détection pour attraper les rayons courbés
+            if(distToPlane < 2.0 && r > isco && r < diskRad) {
+                
+                // Coordonnées polaires
                 float angle = atan(p.z, p.x);
                 float rad = length(p.xz);
                 
-                // Densité de base : Courbe très piquée pour le "Photon Ring" (bord net)
-                float density = exp(-(rad - isco) * 2.0) * 4.0; // Bord intérieur très net
-                density += exp(-(rad - isco) * 0.2) * 0.5; // Queue diffuse vers l'extérieur
+                // Densité de base : Pic très intense près de l'ISCO (le Photon Ring)
+                // exp(-(rad - isco)) crée un dégradé doux vers l'extérieur
+                float baseDensity = exp(-(rad - isco) * 0.8) * 2.0;
                 
-                // Vitesse de rotation
-                float rotSpeed = 14.0 / (rad + 0.1);
+                // Rotation différentielle (le centre tourne plus vite)
+                float rotSpeed = 15.0 / (rad + 0.1);
                 
-                // Texture gazeuse : Bruit plus fin pour les stries
-                float gas = fbm(vec3(rad * 8.0, angle * 6.0 + u_time * rotSpeed * 0.2, p.y * 12.0));
-                gas = pow(gas, 1.5); // Contraste du gaz
+                // Texture : On étire fortement les coordonnées pour faire des lignes
+                // vec3(rad * 4.0, ...) -> crée des anneaux
+                // angle * 8.0 -> crée des variations angulaires
+                vec3 noiseCoord = vec3(rad * 4.0, angle * 8.0 + u_time * rotSpeed * 0.2, p.y * 10.0);
+                float gas = fbm(noiseCoord);
                 
-                // Structure en anneaux fins
-                float rings = 0.5 + 0.5 * sin(rad * 30.0 + gas * 5.0);
-                rings = pow(rings, 2.0); // Anneaux plus marqués
+                // Contraste du gaz (plus tranché)
+                gas = smoothstep(0.3, 0.8, gas);
                 
-                density *= rings * gas;
+                // Variation en anneaux distincts (comme Saturne)
+                float rings = 0.5 + 0.5 * sin(rad * 20.0 + gas * 2.0);
                 
-                // Affinement vertical très strict (disque fin)
-                density *= smoothstep(0.8, 0.0, distToPlane / 0.2);
+                float finalDensity = baseDensity * gas * rings;
                 
-                // BEAMING DOPPLER
+                // Affinement vertical (le disque est fin au centre, plus diffus en haut/bas)
+                finalDensity *= smoothstep(1.0, 0.0, distToPlane / 0.8);
+                
+                // --- 4. EFFET DOPPLER (Relativiste) ---
+                // Le côté qui vient vers nous est plus brillant et bleu
+                // Le côté qui s'éloigne est plus sombre et rouge
                 vec3 tangent = normalize(vec3(-p.z, 0.0, p.x));
-                float doppler = dot(rd, tangent);
-                float beam = smoothstep(-1.0, 1.0, doppler + 0.2);
-                beam = pow(beam, 1.5); // Beaming plus progressif
-                beam = 0.1 + 0.9 * beam; // Contraste fort mais pas noir total
+                float doppler = dot(rd, tangent); // Produit scalaire rayon vs rotation
                 
-                // PALETTE DE COULEURS "INTERSTELLAR"
-                // Centre : Blanc pur / Bleu très pâle (chaleur extrême)
-                // Milieu : Jaune doré
-                // Bord : Rouge profond / Orange brûlé
+                // Facteur de beaming très prononcé
+                float beam = smoothstep(-0.8, 1.0, doppler + 0.1);
+                beam = pow(beam, 2.5); // Courbe exponentielle pour assombrir fortement un côté
                 
-                vec3 colCenter = vec3(1.0, 0.95, 0.9); // Blanc chaud
-                vec3 colMid = vec3(1.0, 0.6, 0.1);     // Orange doré
-                vec3 colEdge = vec3(0.6, 0.1, 0.01);   // Rouge sombre
+                // --- 5. COULEURS (Palette Gargantua) ---
+                // Cœur : Blanc/Chaud
+                // Milieu : Orange brûlé
+                // Bord : Rouge sombre
+                vec3 colInner = vec3(1.0, 0.9, 0.8);  // Blanc chaud
+                vec3 colOuter = vec3(1.0, 0.5, 0.1);  // Orange
+                vec3 colDeep  = vec3(0.4, 0.05, 0.0); // Rouge sombre
                 
-                // Gradient basé sur la distance et la densité
-                float t = smoothstep(isco, diskRad * 0.6, rad);
-                vec3 localColor = mix(colCenter, colMid, t);
-                localColor = mix(localColor, colEdge, smoothstep(0.4, 1.0, t));
+                vec3 dustColor = mix(colOuter, colInner, finalDensity * 0.5);
+                dustColor = mix(dustColor, colDeep, smoothstep(isco, diskRad, rad));
                 
-                // Boost de luminosité au centre (Photon Ring)
-                localColor += vec3(0.5) * exp(-(rad - isco) * 4.0);
+                // Température globale (paramètre UI)
+                dustColor *= u_temp;
                 
-                // Mélange final
-                vec3 finalColor = localColor * u_temp;
+                // Accumulation volumétrique
+                float stepDens = finalDensity * stepSize * 0.8 * u_disk_density;
                 
-                // Accumulation
-                float stepDens = density * stepSize * 2.0 * u_disk_density;
+                // Appliquer le beaming et l'accumulation
+                col += dustColor * stepDens * beam * (1.0 - accum);
                 accum += stepDens;
-                col += finalColor * stepDens * beam;
                 
-                if(accum > 1.0) break;
+                if(accum > 0.98) break; // Optimisation : arrêter si opaque
             }
             
-            // Pas adaptatif : on avance plus vite loin du trou noir pour optimiser
-            float nextStep = max(stepSize, r * 0.1);
+            // Avancer le rayon
+            // On avance plus vite quand on est loin pour gagner des FPS
+            float nextStep = max(stepSize, r * 0.08);
             p += rd * nextStep;
             
-            // Si on est trop loin, on arrête (sortie de la boite)
-            if(r > 50.0) break;
+            if(r > 60.0) break;
         }
         
-        // Tone mapping et Gamma
-        col = pow(col, vec3(1.2)); // Contraste
-        col *= u_bloom; // Intensité globale
+        // Tone mapping filmique simple
+        col = col / (col + vec3(1.0)); // Reinhard
+        col = pow(col, vec3(1.0 / 2.2)); // Gamma correction
         
-        // Ajouter un fond étoilé subtil si le rayon n'a rien touché (optionnel, géré par Starfield externe habituellement)
-        // Mais ici on veut du noir profond pour le contraste
-        
-        gl_FragColor = vec4(col, min(accum, 1.0));
+        // Intensité globale (Bloom multiplier)
+        col *= u_bloom * 3.0;
+
+        gl_FragColor = vec4(col, clamp(accum, 0.0, 1.0));
     }
 `;
 
-// On garde les shaders d'étoiles originaux car ils fonctionnent bien pour l'arrière-plan
 export const StarfieldVertexShader = `
     uniform float u_time;
     attribute float a_size;
@@ -195,7 +191,7 @@ export const StarfieldVertexShader = `
         float t = u_time * a_twinkle_speed;
         float pulse = sin(t) * 0.5 + 0.5;
         v_opacity = a_opacity * (0.7 + 0.3 * pulse); 
-        v_color = vec3(1.0, 1.0, 1.0); // Étoiles blanches pures
+        v_color = vec3(1.0, 1.0, 1.0);
         gl_PointSize = a_size * (300.0 / -mvPosition.z);
     }
 `;
