@@ -2,8 +2,6 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Event Horizon Lab', () => {
     test.beforeEach(async ({ page }) => {
-        page.on('console', msg => console.log(`BROWSER LOG: ${msg.text()}`));
-        page.on('pageerror', err => console.log(`BROWSER ERROR: ${err}`));
         await page.goto('/');
     });
 
