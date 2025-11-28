@@ -155,17 +155,19 @@ export const AccretionDiskFragmentShader = `
         float speed = 5.0 / (radius * radius + 0.1); 
         float rot_angle = angle + u_time * speed * 0.1;
 
-        float n1 = snoise(vec2(rot_angle * 8.0, radius * 12.0));
-        float n2 = snoise(vec2(rot_angle * 4.0, radius * 3.0 - u_time * 0.1));
+        float n1 = snoise(vec2(rot_angle * 12.0, radius * 20.0));
+        float n2 = snoise(vec2(rot_angle * 8.0, radius * 6.0 - u_time * 0.2));
+        float n3 = snoise(vec2(rot_angle * 24.0, radius * 40.0)); // Fine detail
         
-        float streaks = (n1 * 0.4 + 0.6) * (n2 * 0.4 + 0.6);
-        streaks = pow(streaks, 1.5); 
+        float streaks = (n1 * 0.4 + 0.6) * (n2 * 0.4 + 0.6) * (n3 * 0.2 + 0.8);
+        streaks = pow(streaks, 2.0); // Higher contrast 
 
         float r_norm = (radius - 0.28) / (1.0 - 0.28);
         
-        vec3 col_inner_warm = vec3(1.0, 0.95, 0.85); 
-        vec3 col_mid_warm = vec3(1.0, 0.5, 0.1);    
-        vec3 col_outer_warm = vec3(0.2, 0.02, 0.01);
+        // Gargantua-inspired Warm Palette
+        vec3 col_inner_warm = vec3(1.0, 0.9, 0.7); // Bright white-gold
+        vec3 col_mid_warm = vec3(1.0, 0.6, 0.1);   // Deep orange-gold
+        vec3 col_outer_warm = vec3(0.4, 0.05, 0.01); // Dark reddish-brown
 
         vec3 col_inner_cool = vec3(0.95, 0.98, 1.0); 
         vec3 col_mid_cool = vec3(0.2, 0.6, 1.0);    
@@ -192,8 +194,8 @@ export const AccretionDiskFragmentShader = `
         float beaming = 1.0 + doppler * 0.5;
         
         if (doppler > 0.0) {
-            color = mix(color, vec3(1.0, 1.0, 1.0), doppler * 0.15);
-            beaming = pow(beaming, 1.1);
+            color = mix(color, vec3(1.0, 1.0, 0.9), doppler * 0.3); // Whiter doppler
+            beaming = pow(beaming, 1.5); // Sharper beaming
         } else {
             color *= vec3(0.9, 0.7, 0.6); 
             beaming *= 0.5; 

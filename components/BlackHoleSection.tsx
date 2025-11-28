@@ -205,8 +205,15 @@ const BlackHoleSection: React.FC = () => {
         }
     };
 
-    const applyPreset = (preset: 'interstellar' | 'radioactive' | 'ice') => {
+    const applyPreset = (preset: 'interstellar' | 'radioactive' | 'ice' | 'gargantua') => {
         switch (preset) {
+            case 'gargantua':
+                setRotationSpeed(0.2);
+                setBloomIntensity(2.5);
+                setLensingStrength(1.8);
+                setDiskBrightness(1.5);
+                setTemperature(0.9);
+                break;
             case 'interstellar':
                 setRotationSpeed(0.3);
                 setBloomIntensity(0.1);
@@ -352,7 +359,8 @@ const BlackHoleSection: React.FC = () => {
                         </h3>
 
                         {/* PRESETS */}
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 flex-wrap">
+                            <button onClick={() => applyPreset('gargantua')} className="px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-orange-500 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-colors">Gargantua</button>
                             <button onClick={() => applyPreset('interstellar')} className="px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-blue-500 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-colors">Interstellar</button>
                             <button onClick={() => applyPreset('radioactive')} className="px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-green-500 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-colors">Radioactive</button>
                             <button onClick={() => applyPreset('ice')} className="px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-cyan-500 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-colors">Ice</button>
