@@ -58,7 +58,8 @@ export class BlackHoleSim {
             powerPreference: "high-performance",
             alpha: true,
             stencil: false,
-            depth: false
+            depth: false,
+            preserveDrawingBuffer: true
         });
         this.renderer.setSize(container.clientWidth, container.clientHeight);
 

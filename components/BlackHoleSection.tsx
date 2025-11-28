@@ -131,6 +131,16 @@ const BlackHoleSection: React.FC = () => {
     }, [rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme]);
 
     useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && isCinematic) {
+                setIsCinematic(false);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isCinematic]);
+
+    useEffect(() => {
         const timer = setTimeout(() => {
             setIsLoading(false);
         }, 2200);
@@ -237,6 +247,10 @@ const BlackHoleSection: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
+            style={{
+                zIndex: isCinematic ? 9999 : undefined,
+                transform: isCinematic ? 'none' : undefined
+            }}
         >
             <div className="mb-12 border-l-4 border-black dark:border-white pl-3 md:pl-6 -ml-4 md:-ml-7">
                 <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white transition-colors">
@@ -264,7 +278,7 @@ const BlackHoleSection: React.FC = () => {
                     </AnimatePresence>
 
                     {/* HEADER CONTROLS */}
-                    <div className={`bg-white/5 p-4 border-b border-white/10 flex justify-between items-center backdrop-blur-md z-20 absolute top-0 left-0 w-full transition-opacity duration-300 ${isCinematic ? 'opacity-0 hover:opacity-100' : 'opacity-100'}`}>
+                    <div className={`bg-white/5 p-4 border-b border-white/10 flex justify-between items-center backdrop-blur-md z-20 absolute top-0 left-0 w-full transition-opacity duration-300 ${isCinematic ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}>
                         <div className="flex gap-2">
                             <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
                             <div className="w-3 h-3 rounded-full bg-orange-500/50"></div>
@@ -301,7 +315,7 @@ const BlackHoleSection: React.FC = () => {
                     <div ref={containerRef} className="absolute inset-0 w-full h-full z-10" />
 
                     {/* FOOTER INFO */}
-                    <div className={`absolute bottom-0 left-0 w-full p-6 z-20 bg-gradient-to-t from-gray-200/90 dark:from-black/80 to-transparent pointer-events-none flex justify-between items-end transition-opacity duration-300 ${isCinematic ? 'opacity-0 hover:opacity-100' : 'opacity-100'}`}>
+                    <div className={`absolute bottom-0 left-0 w-full p-6 z-20 bg-gradient-to-t from-gray-200/90 dark:from-black/80 to-transparent pointer-events-none flex justify-between items-end transition-opacity duration-300 ${isCinematic ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}>
                         <div>
                             <h3 className="text-3xl font-black text-black/20 dark:text-white/20 uppercase tracking-tighter">Event Horizon</h3>
                         </div>
