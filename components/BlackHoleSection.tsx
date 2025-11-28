@@ -114,6 +114,8 @@ const BlackHoleSection: React.FC = () => {
     const [lensingStrength, setLensingStrength] = useState(1.2);
     const [diskBrightness, setDiskBrightness] = useState(1.0);
     const [temperature, setTemperature] = useState(1.0);
+    const [autoOrbit, setAutoOrbit] = useState(false);
+    const [simKey, setSimKey] = useState(0); // Key to force re-render/reload
     const { isCinematic, setIsCinematic } = useCinematic();
 
     const isInViewRef = useRef(isInView);
@@ -193,6 +195,10 @@ const BlackHoleSection: React.FC = () => {
 
         window.addEventListener('resize', handleResize);
 
+        if (containerRef.current) {
+            containerRef.current.innerHTML = '';
+        }
+
         return () => {
             window.removeEventListener('resize', handleResize);
             cancelAnimationFrame(animationId);
@@ -201,7 +207,7 @@ const BlackHoleSection: React.FC = () => {
                 containerRef.current.innerHTML = '';
             }
         };
-    }, []);
+    }, [simKey]);
 
     const moveCamera = (position: 'orbit' | 'top' | 'side') => {
         if (!simRef.current) return;
@@ -257,6 +263,13 @@ const BlackHoleSection: React.FC = () => {
         link.click();
     };
 
+    const reloadSimulation = () => {
+        setIsLoading(true);
+        setSimKey(prev => prev + 1);
+        setAutoOrbit(false);
+        setTimeout(() => setIsLoading(false), 1500);
+    };
+
     return (
         <motion.section
             id="blackhole"
@@ -296,31 +309,63 @@ const BlackHoleSection: React.FC = () => {
                         )}
                     </AnimatePresence>
 
-                    {/* HEADER CONTROLS */}
-                    <div className={`bg-white/5 p-4 border-b border-white/10 flex justify-between items-center backdrop-blur-md z-20 absolute top-0 left-0 w-full transition-opacity duration-300 ${isCinematic ? 'opacity-100' : 'opacity-100'}`}>
+                    {/* HEADER CONTROLS - CAMERA CONTROL CENTER */}
+                    <div className={`bg-white/5 p-4 border-b border-white/10 flex justify-between items-center backdrop-blur-md z-20 absolute top-0 left-0 w-full transition-opacity duration-300 ${isCinematic ? 'opacity-0 hover:opacity-100' : 'opacity-100'}`}>
                         <div className="flex gap-2">
                             <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
                             <div className="w-3 h-3 rounded-full bg-orange-500/50"></div>
                             <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
                         </div>
+
                         <div className="flex items-center gap-4">
+                            {/* Camera Controls */}
                             <div className="hidden md:flex bg-black/50 rounded-full p-1 gap-1 border border-white/10">
-                                <button onClick={() => moveCamera('orbit')} className="flex items-center gap-2 px-4 py-1.5 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-widest">
-                                    <Navigation size={12} />
-                                    <span>Orbit</span>
+                                <button
+                                    onClick={() => {
+                                        if (simRef.current) {
+                                            simRef.current.setAutoRotation(!autoOrbit);
+                                            setAutoOrbit(!autoOrbit);
+                                        }
+                                    }}
+                                    className={`flex items-center gap-2 px-4 py-1.5 rounded-full transition-all text-[10px] font-bold uppercase tracking-widest ${autoOrbit ? 'bg-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]' : 'hover:bg-white/20 text-white/70 hover:text-white'}`}
+                                >
+                                    <RefreshCw size={12} className={autoOrbit ? "animate-spin" : ""} />
+                                    <span>Auto-Orbit</span>
                                 </button>
-                                <button onClick={() => moveCamera('top')} className="flex items-center gap-2 px-4 py-1.5 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-widest">
-                                    <Layers size={12} />
-                                    <span>Top View</span>
+
+                                <div className="w-px h-4 bg-white/10 mx-1 self-center"></div>
+
+                                <button onClick={() => moveCamera('orbit')} className="p-2 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors" title="Orbit View">
+                                    <Navigation size={14} />
                                 </button>
-                                <button onClick={() => moveCamera('side')} className="flex items-center gap-2 px-4 py-1.5 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-widest">
-                                    <ZoomIn size={12} />
-                                    <span>Side View</span>
+                                <button onClick={() => moveCamera('top')} className="p-2 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors" title="Top View">
+                                    <Layers size={14} />
+                                </button>
+                                <button onClick={() => moveCamera('side')} className="p-2 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors" title="Side View">
+                                    <ZoomIn size={14} />
+                                </button>
+
+                                <div className="w-px h-4 bg-white/10 mx-1 self-center"></div>
+
+                                <button
+                                    onClick={() => {
+                                        if (simRef.current) {
+                                            simRef.current.resetCamera();
+                                            setAutoOrbit(false);
+                                        }
+                                    }}
+                                    className="p-2 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors"
+                                    title="Reset Camera"
+                                >
+                                    <Minimize2 size={14} />
                                 </button>
                             </div>
 
-                            {/* NEW: Screenshot & Cinematic Buttons */}
+                            {/* System Controls */}
                             <div className="flex items-center gap-2 border-l border-white/10 pl-4">
+                                <button onClick={reloadSimulation} className="p-2 hover:bg-red-500/20 hover:text-red-400 rounded-full text-white/70 transition-colors" title="Reload Simulation">
+                                    <Activity size={16} />
+                                </button>
                                 <button onClick={takeScreenshot} className="p-2 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors" title="Take Screenshot">
                                     <Camera size={16} />
                                 </button>

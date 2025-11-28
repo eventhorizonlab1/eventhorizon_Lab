@@ -180,6 +180,17 @@ export class BlackHoleSim {
         this.isAnimatingCamera = true;
     }
 
+    setAutoRotation(active: boolean) {
+        this.controls.autoRotate = active;
+        this.controls.autoRotateSpeed = 0.5; // Vitesse douce
+    }
+
+    resetCamera() {
+        this.targetCameraPosition.set(0, 8, 55);
+        this.isAnimatingCamera = true;
+        this.controls.autoRotate = false;
+    }
+
     update(time: number, delta: number, params: any) {
         if (this.blackHoleMaterial) {
             this.blackHoleMaterial.uniforms.u_time.value = time * params.rotationSpeed;
@@ -206,6 +217,7 @@ export class BlackHoleSim {
             this.camera.position.lerp(this.targetCameraPosition, 0.05);
             if (this.camera.position.distanceTo(this.targetCameraPosition) < 0.1) {
                 this.isAnimatingCamera = false;
+                this.controls.update(); // Force update target
             }
         }
 
