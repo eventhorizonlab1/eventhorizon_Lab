@@ -14,17 +14,66 @@ const getYouTubeId = (url: string) => {
 };
 
 // --- YOUTUBE-STYLE: RICH CONTENT MODAL ---
-const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
+const VideoModalContent: React.FC<{ video: Video; onClose: () => void }> = ({ video, onClose }) => {
     const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
     const [iframeLoaded, setIframeLoaded] = useState(false);
     const { t } = useThemeLanguage();
+    const modalRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         document.body.style.overflow = 'hidden';
+
+        // Focus trap logic
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                onClose();
+                return;
+            }
+
+            if (e.key === 'Tab' && modalRef.current) {
+                const focusableElements = modalRef.current.querySelectorAll(
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                );
+
+                if (focusableElements.length === 0) return;
+
+                const firstElement = focusableElements[0] as HTMLElement;
+                const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+                if (e.shiftKey) {
+                    if (document.activeElement === firstElement) {
+                        lastElement.focus();
+                        e.preventDefault();
+                    }
+                } else {
+                    if (document.activeElement === lastElement) {
+                        firstElement.focus();
+                        e.preventDefault();
+                    }
+                }
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        // Focus the first focusable element on mount
+        // Small timeout to ensure render
+        setTimeout(() => {
+            if (modalRef.current) {
+                const focusableElements = modalRef.current.querySelectorAll(
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                );
+                if (focusableElements.length > 0) {
+                    (focusableElements[0] as HTMLElement).focus();
+                }
+            }
+        }, 50);
+
         return () => {
             document.body.style.overflow = 'unset';
+            document.removeEventListener('keydown', handleKeyDown);
         };
-    }, []);
+    }, [onClose]);
 
     useEffect(() => {
         setShouldLoadIframe(false);
@@ -43,11 +92,13 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
 
     return (
         <div
-            className="flex flex-col w-full max-w-5xl gap-6 h-full md:h-auto"
+            ref={modalRef}
+            className="flex flex-col w-full max-w-5xl gap-6 h-full md:h-auto outline-none"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
             aria-labelledby="video-modal-title"
+            tabIndex={-1}
         >
             {/* VIDEO PLAYER CONTAINER */}
             <motion.div
@@ -269,7 +320,7 @@ const VideoSection: React.FC = () => {
                                 <X size={24} />
                             </button>
 
-                            <VideoModalContent video={selectedVideo} />
+                            <VideoModalContent video={selectedVideo} onClose={() => setSelectedVideo(null)} />
                         </motion.div>
                     )}
                 </AnimatePresence>,

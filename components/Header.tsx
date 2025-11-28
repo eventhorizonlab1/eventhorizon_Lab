@@ -110,6 +110,12 @@ const Header: React.FC = () => {
 
   return (
     <>
+      <a
+        href="#main-content"
+        className="fixed top-4 left-4 z-[100] -translate-y-[150%] focus:translate-y-0 bg-blue-600 text-white px-4 py-2 rounded-lg font-bold shadow-lg transition-transform duration-300 outline-none focus:ring-4 focus:ring-blue-400"
+      >
+        Skip to content
+      </a>
       <header
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out px-4 md:px-8 lg:px-12 ${headerBgClass} ${isCinematic ? '-translate-y-full opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}`}
       >
