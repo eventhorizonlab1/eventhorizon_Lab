@@ -145,10 +145,10 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
     );
 };
 
-const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => void }> = React.memo(({ video, index, onPlay }) => {
+const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => void }> = React.memo(({ video, onPlay }) => {
     const { t } = useThemeLanguage();
-    // Use title directly from constants as it's now the source of truth (synced with YouTube)
-    const title = video.title;
+    const translatedTitle = t(`video_${video.id}_title`);
+    const title = translatedTitle === `video_${video.id}_title` ? video.title : translatedTitle;
 
     return (
         <motion.div

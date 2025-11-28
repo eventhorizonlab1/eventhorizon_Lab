@@ -26,7 +26,7 @@ export const ThemeLanguageProvider: React.FC<{ children: ReactNode }> = ({ child
     const root = document.documentElement;
     // Always start with dark to avoid flash
     if (!root.classList.contains('dark')) {
-        root.classList.add('dark');
+      root.classList.add('dark');
     }
   }, []);
 
@@ -44,8 +44,13 @@ export const ThemeLanguageProvider: React.FC<{ children: ReactNode }> = ({ child
   };
 
   const t = (key: string): string => {
-    const langDict = TRANSLATIONS[language] || TRANSLATIONS['fr'];
-    return langDict[key] || key;
+    const langDict = TRANSLATIONS[language];
+    const val = langDict?.[key];
+    if (val) return val;
+
+    // Fallback to French
+    const frDict = TRANSLATIONS['fr'];
+    return frDict[key] || key;
   };
 
   return (

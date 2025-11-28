@@ -4,7 +4,7 @@ import { PARTNERS } from '../constants';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Partner } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
-import { X, Building2, ExternalLink, Globe, Award, Zap } from 'lucide-react';
+import { X, Building2, ExternalLink, Globe, Award } from 'lucide-react';
 
 const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> = ({ partner, onClose }) => {
     const { t } = useThemeLanguage();
@@ -17,7 +17,8 @@ const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> =
         };
     }, []);
 
-    const role = partner.role;
+    const translatedRole = t(`partner_${partner.id}_role`);
+    const role = translatedRole === `partner_${partner.id}_role` ? partner.role : translatedRole;
     const description = t(`partner_${partner.id}_desc`);
 
     // Generate visual tags based on role for aesthetics
@@ -136,7 +137,8 @@ const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Part
     });
 
     const y = useTransform(scrollYProgress, [0, 1], [30, -30]);
-    const role = partner.role;
+    const translatedRole = t(`partner_${partner.id}_role`);
+    const role = translatedRole === `partner_${partner.id}_role` ? partner.role : translatedRole;
 
     return (
         <motion.div

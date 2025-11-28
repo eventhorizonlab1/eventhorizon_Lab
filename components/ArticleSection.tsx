@@ -16,7 +16,8 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
         return () => { document.body.style.overflow = 'unset'; };
     }, []);
 
-    const title = article.title;
+    const translatedTitle = t(`article_${article.id}_title`);
+    const title = translatedTitle === `article_${article.id}_title` ? article.title : translatedTitle;
 
     // Logique de contenu par défaut si la traduction manque
     let contentText = t(`article_${article.id}_content`);
@@ -90,8 +91,11 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
 // --- COMPOSANT CARTE (Structure identique à PartnerCard) ---
 const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Article) => void }> = React.memo(({ article, index, onClick }) => {
     const { t } = useThemeLanguage();
-    const title = article.title;
-    const summary = article.summary;
+    const translatedTitle = t(`article_${article.id}_title`);
+    const title = translatedTitle === `article_${article.id}_title` ? article.title : translatedTitle;
+
+    const translatedSummary = t(`article_${article.id}_summary`);
+    const summary = translatedSummary === `article_${article.id}_summary` ? article.summary : translatedSummary;
 
     return (
         <motion.div
