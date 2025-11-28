@@ -76,13 +76,14 @@ export class BlackHoleSim {
     }
 
     initBlackHoleVolume() {
-        const geometry = new THREE.BoxGeometry(70, 70, 70);
+        // Augmenter la taille de la boîte pour éviter le culling si la caméra recule
+        const geometry = new THREE.BoxGeometry(200, 200, 200);
 
         this.blackHoleMaterial = new THREE.ShaderMaterial({
             uniforms: {
                 u_time: { value: 0.0 },
                 u_resolution: { value: new THREE.Vector2(1, 1) },
-                u_cameraPos: { value: new THREE.Vector3() },
+                u_cameraPos: { value: new THREE.Vector3(0, 8, 55) }, // Init avec la bonne position
                 u_bloom: { value: 1.0 },
                 u_lensing: { value: 1.0 },
                 u_disk_density: { value: 1.0 },

@@ -75,6 +75,9 @@ export const BlackHoleFragmentShader = `
         // Gravité renforcée pour bien voir le disque "derrière" le trou noir
         float gravityStrength = 0.12 * u_lensing; 
 
+        // Fallback ambient color to ensure screen is never fully black (debug/safety)
+        col += vec3(0.0, 0.0, 0.02);
+
         for(int i = 0; i < 300; i++) {
             float r = length(p);
             
@@ -159,11 +162,12 @@ export const BlackHoleFragmentShader = `
             }
             
             // Avancer le rayon
-            // On avance plus vite quand on est loin pour gagner des FPS
-            float nextStep = max(stepSize, r * 0.08);
+            // Optimisation : Pas de stepSize dynamique trop agressif près du trou noir
+            float nextStep = max(stepSize, r * 0.08); 
+            
             p += rd * nextStep;
             
-            if(r > 60.0) break;
+            if(r > 200.0) break; // Augmenté pour couvrir la distance caméra (55) -> fond de boîte
         }
         
         // Tone mapping filmique simple
