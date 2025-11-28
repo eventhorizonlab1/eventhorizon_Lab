@@ -242,7 +242,9 @@ const BlackHoleSection: React.FC = () => {
     return (
         <motion.section
             id="blackhole"
-            className={`pt-0 md:pt-0 pb-16 md:pb-24 max-w-[1800px] mx-auto px-4 md:px-12 ${isCinematic ? 'relative z-[9999]' : ''}`}
+            className={isCinematic
+                ? "fixed inset-0 z-[9999] w-full h-full bg-black m-0 p-0 flex flex-col justify-center"
+                : "pt-0 md:pt-0 pb-16 md:pb-24 max-w-[1800px] mx-auto px-4 md:px-12 relative"}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -251,7 +253,7 @@ const BlackHoleSection: React.FC = () => {
                 transform: isCinematic ? 'none' : undefined
             }}
         >
-            <div className="mb-12 border-l-4 border-black dark:border-white pl-3 md:pl-6 -ml-4 md:-ml-7">
+            <div className={`mb-12 border-l-4 border-black dark:border-white pl-3 md:pl-6 -ml-4 md:-ml-7 ${isCinematic ? 'hidden' : ''}`}>
                 <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white transition-colors">
                     {t('bh_title')}
                 </h2>
@@ -260,7 +262,7 @@ const BlackHoleSection: React.FC = () => {
                 </p>
             </div>
 
-            <div className={`mb-12 transition-all duration-500 ${isCinematic ? 'fixed inset-0 z-[100] m-0 rounded-none' : ''}`}>
+            <div className={`transition-all duration-500 ${isCinematic ? 'absolute inset-0 w-full h-full m-0 rounded-none' : 'mb-12'}`}>
                 <div className={`relative overflow-hidden bg-gray-100 dark:bg-black border border-gray-200 dark:border-white/10 shadow-2xl w-full flex flex-col group transition-all duration-500 ${isCinematic ? 'h-full rounded-none border-0' : 'aspect-square md:aspect-[21/9] rounded-[2rem]'}`}>
 
                     <AnimatePresence>
@@ -340,7 +342,7 @@ const BlackHoleSection: React.FC = () => {
             </div>
 
             {/* CONTROLS PANEL */}
-            <div className="bg-white dark:bg-eh-gray p-8 rounded-[2rem] border border-gray-200 dark:border-white/5 relative overflow-hidden shadow-lg transition-colors duration-500 max-w-6xl mx-auto w-full">
+            <div className={`bg-white dark:bg-eh-gray p-8 rounded-[2rem] border border-gray-200 dark:border-white/5 relative overflow-hidden shadow-lg transition-colors duration-500 max-w-6xl mx-auto w-full ${isCinematic ? 'hidden' : ''}`}>
                 <div className="relative z-10">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-gray-200 dark:border-white/10 pb-4 gap-4">
                         <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 flex items-center gap-2">
