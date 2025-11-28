@@ -10,17 +10,7 @@ export const NAV_LINKS = [
   { label: 'Écosystème', href: '#ecosystem', key: 'nav_ecosystem' },
 ];
 
-/* 
-  === UTILITAIRE AUTOMATIQUE ===
-  Cette fonction permet de récupérer automatiquement l'image "maxres" (HD) de YouTube.
-  Supporte maintenant les liens "Shorts".
-*/
-export const getYouTubeThumbnail = (url: string): string => {
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
-  const match = url.match(regExp);
-  const id = (match && match[2].length === 11) ? match[2] : null;
-  return id ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg` : '';
-};
+
 
 /* 
   === IMAGES ===
@@ -29,7 +19,7 @@ export const getYouTubeThumbnail = (url: string): string => {
 
 export const FEATURED_VIDEO: Video = {
   id: 'feat_1',
-  title: '🚀 Ariane 6 : Le Retour du Géant Européen',
+  title: 'Lancement Ariane 6 avec le satellite Sentinel-1D (VA265)',
   category: 'LANCEURS',
   subcategory: 'LIVE',
   duration: 'Live',
@@ -43,7 +33,7 @@ export const VIDEOS: Video[] = [
   // --- NOUVELLES VIDÉOS (2024-2025) ---
   {
     id: 'v_new_1',
-    title: 'Ariane 6 - Le Vol Inaugural (Replay)',
+    title: "Vol inaugural d'Ariane 6",
     category: 'LANCEURS',
     subcategory: 'REPLAY',
     duration: '03:45:00',
@@ -53,7 +43,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_2',
-    title: 'Ariane 6 : Un succès (presque) complet !',
+    title: 'Ariane 6: un succès ( presque ) complet !',
     category: 'LANCEURS',
     subcategory: 'ANALYSE',
     duration: '18:20',
@@ -63,7 +53,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_3',
-    title: 'Lancement Inaugural Ariane 6 commenté',
+    title: '🔴 Lancement inaugural Ariane 6 VA-262 commenté FR',
     category: 'LANCEURS',
     subcategory: 'LIVE',
     duration: '04:12:00',
@@ -73,7 +63,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_4',
-    title: 'Décollage Ariane 6 - Vol VA265 / Sentinel-1D',
+    title: 'Vol VA265 | Sentinel-1D | Ariane 6 I Arianespace',
     category: 'FUTUR',
     subcategory: 'SIMULATION',
     duration: '02:30',
@@ -83,7 +73,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_5',
-    title: 'Rêves d\'Espace : Décollage Ariane 6 VA265',
+    title: "Décollage d'Ariane 6 du 4 novembre 2025",
     category: 'LANCEURS',
     subcategory: 'REPORTAGE',
     duration: '15:10',
@@ -93,7 +83,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_6',
-    title: 'ESA Open Day 2025 (ESRIN)',
+    title: 'ESA Open Day 2025: an unforgettable day inside ESRIN',
     category: 'ÉVÉNEMENT',
     subcategory: 'VISITE',
     duration: '05:45',
@@ -103,7 +93,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_7',
-    title: 'Hélène Huby (The Exploration Company) à BIG 2025',
+    title: 'Hélène HUBY au Studio Bang à BIG 2025',
     category: 'NEWSPACE',
     subcategory: 'INTERVIEW',
     duration: '25:30',
@@ -113,7 +103,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_8',
-    title: 'The Exploration Company : Présentation Capsule Nyx',
+    title: 'ISSRDC 2024 Day 3 Lightning Talk: Dana Baki The Exploration Company',
     category: 'TECH',
     subcategory: 'PRÉSENTATION',
     duration: '03:15',
@@ -123,7 +113,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_9',
-    title: 'MaiaSpace : Allocutions officielles (Juin 2025)',
+    title: 'Allocutions depuis le site de l’entreprise MaiaSpace | 13 juin 2025',
     category: 'NEWSPACE',
     subcategory: 'CONFÉRENCE',
     duration: '12:45',
@@ -133,7 +123,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_10',
-    title: 'Yohann Leroy (CEO MaiaSpace) - Interview',
+    title: 'Yohann Leroy, CEO de MaiaSpace - Studio Bang - BIG 2024',
     category: 'NEWSPACE',
     subcategory: 'INTERVIEW',
     duration: '10:20',
@@ -143,7 +133,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_11',
-    title: 'Latitude : Stanislas Maximin (CEO) - Interview',
+    title: 'Envoyer des fusées dans l’espace à 25 ans en autodidacte - Stanislas Maximin',
     category: 'STARTUP',
     subcategory: 'INTERVIEW',
     duration: '14:10',
@@ -153,7 +143,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_12',
-    title: 'Latitude à VivaTech 2025',
+    title: '#Vivatech : La fusée de Latitude réalisera son 1er vol en 2026',
     category: 'TECH',
     subcategory: 'SHORT',
     duration: '00:59',
@@ -163,7 +153,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_13',
-    title: 'Isar Aerospace : Premier vol Spectrum',
+    title: 'Isar Aerospace - Spectrum rocket first launch (full sequence) at Andøya spaceport - 30.3.2025',
     category: 'LANCEURS',
     subcategory: 'TEST',
     duration: '04:50',
@@ -173,7 +163,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_14',
-    title: 'Analyse du crash Isar Aerospace',
+    title: 'BOOM! Isar Aerospace launched Spectrum Rocket and it crashed!',
     category: 'LANCEURS',
     subcategory: 'ANALYSE',
     duration: '08:30',
@@ -183,7 +173,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_15',
-    title: 'HyImpulse : Premier tir (Mai 2024)',
+    title: 'Une start-up allemande a réussi à lancer une fusée avec de la cire de bougie',
     category: 'NEWSPACE',
     subcategory: 'TEST',
     duration: '02:15',
@@ -193,7 +183,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_16',
-    title: 'PLD Space : Miura 5 Update',
+    title: 'PLD Space | MIURA 5 "OM1"',
     category: 'NEWSPACE',
     subcategory: 'SHORT',
     duration: '00:45',
@@ -203,7 +193,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_17',
-    title: 'Hugo Lisoir : Perspectives et défis 2025',
+    title: "[L'espace du Débat]  Perspectives et défis dans le spatial en 2025",
     category: 'ANALYSE',
     subcategory: 'OPINION',
     duration: '22:00',
@@ -213,7 +203,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_18',
-    title: 'Latitude : A French Space Startup',
+    title: 'Latitude: A French Space Startup Planning to Launch Their First Vehicle in 2025',
     category: 'STARTUP',
     subcategory: 'DOCUMENTAIRE',
     duration: '11:45',
@@ -223,7 +213,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_19',
-    title: 'Comprendre MaiaSpace en 30 secondes',
+    title: 'Comprendre MaiaSpace en moins de 30 secondes avec Jérôme Vila (DG Adjoint MaiaSpace)',
     category: 'ÉDU',
     subcategory: 'SHORT',
     duration: '00:30',
@@ -233,7 +223,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v_new_20',
-    title: 'ESA Living Planet Symposium 2025',
+    title: "ESA's Living Planet Symposium 2025",
     category: 'SCIENCE',
     subcategory: 'CONFÉRENCE',
     duration: '01:30:00',
@@ -255,7 +245,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v2',
-    title: "Pourquoi Ariane s'acharne face à SpaceX ?",
+    title: 'Ariane 6: un succès ( presque ) complet !',
     category: 'STRATÉGIE',
     duration: '12:30',
     imageUrl: '/assets/videos/v2.jpg',
@@ -264,7 +254,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v3',
-    title: "MaiaSpace, l'entreprise française qui veut rivaliser avec SpaceX",
+    title: 'Comprendre MaiaSpace en moins de 30 secondes avec Jérôme Vila (DG Adjoint MaiaSpace)',
     category: 'NEWSPACE',
     duration: '08:45',
     imageUrl: '/assets/videos/v3.jpg',
@@ -273,7 +263,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v4',
-    title: 'Enfin une FUSÉE RÉUTILISABLE en EUROPA ! MAIA SPACE',
+    title: 'Allocutions depuis le site de l’entreprise MaiaSpace | 13 juin 2025',
     category: 'TECH',
     duration: '14:20',
     imageUrl: '/assets/videos/v4.jpg',
@@ -282,7 +272,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v5',
-    title: 'La France a ENFIN son SpaceX ( Baguette One, Latitude.. ) ?',
+    title: 'Envoyer des fusées dans l’espace à 25 ans en autodidacte - Stanislas Maximin',
     category: 'STARTUP',
     duration: '11:10',
     imageUrl: '/assets/videos/v5.jpg',
@@ -291,7 +281,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v6',
-    title: 'Space Startup News: The Exploration Company Nyx Crew Vehicle',
+    title: 'ISSRDC 2024 Day 3 Lightning Talk: Dana Baki The Exploration Company',
     category: 'CARGO',
     duration: '09:50',
     imageUrl: '/assets/videos/v6.jpg',
@@ -300,7 +290,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v7',
-    title: 'NASA should use The Exploration Company Nyx to backup Starship!',
+    title: 'Hélène HUBY au Studio Bang à BIG 2025',
     category: 'OPINION',
     duration: '13:15',
     imageUrl: '/assets/videos/v7.jpg',
@@ -349,7 +339,7 @@ export const VIDEOS: Video[] = [
   },
   {
     id: 'v12',
-    title: 'ClearSpace-1 Mission Launch Update',
+    title: 'ClearSpace-1 Mission Launch',
     category: 'DURABILITÉ',
     duration: '04:20',
     imageUrl: '/assets/videos/v12.jpg',
