@@ -9,7 +9,7 @@ import { ArrowRight, ArrowLeft, X, Calendar } from 'lucide-react';
 // --- MODAL COMPONENT (Basé sur le modèle Ecosystem) ---
 const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> = ({ article, onClose }) => {
     const { t } = useThemeLanguage();
-    
+
     // Bloquer le scroll d'arrière-plan
     useEffect(() => {
         document.body.style.overflow = 'hidden';
@@ -17,7 +17,7 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
     }, []);
 
     const title = t(`article_${article.id}_title`);
-    
+
     // Logique de contenu par défaut si la traduction manque
     let contentText = t(`article_${article.id}_content`);
     if (contentText === `article_${article.id}_content`) {
@@ -34,9 +34,9 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
             className="bg-white dark:bg-[#0a0a0a] w-full max-w-5xl h-[90vh] md:h-[85vh] rounded-3xl overflow-hidden shadow-2xl relative border border-gray-100 dark:border-white/10 flex flex-col md:flex-row"
             onClick={(e) => e.stopPropagation()}
         >
-            <button 
+            <button
                 onClick={onClose}
-                className="absolute top-12 right-6 md:top-6 md:right-6 z-50 p-2 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
+                className="absolute top-4 right-4 md:top-6 md:right-6 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
                 aria-label={t('common_close')}
             >
                 <X size={24} />
@@ -44,9 +44,9 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
 
             {/* Gauche: Image */}
             <div className="w-full md:w-5/12 h-1/3 md:h-full relative shrink-0">
-                <img 
-                    src={article.imageUrl} 
-                    alt={title} 
+                <img
+                    src={article.imageUrl}
+                    alt={title}
                     className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent md:bg-gradient-to-r" />
@@ -72,13 +72,13 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
                 </div>
 
                 <div className="prose prose-lg dark:prose-invert max-w-none">
-                     {paragraphs.map((para, idx) => (
+                    {paragraphs.map((para, idx) => (
                         <p key={idx} className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed font-serif text-justify">
                             {para}
                         </p>
                     ))}
                 </div>
-                
+
                 <div className="mt-12 pt-8 border-t border-gray-100 dark:border-white/10 flex justify-center">
                     <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Event Horizon Lab</p>
                 </div>
@@ -99,20 +99,20 @@ const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Arti
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="snap-start shrink-0 w-[85vw] md:w-[400px] cursor-pointer group"
+            className="snap-start shrink-0 w-[80vw] md:w-[400px] cursor-pointer group"
             onClick={() => onClick(article)}
         >
             {/* Conteneur Visuel */}
             <div className="relative overflow-hidden rounded-[2rem] bg-gray-900 aspect-[4/5] mb-4 border border-white/10 shadow-lg transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
-                
+
                 {/* Image */}
-                <img 
-                    src={article.imageUrl} 
+                <img
+                    src={article.imageUrl}
                     alt={title}
                     loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
                 />
-                
+
                 {/* Overlay Dégradé */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
 
@@ -129,18 +129,18 @@ const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Arti
                 {/* Contenu Texte (Toujours visible, pointer-events-none pour laisser passer le clic au parent) */}
                 <div className="absolute inset-0 p-8 flex flex-col justify-end z-10 pointer-events-none">
                     <div className="flex items-center gap-2 mb-3">
-                        <span className="px-2 py-1 bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-md shadow-sm">
+                        <span className="px-2 py-1 bg-blue-600 text-white text-xs font-bold uppercase tracking-widest rounded-md shadow-sm">
                             Article
                         </span>
-                        <span className="text-white/80 text-[10px] font-bold uppercase tracking-widest border-l border-white/20 pl-2">
+                        <span className="text-white/80 text-xs font-bold uppercase tracking-widest border-l border-white/20 pl-2">
                             {article.date}
                         </span>
                     </div>
-                    
+
                     <h3 className="text-2xl font-bold text-white leading-tight mb-2 group-hover:text-blue-300 transition-colors">
                         {title}
                     </h3>
-                    
+
                     <p className="text-gray-300 text-sm line-clamp-2 leading-relaxed">
                         {summary}
                     </p>
@@ -175,9 +175,9 @@ const ArticleSection: React.FC = () => {
                         className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
                         onClick={() => setSelectedArticle(null)}
                     >
-                        <ArticleModalContent 
-                            article={selectedArticle} 
-                            onClose={() => setSelectedArticle(null)} 
+                        <ArticleModalContent
+                            article={selectedArticle}
+                            onClose={() => setSelectedArticle(null)}
                         />
                     </motion.div>
                 )}
@@ -205,16 +205,16 @@ const ArticleSection: React.FC = () => {
                 </div>
 
                 <div className="overflow-hidden">
-                    <div 
+                    <div
                         ref={scrollContainerRef}
                         className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-8 pb-12"
                     >
                         {ARTICLES.map((article, index) => (
-                            <ArticleCard 
-                                key={article.id} 
-                                article={article} 
-                                index={index} 
-                                onClick={setSelectedArticle} 
+                            <ArticleCard
+                                key={article.id}
+                                article={article}
+                                index={index}
+                                onClick={setSelectedArticle}
                             />
                         ))}
                     </div>

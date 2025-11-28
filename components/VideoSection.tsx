@@ -29,21 +29,21 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
     useEffect(() => {
         setShouldLoadIframe(false);
         setIframeLoaded(false);
-        const timer = setTimeout(() => setShouldLoadIframe(true), 450); 
+        const timer = setTimeout(() => setShouldLoadIframe(true), 450);
         return () => clearTimeout(timer);
     }, [video]);
 
     const videoId = getYouTubeId(video.videoUrl);
-    
+
     const translatedTitle = t(`video_${video.id}_title`);
     const title = translatedTitle.startsWith('video_') ? video.title : translatedTitle;
-    
+
     // Fallback for description if not in constants yet (though we added it)
     const description = video.description || t(`video_${video.id}_desc`) || "Aucune description disponible pour cette vidéo.";
 
     return (
-        <div 
-            className="flex flex-col w-full max-w-5xl gap-6 h-full md:h-auto" 
+        <div
+            className="flex flex-col w-full max-w-5xl gap-6 h-full md:h-auto"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -65,10 +65,10 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
                 ) : (
                     <>
                         <div className="absolute inset-0 w-full h-full bg-gray-900 flex items-center justify-center z-0">
-                            <img 
-                                src={video.imageUrl} 
-                                alt={title} 
-                                className="absolute inset-0 w-full h-full object-cover opacity-40 blur-md scale-105" 
+                            <img
+                                src={video.imageUrl}
+                                alt={title}
+                                className="absolute inset-0 w-full h-full object-cover opacity-40 blur-md scale-105"
                             />
                             <div className="relative z-10 flex flex-col items-center gap-3">
                                 <div className="w-16 h-16 rounded-full border-2 border-white/20 border-t-white flex items-center justify-center animate-spin"></div>
@@ -98,7 +98,7 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
             </motion.div>
 
             {/* YOUTUBE-STYLE INFO SECTION */}
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
@@ -106,10 +106,10 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
             >
                 <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                     <h3 id="video-modal-title" className="text-xl md:text-2xl font-bold leading-tight">{title}</h3>
-                    
-                    <a 
-                        href={video.videoUrl} 
-                        target="_blank" 
+
+                    <a
+                        href={video.videoUrl}
+                        target="_blank"
                         rel="noreferrer"
                         className="flex items-center gap-2 px-4 py-2 bg-[#ff0000] hover:bg-[#cc0000] text-white rounded-full text-xs font-bold uppercase tracking-widest transition-colors whitespace-nowrap shadow-lg shrink-0"
                     >
@@ -146,334 +146,334 @@ const VideoModalContent: React.FC<{ video: Video }> = ({ video }) => {
 };
 
 const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => void }> = React.memo(({ video, index, onPlay }) => {
-  const { t } = useThemeLanguage();
-  const title = t(`video_${video.id}_title`);
-  const category = t(`video_${video.id}_cat`);
+    const { t } = useThemeLanguage();
+    const title = t(`video_${video.id}_title`);
+    const category = t(`video_${video.id}_cat`);
 
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.4 }}
-      className="group cursor-pointer snap-start shrink-0 w-[80vw] md:w-[45vw] lg:w-auto transform-gpu"
-      onClick={() => onPlay(video)}
-    >
-      <div className="block h-full">
-        <div>
-          {/* Thumbnail Container */}
-          <div className="relative overflow-hidden rounded-xl bg-gray-200 dark:bg-gray-800 aspect-video mb-3 transition-colors duration-500 border border-black/5 dark:border-white/5 shadow-sm group-hover:shadow-lg">
-             <img 
-              src={video.imageUrl} 
-              alt={title} 
-              loading="lazy"
-              decoding="async" 
-              referrerPolicy="no-referrer"
-              onError={(e) => {
-                e.currentTarget.src = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
-              }}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
-            />
-            
-            {/* YouTube-style Duration Badge */}
-            <div className="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] tracking-wide">
-              {video.duration}
-            </div>
+    return (
+        <motion.div
+            layout
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.4 }}
+            className="group cursor-pointer snap-start shrink-0 w-[80vw] md:w-[40vw] lg:w-auto transform-gpu"
+            onClick={() => onPlay(video)}
+        >
+            <div className="block h-full">
+                <div>
+                    {/* Thumbnail Container */}
+                    <div className="relative overflow-hidden rounded-xl bg-gray-200 dark:bg-gray-800 aspect-video mb-3 transition-colors duration-500 border border-black/5 dark:border-white/5 shadow-sm group-hover:shadow-lg">
+                        <img
+                            src={video.imageUrl}
+                            alt={title}
+                            loading="lazy"
+                            decoding="async"
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                                e.currentTarget.src = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+                            }}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                        />
 
-            {/* Play Button Overlay */}
-             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20">
-                <div className="w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                  <Play className="w-5 h-5 text-black fill-black ml-0.5" />
+                        {/* YouTube-style Duration Badge */}
+                        <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs font-bold px-2 py-1 rounded-[4px] tracking-wide">
+                            {video.duration}
+                        </div>
+
+                        {/* Play Button Overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20">
+                            <div className="w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                <Play className="w-5 h-5 text-black fill-black ml-0.5" />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Meta Data */}
+                    <div className="pr-2">
+                        <h4 className="text-base md:text-lg font-bold leading-tight transition-colors duration-300 text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 line-clamp-2 mb-1">
+                            {title}
+                        </h4>
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{video.category}</span>
+                            {video.subcategory && (
+                                <>
+                                    <span className="w-0.5 h-0.5 bg-gray-400 rounded-full"></span>
+                                    <span className="text-xs font-bold text-blue-500 dark:text-blue-400 uppercase tracking-wider">{video.subcategory}</span>
+                                </>
+                            )}
+                        </div>
+                    </div>
                 </div>
-             </div>
-          </div>
-          
-          {/* Meta Data */}
-          <div className="pr-2">
-            <h4 className="text-base md:text-lg font-bold leading-tight transition-colors duration-300 text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 line-clamp-2 mb-1">
-              {title}
-            </h4>
-            <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{video.category}</span>
-                {video.subcategory && (
-                    <>
-                        <span className="w-0.5 h-0.5 bg-gray-400 rounded-full"></span>
-                        <span className="text-[10px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-wider">{video.subcategory}</span>
-                    </>
-                )}
             </div>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
+        </motion.div>
+    );
 });
 
 const VideoSection: React.FC = () => {
-  const featuredRef = useRef<HTMLDivElement>(null);
-  const { t } = useThemeLanguage();
-  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
-  const [activeCategory, setActiveCategory] = useState<string>('ALL');
-  const [activeSubCategory, setActiveSubCategory] = useState<string>('ALL');
-  
-  const { scrollYProgress } = useScroll({
-    target: featuredRef,
-    offset: ["start end", "end start"]
-  });
-  
-  const imageY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
+    const featuredRef = useRef<HTMLDivElement>(null);
+    const { t } = useThemeLanguage();
+    const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+    const [activeCategory, setActiveCategory] = useState<string>('ALL');
+    const [activeSubCategory, setActiveSubCategory] = useState<string>('ALL');
 
-  const featuredTitle = t(`video_${FEATURED_VIDEO.id}_title`);
-
-  // Extract unique categories (Main)
-  const categories = useMemo(() => {
-    const cats = new Set(VIDEOS.map(v => v.category));
-    return ['ALL', ...Array.from(cats)];
-  }, []);
-
-  // Extract unique subcategories (Sub)
-  const subCategories = useMemo(() => {
-    // Collect all subcategories
-    const subs = new Set<string>();
-    VIDEOS.forEach(v => {
-        if (v.subcategory) subs.add(v.subcategory);
+    const { scrollYProgress } = useScroll({
+        target: featuredRef,
+        offset: ["start end", "end start"]
     });
-    return ['ALL', ...Array.from(subs)];
-  }, []);
 
-  // Filter videos based on selection
-  const filteredVideos = useMemo(() => {
-    return VIDEOS.filter(v => {
-        const matchCat = activeCategory === 'ALL' || v.category === activeCategory;
-        const matchSub = activeSubCategory === 'ALL' || v.subcategory === activeSubCategory;
-        return matchCat && matchSub;
-    });
-  }, [activeCategory, activeSubCategory]);
+    const imageY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
 
-  return (
-    <>
-      {createPortal(
-        <AnimatePresence>
-            {selectedVideo && (
-                <motion.div
-                  key="video-modal-backdrop"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-xl p-0 md:p-12"
-                  onClick={() => setSelectedVideo(null)}
-                >
-                    <button 
-                      onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedVideo(null);
-                      }}
-                      className="absolute top-4 right-4 md:top-6 md:right-6 p-2 md:p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-50 backdrop-blur-md"
-                      aria-label={t('common_close')}
-                    >
-                      <X size={24} />
-                    </button>
-                    
-                    <VideoModalContent video={selectedVideo} />
-                </motion.div>
-            )}
-        </AnimatePresence>,
-        document.body
-      )}
+    const featuredTitle = t(`video_${FEATURED_VIDEO.id}_title`);
 
-      <motion.section 
-        id="videos" 
-        className="py-16 md:py-24" 
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      >
-        
-        {/* TRANSMISSION HEADER */}
-        <div className="max-w-[1800px] mx-auto md:px-12">
-            <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-12 relative overflow-hidden rounded-none md:rounded-3xl bg-gray-50 dark:bg-[#080808] text-black dark:text-white border-y md:border border-gray-200 dark:border-white/10 shadow-sm transition-colors duration-500"
-            >
-            <div className="absolute inset-0 z-0 pointer-events-none opacity-30">
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.1)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
-            </div>
+    // Extract unique categories (Main)
+    const categories = useMemo(() => {
+        const cats = new Set(VIDEOS.map(v => v.category));
+        return ['ALL', ...Array.from(cats)];
+    }, []);
 
-            <div className="relative z-10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-8">
-                
-                <div className="flex flex-row items-center gap-6 w-full md:w-auto">
-                    <div className="hidden md:flex w-16 h-16 border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 items-center justify-center rounded-lg">
-                        <Radio className="w-6 h-6 text-black dark:text-white opacity-80" />
-                    </div>
-                    
-                    <div className="flex flex-col">
-                        <div className="flex items-center gap-2 mb-2">
-                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                        <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">Transmission Entrante</span>
-                        </div>
-                        <h2 className="text-xl md:text-3xl font-bold tracking-tighter uppercase text-black dark:text-white">
-                        {t('videos_channel')}
-                        </h2>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 max-w-md mt-2 font-medium">
-                        {t('videos_channel_desc')}
-                        </p>
-                    </div>
-                </div>
-                
-                <a 
-                    href="https://www.youtube.com/@EventHorizonLab-n9g" 
-                    target="_blank" 
-                    rel="noreferrer"
-                    className="group relative px-6 py-3 bg-transparent border border-black dark:border-white text-black dark:text-white overflow-hidden transition-all hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black w-full md:w-auto text-center rounded-md"
-                >
-                    <div className="relative flex items-center justify-center gap-3">
-                    <span className="font-bold text-xs tracking-[0.2em] uppercase">{t('videos_access')}</span>
-                    <ArrowUpRight size={14} />
-                    </div>
-                </a>
+    // Extract unique subcategories (Sub)
+    const subCategories = useMemo(() => {
+        // Collect all subcategories
+        const subs = new Set<string>();
+        VIDEOS.forEach(v => {
+            if (v.subcategory) subs.add(v.subcategory);
+        });
+        return ['ALL', ...Array.from(subs)];
+    }, []);
 
-            </div>
-            </motion.div>
-        </div>
+    // Filter videos based on selection
+    const filteredVideos = useMemo(() => {
+        return VIDEOS.filter(v => {
+            const matchCat = activeCategory === 'ALL' || v.category === activeCategory;
+            const matchSub = activeSubCategory === 'ALL' || v.subcategory === activeSubCategory;
+            return matchCat && matchSub;
+        });
+    }, [activeCategory, activeSubCategory]);
 
-        {/* SECTION TITLE & FILTERS */}
-        <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-8">
-            <div className="flex flex-col gap-8">
-                <div className="border-l-4 border-black dark:border-white pl-3 md:pl-6 -ml-4 md:-ml-7">
-                    <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white transition-colors duration-500">
-                    {t('videos_title')}
-                    </h2>
-                    <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg max-w-md">
-                        {t('videos_subtitle')}
-                    </p>
-                </div>
-
-                <div className="flex flex-col gap-6">
-                    {/* MAIN CATEGORIES */}
-                    <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mask-linear-fade">
-                        {categories.map((cat) => (
+    return (
+        <>
+            {createPortal(
+                <AnimatePresence>
+                    {selectedVideo && (
+                        <motion.div
+                            key="video-modal-backdrop"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-xl p-0 md:p-12"
+                            onClick={() => setSelectedVideo(null)}
+                        >
                             <button
-                                key={cat}
-                                onClick={() => setActiveCategory(cat)}
-                                className={`
-                                    px-5 py-2 rounded-lg text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300 border-2
-                                    ${activeCategory === cat 
-                                        ? 'bg-black text-white dark:bg-white dark:text-black border-black dark:border-white shadow-lg' 
-                                        : 'bg-transparent text-gray-500 dark:text-gray-400 border-gray-200 dark:border-white/10 hover:border-black dark:hover:border-white hover:text-black dark:hover:text-white'}
-                                `}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedVideo(null);
+                                }}
+                                className="absolute top-4 right-4 md:top-6 md:right-6 p-2 md:p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-50 backdrop-blur-md"
+                                aria-label={t('common_close')}
                             >
-                                {cat === 'ALL' ? 'Tous les sujets' : cat}
+                                <X size={24} />
                             </button>
-                        ))}
-                    </div>
 
-                    {/* SUB CATEGORIES */}
-                    <div className="flex flex-col gap-3">
-                         <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                             <Filter size={12} />
-                             <span>{t('video_subcategories')}</span>
+                            <VideoModalContent video={selectedVideo} />
+                        </motion.div>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
+
+            <motion.section
+                id="videos"
+                className="py-16 md:py-24"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+
+                {/* TRANSMISSION HEADER */}
+                <div className="max-w-[1800px] mx-auto md:px-12">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="mb-12 relative overflow-hidden rounded-none md:rounded-3xl bg-gray-50 dark:bg-[#080808] text-black dark:text-white border-y md:border border-gray-200 dark:border-white/10 shadow-sm transition-colors duration-500"
+                    >
+                        <div className="absolute inset-0 z-0 pointer-events-none opacity-30">
+                            <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.1)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
                         </div>
-                        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
-                            {subCategories.map((sub) => (
-                                <button
-                                    key={sub}
-                                    onClick={() => setActiveSubCategory(sub)}
-                                    className={`
-                                        px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wide whitespace-nowrap transition-all duration-300
-                                        ${activeSubCategory === sub 
-                                            ? 'bg-blue-600 text-white shadow-md' 
-                                            : 'bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10'}
+
+                        <div className="relative z-10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-8">
+
+                            <div className="flex flex-row items-center gap-6 w-full md:w-auto">
+                                <div className="hidden md:flex w-16 h-16 border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 items-center justify-center rounded-lg">
+                                    <Radio className="w-6 h-6 text-black dark:text-white opacity-80" />
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                                        <span className="text-xs font-mono uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">Transmission Entrante</span>
+                                    </div>
+                                    <h2 className="text-xl md:text-3xl font-bold tracking-tighter uppercase text-black dark:text-white">
+                                        {t('videos_channel')}
+                                    </h2>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400 max-w-md mt-2 font-medium">
+                                        {t('videos_channel_desc')}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <a
+                                href="https://www.youtube.com/@EventHorizonLab-n9g"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="group relative px-6 py-3 bg-transparent border border-black dark:border-white text-black dark:text-white overflow-hidden transition-all hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black w-full md:w-auto text-center rounded-md"
+                            >
+                                <div className="relative flex items-center justify-center gap-3">
+                                    <span className="font-bold text-xs tracking-[0.2em] uppercase">{t('videos_access')}</span>
+                                    <ArrowUpRight size={14} />
+                                </div>
+                            </a>
+
+                        </div>
+                    </motion.div>
+                </div>
+
+                {/* SECTION TITLE & FILTERS */}
+                <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-8">
+                    <div className="flex flex-col gap-8">
+                        <div className="border-l-4 border-black dark:border-white pl-3 md:pl-6 -ml-4 md:-ml-7">
+                            <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white transition-colors duration-500">
+                                {t('videos_title')}
+                            </h2>
+                            <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg max-w-md">
+                                {t('videos_subtitle')}
+                            </p>
+                        </div>
+
+                        <div className="flex flex-col gap-6">
+                            {/* MAIN CATEGORIES */}
+                            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mask-linear-fade">
+                                {categories.map((cat) => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setActiveCategory(cat)}
+                                        className={`
+                                    px-5 py-2 rounded-lg text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300 border-2
+                                    ${activeCategory === cat
+                                                ? 'bg-black text-white dark:bg-white dark:text-black border-black dark:border-white shadow-lg'
+                                                : 'bg-transparent text-gray-500 dark:text-gray-400 border-gray-200 dark:border-white/10 hover:border-black dark:hover:border-white hover:text-black dark:hover:text-white'}
+                                `}
+                                    >
+                                        {cat === 'ALL' ? 'Tous les sujets' : cat}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* SUB CATEGORIES */}
+                            <div className="flex flex-col gap-3">
+                                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
+                                    <Filter size={14} />
+                                    <span>{t('video_subcategories')}</span>
+                                </div>
+                                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
+                                    {subCategories.map((sub) => (
+                                        <button
+                                            key={sub}
+                                            onClick={() => setActiveSubCategory(sub)}
+                                            className={`
+                                        px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide whitespace-nowrap transition-all duration-300
+                                        ${activeSubCategory === sub
+                                                    ? 'bg-blue-600 text-white shadow-md'
+                                                    : 'bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10'}
                                     `}
-                                >
-                                    {sub === 'ALL' ? 'Tous les formats' : sub}
-                                </button>
-                            ))}
+                                        >
+                                            {sub === 'ALL' ? 'Tous les formats' : sub}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        {/* FEATURED VIDEO */}
-        <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-12" ref={featuredRef}>
-          <motion.div 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="group cursor-pointer relative"
-            onClick={() => setSelectedVideo(FEATURED_VIDEO)}
-          >
-            <div className="relative overflow-hidden rounded-2xl bg-gray-200 dark:bg-gray-800 aspect-video md:aspect-[21/9] transition-colors duration-500 border border-black/5 dark:border-white/5 transform-gpu">
-              <motion.div style={{ y: imageY }} className="w-full h-[120%] -mt-[10%] will-change-transform">
-                <img 
-                  src={FEATURED_VIDEO.imageUrl} 
-                  alt={featuredTitle} 
-                  loading="lazy"
-                  decoding="async"
-                  referrerPolicy="no-referrer"
-                  onError={(e) => {
-                    e.currentTarget.src = 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80';
-                  }}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
-                />
-              </motion.div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-              
-              <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 flex flex-col md:flex-row justify-between items-end gap-6">
-                  <div>
-                      <div className="flex gap-2 mb-3">
-                        <span className="inline-block px-3 py-1 bg-[#ff0000] text-white text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg">{t('videos_featured')}</span>
-                        {FEATURED_VIDEO.subcategory && (
-                            <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg">{FEATURED_VIDEO.subcategory}</span>
-                        )}
-                      </div>
-                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tighter uppercase text-white mb-2 max-w-3xl">
-                          {featuredTitle}
-                      </h3>
-                      <p className="text-white/80 text-xs md:text-sm font-medium max-w-2xl line-clamp-2 md:line-clamp-none">
-                          {FEATURED_VIDEO.description}
-                      </p>
-                  </div>
-                  
-                  <button className="w-14 h-14 md:w-16 md:h-16 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.3)] shrink-0">
-                      <Play className="w-6 h-6 fill-current ml-1" />
-                  </button>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+                {/* FEATURED VIDEO */}
+                <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-12" ref={featuredRef}>
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        className="group cursor-pointer relative"
+                        onClick={() => setSelectedVideo(FEATURED_VIDEO)}
+                    >
+                        <div className="relative overflow-hidden rounded-2xl bg-gray-200 dark:bg-gray-800 aspect-video md:aspect-[21/9] transition-colors duration-500 border border-black/5 dark:border-white/5 transform-gpu">
+                            <motion.div style={{ y: imageY }} className="w-full h-[120%] -mt-[10%] will-change-transform">
+                                <img
+                                    src={FEATURED_VIDEO.imageUrl}
+                                    alt={featuredTitle}
+                                    loading="lazy"
+                                    decoding="async"
+                                    referrerPolicy="no-referrer"
+                                    onError={(e) => {
+                                        e.currentTarget.src = 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80';
+                                    }}
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
+                                />
+                            </motion.div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
 
-        {/* VIDEOS GRID/LIST */}
-        <div className="max-w-[1800px] mx-auto px-4 md:px-12 flex overflow-x-auto lg:grid lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-x-6 md:gap-y-12 snap-x snap-mandatory lg:snap-none no-scrollbar pb-8 md:pb-0 touch-pan-x min-h-[300px]" style={{ WebkitOverflowScrolling: 'touch' }}>
-          <AnimatePresence mode="popLayout">
-            {filteredVideos.map((video, index) => (
-                <VideoCard key={video.id} video={video} index={index} onPlay={setSelectedVideo} />
-            ))}
-          </AnimatePresence>
-          
-          {filteredVideos.length === 0 && (
-              <div className="col-span-full flex flex-col items-center justify-center py-20 text-gray-500">
-                  <p className="text-lg mb-2">Aucune vidéo ne correspond à ces critères.</p>
-                  <button onClick={() => {setActiveCategory('ALL'); setActiveSubCategory('ALL');}} className="text-blue-500 hover:underline text-sm font-bold uppercase tracking-widest">Réinitialiser les filtres</button>
-              </div>
-          )}
-        </div>
-        
-        {/* SCROLL INDICATOR (Mobile/Tablet) */}
-        <div className="flex lg:hidden justify-center gap-1 mt-2 mb-8">
-             <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-50"></div>
-             <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
-             <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
-        </div>
+                            <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 flex flex-col md:flex-row justify-between items-end gap-6">
+                                <div>
+                                    <div className="flex gap-2 mb-3">
+                                        <span className="inline-block px-3 py-1 bg-[#ff0000] text-white text-xs font-bold uppercase tracking-widest rounded-full shadow-lg">{t('videos_featured')}</span>
+                                        {FEATURED_VIDEO.subcategory && (
+                                            <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-widest rounded-full shadow-lg">{FEATURED_VIDEO.subcategory}</span>
+                                        )}
+                                    </div>
+                                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tighter uppercase text-white mb-2 max-w-3xl">
+                                        {featuredTitle}
+                                    </h3>
+                                    <p className="text-white/80 text-xs md:text-sm font-medium max-w-2xl line-clamp-2 md:line-clamp-none">
+                                        {FEATURED_VIDEO.description}
+                                    </p>
+                                </div>
 
-      </motion.section>
-    </>
-  );
+                                <button className="w-14 h-14 md:w-16 md:h-16 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.3)] shrink-0">
+                                    <Play className="w-6 h-6 fill-current ml-1" />
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+
+                {/* VIDEOS GRID/LIST */}
+                <div className="max-w-[1800px] mx-auto px-4 md:px-12 flex overflow-x-auto lg:grid lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-x-6 md:gap-y-12 snap-x snap-mandatory lg:snap-none no-scrollbar pb-8 md:pb-0 touch-pan-x min-h-[300px]" style={{ WebkitOverflowScrolling: 'touch' }}>
+                    <AnimatePresence mode="popLayout">
+                        {filteredVideos.map((video, index) => (
+                            <VideoCard key={video.id} video={video} index={index} onPlay={setSelectedVideo} />
+                        ))}
+                    </AnimatePresence>
+
+                    {filteredVideos.length === 0 && (
+                        <div className="col-span-full flex flex-col items-center justify-center py-20 text-gray-500">
+                            <p className="text-lg mb-2">Aucune vidéo ne correspond à ces critères.</p>
+                            <button onClick={() => { setActiveCategory('ALL'); setActiveSubCategory('ALL'); }} className="text-blue-500 hover:underline text-sm font-bold uppercase tracking-widest">Réinitialiser les filtres</button>
+                        </div>
+                    )}
+                </div>
+
+                {/* SCROLL INDICATOR (Mobile/Tablet) */}
+                <div className="flex lg:hidden justify-center gap-1 mt-2 mb-8">
+                    <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-50"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+                </div>
+
+            </motion.section>
+        </>
+    );
 };
 
 export default VideoSection;
