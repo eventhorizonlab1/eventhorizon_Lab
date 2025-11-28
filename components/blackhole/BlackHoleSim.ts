@@ -42,6 +42,7 @@ export class BlackHoleSim {
         // Y=8 permet de voir le disque passer "par dessus" l'ombre
         this.camera.position.set(0, 8, 55);
         this.targetCameraPosition = new THREE.Vector3(0, 8, 55);
+        console.log("BlackHoleSim: Constructor called. Camera set to", this.camera.position);
 
         // Renderer
         this.renderer = new THREE.WebGLRenderer({
@@ -100,6 +101,8 @@ export class BlackHoleSim {
         const box = new THREE.Mesh(geometry, this.blackHoleMaterial);
         this.scene.add(box);
         this.disposables.push(geometry, this.blackHoleMaterial);
+
+        console.log("BlackHoleSim: Volume added.");
     }
 
     initStarfield() {

@@ -16,6 +16,7 @@ export const BlackHoleVertexShader = `
 `;
 
 export const BlackHoleFragmentShader = `
+    precision highp float;
     uniform float u_time;
     uniform vec2 u_resolution;
     uniform vec3 u_cameraPos;
@@ -163,11 +164,13 @@ export const BlackHoleFragmentShader = `
             
             // Avancer le rayon
             // Optimisation : Pas de stepSize dynamique trop agressif près du trou noir
-            float nextStep = max(stepSize, r * 0.08); 
+            // Réduit de 0.08 à 0.02 pour ne pas sauter le disque fin
+            float nextStep = max(stepSize, r * 0.02); 
             
             p += rd * nextStep;
             
             if(r > 200.0) break; // Augmenté pour couvrir la distance caméra (55) -> fond de boîte
+            if(accum > 0.98) break;
         }
         
         // Tone mapping filmique simple
@@ -177,7 +180,8 @@ export const BlackHoleFragmentShader = `
         // Intensité globale (Bloom multiplier)
         col *= u_bloom * 3.0;
 
-        gl_FragColor = vec4(col, clamp(accum, 0.0, 1.0));
+        // Force minimum alpha to ensure visibility if shader runs
+        gl_FragColor = vec4(col, clamp(accum + 0.05, 0.0, 1.0));
     }
 `;
 
