@@ -379,6 +379,8 @@ const InterstellarBlackHole = ({ setOrbitalData, setFocusLevel }: { setOrbitalDa
     const isDragging = useRef(false);
     const isMouseDown = useRef(false); // Pour le focus (clic statique)
     const lastMousePos = useRef({ x: 0, y: 0 });
+    // Nouveau ref pour le pinch-to-zoom
+    const lastPinchDistance = useRef<number | null>(null);
 
     const focusRef = useRef(0.0);
 
@@ -511,11 +513,16 @@ const InterstellarBlackHole = ({ setOrbitalData, setFocusLevel }: { setOrbitalDa
                 isMouseDown.current = true;
                 isDragging.current = false;
                 lastMousePos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            } else if (e.touches.length === 2) {
+                // Zoom (2 doigts - Pinch)
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                lastPinchDistance.current = Math.hypot(dx, dy);
             }
         };
 
         const handleTouchMove = (e: TouchEvent) => {
-            if (isMouseDown.current && e.touches.length === 1) {
+            if (e.touches.length === 1 && isMouseDown.current) {
                 const dx = e.touches[0].clientX - lastMousePos.current.x;
                 const dy = e.touches[0].clientY - lastMousePos.current.y;
 
@@ -528,12 +535,27 @@ const InterstellarBlackHole = ({ setOrbitalData, setFocusLevel }: { setOrbitalDa
                 orbitState.current.targetElevation = Math.max(-limit, Math.min(limit, orbitState.current.targetElevation));
 
                 lastMousePos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            } else if (e.touches.length === 2 && lastPinchDistance.current !== null) {
+                // Logique de Zoom Tactile (Pinch)
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                const currentDist = Math.hypot(dx, dy);
+
+                const delta = lastPinchDistance.current - currentDist;
+                const zoomSensitivity = 0.05;
+
+                orbitState.current.targetDistance += delta * zoomSensitivity;
+                // Clamp Distance
+                orbitState.current.targetDistance = Math.max(3.0, Math.min(30.0, orbitState.current.targetDistance));
+
+                lastPinchDistance.current = currentDist;
             }
         };
 
         const handleTouchEnd = () => {
             isMouseDown.current = false;
             isDragging.current = false;
+            lastPinchDistance.current = null;
         };
 
         window.addEventListener('resize', handleResize);
@@ -583,7 +605,7 @@ const BlackHoleSection: React.FC = () => {
             {/* UI Hints */}
             <div className="absolute bottom-12 left-8 text-white/30 text-[9px] font-mono flex flex-col gap-1 pointer-events-none mix-blend-difference">
                 <span>GLISSER: ORBITE</span>
-                <span>SCROLL: DISTANCE</span>
+                <span>SCROLL/PINCH: DISTANCE</span>
                 <span>CLIC MAINTENU: DILATATION TEMP.</span>
                 <span><Move3d size={12} className="inline mr-1" />3D LOCK</span>
             </div>
