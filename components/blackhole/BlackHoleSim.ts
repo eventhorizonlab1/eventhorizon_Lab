@@ -42,8 +42,7 @@ export class BlackHoleSim {
         });
 
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Reduce resolution slightly for performance
-        // DEBUG: Red background to verify renderer visibility
-        this.renderer.setClearColor(0xff0000, 0.2);
+        this.renderer.setClearColor(0x000000, 0.0); // Transparent/Black background
 
         // NO appendChild needed anymore!
 
@@ -69,8 +68,6 @@ export class BlackHoleSim {
 
         // 7. Initial Resize
         this.resize(canvas.clientWidth, canvas.clientHeight);
-
-        console.log("BlackHoleSim: Initialized");
     }
 
     initBlackHole() {
