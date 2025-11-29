@@ -1,9 +1,14 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { RefreshCw, Eye, Thermometer, Activity, Sun, Navigation, Layers, ZoomIn, Cpu, Maximize2, Minimize2, Camera, Sliders } from 'lucide-react';
+import {
+    RefreshCw, Eye, Thermometer, Activity, Sun, Cpu, Maximize2, Minimize2, Camera, Sliders, Power, Aperture,
+    ChevronUp, ChevronDown
+} from 'lucide-react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 import { useCinematic } from '../context/CinematicContext';
 import { BlackHoleSim } from './blackhole/BlackHoleSim';
+
+// --- HUD COMPONENTS ---
 
 const SimLoader = () => {
     const { t } = useThemeLanguage();
@@ -12,62 +17,72 @@ const SimLoader = () => {
 
     useEffect(() => {
         const phases = [
-            { t: 5, key: "bh_load_assets" },
-            { t: 25, key: "bh_load_shaders" },
-            { t: 50, key: "bh_load_gravity" },
-            { t: 75, key: "bh_load_optics" },
-            { t: 90, key: "bh_load_final" },
+            { t: 15, key: "bh_load_assets" },
+            { t: 35, key: "bh_load_shaders" },
+            { t: 60, key: "bh_load_gravity" },
+            { t: 85, key: "bh_load_optics" },
+            { t: 95, key: "bh_load_final" },
             { t: 100, key: "bh_load_ready" }
         ];
 
-        let currentPhase = 0;
-        const interval = setInterval(() => {
-            setProgress((prev) => {
-                const next = prev + Math.random() * 15;
-                if (currentPhase < phases.length && next > phases[currentPhase].t) {
-                    setStatusKey(phases[currentPhase].key);
-                    currentPhase++;
-                }
-                return next > 100 ? 100 : next;
-            });
-        }, 100);
+        let start: number | null = null;
+        const duration = 2500; // 2.5s loading time
 
-        return () => clearInterval(interval);
+        const animate = (timestamp: number) => {
+            if (!start) start = timestamp;
+            const elapsed = timestamp - start;
+            const p = Math.min((elapsed / duration) * 100, 100);
+
+            setProgress(p);
+
+            const currentPhase = phases.find(phase => p <= phase.t);
+            if (currentPhase) {
+                setStatusKey(currentPhase.key);
+            }
+
+            if (p < 100) {
+                requestAnimationFrame(animate);
+            }
+        };
+
+        requestAnimationFrame(animate);
     }, []);
 
     return (
-        <div className="absolute inset-0 z-50 bg-gray-50 dark:bg-black flex flex-col items-center justify-center text-gray-500 dark:text-white font-mono pointer-events-none transition-colors duration-500 rounded-[2rem]">
-            <div className="relative w-32 h-32 mb-8 flex items-center justify-center">
-                <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-0 border-t-2 border-l-2 border-blue-500 rounded-full"
-                />
-                <motion.div
-                    animate={{ rotate: -360 }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-2 border-b-2 border-r-2 border-purple-500 rounded-full opacity-70"
-                />
-                <div className="text-2xl font-bold tracking-tighter text-black dark:text-white">{Math.floor(progress)}%</div>
-            </div>
+        <div className="absolute inset-0 z-50 bg-black flex flex-col items-center justify-center font-mono text-cyan-500 overflow-hidden">
+            {/* Background Grid */}
+            <div className="absolute inset-0 opacity-20 bg-[linear-gradient(rgba(0,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,255,0.1)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
 
-            <div className="flex flex-col items-center gap-2">
-                <div className="flex items-center gap-2 text-blue-400">
-                    <Cpu size={16} className="animate-pulse" />
-                    <span className="text-xs font-bold tracking-[0.2em] uppercase">{t(statusKey)}</span>
+            <div className="relative z-10 flex flex-col items-center gap-8">
+                {/* Hexagon Loader */}
+                <div className="relative w-32 h-32 flex items-center justify-center">
+                    <svg className="absolute inset-0 w-full h-full animate-[spin_3s_linear_infinite]" viewBox="0 0 100 100">
+                        <path d="M50 5 L93 25 L93 75 L50 95 L7 75 L7 25 Z" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="10 5" />
+                    </svg>
+                    <svg className="absolute inset-4 w-[calc(100%-2rem)] h-[calc(100%-2rem)] animate-[spin_2s_linear_infinite_reverse]" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="60 100" />
+                    </svg>
+                    <div className="text-3xl font-bold tracking-tighter text-white">{Math.floor(progress)}%</div>
                 </div>
-                <div className="w-48 h-1 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
-                    <motion.div
-                        className="h-full bg-blue-500"
-                        style={{ width: `${progress}%` }}
-                    />
+
+                {/* Status Text */}
+                <div className="flex flex-col items-center gap-2">
+                    <div className="flex items-center gap-2 text-cyan-400">
+                        <Cpu size={14} className="animate-pulse" />
+                        <span className="text-xs font-bold tracking-[0.3em] uppercase">{t(statusKey)}</span>
+                    </div>
+                    {/* Progress Bar */}
+                    <div className="w-64 h-1 bg-cyan-900/30 rounded-full overflow-hidden border border-cyan-900/50">
+                        <motion.div
+                            className="h-full bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.8)]"
+                            style={{ width: `${progress}%` }}
+                        />
+                    </div>
                 </div>
             </div>
-
-            <div className="absolute inset-0 opacity-10 bg-[linear-gradient(0deg,transparent_24%,rgba(0,0,0,.5)_25%,rgba(0,0,0,.5)_26%,transparent_27%,transparent_74%,rgba(0,0,0,.5)_75%,rgba(0,0,0,.5)_76%,transparent_77%,transparent),linear-gradient(90deg,transparent_24%,rgba(0,0,0,.5)_25%,rgba(0,0,0,.5)_26%,transparent_27%,transparent_74%,rgba(0,0,0,.5)_75%,rgba(0,0,0,.5)_76%,transparent_77%,transparent)] dark:bg-[linear-gradient(0deg,transparent_24%,rgba(255,255,255,.5)_25%,rgba(255,255,255,.5)_26%,transparent_27%,transparent_74%,rgba(255,255,255,.5)_75%,rgba(255,255,255,.5)_76%,transparent_77%,transparent),linear-gradient(90deg,transparent_24%,rgba(255,255,255,.5)_25%,rgba(255,255,255,.5)_26%,transparent_27%,transparent_74%,rgba(255,255,255,.5)_75%,rgba(255,255,255,.5)_76%,transparent_77%,transparent)] bg-[length:30px_30px]"></div>
         </div>
     );
-}
+};
 
 interface ControlSliderProps {
     label: string;
@@ -80,75 +95,78 @@ interface ControlSliderProps {
 }
 
 const ControlSlider = React.memo<ControlSliderProps>(({ label, value, min, max, step, onChange, icon: Icon }) => (
-    <div className="mb-6 group">
-        <div className="flex justify-between items-center mb-2">
-            <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 group-hover:text-black dark:group-hover:text-gray-200 transition-colors">
-                {Icon && <Icon size={14} />} {label}
+    <div className="group flex flex-col gap-2">
+        <div className="flex justify-between items-center text-cyan-100/70 group-hover:text-cyan-400 transition-colors">
+            <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest">
+                {Icon && <Icon size={12} />} {label}
             </label>
-            <span className="text-xs font-mono text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded">{value}</span>
+            <span className="text-[10px] font-mono bg-cyan-950/50 px-1.5 py-0.5 rounded border border-cyan-900/30">{value.toFixed(1)}</span>
         </div>
-        {/* Optimization: Increased height (h-4) of slider thumb target for mobile touch */}
-        <input
-            type="range"
-            min={min}
-            max={max}
-            step={step}
-            value={value}
-            onChange={(e) => onChange(parseFloat(e.target.value))}
-            className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500 hover:[&::-webkit-slider-thumb]:bg-blue-400 transition-all [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
-        />
+        <div className="relative h-4 flex items-center">
+            <input
+                type="range"
+                min={min}
+                max={max}
+                step={step}
+                value={value}
+                onChange={(e) => onChange(parseFloat(e.target.value))}
+                className="w-full h-1 bg-cyan-950 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-cyan-400 [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(34,211,238,0.8)] hover:[&::-webkit-slider-thumb]:scale-110 transition-all"
+            />
+        </div>
     </div>
 ));
 
+// --- MAIN COMPONENT ---
+
 const BlackHoleSection: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const canvasRef = useRef<HTMLCanvasElement>(null); // New Canvas Ref
+    const canvasRef = useRef<HTMLCanvasElement>(null);
     const simRef = useRef<BlackHoleSim | null>(null);
-    const { t, theme } = useThemeLanguage();
+    const { t } = useThemeLanguage();
     const isInView = useInView(containerRef);
     const shouldReduceMotion = useReducedMotion();
-
-    const [isLoading, setIsLoading] = useState(false);
-    const [renderFallback, setRenderFallback] = useState(false);
-    const [rotationSpeed, setRotationSpeed] = useState(shouldReduceMotion ? 0.05 : 0.3);
-    const [bloomIntensity, setBloomIntensity] = useState(0.1);
-    const [lensingStrength, setLensingStrength] = useState(1.2);
-    const [diskBrightness, setDiskBrightness] = useState(1.0);
-    const [temperature, setTemperature] = useState(1.0);
-    const [autoOrbit, setAutoOrbit] = useState(false);
-    const [simKey, setSimKey] = useState(0); // Key to force re-render/reload
     const { isCinematic, setIsCinematic } = useCinematic();
 
+    // Simulation State
+    const [isLoading, setIsLoading] = useState(true);
+    const [renderFallback, setRenderFallback] = useState(false);
+    const [isControlsOpen, setIsControlsOpen] = useState(true);
+
+    // Physics & Visual Parameters
+    const [params, setParams] = useState({
+        rotationSpeed: shouldReduceMotion ? 0.05 : 0.3,
+        bloomIntensity: 0.1,
+        lensingStrength: 1.2,
+        diskBrightness: 1.0,
+        temperature: 1.0,
+        autoOrbit: false
+    });
+
+    const [simKey, setSimKey] = useState(0); // Force reload
+
+    // Refs for animation loop
+    const paramsRef = useRef(params);
     const isInViewRef = useRef(isInView);
     const isLoadingRef = useRef(isLoading);
-    const paramsRef = useRef({ rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme });
 
-    useEffect(() => {
-        isInViewRef.current = isInView;
-    }, [isInView]);
+    // Sync Refs
+    useEffect(() => { paramsRef.current = params; }, [params]);
+    useEffect(() => { isInViewRef.current = isInView; }, [isInView]);
+    useEffect(() => { isLoadingRef.current = isLoading; }, [isLoading]);
 
-    useEffect(() => {
-        isLoadingRef.current = isLoading;
-    }, [isLoading]);
-
-    useEffect(() => {
-        paramsRef.current = { rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme };
-    }, [rotationSpeed, bloomIntensity, lensingStrength, diskBrightness, temperature, theme]);
-
+    // Keyboard Shortcuts
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape' && isCinematic) {
-                setIsCinematic(false);
-            }
+            if (e.key === 'Escape') setIsCinematic(false);
+            if (e.key === 'h') setIsControlsOpen(prev => !prev);
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [isCinematic]);
+    }, [setIsCinematic]);
 
+    // Initialization
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 2200);
+        const timer = setTimeout(() => setIsLoading(false), 2500);
         return () => clearTimeout(timer);
     }, []);
 
@@ -158,9 +176,8 @@ const BlackHoleSection: React.FC = () => {
 
         let sim: BlackHoleSim;
         try {
-            sim = new BlackHoleSim(canvas); // Pass canvas!
+            sim = new BlackHoleSim(canvas);
             simRef.current = sim;
-
         } catch (error) {
             console.error("WebGL initialization failed:", error);
             setRenderFallback(true);
@@ -169,10 +186,8 @@ const BlackHoleSection: React.FC = () => {
         }
 
         let animationId: number;
-
         const animate = () => {
             animationId = requestAnimationFrame(animate);
-
             if (!isInViewRef.current && !isLoadingRef.current) return;
 
             if (simRef.current) {
@@ -182,280 +197,197 @@ const BlackHoleSection: React.FC = () => {
                     lensingStrength: paramsRef.current.lensingStrength,
                     diskBrightness: paramsRef.current.diskBrightness,
                     temperature: paramsRef.current.temperature,
-                    isLightMode: paramsRef.current.theme === 'light'
+                    isLightMode: false // Always dark mode for simulation page
                 });
             }
         };
-
         animate();
 
         const handleResize = () => {
             if (canvasRef.current && simRef.current) {
-                simRef.current.resize(canvasRef.current.clientWidth, canvasRef.current.clientHeight);
+                simRef.current.resize(window.innerWidth, window.innerHeight);
             }
         };
-
         window.addEventListener('resize', handleResize);
+        handleResize(); // Initial resize
 
         return () => {
             window.removeEventListener('resize', handleResize);
             cancelAnimationFrame(animationId);
             sim.dispose();
-            // No need to clear innerHTML anymore
         };
     }, [simKey]);
 
-    // ... (rest of code)
-
-    return (
-        // ...
-        <div ref={containerRef} className="absolute inset-0 w-full h-full z-0 overflow-hidden rounded-[2rem]">
-            <canvas ref={canvasRef} className="w-full h-full block" />
-        </div>
-        // ...
-    );
-
-    const moveCamera = (position: 'orbit' | 'top' | 'side') => {
-        if (!simRef.current) return;
-
-        if (position === 'orbit') {
-            simRef.current.moveTo(0, 15, 90);
-        } else if (position === 'top') {
-            simRef.current.moveTo(0, 100, 5);
-        } else if (position === 'side') {
-            simRef.current.moveTo(90, 0, 0);
+    // Handlers
+    const updateParam = (key: keyof typeof params, value: any) => {
+        setParams(prev => ({ ...prev, [key]: value }));
+        if (key === 'autoOrbit' && simRef.current) {
+            simRef.current.setAutoRotation(value);
         }
     };
 
+
+
     const applyPreset = (preset: 'interstellar' | 'radioactive' | 'ice' | 'gargantua') => {
-        switch (preset) {
-            case 'gargantua':
-                setRotationSpeed(0.2);
-                setBloomIntensity(2.5);
-                setLensingStrength(1.8);
-                setDiskBrightness(1.5);
-                setTemperature(0.9);
-                break;
-            case 'interstellar':
-                setRotationSpeed(0.3);
-                setBloomIntensity(0.1);
-                setLensingStrength(1.2);
-                setDiskBrightness(1.0);
-                setTemperature(1.0);
-                break;
-            case 'radioactive':
-                setRotationSpeed(0.8);
-                setBloomIntensity(1.5);
-                setLensingStrength(1.5);
-                setDiskBrightness(2.0);
-                setTemperature(1.8);
-                break;
-            case 'ice':
-                setRotationSpeed(0.1);
-                setBloomIntensity(0.5);
-                setLensingStrength(0.8);
-                setDiskBrightness(0.8);
-                setTemperature(0.5);
-                break;
-        }
+        const presets = {
+            gargantua: { rotationSpeed: 0.2, bloomIntensity: 2.5, lensingStrength: 1.8, diskBrightness: 1.5, temperature: 0.9 },
+            interstellar: { rotationSpeed: 0.3, bloomIntensity: 0.1, lensingStrength: 1.2, diskBrightness: 1.0, temperature: 1.0 },
+            radioactive: { rotationSpeed: 0.8, bloomIntensity: 1.5, lensingStrength: 1.5, diskBrightness: 2.0, temperature: 1.8 },
+            ice: { rotationSpeed: 0.1, bloomIntensity: 0.5, lensingStrength: 0.8, diskBrightness: 0.8, temperature: 0.5 }
+        };
+        setParams(prev => ({ ...prev, ...presets[preset] }));
     };
 
     const takeScreenshot = () => {
         if (!simRef.current) return;
-        const canvas = simRef.current.renderer.domElement;
         const link = document.createElement('a');
         link.download = 'event-horizon-capture.png';
-        link.href = canvas.toDataURL('image/png');
+        link.href = simRef.current.renderer.domElement.toDataURL('image/png');
         link.click();
     };
 
     const reloadSimulation = () => {
         setIsLoading(true);
         setSimKey(prev => prev + 1);
-        setAutoOrbit(false);
-        setTimeout(() => setIsLoading(false), 1500);
+        updateParam('autoOrbit', false);
+        setTimeout(() => setIsLoading(false), 2000);
     };
 
     return (
-        <motion.section
-            id="blackhole"
-            className={isCinematic
-                ? "fixed inset-0 z-[9999] w-full h-full bg-black m-0 p-0 flex flex-col justify-center"
-                : "pt-0 md:pt-0 pb-16 md:pb-24 max-w-[1800px] mx-auto px-4 md:px-12 relative"}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            style={{
-                transform: isCinematic ? 'none' : undefined
-            }}
-        >
-            <div className={`mb-12 border-l-4 border-black dark:border-white pl-3 md:pl-6 -ml-4 md:-ml-7 ${isCinematic ? 'hidden' : ''}`}>
-                <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white transition-colors">
-                    {t('bh_title')}
-                </h2>
-                <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg leading-relaxed max-w-2xl">
-                    {t('bh_subtitle')}
-                </p>
-            </div>
+        <section ref={containerRef} className="relative w-full h-full bg-black overflow-hidden">
+            {/* CANVAS LAYER */}
+            <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block z-0" />
 
-            <div className={`transition-all duration-500 ${isCinematic ? 'absolute inset-0 w-full h-full m-0 rounded-none z-[100]' : 'relative mb-12 z-0'}`}>
-                <div className={`relative overflow-hidden bg-gray-100 dark:bg-black border border-gray-200 dark:border-white/10 shadow-2xl w-full flex flex-col group transition-all duration-500 ${isCinematic ? 'h-full rounded-none border-0' : 'aspect-square md:aspect-[21/9] rounded-[2rem]'}`}>
+            {/* FALLBACK LAYER */}
+            {renderFallback && (
+                <div className="absolute inset-0 z-50 bg-black flex items-center justify-center">
+                    <div className="text-center text-red-500 font-mono">
+                        <Activity size={48} className="mx-auto mb-4" />
+                        <p>{t('bh_webgl_unsupported')}</p>
+                    </div>
+                </div>
+            )}
 
-                    <AnimatePresence>
-                        {isLoading && (
-                            <motion.div
-                                initial={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.8, ease: "easeInOut" }}
-                                className="absolute inset-0 z-50 bg-gray-50 dark:bg-black rounded-[2rem]" // Ensure it stays inside
-                            >
-                                <SimLoader />
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+            {/* LOADING LAYER */}
+            <AnimatePresence>
+                {isLoading && (
+                    <motion.div
+                        initial={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.8 }}
+                        className="absolute inset-0 z-[100]"
+                    >
+                        <SimLoader />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-                    {/* HEADER CONTROLS - CAMERA CONTROL CENTER */}
-                    <div className={`bg-white/5 p-4 border-b border-white/10 flex justify-between items-center backdrop-blur-md z-20 absolute top-0 left-0 w-full transition-opacity duration-300 ${isCinematic ? 'opacity-0 hover:opacity-100' : 'opacity-100'}`}>
-                        <div className="flex gap-2">
-                            <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
-                            <div className="w-3 h-3 rounded-full bg-orange-500/50"></div>
-                            <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
-                        </div>
+            {/* HUD OVERLAY LAYER - Hidden in Cinematic Mode */}
+            <div className={`absolute inset-0 z-10 pointer-events-none transition-opacity duration-500 ${isCinematic ? 'opacity-0' : 'opacity-100'}`}>
 
-                        <div className="flex items-center gap-4">
-                            {/* Camera Controls */}
-                            <div className="hidden md:flex bg-black/50 rounded-full p-1 gap-1 border border-white/10">
-                                <button
-                                    onClick={() => {
-                                        if (simRef.current) {
-                                            simRef.current.setAutoRotation(!autoOrbit);
-                                            setAutoOrbit(!autoOrbit);
-                                        }
-                                    }}
-                                    className={`flex items-center gap-2 px-4 py-1.5 rounded-full transition-all text-[10px] font-bold uppercase tracking-widest ${autoOrbit ? 'bg-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]' : 'hover:bg-white/20 text-white/70 hover:text-white'}`}
-                                >
-                                    <RefreshCw size={12} className={autoOrbit ? "animate-spin" : ""} />
-                                    <span>Auto-Orbit</span>
-                                </button>
-
-                                <div className="w-px h-4 bg-white/10 mx-1 self-center"></div>
-
-                                <button onClick={() => moveCamera('orbit')} className="p-2 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors" title="Orbit View">
-                                    <Navigation size={14} />
-                                </button>
-                                <button onClick={() => moveCamera('top')} className="p-2 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors" title="Top View">
-                                    <Layers size={14} />
-                                </button>
-                                <button onClick={() => moveCamera('side')} className="p-2 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors" title="Side View">
-                                    <ZoomIn size={14} />
-                                </button>
-
-                                <div className="w-px h-4 bg-white/10 mx-1 self-center"></div>
-
-                                <button
-                                    onClick={() => {
-                                        if (simRef.current) {
-                                            simRef.current.resetCamera();
-                                            setAutoOrbit(false);
-                                        }
-                                    }}
-                                    className="p-2 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors"
-                                    title="Reset Camera"
-                                >
-                                    <Minimize2 size={14} />
-                                </button>
-                            </div>
-
-                            {/* System Controls */}
-                            <div className="flex items-center gap-2 border-l border-white/10 pl-4">
-                                <button onClick={reloadSimulation} className="p-2 hover:bg-red-500/20 hover:text-red-400 rounded-full text-white/70 transition-colors" title="Reload Simulation">
-                                    <Activity size={16} />
-                                </button>
-                                <button onClick={takeScreenshot} className="p-2 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors" title="Take Screenshot">
-                                    <Camera size={16} />
-                                </button>
-                                <button onClick={() => setIsCinematic(!isCinematic)} className="p-2 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-colors" title="Toggle Cinematic Mode">
-                                    {isCinematic ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-                                </button>
-                            </div>
+                {/* TOP BAR */}
+                <div className="absolute top-0 left-0 w-full p-6 flex justify-between items-start bg-gradient-to-b from-black/80 to-transparent">
+                    <div className="flex flex-col">
+                        <h1 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tighter flex items-center gap-3">
+                            <Aperture className="text-cyan-400 animate-spin-slow" size={24} />
+                            Event Horizon
+                        </h1>
+                        <div className="flex items-center gap-4 mt-2">
+                            <span className="text-[10px] font-mono text-cyan-400/70 uppercase tracking-widest border border-cyan-900/50 px-2 py-0.5 rounded bg-cyan-950/20">
+                                System: Online
+                            </span>
+                            <span className="text-[10px] font-mono text-red-400/70 uppercase tracking-widest flex items-center gap-1 animate-pulse">
+                                <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div> Live Feed
+                            </span>
                         </div>
                     </div>
 
-                    <div ref={containerRef} className="absolute inset-0 w-full h-full z-10 border-4 border-red-500 bg-yellow-500/20" />
+                    <div className="flex gap-2 pointer-events-auto">
+                        <button onClick={() => setIsCinematic(true)} className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white/70 hover:text-white transition-colors backdrop-blur-md group">
+                            <Maximize2 size={18} className="group-hover:scale-110 transition-transform" />
+                        </button>
+                    </div>
+                </div>
 
-                    {renderFallback && (
-                        <div className="absolute inset-0 z-40 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center p-6">
-                            <div className="text-center max-w-md">
-                                <div className="w-16 h-16 mx-auto mb-4 text-red-500/50 border-2 border-red-500/30 rounded-full flex items-center justify-center">
-                                    <Activity size={32} />
+                {/* BOTTOM CONTROL DOCK */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[95%] max-w-4xl pointer-events-auto">
+                    <motion.div
+                        animate={{ height: isControlsOpen ? 'auto' : '60px' }}
+                        className="bg-black/60 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]"
+                    >
+                        {/* Dock Header / Toggle */}
+                        <div
+                            className="h-[60px] flex items-center justify-between px-6 cursor-pointer hover:bg-white/5 transition-colors border-b border-white/5"
+                            onClick={() => setIsControlsOpen(!isControlsOpen)}
+                        >
+                            <div className="flex items-center gap-3 text-cyan-400">
+                                <Sliders size={18} />
+                                <span className="text-xs font-bold uppercase tracking-widest">Control Deck</span>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <div className="flex gap-1">
+                                    <div className="w-1 h-1 bg-cyan-500 rounded-full animate-pulse"></div>
+                                    <div className="w-1 h-1 bg-cyan-500 rounded-full animate-pulse delay-75"></div>
+                                    <div className="w-1 h-1 bg-cyan-500 rounded-full animate-pulse delay-150"></div>
                                 </div>
-                                <p className="text-white/60 text-sm md:text-base font-mono">
-                                    {t('bh_webgl_unsupported')}
-                                </p>
+                                {isControlsOpen ? <ChevronDown size={16} className="text-white/50" /> : <ChevronUp size={16} className="text-white/50" />}
                             </div>
                         </div>
-                    )}
 
-                    {/* FOOTER INFO */}
-                    <div className={`absolute bottom-0 left-0 w-full p-6 z-20 bg-gradient-to-t from-gray-200/90 dark:from-black/80 to-transparent pointer-events-none flex justify-between items-end transition-opacity duration-300 ${isCinematic ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}>
-                        <div>
-                            <h3 className="text-3xl font-black text-black/20 dark:text-white/20 uppercase tracking-tighter">Event Horizon</h3>
+                        {/* Dock Content */}
+                        <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {/* Column 1: Physics */}
+                            <div className="space-y-4">
+                                <h4 className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-4 border-b border-white/5 pb-2">Physics Engine</h4>
+                                <ControlSlider label={t('bh_rotation')} icon={RefreshCw} value={params.rotationSpeed} min={0} max={2} step={0.1} onChange={(v) => updateParam('rotationSpeed', v)} />
+                                <ControlSlider label={t('bh_density')} icon={Activity} value={params.diskBrightness} min={1} max={10} step={0.1} onChange={(v) => updateParam('diskBrightness', v)} />
+                            </div>
+
+                            {/* Column 2: Optics */}
+                            <div className="space-y-4">
+                                <h4 className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-4 border-b border-white/5 pb-2">Optical Array</h4>
+                                <ControlSlider label={t('bh_bloom')} icon={Sun} value={params.bloomIntensity} min={0} max={4} step={0.1} onChange={(v) => updateParam('bloomIntensity', v)} />
+                                <ControlSlider label={t('bh_lensing')} icon={Eye} value={params.lensingStrength} min={0} max={2} step={0.1} onChange={(v) => updateParam('lensingStrength', v)} />
+                                <ControlSlider label={t('bh_temp')} icon={Thermometer} value={params.temperature} min={0.5} max={2} step={0.1} onChange={(v) => updateParam('temperature', v)} />
+                            </div>
+
+                            {/* Column 3: Actions & Presets */}
+                            <div className="space-y-4">
+                                <h4 className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-4 border-b border-white/5 pb-2">Mission Control</h4>
+
+                                {/* Camera Actions */}
+                                <div className="flex gap-2 mb-4">
+                                    <button onClick={() => updateParam('autoOrbit', !params.autoOrbit)} className={`flex-1 py-2 rounded-lg border text-[10px] font-bold uppercase tracking-wider transition-all ${params.autoOrbit ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400' : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10'}`}>
+                                        Auto-Orbit
+                                    </button>
+                                    <button onClick={() => simRef.current?.resetCamera()} className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:bg-white/10 hover:text-white transition-colors">
+                                        <Minimize2 size={14} />
+                                    </button>
+                                </div>
+
+                                {/* Presets Grid */}
+                                <div className="grid grid-cols-2 gap-2">
+                                    <button onClick={() => applyPreset('gargantua')} className="py-1.5 rounded bg-white/5 hover:bg-orange-500/20 hover:text-orange-400 text-[9px] font-bold uppercase tracking-wider text-white/50 transition-colors border border-transparent hover:border-orange-500/50">Gargantua</button>
+                                    <button onClick={() => applyPreset('interstellar')} className="py-1.5 rounded bg-white/5 hover:bg-blue-500/20 hover:text-blue-400 text-[9px] font-bold uppercase tracking-wider text-white/50 transition-colors border border-transparent hover:border-blue-500/50">Interstellar</button>
+                                    <button onClick={() => applyPreset('radioactive')} className="py-1.5 rounded bg-white/5 hover:bg-green-500/20 hover:text-green-400 text-[9px] font-bold uppercase tracking-wider text-white/50 transition-colors border border-transparent hover:border-green-500/50">Radioactive</button>
+                                    <button onClick={() => applyPreset('ice')} className="py-1.5 rounded bg-white/5 hover:bg-cyan-500/20 hover:text-cyan-400 text-[9px] font-bold uppercase tracking-wider text-white/50 transition-colors border border-transparent hover:border-cyan-500/50">Ice</button>
+                                </div>
+
+                                {/* System Actions */}
+                                <div className="flex gap-2 mt-4 pt-4 border-t border-white/5">
+                                    <button onClick={reloadSimulation} className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[10px] font-bold uppercase tracking-wider transition-colors">
+                                        <Power size={12} /> Reboot
+                                    </button>
+                                    <button onClick={takeScreenshot} className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 text-[10px] font-bold uppercase tracking-wider transition-colors">
+                                        <Camera size={12} /> Capture
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        {!renderFallback && (
-                            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-black/40 dark:text-white/40 animate-pulse border border-black/10 dark:border-white/10 px-3 py-1 rounded-full backdrop-blur-sm pointer-events-auto cursor-help" title="Interactive Simulation">
-                                {t('bh_interact')}
-                            </p>
-                        )}
-                    </div>
-
-                    <div className="absolute inset-0 pointer-events-none opacity-[0.05] z-0 bg-[linear-gradient(rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.1)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-                </div>
-
-                <div className="flex md:hidden justify-center gap-4 mt-4">
-                    <button onClick={() => moveCamera('orbit')} className="bg-gray-100 dark:bg-white/5 p-3 rounded-full text-black dark:text-white">
-                        <Navigation size={20} />
-                    </button>
-                    <button onClick={() => moveCamera('top')} className="bg-gray-100 dark:bg-white/5 p-3 rounded-full text-black dark:text-white">
-                        <Layers size={20} />
-                    </button>
-                    <button onClick={() => moveCamera('side')} className="bg-gray-100 dark:bg-white/5 p-3 rounded-full text-black dark:text-white">
-                        <ZoomIn size={20} />
-                    </button>
+                    </motion.div>
                 </div>
             </div>
-
-            {/* CONTROLS PANEL */}
-            <div className={`bg-white dark:bg-eh-gray p-8 rounded-[2rem] border border-gray-200 dark:border-white/5 relative overflow-hidden shadow-lg transition-colors duration-500 max-w-6xl mx-auto w-full ${isCinematic ? 'hidden' : ''}`}>
-                <div className="relative z-10">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-gray-200 dark:border-white/10 pb-4 gap-4">
-                        <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 flex items-center gap-2">
-                            <Sliders size={14} />
-                            {t('bh_controls')}
-                        </h3>
-
-                        {/* PRESETS */}
-                        <div className="flex gap-2 flex-wrap">
-                            <button onClick={() => applyPreset('gargantua')} className="px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-orange-500 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-colors">Gargantua</button>
-                            <button onClick={() => applyPreset('interstellar')} className="px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-blue-500 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-colors">Interstellar</button>
-                            <button onClick={() => applyPreset('radioactive')} className="px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-green-500 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-colors">Radioactive</button>
-                            <button onClick={() => applyPreset('ice')} className="px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-cyan-500 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-colors">Ice</button>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-4">
-                        <ControlSlider label={t('bh_rotation')} icon={RefreshCw} value={rotationSpeed} min={0} max={2} step={0.1} onChange={setRotationSpeed} />
-                        <ControlSlider label={t('bh_bloom')} icon={Sun} value={bloomIntensity} min={0} max={4} step={0.1} onChange={setBloomIntensity} />
-                        <ControlSlider label={t('bh_lensing')} icon={Eye} value={lensingStrength} min={0} max={2} step={0.1} onChange={setLensingStrength} />
-                        <ControlSlider label={t('bh_density')} icon={Activity} value={diskBrightness} min={1} max={10} step={0.1} onChange={setDiskBrightness} />
-                        <ControlSlider label={t('bh_temp')} icon={Thermometer} value={temperature} min={0.5} max={2} step={0.1} onChange={setTemperature} />
-                    </div>
-                </div>
-
-                <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.05),transparent_50%)] pointer-events-none"></div>
-            </div>
-
-        </motion.section>
+        </section>
     );
 };
 
