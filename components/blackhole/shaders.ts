@@ -60,9 +60,88 @@ export const BlackHoleFragmentShader = `
     void main() {
         vec3 ro = u_cameraPos;
         vec3 rd = normalize(vWorldPosition - u_cameraPos);
-        // DEBUG: NUCLEAR OPTION
-        // If this doesn't show red, the mesh is not being rendered at all.
-        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        
+        vec3 col = vec3(0.0);
+        float alpha = 0.0;
+        vec3 p = ro;
+        
+        float stepSize = 0.1;
+        float maxDist = 50.0;
+        float bhRadius = 1.0; // Schwarzschild radius
+        
+        for(int i = 0; i < 150; i++) {
+            float dist = length(p);
+            
+            // Event Horizon
+            if(dist < bhRadius) {
+                col = mix(col, vec3(0.0), 1.0 - alpha);
+                alpha = 1.0;
+                break;
+            }
+            
+            if(dist > maxDist) break;
+            
+            // Gravitational Lensing
+            // Bend light towards the black hole center
+            // Force is roughly proportional to 1/r^2
+            float gravityStrength = u_lensing * 0.1;
+            vec3 toCenter = normalize(-p);
+            vec3 gravity = toCenter * (gravityStrength / (dist * dist));
+            
+            // Apply curvature
+            rd = normalize(rd + gravity * stepSize);
+            
+            // Accretion Disk
+            // Disk lies in the XZ plane (y=0)
+            float diskY = abs(p.y);
+            float diskH = 0.1 + dist * 0.08; // Disk thickness increases with radius
+            
+            // Check if we are inside the disk volume
+            if(diskY < diskH && dist > 2.5 && dist < 12.0) {
+                // Calculate polar coordinates for noise mapping
+                float angle = atan(p.z, p.x);
+                float speed = 2.0 / (dist + 0.1); // Inner parts rotate faster
+                
+                // 3D Noise position (animated)
+                vec3 noisePos = vec3(dist * 2.0, angle * 2.0 + u_time * speed, p.y * 4.0);
+                float noiseVal = fbm(noisePos);
+                
+                // Density calculation
+                float density = noiseVal * u_disk_density;
+                
+                // Fade edges
+                density *= smoothstep(2.5, 3.5, dist); // Inner fade
+                density *= smoothstep(12.0, 9.0, dist); // Outer fade
+                density *= smoothstep(diskH, 0.0, diskY); // Vertical fade
+                
+                // Doppler Effect / Relativistic Beaming
+                // Matter moves counter-clockwise
+                vec3 vel = normalize(vec3(-p.z, 0.0, p.x));
+                float doppler = dot(rd, vel);
+                float beaming = 1.0 + doppler * 0.8;
+                beaming = max(0.1, beaming);
+                
+                // Color mapping
+                vec3 diskColor = vec3(1.0, 0.5, 0.1); // Base orange
+                diskColor *= u_temp * beaming; // Apply temperature and beaming
+                
+                // Accumulate color
+                float segmentAlpha = density * 0.2 * stepSize;
+                segmentAlpha = clamp(segmentAlpha, 0.0, 1.0);
+                
+                col += diskColor * segmentAlpha * (1.0 - alpha);
+                alpha += segmentAlpha;
+                
+                if(alpha > 0.99) break;
+            }
+            
+            // Step forward
+            // Variable step size for performance
+            stepSize = 0.05 + dist * 0.02;
+            p += rd * stepSize;
+        }
+        
+        gl_FragColor = vec4(col, alpha);
     }
 `;
 
