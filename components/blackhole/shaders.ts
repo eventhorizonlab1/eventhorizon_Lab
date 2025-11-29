@@ -1,17 +1,10 @@
 export const BlackHoleVertexShader = `
     varying vec3 vWorldPosition;
-    varying vec3 vViewPosition;
-    varying vec2 vUv;
 
     void main() {
-        vUv = uv;
         vec4 worldPosition = modelMatrix * vec4(position, 1.0);
         vWorldPosition = worldPosition.xyz;
-        
-        vec4 mvPosition = viewMatrix * worldPosition;
-        vViewPosition = -mvPosition.xyz; // Camera space position
-        
-        gl_Position = projectionMatrix * mvPosition;
+        gl_Position = projectionMatrix * viewMatrix * worldPosition;
     }
 `;
 
@@ -21,10 +14,12 @@ export const BlackHoleFragmentShader = `
     uniform float u_time;
     uniform vec2 u_resolution;
     uniform vec3 u_cameraPos;
+    uniform float u_bloom;
+    uniform float u_lensing;
+    uniform float u_disk_density;
+    uniform float u_temp;
     
     varying vec3 vWorldPosition;
-    varying vec3 vViewPosition;
-    varying vec2 vUv;
 
     // --- NOISE & UTILS ---
     float hash(float n) { return fract(sin(n) * 43758.5453123); }
@@ -56,7 +51,6 @@ export const BlackHoleFragmentShader = `
         vec3 rd = normalize(vWorldPosition - u_cameraPos);
         
         vec3 col = vec3(0.0);
-        float alpha = 0.0;
         
         // PARAMS
         float rs = 3.0; // Schwarzschild Radius
@@ -64,7 +58,6 @@ export const BlackHoleFragmentShader = `
         float diskRad = 18.0; // Disk Outer Radius
         
         vec3 p = ro;
-        float t = 0.0;
         float stepSize = 0.15;
         
         float accum = 0.0; // Light accumulation
@@ -130,7 +123,6 @@ export const BlackHoleFragmentShader = `
             else if(distToPlane < 2.0 && r < diskRad + 2.0) nextStep = 0.08; // Slow down near disk
             
             p += rd * nextStep;
-            t += nextStep;
             
             if(r > 100.0) break;
         }
@@ -151,7 +143,21 @@ export const BlackHoleFragmentShader = `
 
 export const StarfieldVertexShader = `
     attribute float a_size;
+    attribute float a_opacity;
+    attribute float a_twinkle_speed;
+    
+    varying float vOpacity;
+    varying float vTwinkle;
+    
+    uniform float u_time;
+
     void main() {
+        vOpacity = a_opacity;
+        
+        // Twinkle effect
+        float twinkle = sin(u_time * a_twinkle_speed + position.x);
+        vTwinkle = (twinkle + 1.0) * 0.5; // 0 to 1
+        
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
         gl_Position = projectionMatrix * mvPosition;
         gl_PointSize = a_size * (300.0 / -mvPosition.z);
@@ -159,9 +165,14 @@ export const StarfieldVertexShader = `
 `;
 
 export const StarfieldFragmentShader = `
+    varying float vOpacity;
+    varying float vTwinkle;
+
     void main() {
         vec2 coord = gl_PointCoord - vec2(0.5);
         if(length(coord) > 0.5) discard;
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        
+        float alpha = vOpacity * (0.5 + 0.5 * vTwinkle);
+        gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
     }
 `;
