@@ -30,7 +30,9 @@ export class BlackHoleSim {
 
         // 2. Camera Setup
         // Positioned at z=55, looking at 0,0,0
-        this.camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+        const width = Math.max(1, canvas.clientWidth);
+        const height = Math.max(1, canvas.clientHeight);
+        this.camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
         this.camera.position.set(0, 8, 55);
 
         // 3. Renderer Setup
