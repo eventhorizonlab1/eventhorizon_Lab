@@ -107,7 +107,7 @@ const BlackHoleSection: React.FC = () => {
     const isInView = useInView(containerRef);
     const shouldReduceMotion = useReducedMotion();
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [renderFallback, setRenderFallback] = useState(false);
     const [rotationSpeed, setRotationSpeed] = useState(shouldReduceMotion ? 0.05 : 0.3);
     const [bloomIntensity, setBloomIntensity] = useState(0.1);
@@ -155,6 +155,13 @@ const BlackHoleSection: React.FC = () => {
         const container = containerRef.current;
         if (!container) return;
 
+        console.log("BlackHoleSection: Container found", {
+            width: container.clientWidth,
+            height: container.clientHeight,
+            offsetWidth: container.offsetWidth,
+            offsetHeight: container.offsetHeight
+        });
+
         let sim: BlackHoleSim;
         try {
             sim = new BlackHoleSim(container);
@@ -189,6 +196,7 @@ const BlackHoleSection: React.FC = () => {
 
         const handleResize = () => {
             if (containerRef.current && simRef.current) {
+                console.log("BlackHoleSection: Resizing", containerRef.current.clientWidth, containerRef.current.clientHeight);
                 simRef.current.resize(containerRef.current.clientWidth, containerRef.current.clientHeight);
             }
         };
@@ -208,6 +216,14 @@ const BlackHoleSection: React.FC = () => {
             }
         };
     }, [simKey]);
+
+    // ... (rest of code)
+
+    return (
+        // ...
+        <div ref={containerRef} className="absolute inset-0 w-full h-full z-10 border-4 border-red-500 bg-yellow-500/20" />
+        // ...
+    );
 
     const moveCamera = (position: 'orbit' | 'top' | 'side') => {
         if (!simRef.current) return;
@@ -376,7 +392,7 @@ const BlackHoleSection: React.FC = () => {
                         </div>
                     </div>
 
-                    <div ref={containerRef} className="absolute inset-0 w-full h-full z-10" />
+                    <div ref={containerRef} className="absolute inset-0 w-full h-full z-10 border-4 border-red-500 bg-yellow-500/20" />
 
                     {renderFallback && (
                         <div className="absolute inset-0 z-40 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center p-6">
