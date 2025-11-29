@@ -1,9 +1,9 @@
-// components/blackhole/BlackHoleSim.ts
-
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import {
     BlackHoleVertexShader,
     BlackHoleFragmentShader,
@@ -15,100 +15,110 @@ export class BlackHoleSim {
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
     renderer: THREE.WebGLRenderer;
-    composer: EffectComposer;
+    composer!: EffectComposer;
     controls: OrbitControls;
     clock: THREE.Clock;
 
     blackHoleMesh!: THREE.Mesh;
     starfieldPoints!: THREE.Points;
+    bloomPass!: UnrealBloomPass;
 
+    isMobile: boolean = false;
     disposables: any[] = [];
+    targetCameraPosition: THREE.Vector3;
+    isAnimatingCamera: boolean = false;
 
     constructor(canvas: HTMLCanvasElement) {
-        // 1. Scene Setup
+        this.isMobile = window.innerWidth < 1024;
+
         this.scene = new THREE.Scene();
 
-        // 2. Camera Setup
-        // Positioned at z=55, looking at 0,0,0
+        // Caméra : Positionnée à z=55 pour voir le trou noir (qui est à 0,0,0)
         const width = Math.max(1, canvas.clientWidth);
         const height = Math.max(1, canvas.clientHeight);
         this.camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
         this.camera.position.set(0, 8, 55);
+        this.targetCameraPosition = new THREE.Vector3(0, 8, 55);
 
-        // 3. Renderer Setup
+        // Renderer
         this.renderer = new THREE.WebGLRenderer({
             canvas: canvas, // USE EXISTING CANVAS
-            antialias: true,
+            antialias: false, // Le post-processing gère l'AA
+            powerPreference: "high-performance",
             alpha: true,
-            powerPreference: "high-performance"
+            stencil: false,
+            depth: true
         });
-
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Reduce resolution slightly for performance
-        this.renderer.setClearColor(0x000000, 0.0); // Transparent/Black background
-
-        // NO appendChild needed anymore!
+        this.renderer.setSize(width, height);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.isMobile ? 1.0 : 1.5));
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 1.0;
+        this.renderer.setClearColor(0x000000, 0.0);
 
         this.clock = new THREE.Clock();
 
-        // 4. Controls
+        // Contrôles Orbitaux
         this.controls = new OrbitControls(this.camera, canvas);
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.05;
-        this.controls.enableZoom = false; // CRITICAL: Disable zoom to prevent scroll hijacking
-        this.controls.enablePan = false;  // Disable pan to keep black hole centered
-        this.controls.minDistance = 10;
-        this.controls.maxDistance = 200;
+        this.controls.minDistance = 20;
+        this.controls.maxDistance = 120;
+        this.controls.enablePan = false;
+        this.controls.enableZoom = false; // Keep zoom disabled for scroll safety
+        this.controls.maxPolarAngle = Math.PI * 0.85;
+        this.controls.minPolarAngle = Math.PI * 0.15;
 
-        // 5. Initialize Objects
         this.initStarfield();
-        this.initBlackHole();
+        this.initBlackHoleVolume();
+        this.initPostProcessing(width, height);
 
-        // 6. Post Processing (Basic for now)
-        this.composer = new EffectComposer(this.renderer);
-        const renderPass = new RenderPass(this.scene, this.camera);
-        this.composer.addPass(renderPass);
-
-        // 7. Initial Resize
-        this.resize(canvas.clientWidth, canvas.clientHeight);
+        // Initial Resize
+        this.resize(width, height);
     }
 
-    initBlackHole() {
-        // GEOMETRY: Large Sphere to act as a "Skybox" for the raymarching
-        // Radius 100 ensures the camera (at z=55) is well inside
-        const geometry = new THREE.SphereGeometry(100, 64, 64);
+    initBlackHoleVolume() {
+        // Création d'un grand cube qui contient le trou noir
+        // Le shader sera appliqué sur les faces intérieures de ce cube (BackSide)
+        // Using BoxGeometry as requested by user snippet, but Sphere is also fine.
+        // Let's stick to Sphere for smoother skybox effect in raymarching, 
+        // OR use Box if the shader relies on box coordinates (it uses vWorldPosition so it doesn't matter).
+        // User snippet used BoxGeometry(200, 200, 200).
+        const geometry = new THREE.BoxGeometry(200, 200, 200);
 
-        // MATERIAL: Shader
         const material = new THREE.ShaderMaterial({
             uniforms: {
                 u_time: { value: 0.0 },
                 u_resolution: { value: new THREE.Vector2(1, 1) },
-                u_cameraPos: { value: new THREE.Vector3() }
+                u_cameraPos: { value: new THREE.Vector3(0, 8, 55) },
+                u_bloom: { value: 1.0 },
+                u_lensing: { value: 1.0 },
+                u_disk_density: { value: 1.0 },
+                u_temp: { value: 1.0 }
             },
             vertexShader: BlackHoleVertexShader,
             fragmentShader: BlackHoleFragmentShader,
-            side: THREE.DoubleSide, // Try DoubleSide to be 100% sure
+            side: THREE.BackSide, // On regarde l'intérieur du cube
             transparent: true,
-            depthWrite: false,    // Do not write to depth buffer (allow stars behind to show if needed)
+            blending: THREE.NormalBlending,
         });
 
         this.blackHoleMesh = new THREE.Mesh(geometry, material);
-
-        // CRITICAL: Disable frustum culling to prevent disappearance
-        this.blackHoleMesh.frustumCulled = false;
-
+        this.blackHoleMesh.frustumCulled = false; // Critical
         this.scene.add(this.blackHoleMesh);
         this.disposables.push(geometry, material);
     }
 
     initStarfield() {
+        // Création des particules d'étoiles autour
         const geometry = new THREE.BufferGeometry();
-        const count = 2000;
+        const count = 4000;
         const positions = [];
         const sizes = [];
+        const opacities = [];
+        const speeds = [];
 
         for (let i = 0; i < count; i++) {
-            // Random sphere distribution
-            const r = 200 + Math.random() * 300; // Far background
+            const r = 300 + Math.random() * 200;
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
 
@@ -117,11 +127,15 @@ export class BlackHoleSim {
                 r * Math.sin(phi) * Math.sin(theta),
                 r * Math.cos(phi)
             );
-            sizes.push(Math.random() * 2.0);
+            sizes.push(Math.random() * 2.5);
+            opacities.push(Math.random());
+            speeds.push(Math.random());
         }
 
         geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
         geometry.setAttribute('a_size', new THREE.Float32BufferAttribute(sizes, 1));
+        geometry.setAttribute('a_opacity', new THREE.Float32BufferAttribute(opacities, 1));
+        geometry.setAttribute('a_twinkle_speed', new THREE.Float32BufferAttribute(speeds, 1));
 
         const material = new THREE.ShaderMaterial({
             uniforms: { u_time: { value: 0 } },
@@ -137,11 +151,31 @@ export class BlackHoleSim {
         this.disposables.push(geometry, material);
     }
 
+    initPostProcessing(width: number, height: number) {
+        this.composer = new EffectComposer(this.renderer);
+
+        const renderPass = new RenderPass(this.scene, this.camera);
+        this.composer.addPass(renderPass);
+
+        // Bloom pour l'effet lumineux intense
+        this.bloomPass = new UnrealBloomPass(
+            new THREE.Vector2(width, height),
+            1.2,  // Force
+            0.8,  // Rayon
+            0.15  // Seuil
+        );
+        this.composer.addPass(this.bloomPass);
+
+        const outputPass = new OutputPass();
+        this.composer.addPass(outputPass);
+    }
+
     resize(width: number, height: number) {
+        this.isMobile = width < 1024;
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(width, height);
-        // this.composer.setSize(width, height); // Bypass composer
+        this.composer.setSize(width, height);
 
         if (this.blackHoleMesh && this.blackHoleMesh.material instanceof THREE.ShaderMaterial) {
             this.blackHoleMesh.material.uniforms.u_resolution.value.set(width, height);
@@ -149,33 +183,60 @@ export class BlackHoleSim {
     }
 
     moveTo(x: number, y: number, z: number) {
-        // Simplified camera move for now
-        this.camera.position.set(x, y, z);
+        this.targetCameraPosition.set(x, y, z);
+        this.isAnimatingCamera = true;
     }
 
     setAutoRotation(active: boolean) {
         this.controls.autoRotate = active;
+        this.controls.autoRotateSpeed = 0.5;
     }
 
     resetCamera() {
-        this.camera.position.set(0, 8, 55);
+        this.targetCameraPosition.set(0, 8, 55);
+        this.isAnimatingCamera = true;
+        this.controls.autoRotate = false;
     }
 
     update(time: number, delta: number, params: any) {
-        // Update Uniforms
         if (this.blackHoleMesh && this.blackHoleMesh.material instanceof THREE.ShaderMaterial) {
             const uniforms = this.blackHoleMesh.material.uniforms;
-            uniforms.u_time.value = time;
+            uniforms.u_time.value = time * params.rotationSpeed;
+
+            const brightnessMod = params.isLightMode ? 1.5 : 1.0;
+
+            uniforms.u_bloom.value = params.diskBrightness * brightnessMod;
+            uniforms.u_lensing.value = params.lensingStrength;
+            uniforms.u_disk_density.value = params.diskBrightness;
+            uniforms.u_temp.value = params.temperature;
             uniforms.u_cameraPos.value.copy(this.camera.position);
         }
 
+        if (this.starfieldPoints && this.starfieldPoints.material instanceof THREE.ShaderMaterial) {
+            this.starfieldPoints.material.uniforms.u_time.value = time;
+        }
+
+        if (this.bloomPass) {
+            this.bloomPass.strength = params.bloomIntensity;
+        }
+
+        if (this.isAnimatingCamera) {
+            this.camera.position.lerp(this.targetCameraPosition, 0.05);
+            if (this.camera.position.distanceTo(this.targetCameraPosition) < 0.1) {
+                this.isAnimatingCamera = false;
+                this.controls.update();
+            }
+        }
+
         this.controls.update();
-        // this.composer.render(); // Bypass composer
-        this.renderer.render(this.scene, this.camera);
+        this.composer.render();
     }
 
     dispose() {
-        this.disposables.forEach(d => d.dispose());
+        this.disposables.forEach(obj => {
+            if (obj.dispose) obj.dispose();
+        });
         this.renderer.dispose();
+        this.composer.dispose();
     }
 }
