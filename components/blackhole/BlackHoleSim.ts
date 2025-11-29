@@ -81,7 +81,7 @@ export class BlackHoleSim {
             },
             vertexShader: BlackHoleVertexShader,
             fragmentShader: BlackHoleFragmentShader,
-            side: THREE.BackSide, // Render the INSIDE of the sphere
+            side: THREE.DoubleSide, // Try DoubleSide to be 100% sure
             transparent: true,
             depthWrite: false,    // Do not write to depth buffer (allow stars behind to show if needed)
         });
@@ -136,7 +136,7 @@ export class BlackHoleSim {
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(width, height);
-        this.composer.setSize(width, height);
+        // this.composer.setSize(width, height); // Bypass composer
 
         if (this.blackHoleMesh && this.blackHoleMesh.material instanceof THREE.ShaderMaterial) {
             this.blackHoleMesh.material.uniforms.u_resolution.value.set(width, height);
@@ -165,12 +165,12 @@ export class BlackHoleSim {
         }
 
         this.controls.update();
-        this.composer.render();
+        // this.composer.render(); // Bypass composer
+        this.renderer.render(this.scene, this.camera);
     }
 
     dispose() {
         this.disposables.forEach(d => d.dispose());
         this.renderer.dispose();
-        this.composer.dispose();
     }
 }
