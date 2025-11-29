@@ -68,8 +68,6 @@ export class BlackHoleSim {
 
         // 7. Initial Resize
         this.resize(canvas.clientWidth, canvas.clientHeight);
-
-        console.log("BlackHoleSim: Initialized (Rewrite Step 1)");
     }
 
     initBlackHole() {

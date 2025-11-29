@@ -169,7 +169,6 @@ const BlackHoleSection: React.FC = () => {
             }, 100);
 
         } catch (error) {
-            console.error("WebGL initialization failed:", error);
             setRenderFallback(true);
             setIsLoading(false);
             return;
