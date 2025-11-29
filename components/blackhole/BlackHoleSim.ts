@@ -54,6 +54,7 @@ export class BlackHoleSim {
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 1.0;
         this.renderer.setClearColor(0x000000, 0.0);
+        this.renderer.autoClear = true;
 
         this.clock = new THREE.Clock();
 
@@ -74,6 +75,7 @@ export class BlackHoleSim {
 
         // Initial Resize
         this.resize(width, height);
+
     }
 
     initBlackHoleVolume() {
@@ -97,8 +99,8 @@ export class BlackHoleSim {
             },
             vertexShader: BlackHoleVertexShader,
             fragmentShader: BlackHoleFragmentShader,
-            side: THREE.BackSide, // On regarde l'intérieur du cube
-            transparent: true,
+            side: THREE.DoubleSide, // Ensure visibility from both sides
+            transparent: false,
             blending: THREE.NormalBlending,
         });
 
@@ -122,14 +124,14 @@ export class BlackHoleSim {
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
 
-            positions.push(
-                r * Math.sin(phi) * Math.cos(theta),
-                r * Math.sin(phi) * Math.sin(theta),
-                r * Math.cos(phi)
-            );
-            sizes.push(Math.random() * 2.5);
+            const x = r * Math.sin(phi) * Math.cos(theta);
+            const y = r * Math.sin(phi) * Math.sin(theta);
+            const z = r * Math.cos(phi);
+
+            positions.push(x, y, z);
+            sizes.push(Math.random() * 2);
             opacities.push(Math.random());
-            speeds.push(Math.random());
+            speeds.push(Math.random() * 0.2);
         }
 
         geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
@@ -158,13 +160,14 @@ export class BlackHoleSim {
         this.composer.addPass(renderPass);
 
         // Bloom pour l'effet lumineux intense
-        this.bloomPass = new UnrealBloomPass(
+        const bloomPass = new UnrealBloomPass(
             new THREE.Vector2(width, height),
-            1.2,  // Force
-            0.8,  // Rayon
-            0.15  // Seuil
+            1.5, // Strength
+            0.4, // Radius
+            0.85 // Threshold
         );
-        this.composer.addPass(this.bloomPass);
+        this.composer.addPass(bloomPass);
+        this.bloomPass = bloomPass;
 
         const outputPass = new OutputPass();
         this.composer.addPass(outputPass);

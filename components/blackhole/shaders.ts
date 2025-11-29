@@ -63,7 +63,7 @@ export const BlackHoleFragmentShader = `
         float accum = 0.0; // Light accumulation
         float trans = 1.0; // Transmittance
         
-        for(int i=0; i<150; i++) {
+        for(int i=0; i<80; i++) {
             float r = length(p);
             
             // 1. GRAVITY
