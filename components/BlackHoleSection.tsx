@@ -216,8 +216,8 @@ const BlackHoleSection: React.FC = () => {
 
     return (
         // ...
-        <div ref={containerRef} className="absolute inset-0 w-full h-full z-10">
-            <canvas ref={canvasRef} className="w-full h-full block" />
+        <div ref={containerRef} className="absolute inset-0 w-full h-full z-0 overflow-hidden rounded-[2rem]">
+            <canvas ref={canvasRef} className="w-full h-full block object-cover" />
         </div>
         // ...
     );
