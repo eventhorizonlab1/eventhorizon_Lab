@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
-import { Target, Activity, Cpu, Wifi, Triangle, BatteryCharging, Eye, Aperture, Clock } from 'lucide-react';
+import { Activity, Wifi, Triangle, Globe, Compass, Move3d, Clock } from 'lucide-react';
 
-// --- SHADERS GLSL (MONOCHROME & PHYSIQUE) ---
+// --- SHADERS GLSL (MONOCHROME & ORBITAL) ---
 
 const VertexShader = `
     varying vec2 vUv;
@@ -15,21 +15,17 @@ const VertexShader = `
 const FragmentShader = `
     uniform float u_time;
     uniform vec2 u_resolution;
-    uniform vec2 u_mouse; // Position "Regard" lissée
     
-    // NOUVEAUX UNIFORMS CREATIFS
-    uniform float u_zoom_level; // Contrôle le Dolly Zoom (0.0 à 1.0)
-    uniform float u_focus;      // Contrôle la dilatation temporelle (0.0 à 1.0)
+    // PARAMÈTRES ORBITAUX
+    uniform vec2 u_orbit; // x: Azimut, y: Élévation
+    uniform float u_dist; // Distance au centre
+    uniform float u_focus; // Dilatation temporelle
     
     varying vec2 vUv;
 
     #define PI 3.14159265359
 
-    mat2 rot(float a) {
-        float s = sin(a), c = cos(a);
-        return mat2(c, -s, s, c);
-    }
-
+    // --- MATHS & NOISE ---
     float hash(vec2 p) {
         vec3 p3  = fract(vec3(p.xyx) * .1031);
         p3 += dot(p3, p3.yzx + 33.33);
@@ -71,10 +67,8 @@ const FragmentShader = `
         
         if(rnd > 0.98) {
             float brightness = (rnd - 0.98) * 50.0;
-            // Scintillement ralenti par u_focus
             float twinkleSpeed = 5.0 * (1.0 - u_focus * 0.9);
             brightness *= (0.8 + 0.4 * sin(u_time * twinkleSpeed + rnd * 100.0));
-            
             float dist = length(grid);
             float star = max(0.0, 1.0 - dist * 4.0); 
             star = pow(star, 8.0); 
@@ -83,38 +77,41 @@ const FragmentShader = `
         return col;
     }
 
+    // Fonction Caméra LookAt
+    mat3 setCamera(in vec3 ro, in vec3 ta, float cr) {
+        vec3 cw = normalize(ta - ro);
+        vec3 cp = vec3(sin(cr), cos(cr), 0.0); // Up vector temporaire
+        vec3 cu = normalize(cross(cw, cp));
+        vec3 cv = normalize(cross(cu, cw));
+        return mat3(cu, cv, cw);
+    }
+
     void main() {
         vec2 uv = (vUv - 0.5) * 2.0;
         uv.x *= u_resolution.x / u_resolution.y;
 
-        // --- DOLLY ZOOM (EFFET VERTIGO) ---
-        // u_zoom_level va de 0 (loin/téléobjectif) à 1 (près/grand angle)
-        
-        // Distance caméra : Plus on zoom (1.0), plus on s'approche physiquement
-        // Range: -20.0 (loin) à -6.0 (très près)
-        float camDist = mix(25.0, 5.0, u_zoom_level);
-        
-        // FOV : Plus on zoom (1.0), plus le FOV est GRAND (Fish-eye) pour compenser
-        // Range: 0.5 (Téléobjectif) à 2.5 (Grand angle)
-        float fov = mix(0.4, 3.0, u_zoom_level * u_zoom_level); // Non-linéaire pour l'effet dramatique
-        
-        vec3 ro = vec3(0.0, 0.5 * u_zoom_level, -camDist);
-        vec3 target = vec3(0.0, 0.0, 0.0);
-        
-        vec3 forward = normalize(target - ro);
-        vec3 right = normalize(cross(vec3(0.0, 1.0, 0.0), forward));
-        vec3 up = cross(forward, right);
-        vec3 rd = normalize(forward * fov + uv.x * right + uv.y * up);
+        // --- ORBITAL CAMERA LOGIC ---
+        float az = u_orbit.x;
+        float el = u_orbit.y;
+        float d = u_dist;
 
-        // --- NAVIGATION INERTIELLE (SCAPHANDRE) ---
-        // La souris fait tourner la caméra avec une sensation de poids
-        float mx = u_mouse.x * 0.4; // Amplitude limitée
-        float my = u_mouse.y * 0.2;
-        mat2 rotY = rot(mx);
-        mat2 rotX = rot(my);
-        ro.yz *= rotX; rd.yz *= rotX;
-        ro.xz *= rotY; rd.xz *= rotY;
+        // Conversion Sphérique -> Cartésien (Y-Up)
+        vec3 ro = vec3(
+            d * cos(el) * sin(az),
+            d * sin(el),
+            d * cos(el) * cos(az)
+        );
+
+        vec3 ta = vec3(0.0); // Cible : Centre du Trou Noir
         
+        // Construction de la matrice caméra
+        mat3 camMat = setCamera(ro, ta, 0.0);
+        
+        // Ray Direction
+        // FOV = 1.5 (Standard ~50-60mm)
+        vec3 rd = camMat * normalize(vec3(uv, 1.5));
+
+        // --- PHYSIQUE TROU NOIR ---
         float rs = 1.0; 
         float isco = 2.0; 
         float diskRad = 12.0; 
@@ -129,7 +126,8 @@ const FragmentShader = `
         for(int i=0; i<150; i++) {
             float r = length(p);
             
-            // Lensing renforcé par le focus
+            // Lensing
+            // Focus augmente la gravité perçue (Zoom temporel)
             float lensPower = 4.0 + u_focus * 2.0; 
             vec3 gravity = -normalize(p) * (lensPower / (r*r + 0.1));
             rd += gravity * stepSize * 0.08;
@@ -147,7 +145,7 @@ const FragmentShader = `
                 float angle = atan(p.z, p.x);
                 float rad = length(p.xz);
                 float speed = 8.0 / sqrt(rad);
-                // Le temps semble ralentir quand on focus
+                
                 float timeScale = 1.0 - u_focus * 0.8; 
                 float rotAngle = angle + u_time * speed * 0.2 * timeScale; 
                 
@@ -159,20 +157,18 @@ const FragmentShader = `
                 density *= smoothstep(diskHeight, 0.0, distToPlane);
                 
                 // Doppler Beaming
-                vec3 tangent = normalize(vec3(-p.z, 0.0, p.x));
+                // Calcul tangentiel correct quelque soit l'angle de vue
+                vec3 tangent = normalize(cross(vec3(0.0, 1.0, 0.0), p)); 
                 float doppler = dot(rd, tangent);
                 
                 float beam = 1.0 + doppler * 0.7;
                 beam = pow(beam, 2.0);
                 
-                vec3 finalDiskCol = vec3(1.0);
-                
                 float intensity = density * beam * 2.0;
-                // Focus augmente la brillance perçue
                 intensity *= (1.0 + u_focus * 0.5); 
                 
                 float stepDens = density * stepSize * 0.8;
-                col += finalDiskCol * intensity * stepDens * alpha;
+                col += vec3(1.0) * intensity * stepDens * alpha;
                 alpha *= (1.0 - stepDens);
                 
                 if(alpha < 0.01) break;
@@ -188,27 +184,21 @@ const FragmentShader = `
             col += getStars(rd) * alpha;
         }
 
-        // --- POST PROCESS : FOCUS & VIGNETTE ---
+        // --- POST PROCESS ---
         
-        // Glow monochrome
         float centerGlow = 1.0 / (length(uv) + 0.2);
         col += vec3(0.2) * centerGlow * 0.05;
 
-        // Tone Mapping
         col = vec3(1.0) - exp(-col * 1.5); 
         col = pow(col, vec3(0.9)); 
         float gray = dot(col, vec3(0.299, 0.587, 0.114));
         col = vec3(gray);
 
-        // VIGNETTE DYNAMIQUE (Effet Casque/Focus)
-        // Normalement douce, elle devient très forte sur les bords en mode Focus
         float vignetteStrength = 1.8 + u_focus * 1.5;
         col *= 1.0 - smoothstep(0.5, vignetteStrength, length(vUv - 0.5) * 2.0);
         
-        // BLUR RADIAL SUR LES BORDS (Simulation de concentration)
         if (u_focus > 0.01) {
              float blurAmount = smoothstep(0.2, 0.8, length(vUv - 0.5)) * u_focus * 0.5;
-             // Simulation cheap de blur : on assombrit simplement plus
              col *= (1.0 - blurAmount);
         }
 
@@ -229,10 +219,7 @@ const CornerBrackets = () => (
 
 const CrosshairHUD = ({ focusLevel }: { focusLevel: number }) => (
     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center mix-blend-difference">
-        {/* Point central qui palpite si focus */}
         <div className={`w-1 h-1 bg-white rounded-full transition-all duration-300 ${focusLevel > 0.1 ? 'scale-150 shadow-[0_0_15px_white]' : ''}`} />
-
-        {/* Cercle de focus qui se resserre */}
         <div
             className="absolute border border-white/30 rounded-full transition-all duration-300 ease-out"
             style={{
@@ -241,8 +228,6 @@ const CrosshairHUD = ({ focusLevel }: { focusLevel: number }) => (
                 borderColor: `rgba(255, 255, 255, ${0.3 + focusLevel * 0.7})`
             }}
         />
-
-        {/* Lignes latérales qui s'écartent */}
         <div
             className="absolute h-[1px] bg-white/20 transition-all duration-500"
             style={{ width: `${200 + focusLevel * 300}px`, opacity: 1 - focusLevel }}
@@ -266,7 +251,7 @@ const DataPanel = ({ label, value, icon: Icon }: { label: string, value: string,
 
 // --- HUD PRINCIPAL ---
 
-const ComplexHUD = ({ zoomLevel, focusLevel }: { zoomLevel: number, focusLevel: number }) => {
+const ComplexHUD = ({ orbitalData, focusLevel }: { orbitalData: { az: number, el: number, dist: number }, focusLevel: number }) => {
     const [time, setTime] = useState(new Date());
 
     useEffect(() => {
@@ -308,55 +293,55 @@ const ComplexHUD = ({ zoomLevel, focusLevel }: { zoomLevel: number, focusLevel: 
             {/* Center Area */}
             <CrosshairHUD focusLevel={focusLevel} />
 
-            {/* Mode Indicator (Right) */}
+            {/* Orbital Indicator (Right) */}
             <div className="absolute right-8 top-1/2 -translate-y-1/2 flex flex-col gap-4 text-right">
-                <div className="flex flex-col gap-1 transition-opacity duration-300" style={{ opacity: focusLevel > 0.1 ? 1 : 0.4 }}>
+                <div className="flex flex-col gap-1 transition-opacity duration-300">
                     <div className="flex items-center justify-end gap-2 text-white/90">
-                        <span className="text-[10px] tracking-widest uppercase font-bold">Dilatation Temporelle</span>
-                        <Clock size={14} className={focusLevel > 0.1 ? "animate-spin-slow" : ""} />
+                        <span className="text-[10px] tracking-widest uppercase font-bold">NAVIGATION</span>
+                        <Compass size={14} className="animate-spin-slow" />
                     </div>
                     <div className="text-[9px] font-mono text-white/60">
-                        {focusLevel > 0.1 ? "ACTIVE" : "INACTIVE"}
+                        ORBITAL MODE
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-1 transition-opacity duration-300" style={{ opacity: 0.8 }}>
+                <div className="flex flex-col gap-1 transition-opacity duration-300" style={{ opacity: focusLevel > 0.1 ? 1 : 0.4 }}>
                     <div className="flex items-center justify-end gap-2 text-white/90">
-                        <span className="text-[10px] tracking-widest uppercase font-bold">Optique</span>
-                        <Aperture size={14} />
+                        <span className="text-[10px] tracking-widest uppercase font-bold">Dilatation Temp.</span>
+                        <Activity size={14} className={focusLevel > 0.1 ? "animate-pulse" : ""} />
                     </div>
                     <div className="text-[9px] font-mono text-white/60">
-                        {zoomLevel < 0.3 ? "TÉLÉOBJECTIF" : (zoomLevel > 0.7 ? "GRAND ANGLE" : "STANDARD")}
+                        {focusLevel > 0.1 ? "ACTIVE" : "NOMINALE"}
                     </div>
                 </div>
             </div>
 
-            {/* Zoom Slider (Bottom Center) - Purely Visual Representation */}
+            {/* Orbital Visualizer (Bottom Center) */}
             <div className="absolute bottom-12 left-1/2 -translate-x-1/2 w-64 flex flex-col gap-1 items-center pointer-events-none mix-blend-difference">
                 <div className="w-full flex justify-between text-[9px] text-white/60 font-mono tracking-[0.2em] uppercase">
-                    <span>Tele</span>
-                    <span>Wide</span>
+                    <span>Horizon</span>
+                    <span>Deep Space</span>
                 </div>
                 <div className="w-full h-1 bg-white/10 border border-white/30 rounded-full overflow-hidden relative">
-                    {/* Marker */}
+                    {/* Distance Marker */}
                     <div
                         className="absolute top-0 bottom-0 w-2 bg-white shadow-[0_0_10px_white] transition-all duration-75 ease-out"
-                        style={{ left: `${zoomLevel * 100}%` }}
+                        style={{ left: `${Math.min(1, (orbitalData.dist - 2.0) / 25.0) * 100}%` }}
                     />
                 </div>
                 <span className="text-[10px] font-mono mt-1 tracking-widest uppercase text-white/50">
-                    DOLLY ZOOM (VERTIGO)
+                    RAYON ORBITAL: {orbitalData.dist.toFixed(2)} UA
                 </span>
             </div>
 
             {/* Bottom Bar */}
             <div className="flex justify-between items-end pb-2">
                 <div className="flex flex-col gap-1">
-                    <div className="flex gap-1 text-[10px] text-white/40 font-mono mix-blend-difference">
-                        <span>FOV: {(30 + zoomLevel * 90).toFixed(1)}°</span>
-                        <span>DIST: {(25.0 - zoomLevel * 20.0).toFixed(1)} UA</span>
+                    <div className="flex gap-4 text-[10px] text-white/40 font-mono mix-blend-difference">
+                        <span>AZM: {(orbitalData.az * 180 / Math.PI).toFixed(0)}°</span>
+                        <span>ELV: {(orbitalData.el * 180 / Math.PI).toFixed(0)}°</span>
                     </div>
-                    <DataPanel label="OPTICS" value="VARIABLE GEOMETRY" icon={Eye} />
+                    <DataPanel label="VECTEUR" value="ORBITAL LOCK" icon={Globe} />
                 </div>
 
                 <div className="flex gap-6 items-end">
@@ -378,16 +363,24 @@ const ComplexHUD = ({ zoomLevel, focusLevel }: { zoomLevel: number, focusLevel: 
 
 // --- MOTEUR THREE.JS ---
 
-const InterstellarBlackHole = ({ setZoomLevel, setFocusLevel }: { setZoomLevel: (l: number) => void, setFocusLevel: (l: number) => void }) => {
+const InterstellarBlackHole = ({ setOrbitalData, setFocusLevel }: { setOrbitalData: (d: any) => void, setFocusLevel: (l: number) => void }) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const mouseRef = useRef({ x: 0, y: 0 }); // Mouse position relative to center (-1 to 1)
 
-    // Etats de la simulation
-    const zoomRef = useRef(0.5); // 0.5 = milieu (vue normale)
-    const targetZoomRef = useRef(0.5);
+    // ÉTAT ORBITAL
+    const orbitState = useRef({
+        azimuth: -Math.PI / 2, // Commence face au disque
+        elevation: 0.1,        // Légèrement au-dessus
+        distance: 12.0,        // Distance initiale
+        targetAzimuth: -Math.PI / 2,
+        targetElevation: 0.1,
+        targetDistance: 12.0
+    });
+
+    const isDragging = useRef(false);
+    const isMouseDown = useRef(false); // Pour le focus (clic statique)
+    const lastMousePos = useRef({ x: 0, y: 0 });
 
     const focusRef = useRef(0.0);
-    const isMouseDown = useRef(false);
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -411,8 +404,8 @@ const InterstellarBlackHole = ({ setZoomLevel, setFocusLevel }: { setZoomLevel: 
             uniforms: {
                 u_time: { value: 0 },
                 u_resolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) },
-                u_mouse: { value: new THREE.Vector2(0, 0) },
-                u_zoom_level: { value: 0.5 },
+                u_orbit: { value: new THREE.Vector2(0, 0) }, // Azimut, Elevation
+                u_dist: { value: 12.0 },
                 u_focus: { value: 0.0 }
             },
             vertexShader: VertexShader,
@@ -427,29 +420,35 @@ const InterstellarBlackHole = ({ setZoomLevel, setFocusLevel }: { setZoomLevel: 
         let animationId: number;
         const animate = () => {
             animationId = requestAnimationFrame(animate);
-            // Si Focus actif, le temps ralentit (dt plus petit)
             const rawDt = clock.getDelta();
-            const timeDilation = 1.0 - (focusRef.current * 0.8); // Ralentit jusqu'à 20%
-            material.uniforms.u_time.value += rawDt * timeDilation;
 
-            // --- GESTION DU ZOOM (VERTIGO) ---
-            // Interpolation fluide vers la cible
-            zoomRef.current += (targetZoomRef.current - zoomRef.current) * 0.05;
-            material.uniforms.u_zoom_level.value = zoomRef.current;
-            setZoomLevel(zoomRef.current);
+            // --- LOGIQUE ORBITALE (INTERPOLATION) ---
+            // Lissage des mouvements
+            orbitState.current.azimuth += (orbitState.current.targetAzimuth - orbitState.current.azimuth) * 0.1;
+            orbitState.current.elevation += (orbitState.current.targetElevation - orbitState.current.elevation) * 0.1;
+            orbitState.current.distance += (orbitState.current.targetDistance - orbitState.current.distance) * 0.1;
 
-            // --- GESTION DU FOCUS (TEMPS) ---
-            const targetFocus = isMouseDown.current ? 1.0 : 0.0;
+            // Mise à jour Uniforms
+            material.uniforms.u_orbit.value.set(orbitState.current.azimuth, orbitState.current.elevation);
+            material.uniforms.u_dist.value = orbitState.current.distance;
+
+            // --- LOGIQUE FOCUS ---
+            // Si on clique sans bouger (pas de drag), on active le focus
+            const targetFocus = (isMouseDown.current && !isDragging.current) ? 1.0 : 0.0;
             focusRef.current += (targetFocus - focusRef.current) * 0.1;
             material.uniforms.u_focus.value = focusRef.current;
-            setFocusLevel(focusRef.current);
 
-            // --- GESTION DU REGARD (INERTIE) ---
-            // La souris ne donne pas une position absolue, mais une "intention" de regard
-            // Plus on s'éloigne du centre, plus l'uniform u_mouse change, mais avec du lag
-            // Ici on garde simple : u_mouse suit la souris physique avec beaucoup d'inertie
-            material.uniforms.u_mouse.value.x += (mouseRef.current.x - material.uniforms.u_mouse.value.x) * 0.05;
-            material.uniforms.u_mouse.value.y += (mouseRef.current.y - material.uniforms.u_mouse.value.y) * 0.05;
+            // Ralenti temporel si focus actif
+            const timeDilation = 1.0 - (focusRef.current * 0.8);
+            material.uniforms.u_time.value += rawDt * timeDilation;
+
+            // Sync React State (Pour le HUD)
+            setOrbitalData({
+                az: orbitState.current.azimuth,
+                el: orbitState.current.elevation,
+                dist: orbitState.current.distance
+            });
+            setFocusLevel(focusRef.current);
 
             renderer.render(scene, camera);
         };
@@ -463,43 +462,132 @@ const InterstellarBlackHole = ({ setZoomLevel, setFocusLevel }: { setZoomLevel: 
             material.uniforms.u_resolution.value.set(container.clientWidth, container.clientHeight);
         };
 
+        const handleMouseDown = (e: MouseEvent) => {
+            isMouseDown.current = true;
+            isDragging.current = false;
+            lastMousePos.current = { x: e.clientX, y: e.clientY };
+        };
+
         const handleMouseMove = (e: MouseEvent) => {
-            // Normalisation (-1 à 1)
-            mouseRef.current.x = (e.clientX / window.innerWidth) * 2 - 1;
-            mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            if (isMouseDown.current) {
+                const dx = e.clientX - lastMousePos.current.x;
+                const dy = e.clientY - lastMousePos.current.y;
+
+                // Seuil pour considérer qu'on drag (évite d'annuler le clic statique pour un micro mouvement)
+                if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+                    isDragging.current = true;
+
+                    // Sensibilité
+                    const sensitivity = 0.005;
+                    orbitState.current.targetAzimuth -= dx * sensitivity;
+                    orbitState.current.targetElevation += dy * sensitivity;
+
+                    // Clamp Elevation pour éviter le retournement aux pôles (Gimbal lock visual)
+                    // On garde une marge de sécurité (89 degrés)
+                    const limit = Math.PI / 2 - 0.05;
+                    orbitState.current.targetElevation = Math.max(-limit, Math.min(limit, orbitState.current.targetElevation));
+
+                    lastMousePos.current = { x: e.clientX, y: e.clientY };
+                }
+            }
         };
 
-        // Zoom sur la molette
+        const handleMouseUp = () => {
+            isMouseDown.current = false;
+            isDragging.current = false;
+        };
+
         const handleWheel = (e: WheelEvent) => {
-            // e.deltaY > 0 : Scroll Down (Recul) -> Zoom level diminue
-            // e.deltaY < 0 : Scroll Up (Avance) -> Zoom level augmente
-            const sensitivity = 0.001;
-            targetZoomRef.current -= e.deltaY * sensitivity;
-            // Clamp entre 0 et 1
-            targetZoomRef.current = Math.max(0.0, Math.min(1.0, targetZoomRef.current));
-            e.preventDefault(); // Empêche le scroll de page si nécessaire
+            const zoomSensitivity = 0.01;
+            orbitState.current.targetDistance += e.deltaY * zoomSensitivity;
+            // Clamp Distance
+            orbitState.current.targetDistance = Math.max(3.0, Math.min(30.0, orbitState.current.targetDistance));
+            e.preventDefault();
         };
 
-        const handleMouseDown = () => { isMouseDown.current = true; };
-        const handleMouseUp = () => { isMouseDown.current = false; };
-        const handleTouchStart = () => { isMouseDown.current = true; };
-        const handleTouchEnd = () => { isMouseDown.current = false; };
+        // Touch Events (Mobile)
+        const initialPinchDist = useRef<number | null>(null);
+        const initialZoomDist = useRef<number>(12.0);
+
+        const handleTouchStart = (e: TouchEvent) => {
+            // Prevent default to stop scrolling/refreshing
+            e.preventDefault();
+
+            if (e.touches.length === 1) {
+                // Single touch: Rotate
+                isMouseDown.current = true;
+                isDragging.current = false;
+                lastMousePos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            } else if (e.touches.length === 2) {
+                // Multi touch: Pinch to Zoom
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                initialPinchDist.current = Math.sqrt(dx * dx + dy * dy);
+                initialZoomDist.current = orbitState.current.targetDistance;
+            }
+        };
+
+        const handleTouchMove = (e: TouchEvent) => {
+            e.preventDefault();
+
+            if (e.touches.length === 1 && isMouseDown.current) {
+                // Rotation Logic
+                const dx = e.touches[0].clientX - lastMousePos.current.x;
+                const dy = e.touches[0].clientY - lastMousePos.current.y;
+
+                // Threshold for drag detection
+                if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+                    isDragging.current = true;
+
+                    // Increased sensitivity for mobile
+                    const sensitivity = 0.008;
+                    orbitState.current.targetAzimuth -= dx * sensitivity;
+                    orbitState.current.targetElevation += dy * sensitivity;
+
+                    const limit = Math.PI / 2 - 0.05;
+                    orbitState.current.targetElevation = Math.max(-limit, Math.min(limit, orbitState.current.targetElevation));
+
+                    lastMousePos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }
+            } else if (e.touches.length === 2 && initialPinchDist.current !== null) {
+                // Pinch Zoom Logic
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                const currentDist = Math.sqrt(dx * dx + dy * dy);
+
+                // Calculate zoom factor
+                const scale = initialPinchDist.current / currentDist;
+
+                // Apply zoom
+                orbitState.current.targetDistance = initialZoomDist.current * scale;
+                orbitState.current.targetDistance = Math.max(3.0, Math.min(30.0, orbitState.current.targetDistance));
+            }
+        };
+
+        const handleTouchEnd = () => {
+            isMouseDown.current = false;
+            isDragging.current = false;
+            initialPinchDist.current = null;
+        };
 
         window.addEventListener('resize', handleResize);
-        window.addEventListener('mousemove', handleMouseMove);
-        window.addEventListener('wheel', handleWheel, { passive: false });
         window.addEventListener('mousedown', handleMouseDown);
+        window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseup', handleMouseUp);
-        window.addEventListener('touchstart', handleTouchStart);
+        window.addEventListener('wheel', handleWheel, { passive: false });
+
+        window.addEventListener('touchstart', handleTouchStart, { passive: false });
+        window.addEventListener('touchmove', handleTouchMove, { passive: false });
         window.addEventListener('touchend', handleTouchEnd);
 
         return () => {
             window.removeEventListener('resize', handleResize);
-            window.removeEventListener('mousemove', handleMouseMove);
-            window.removeEventListener('wheel', handleWheel);
             window.removeEventListener('mousedown', handleMouseDown);
+            window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('mouseup', handleMouseUp);
+            window.removeEventListener('wheel', handleWheel);
             window.removeEventListener('touchstart', handleTouchStart);
+            window.removeEventListener('touchmove', handleTouchMove);
             window.removeEventListener('touchend', handleTouchEnd);
             cancelAnimationFrame(animationId);
             renderer.dispose();
@@ -510,27 +598,28 @@ const InterstellarBlackHole = ({ setZoomLevel, setFocusLevel }: { setZoomLevel: 
         };
     }, []);
 
-    return <div ref={containerRef} className="fixed inset-0 w-full h-full bg-black cursor-crosshair" />;
+    return <div ref={containerRef} className="fixed inset-0 w-full h-full bg-black cursor-move" />;
 };
 
 const BlackHoleSection: React.FC = () => {
-    const [zoomLevel, setZoomLevel] = useState(0.5);
+    const [orbitalData, setOrbitalData] = useState({ az: 0, el: 0, dist: 12.0 });
     const [focusLevel, setFocusLevel] = useState(0.0);
 
     return (
         <main className="w-full h-screen bg-black overflow-hidden font-sans relative">
-            <InterstellarBlackHole setZoomLevel={setZoomLevel} setFocusLevel={setFocusLevel} />
-            <ComplexHUD zoomLevel={zoomLevel} focusLevel={focusLevel} />
+            <InterstellarBlackHole setOrbitalData={setOrbitalData} setFocusLevel={setFocusLevel} />
+            <ComplexHUD orbitalData={orbitalData} focusLevel={focusLevel} />
 
             {/* Grain Film Overlay */}
             <div className="absolute inset-0 pointer-events-none opacity-[0.05] bg-white mix-blend-overlay"
                 style={{ filter: 'url(#noise)' }}></div>
 
-            {/* UI Hints (Bottom Left) */}
+            {/* UI Hints */}
             <div className="absolute bottom-12 left-8 text-white/30 text-[9px] font-mono flex flex-col gap-1 pointer-events-none mix-blend-difference">
-                <span>SCROLL: VERTIGO ZOOM</span>
+                <span>GLISSER: ORBITE</span>
+                <span>SCROLL: DISTANCE</span>
                 <span>CLIC MAINTENU: DILATATION TEMP.</span>
-                <span>SOURIS: REGARD INERTIEL</span>
+                <span><Move3d size={12} className="inline mr-1" />3D LOCK</span>
             </div>
         </main>
     );

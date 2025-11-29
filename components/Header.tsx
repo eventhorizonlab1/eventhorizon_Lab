@@ -256,6 +256,21 @@ const Header: React.FC = () => {
                     {t(link.key)}
                   </motion.a>
                 ))}
+
+                {/* Mobile Simulation Link */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 + NAV_LINKS.length * 0.1 }}
+                >
+                  <Link
+                    to="/simulation"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-tighter hover:text-gray-500 transition-colors text-black dark:text-white"
+                  >
+                    Simulation
+                  </Link>
+                </motion.div>
               </nav>
 
               {/* Mobile Controls */}
