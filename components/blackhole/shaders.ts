@@ -26,6 +26,7 @@ export const BlackHoleFragmentShader = `
     uniform float u_temp;
     
     varying vec3 vWorldPosition;
+    varying vec3 vViewPosition;
     varying vec2 vUv;
 
     // --- NOISE FUNCTIONS (Simplex 3D) ---
@@ -189,7 +190,15 @@ export const BlackHoleFragmentShader = `
         
         col = pow(col, vec3(0.4545)); // Gamma Correction
         
-        gl_FragColor = vec4(col, 1.0 - trans);
+        // Prevent optimization of unused varyings
+        vec2 dummy = vUv * 0.00001;
+        vec3 dummy2 = vViewPosition * 0.00001;
+        col += vec3(dummy.x + dummy.y + dummy2.x);
+
+        // DEBUG: Add faint blue background to verify shader execution
+        // If you see a blue box, the shader is running!
+        vec3 debugTint = vec3(0.0, 0.0, 0.1); 
+        gl_FragColor = vec4(col + debugTint, max(0.2, 1.0 - trans));
     }
 `;
 
