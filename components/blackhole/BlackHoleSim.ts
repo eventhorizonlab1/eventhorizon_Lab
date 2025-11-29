@@ -39,10 +39,16 @@ export class BlackHoleSim {
             alpha: true,
             powerPreference: "high-performance"
         });
-        this.renderer.setSize(container.clientWidth, container.clientHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         // DEBUG: Set clear color to GREEN to verify renderer is working
         this.renderer.setClearColor(0x00ff00, 1.0);
+
+        // DEBUG: Force canvas styles to ensure visibility
+        this.renderer.domElement.style.width = '100%';
+        this.renderer.domElement.style.height = '100%';
+        this.renderer.domElement.style.border = '4px solid blue'; // Blue border on canvas
+        this.renderer.domElement.style.display = 'block';
+
         container.appendChild(this.renderer.domElement);
 
         this.clock = new THREE.Clock();

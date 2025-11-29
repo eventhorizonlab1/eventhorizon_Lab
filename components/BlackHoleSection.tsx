@@ -166,6 +166,15 @@ const BlackHoleSection: React.FC = () => {
         try {
             sim = new BlackHoleSim(container);
             simRef.current = sim;
+
+            // DEBUG: Force resize after a short delay to ensure container has dimensions
+            setTimeout(() => {
+                if (container && sim) {
+                    console.log("BlackHoleSection: Delayed resize", container.clientWidth, container.clientHeight);
+                    sim.resize(container.clientWidth, container.clientHeight);
+                }
+            }, 100);
+
         } catch (error) {
             console.error("WebGL initialization failed:", error);
             setRenderFallback(true);
