@@ -41,6 +41,8 @@ export class BlackHoleSim {
         });
         this.renderer.setSize(container.clientWidth, container.clientHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        // DEBUG: Set clear color to GREEN to verify renderer is working
+        this.renderer.setClearColor(0x00ff00, 1.0);
         container.appendChild(this.renderer.domElement);
 
         this.clock = new THREE.Clock();
@@ -55,6 +57,13 @@ export class BlackHoleSim {
         // 5. Initialize Objects
         this.initStarfield();
         this.initBlackHole();
+
+        // DEBUG: Add a simple standard mesh to verify scene
+        const debugGeo = new THREE.BoxGeometry(5, 5, 5);
+        const debugMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        const debugMesh = new THREE.Mesh(debugGeo, debugMat);
+        debugMesh.position.set(0, 8, 45); // 10 units in front of camera (z=55)
+        this.scene.add(debugMesh);
 
         // 6. Post Processing (Basic for now)
         this.composer = new EffectComposer(this.renderer);
