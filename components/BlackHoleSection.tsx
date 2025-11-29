@@ -123,7 +123,7 @@ const FragmentShader = `
         float stepSize = 0.1;
         float maxDist = 80.0;
         
-        for(int i=0; i<150; i++) {
+        for(int i=0; i<100; i++) {
             float r = length(p);
             
             // Lensing
@@ -403,7 +403,7 @@ const InterstellarBlackHole = ({ setOrbitalData, setFocusLevel }: { setOrbitalDa
         const material = new THREE.ShaderMaterial({
             uniforms: {
                 u_time: { value: 0 },
-                u_resolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) },
+                u_resolution: { value: new THREE.Vector2(Math.max(container.clientWidth, 1), Math.max(container.clientHeight, 1)) },
                 u_orbit: { value: new THREE.Vector2(0, 0) }, // Azimut, Elevation
                 u_dist: { value: 12.0 },
                 u_focus: { value: 0.0 }
@@ -459,7 +459,7 @@ const InterstellarBlackHole = ({ setOrbitalData, setFocusLevel }: { setOrbitalDa
         const handleResize = () => {
             if (!container) return;
             renderer.setSize(container.clientWidth, container.clientHeight);
-            material.uniforms.u_resolution.value.set(container.clientWidth, container.clientHeight);
+            material.uniforms.u_resolution.value.set(Math.max(container.clientWidth, 1), Math.max(container.clientHeight, 1));
         };
 
         const handleMouseDown = (e: MouseEvent) => {
