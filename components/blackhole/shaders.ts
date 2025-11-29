@@ -26,33 +26,85 @@ export const BlackHoleFragmentShader = `
     uniform float u_temp;
     
     varying vec3 vWorldPosition;
+    varying vec2 vUv;
 
-    // --- NOISE FUNCTIONS ---
-    float hash(float n) { return fract(sin(n) * 43758.5453123); }
-    
-    // Bruit 3D optimisé
-    float noise(vec3 x) {
-        vec3 p = floor(x);
-        vec3 f = fract(x);
-        f = f * f * (3.0 - 2.0 * f);
-        float n = p.x + p.y * 57.0 + p.z * 113.0;
-        return mix(mix(mix(hash(n + 0.0), hash(n + 1.0), f.x),
-                       mix(hash(n + 57.0), hash(n + 58.0), f.x), f.y),
-                   mix(mix(hash(n + 113.0), hash(n + 114.0), f.x),
-                       mix(hash(n + 170.0), hash(n + 171.0), f.x), f.y), f.z);
+    // --- NOISE FUNCTIONS (Simplex 3D) ---
+    vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+    vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+    vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+    vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+
+    float snoise(vec3 v) {
+        const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
+        const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
+
+        vec3 i  = floor(v + dot(v, C.yyy) );
+        vec3 x0 = v - i + dot(i, C.xxx) ;
+
+        vec3 g = step(x0.yzx, x0.xyz);
+        vec3 l = 1.0 - g;
+        vec3 i1 = min( g.xyz, l.zxy );
+        vec3 i2 = max( g.xyz, l.zxy );
+
+        vec3 x1 = x0 - i1 + C.xxx;
+        vec3 x2 = x0 - i2 + C.yyy; 
+        vec3 x3 = x0 - 1.0 + 3.0*C.xxx; 
+
+        i = mod289(i);
+        vec4 p = permute( permute( permute(
+                    i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
+                + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
+                + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
+
+        float n_ = 0.142857142857; 
+        vec3  ns = n_ * D.wyz - D.xzx;
+
+        vec4 j = p - 49.0 * floor(p * ns.z * ns.z); 
+
+        vec4 x_ = floor(j * ns.z);
+        vec4 y_ = floor(j - 7.0 * x_ ); 
+
+        vec4 x = x_ *ns.x + ns.yyyy;
+        vec4 y = y_ *ns.x + ns.yyyy;
+        vec4 h = 1.0 - abs(x) - abs(y);
+
+        vec4 b0 = vec4( x.xy, y.xy );
+        vec4 b1 = vec4( x.zw, y.zw );
+
+        vec4 s0 = floor(b0)*2.0 + 1.0;
+        vec4 s1 = floor(b1)*2.0 + 1.0;
+        vec4 sh = -step(h, vec4(0.0));
+
+        vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
+        vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
+
+        vec3 p0 = vec3(a0.xy,h.x);
+        vec3 p1 = vec3(a0.zw,h.y);
+        vec3 p2 = vec3(a1.xy,h.z);
+        vec3 p3 = vec3(a1.zw,h.w);
+
+        vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+        p0 *= norm.x;
+        p1 *= norm.y;
+        p2 *= norm.z;
+        p3 *= norm.w;
+
+        vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+        m = m * m;
+        return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1),
+                                    dot(p2,x2), dot(p3,x3) ) );
     }
 
-    // Fractal Brownian Motion modifié pour créer des stries
     float fbm(vec3 p) {
         float f = 0.0;
-        float w = 0.5;
-        // On modifie l'échelle pour étirer le bruit tangentiellement
-        // Cela crée l'effet de "motion blur" circulaire typique d'Interstellar
-        for (int i = 0; i < 5; i++) { 
-            f += w * noise(p);
-            p.xz *= 2.0; // Plus de détails sur le plan horizontal
-            p.y *= 1.5;  // Moins de détails verticaux
-            w *= 0.5;
+        float amp = 0.5;
+        float freq = 2.0; 
+        for (int i = 0; i < 4; i++) { 
+            f += amp * snoise(p * freq);
+            p.xy *= 1.6; 
+            p.z *= 1.1;
+            amp *= 0.5;
+            freq *= 1.4;
         }
         return f;
     }
@@ -61,87 +113,83 @@ export const BlackHoleFragmentShader = `
         vec3 ro = u_cameraPos;
         vec3 rd = normalize(vWorldPosition - u_cameraPos);
         
-        vec3 col = vec3(0.0);
-        float alpha = 0.0;
+        float rs = 2.0; 
+        float isco = 3.0 * rs; 
+        float diskRad = 18.0; 
+        
         vec3 p = ro;
+        vec3 col = vec3(0.0);
+        float accum = 0.0; 
+        float trans = 1.0; 
         
-        float stepSize = 0.1;
-        float maxDist = 50.0;
-        float bhRadius = 1.0; // Schwarzschild radius
+        float stepSize = 0.15; 
         
-        for(int i = 0; i < 150; i++) {
-            float dist = length(p);
+        // CORRECTION MAJEURE : Limite de la boucle et distance de coupure
+        // 150 itérations pour une meilleure qualité
+        for(int i=0; i<150; i++) {
+            float r = length(p);
             
-            // Event Horizon
-            if(dist < bhRadius) {
-                col = mix(col, vec3(0.0), 1.0 - alpha);
-                alpha = 1.0;
+            // Lentille Gravitationnelle
+            vec3 gravity = -normalize(p) * (4.0 * u_lensing / (r * r + 0.1)); 
+            rd += gravity * stepSize;
+            rd = normalize(rd);
+            
+            // Horizon des événements
+            if(r < rs) {
+                accum += 0.0;
+                trans = 0.0;
                 break;
             }
             
-            if(dist > maxDist) break;
+            // Disque d'accrétion
+            float distToPlane = abs(p.y); 
             
-            // Gravitational Lensing
-            // Bend light towards the black hole center
-            // Force is roughly proportional to 1/r^2
-            float gravityStrength = u_lensing * 0.1;
-            vec3 toCenter = normalize(-p);
-            vec3 gravity = toCenter * (gravityStrength / (dist * dist));
-            
-            // Apply curvature
-            rd = normalize(rd + gravity * stepSize);
-            
-            // Accretion Disk
-            // Disk lies in the XZ plane (y=0)
-            float diskY = abs(p.y);
-            float diskH = 0.1 + dist * 0.08; // Disk thickness increases with radius
-            
-            // Check if we are inside the disk volume
-            if(diskY < diskH && dist > 2.5 && dist < 12.0) {
-                // Calculate polar coordinates for noise mapping
+            if(distToPlane < 1.0 && r > isco && r < diskRad) {
                 float angle = atan(p.z, p.x);
-                float speed = 2.0 / (dist + 0.1); // Inner parts rotate faster
+                float rad = length(p.xz);
                 
-                // 3D Noise position (animated)
-                vec3 noisePos = vec3(dist * 2.0, angle * 2.0 + u_time * speed, p.y * 4.0);
-                float noiseVal = fbm(noisePos);
+                float density = exp(-(rad - isco) * 0.5);
+                float rotSpeed = 10.0 / (rad + 0.1);
                 
-                // Density calculation
-                float density = noiseVal * u_disk_density;
+                float noiseVal = fbm(vec3(rad * 1.5, angle * 2.0 + u_time * rotSpeed * 0.1, p.y * 4.0));
                 
-                // Fade edges
-                density *= smoothstep(2.5, 3.5, dist); // Inner fade
-                density *= smoothstep(12.0, 9.0, dist); // Outer fade
-                density *= smoothstep(diskH, 0.0, diskY); // Vertical fade
+                float rings = 0.5 + 0.5 * sin(rad * 8.0 + noiseVal * 3.0);
+                density *= rings;
+                density *= (noiseVal * 0.5 + 0.5); 
+                density *= smoothstep(0.8, 0.0, distToPlane);
+
+                // Relativistic Beaming
+                vec3 tangent = normalize(vec3(-p.z, 0.0, p.x)); 
+                float doppler = dot(rd, tangent); 
+                float beam = smoothstep(-0.5, 1.0, doppler * 2.0 + 0.3);
+                beam = pow(beam, 2.0); 
                 
-                // Doppler Effect / Relativistic Beaming
-                // Matter moves counter-clockwise
-                vec3 vel = normalize(vec3(-p.z, 0.0, p.x));
-                float doppler = dot(rd, vel);
-                float beaming = 1.0 + doppler * 0.8;
-                beaming = max(0.1, beaming);
+                // Température et Couleur
+                vec3 diskColor = vec3(1.0, 0.6, 0.3); 
+                float tempFactor = u_temp * (1.0 + doppler * 0.5);
+                if (tempFactor > 1.2) diskColor = vec3(0.6, 0.8, 1.0);
+                else if (tempFactor < 0.8) diskColor = vec3(1.0, 0.2, 0.1); 
                 
-                // Color mapping
-                vec3 diskColor = vec3(1.0, 0.5, 0.1); // Base orange
-                diskColor *= u_temp * beaming; // Apply temperature and beaming
+                float stepDens = density * stepSize * u_disk_density; 
+                float light = stepDens * beam * u_bloom;
                 
-                // Accumulate color
-                float segmentAlpha = density * 0.2 * stepSize;
-                segmentAlpha = clamp(segmentAlpha, 0.0, 1.0);
+                col += diskColor * light * trans; 
+                trans *= (1.0 - stepDens); 
                 
-                col += diskColor * segmentAlpha * (1.0 - alpha);
-                alpha += segmentAlpha;
-                
-                if(alpha > 0.99) break;
+                if(trans < 0.01) break; 
             }
             
-            // Step forward
-            // Variable step size for performance
-            stepSize = 0.05 + dist * 0.02;
-            p += rd * stepSize;
+            float nextStep = max(stepSize, r * 0.05);
+            p += rd * nextStep;
+            
+            // CORRECTION : Augmentation de la limite de rendu de 60.0 à 300.0
+            // Cela empêche le trou noir de disparaître si la caméra recule
+            if(r > 300.0) break; 
         }
         
-        gl_FragColor = vec4(col, alpha);
+        col = pow(col, vec3(0.4545)); // Gamma Correction
+        
+        gl_FragColor = vec4(col, 1.0 - trans);
     }
 `;
 
