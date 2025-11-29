@@ -132,12 +132,12 @@ const BlackHoleSection: React.FC = () => {
     const [renderFallback, setRenderFallback] = useState(false);
     const [isControlsOpen, setIsControlsOpen] = useState(true);
 
-    // Physics & Visual Parameters
+    // Initial parameters tuned for "Standard" look (balanced)
     const [params, setParams] = useState({
         rotationSpeed: shouldReduceMotion ? 0.05 : 0.3,
-        bloomIntensity: 0.1,
-        lensingStrength: 1.2,
-        diskBrightness: 1.0,
+        bloomIntensity: 1.2,
+        lensingStrength: 1.0,
+        diskBrightness: 2.5,
         temperature: 1.0,
         autoOrbit: false
     });
@@ -226,14 +226,37 @@ const BlackHoleSection: React.FC = () => {
         }
     };
 
-
-
     const applyPreset = (preset: 'interstellar' | 'radioactive' | 'ice' | 'gargantua') => {
         const presets = {
-            gargantua: { rotationSpeed: 0.2, bloomIntensity: 2.5, lensingStrength: 1.8, diskBrightness: 1.5, temperature: 0.9 },
-            interstellar: { rotationSpeed: 0.3, bloomIntensity: 0.1, lensingStrength: 1.2, diskBrightness: 1.0, temperature: 1.0 },
-            radioactive: { rotationSpeed: 0.8, bloomIntensity: 1.5, lensingStrength: 1.5, diskBrightness: 2.0, temperature: 1.8 },
-            ice: { rotationSpeed: 0.1, bloomIntensity: 0.5, lensingStrength: 0.8, diskBrightness: 0.8, temperature: 0.5 }
+            // Updated to match the new shader physics
+            gargantua: {
+                rotationSpeed: 0.2,
+                bloomIntensity: 1.8,
+                lensingStrength: 1.2,
+                diskBrightness: 3.5,
+                temperature: 1.0
+            },
+            interstellar: { // The "Movie" look: bright, golden, sharp
+                rotationSpeed: 0.4,
+                bloomIntensity: 1.0,
+                lensingStrength: 1.0,
+                diskBrightness: 4.0,
+                temperature: 1.1
+            },
+            radioactive: { // Toxic green/yellow
+                rotationSpeed: 0.8,
+                bloomIntensity: 2.0,
+                lensingStrength: 1.5,
+                diskBrightness: 3.0,
+                temperature: 3.0 // Pushes color to green/blue spectrum
+            },
+            ice: { // Cold, dim, slow
+                rotationSpeed: 0.1,
+                bloomIntensity: 0.8,
+                lensingStrength: 0.8,
+                diskBrightness: 1.5,
+                temperature: 5.0 // Very blue
+            }
         };
         setParams(prev => ({ ...prev, ...presets[preset] }));
     };
@@ -348,7 +371,7 @@ const BlackHoleSection: React.FC = () => {
                                 <h4 className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-4 border-b border-white/5 pb-2">Optical Array</h4>
                                 <ControlSlider label={t('bh_bloom')} icon={Sun} value={params.bloomIntensity} min={0} max={4} step={0.1} onChange={(v) => updateParam('bloomIntensity', v)} />
                                 <ControlSlider label={t('bh_lensing')} icon={Eye} value={params.lensingStrength} min={0} max={2} step={0.1} onChange={(v) => updateParam('lensingStrength', v)} />
-                                <ControlSlider label={t('bh_temp')} icon={Thermometer} value={params.temperature} min={0.5} max={2} step={0.1} onChange={(v) => updateParam('temperature', v)} />
+                                <ControlSlider label={t('bh_temp')} icon={Thermometer} value={params.temperature} min={0.5} max={5} step={0.1} onChange={(v) => updateParam('temperature', v)} />
                             </div>
 
                             {/* Column 3: Actions & Presets */}
@@ -368,7 +391,7 @@ const BlackHoleSection: React.FC = () => {
                                 {/* Presets Grid */}
                                 <div className="grid grid-cols-2 gap-2">
                                     <button onClick={() => applyPreset('gargantua')} className="py-1.5 rounded bg-white/5 hover:bg-orange-500/20 hover:text-orange-400 text-[9px] font-bold uppercase tracking-wider text-white/50 transition-colors border border-transparent hover:border-orange-500/50">Gargantua</button>
-                                    <button onClick={() => applyPreset('interstellar')} className="py-1.5 rounded bg-white/5 hover:bg-blue-500/20 hover:text-blue-400 text-[9px] font-bold uppercase tracking-wider text-white/50 transition-colors border border-transparent hover:border-blue-500/50">Interstellar</button>
+                                    <button onClick={() => applyPreset('interstellar')} className="py-1.5 rounded bg-white/5 hover:bg-yellow-500/20 hover:text-yellow-400 text-[9px] font-bold uppercase tracking-wider text-white/50 transition-colors border border-transparent hover:border-yellow-500/50">Interstellar</button>
                                     <button onClick={() => applyPreset('radioactive')} className="py-1.5 rounded bg-white/5 hover:bg-green-500/20 hover:text-green-400 text-[9px] font-bold uppercase tracking-wider text-white/50 transition-colors border border-transparent hover:border-green-500/50">Radioactive</button>
                                     <button onClick={() => applyPreset('ice')} className="py-1.5 rounded bg-white/5 hover:bg-cyan-500/20 hover:text-cyan-400 text-[9px] font-bold uppercase tracking-wider text-white/50 transition-colors border border-transparent hover:border-cyan-500/50">Ice</button>
                                 </div>
