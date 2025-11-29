@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { ThemeLanguageProvider } from './context/ThemeLanguageContext';
 import { CinematicProvider } from './context/CinematicContext';
@@ -28,7 +29,9 @@ root.render(
   <React.StrictMode>
     <ThemeLanguageProvider>
       <CinematicProvider>
-        <App />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </CinematicProvider>
     </ThemeLanguageProvider>
   </React.StrictMode>

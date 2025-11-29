@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { NAV_LINKS } from '../constants';
 import { motion, AnimatePresence, useScroll, useSpring, animate } from 'framer-motion';
 import { X, Moon, Sun, ChevronDown } from 'lucide-react';
@@ -138,6 +139,15 @@ const Header: React.FC = () => {
                   <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full ${navHoverClass}`}></span>
                 </a>
               ))}
+
+              {/* Simulation Link */}
+              <Link
+                to="/simulation"
+                className={`text-sm font-medium uppercase tracking-widest hover:opacity-50 transition-opacity relative group ${textColorClass}`}
+              >
+                Simulation
+                <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full ${navHoverClass}`}></span>
+              </Link>
             </nav>
 
             <div className={`flex items-center gap-4 border-l pl-6 transition-colors duration-300 ${separatorClass}`}>
