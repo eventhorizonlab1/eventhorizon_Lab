@@ -116,58 +116,63 @@ export const BlackHoleFragmentShader = `
         
         float rs = 2.0; 
         float isco = 3.0 * rs; 
-        float diskRad = 18.0; 
+        float diskRad = 22.0; // Légèrement agrandi pour la visibilité
         
         vec3 p = ro;
         vec3 col = vec3(0.0);
         float accum = 0.0; 
         float trans = 1.0; 
         
-        float stepSize = 0.15; 
+        // CORRECTION: Pas de base plus petit pour éviter les artefacts
+        float stepSize = 0.1;
         
-        // CORRECTION MAJEURE : Limite de la boucle et distance de coupure
-        // 150 itérations pour une meilleure qualité
-        for(int i=0; i<150; i++) {
+        // Augmentation du nombre d'itérations pour couvrir la distance
+        for(int i=0; i<300; i++) {
             float r = length(p);
             
-            // Lentille Gravitationnelle
+            // Lentille Gravitationnelle (déviation de la lumière)
             vec3 gravity = -normalize(p) * (4.0 * u_lensing / (r * r + 0.1)); 
             rd += gravity * stepSize;
             rd = normalize(rd);
             
-            // Horizon des événements
+            // Horizon des événements (trou noir)
             if(r < rs) {
                 accum += 0.0;
                 trans = 0.0;
                 break;
             }
             
-            // Disque d'accrétion
             float distToPlane = abs(p.y); 
             
-            if(distToPlane < 1.0 && r > isco && r < diskRad) {
+            // Disque d'accrétion
+            if(distToPlane < 2.0 && r > isco && r < diskRad) {
                 float angle = atan(p.z, p.x);
                 float rad = length(p.xz);
                 
+                // Densité décroissante avec la distance
                 float density = exp(-(rad - isco) * 0.5);
                 float rotSpeed = 10.0 / (rad + 0.1);
                 
+                // Bruit fractal animé
                 float noiseVal = fbm(vec3(rad * 1.5, angle * 2.0 + u_time * rotSpeed * 0.1, p.y * 4.0));
                 
                 float rings = 0.5 + 0.5 * sin(rad * 8.0 + noiseVal * 3.0);
                 density *= rings;
                 density *= (noiseVal * 0.5 + 0.5); 
-                density *= smoothstep(0.8, 0.0, distToPlane);
+                
+                // Atténuation verticale douce
+                density *= smoothstep(1.5, 0.0, distToPlane);
 
-                // Relativistic Beaming
+                // Relativistic Beaming (Doppler)
                 vec3 tangent = normalize(vec3(-p.z, 0.0, p.x)); 
                 float doppler = dot(rd, tangent); 
                 float beam = smoothstep(-0.5, 1.0, doppler * 2.0 + 0.3);
                 beam = pow(beam, 2.0); 
                 
-                // Température et Couleur
+                // Couleur
                 vec3 diskColor = vec3(1.0, 0.6, 0.3); 
                 float tempFactor = u_temp * (1.0 + doppler * 0.5);
+                
                 if (tempFactor > 1.2) diskColor = vec3(0.6, 0.8, 1.0);
                 else if (tempFactor < 0.8) diskColor = vec3(1.0, 0.2, 0.1); 
                 
@@ -180,25 +185,37 @@ export const BlackHoleFragmentShader = `
                 if(trans < 0.01) break; 
             }
             
-            float nextStep = max(stepSize, r * 0.05);
+            // CORRECTION CRITIQUE : Pas adaptatif intelligent
+            // Si on est près du plan du disque et dans son rayon, on force des petits pas
+            // Sinon, on accélère
+            float nextStep = stepSize;
+            
+            if (r > diskRad * 1.5) {
+                // Loin du trou noir : grands pas
+                nextStep = max(stepSize, r * 0.1); 
+            } else if (distToPlane < 3.0 && r < diskRad + 5.0) {
+                // Zone critique du disque : petits pas pour ne pas "sauter" le disque
+                nextStep = 0.08; 
+            } else {
+                // Zone intermédiaire
+                nextStep = 0.2;
+            }
+            
             p += rd * nextStep;
             
-            // CORRECTION : Augmentation de la limite de rendu de 60.0 à 300.0
-            // Cela empêche le trou noir de disparaître si la caméra recule
-            if(r > 300.0) break; 
+            // Limite de rendu large pour ne pas couper la scène
+            if(r > 400.0) break; 
         }
         
-        col = pow(col, vec3(0.4545)); // Gamma Correction
-        
+        // Tone mapping
+        col = pow(col, vec3(0.4545)); 
+
         // Prevent optimization of unused varyings
         vec2 dummy = vUv * 0.00001;
         vec3 dummy2 = vViewPosition * 0.00001;
         col += vec3(dummy.x + dummy.y + dummy2.x);
-
-        // DEBUG: Add faint blue background to verify shader execution
-        // If you see a blue box, the shader is running!
-        vec3 debugTint = vec3(0.0, 0.0, 0.1); 
-        gl_FragColor = vec4(col + debugTint, max(0.2, 1.0 - trans));
+        
+        gl_FragColor = vec4(col, 1.0 - trans);
     }
 `;
 

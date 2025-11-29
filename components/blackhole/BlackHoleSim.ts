@@ -74,6 +74,9 @@ export class BlackHoleSim {
         this.initStarfield();
         this.initBlackHoleVolume();
         this.initPostProcessing(container.clientWidth, container.clientHeight);
+
+        // Force initial resize to set uniforms
+        this.resize(container.clientWidth, container.clientHeight);
     }
 
     initBlackHoleVolume() {
