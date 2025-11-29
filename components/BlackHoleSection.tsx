@@ -506,68 +506,34 @@ const InterstellarBlackHole = ({ setOrbitalData, setFocusLevel }: { setOrbitalDa
         };
 
         // Touch Events (Mobile)
-        const initialPinchDist = useRef<number | null>(null);
-        const initialZoomDist = useRef<number>(12.0);
-
         const handleTouchStart = (e: TouchEvent) => {
-            // Prevent default to stop scrolling/refreshing
-            e.preventDefault();
-
             if (e.touches.length === 1) {
-                // Single touch: Rotate
                 isMouseDown.current = true;
                 isDragging.current = false;
                 lastMousePos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-            } else if (e.touches.length === 2) {
-                // Multi touch: Pinch to Zoom
-                const dx = e.touches[0].clientX - e.touches[1].clientX;
-                const dy = e.touches[0].clientY - e.touches[1].clientY;
-                initialPinchDist.current = Math.sqrt(dx * dx + dy * dy);
-                initialZoomDist.current = orbitState.current.targetDistance;
             }
         };
 
         const handleTouchMove = (e: TouchEvent) => {
-            e.preventDefault();
-
-            if (e.touches.length === 1 && isMouseDown.current) {
-                // Rotation Logic
+            if (isMouseDown.current && e.touches.length === 1) {
                 const dx = e.touches[0].clientX - lastMousePos.current.x;
                 const dy = e.touches[0].clientY - lastMousePos.current.y;
 
-                // Threshold for drag detection
-                if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
-                    isDragging.current = true;
+                isDragging.current = true;
+                const sensitivity = 0.005;
+                orbitState.current.targetAzimuth -= dx * sensitivity;
+                orbitState.current.targetElevation += dy * sensitivity;
 
-                    // Increased sensitivity for mobile
-                    const sensitivity = 0.008;
-                    orbitState.current.targetAzimuth -= dx * sensitivity;
-                    orbitState.current.targetElevation += dy * sensitivity;
+                const limit = Math.PI / 2 - 0.05;
+                orbitState.current.targetElevation = Math.max(-limit, Math.min(limit, orbitState.current.targetElevation));
 
-                    const limit = Math.PI / 2 - 0.05;
-                    orbitState.current.targetElevation = Math.max(-limit, Math.min(limit, orbitState.current.targetElevation));
-
-                    lastMousePos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-                }
-            } else if (e.touches.length === 2 && initialPinchDist.current !== null) {
-                // Pinch Zoom Logic
-                const dx = e.touches[0].clientX - e.touches[1].clientX;
-                const dy = e.touches[0].clientY - e.touches[1].clientY;
-                const currentDist = Math.sqrt(dx * dx + dy * dy);
-
-                // Calculate zoom factor
-                const scale = initialPinchDist.current / currentDist;
-
-                // Apply zoom
-                orbitState.current.targetDistance = initialZoomDist.current * scale;
-                orbitState.current.targetDistance = Math.max(3.0, Math.min(30.0, orbitState.current.targetDistance));
+                lastMousePos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
             }
         };
 
         const handleTouchEnd = () => {
             isMouseDown.current = false;
             isDragging.current = false;
-            initialPinchDist.current = null;
         };
 
         window.addEventListener('resize', handleResize);
