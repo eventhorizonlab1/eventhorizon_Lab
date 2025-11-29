@@ -41,22 +41,15 @@ export class BlackHoleSim {
             powerPreference: "high-performance"
         });
 
-        // DEBUG: Force canvas styles to ensure visibility
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
-        canvas.style.border = '4px solid blue'; // Blue border on canvas
-        canvas.style.display = 'block';
-
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        // DEBUG: Set clear color to GREEN to verify renderer is working
-        this.renderer.setClearColor(0x00ff00, 1.0);
+        this.renderer.setClearColor(0x000000, 0.0); // Transparent/Black background
 
         // NO appendChild needed anymore!
 
         this.clock = new THREE.Clock();
 
         // 4. Controls
-        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        this.controls = new OrbitControls(this.camera, canvas);
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.05;
         this.controls.minDistance = 10;
@@ -65,13 +58,6 @@ export class BlackHoleSim {
         // 5. Initialize Objects
         this.initStarfield();
         this.initBlackHole();
-
-        // DEBUG: Add a simple standard mesh to verify scene
-        const debugGeo = new THREE.BoxGeometry(5, 5, 5);
-        const debugMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-        const debugMesh = new THREE.Mesh(debugGeo, debugMat);
-        debugMesh.position.set(0, 8, 45); // 10 units in front of camera (z=55)
-        this.scene.add(debugMesh);
 
         // 6. Post Processing (Basic for now)
         this.composer = new EffectComposer(this.renderer);
