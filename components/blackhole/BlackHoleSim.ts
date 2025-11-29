@@ -19,8 +19,8 @@ export class BlackHoleSim {
     controls: OrbitControls;
     clock: THREE.Clock;
 
-    blackHoleMesh: THREE.Mesh;
-    starfieldPoints: THREE.Points;
+    blackHoleMesh!: THREE.Mesh;
+    starfieldPoints!: THREE.Points;
 
     disposables: any[] = [];
 
@@ -42,7 +42,8 @@ export class BlackHoleSim {
         });
 
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Reduce resolution slightly for performance
-        this.renderer.setClearColor(0x000000, 0.0); // Transparent/Black background
+        // DEBUG: Red background to verify renderer visibility
+        this.renderer.setClearColor(0xff0000, 0.2);
 
         // NO appendChild needed anymore!
 
