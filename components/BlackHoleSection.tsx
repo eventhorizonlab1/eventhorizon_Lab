@@ -36,7 +36,7 @@ const SimLoader = () => {
     }, []);
 
     return (
-        <div className="absolute inset-0 z-50 bg-gray-50 dark:bg-black flex flex-col items-center justify-center text-gray-500 dark:text-white font-mono pointer-events-none transition-colors duration-500">
+        <div className="absolute inset-0 z-50 bg-gray-50 dark:bg-black flex flex-col items-center justify-center text-gray-500 dark:text-white font-mono pointer-events-none transition-colors duration-500 rounded-[2rem]">
             <div className="relative w-32 h-32 mb-8 flex items-center justify-center">
                 <motion.div
                     animate={{ rotate: 360 }}
@@ -299,7 +299,7 @@ const BlackHoleSection: React.FC = () => {
                 </p>
             </div>
 
-            <div className={`transition-all duration-500 ${isCinematic ? 'absolute inset-0 w-full h-full m-0 rounded-none' : 'mb-12'}`}>
+            <div className={`transition-all duration-500 ${isCinematic ? 'absolute inset-0 w-full h-full m-0 rounded-none z-[100]' : 'relative mb-12 z-0'}`}>
                 <div className={`relative overflow-hidden bg-gray-100 dark:bg-black border border-gray-200 dark:border-white/10 shadow-2xl w-full flex flex-col group transition-all duration-500 ${isCinematic ? 'h-full rounded-none border-0' : 'aspect-square md:aspect-[21/9] rounded-[2rem]'}`}>
 
                     <AnimatePresence>
@@ -308,7 +308,7 @@ const BlackHoleSection: React.FC = () => {
                                 initial={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 0.8, ease: "easeInOut" }}
-                                className="absolute inset-0 z-50"
+                                className="absolute inset-0 z-50 bg-gray-50 dark:bg-black rounded-[2rem]" // Ensure it stays inside
                             >
                                 <SimLoader />
                             </motion.div>
