@@ -288,7 +288,7 @@ const BlackHoleSection: React.FC = () => {
             id="blackhole"
             className={isCinematic
                 ? "fixed inset-0 z-[9999] w-full h-full bg-black m-0 p-0 flex flex-col justify-center"
-                : "pt-0 md:pt-0 pb-16 md:pb-24 max-w-[1800px] mx-auto px-4 md:px-12 relative border-4 border-red-500"} // DEBUG BORDER
+                : "pt-0 md:pt-0 pb-16 md:pb-24 max-w-[1800px] mx-auto px-4 md:px-12 relative"}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
