@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
-import { Target, Activity, Cpu, Wifi, Triangle, BatteryCharging } from 'lucide-react';
+import { Target, Activity, Cpu, Wifi, Triangle, BatteryCharging, Eye, Aperture, Clock } from 'lucide-react';
 
 // --- SHADERS GLSL (MONOCHROME & PHYSIQUE) ---
 
@@ -15,8 +15,11 @@ const VertexShader = `
 const FragmentShader = `
     uniform float u_time;
     uniform vec2 u_resolution;
-    uniform vec2 u_mouse;
-    uniform float u_warp;
+    uniform vec2 u_mouse; // Position "Regard" lissée
+    
+    // NOUVEAUX UNIFORMS CREATIFS
+    uniform float u_zoom_level; // Contrôle le Dolly Zoom (0.0 à 1.0)
+    uniform float u_focus;      // Contrôle la dilatation temporelle (0.0 à 1.0)
     
     varying vec2 vUv;
 
@@ -68,11 +71,13 @@ const FragmentShader = `
         
         if(rnd > 0.98) {
             float brightness = (rnd - 0.98) * 50.0;
-            brightness *= (0.8 + 0.4 * sin(u_time * 5.0 + rnd * 100.0));
+            // Scintillement ralenti par u_focus
+            float twinkleSpeed = 5.0 * (1.0 - u_focus * 0.9);
+            brightness *= (0.8 + 0.4 * sin(u_time * twinkleSpeed + rnd * 100.0));
+            
             float dist = length(grid);
             float star = max(0.0, 1.0 - dist * 4.0); 
             star = pow(star, 8.0); 
-            // Étoiles blanches pures
             col += vec3(1.0) * star * brightness;
         }
         return col;
@@ -82,18 +87,28 @@ const FragmentShader = `
         vec2 uv = (vUv - 0.5) * 2.0;
         uv.x *= u_resolution.x / u_resolution.y;
 
-        float warpEffect = u_warp * 20.0;
-        vec3 ro = vec3(0.0, 0.5 - u_warp * 0.4, -10.0 - warpEffect); 
-        vec3 target = vec3(0.0, 0.0, 0.0);
+        // --- DOLLY ZOOM (EFFET VERTIGO) ---
+        // u_zoom_level va de 0 (loin/téléobjectif) à 1 (près/grand angle)
         
-        float fov = 1.0 + u_warp * 0.5;
+        // Distance caméra : Plus on zoom (1.0), plus on s'approche physiquement
+        // Range: -20.0 (loin) à -6.0 (très près)
+        float camDist = mix(25.0, 5.0, u_zoom_level);
+        
+        // FOV : Plus on zoom (1.0), plus le FOV est GRAND (Fish-eye) pour compenser
+        // Range: 0.5 (Téléobjectif) à 2.5 (Grand angle)
+        float fov = mix(0.4, 3.0, u_zoom_level * u_zoom_level); // Non-linéaire pour l'effet dramatique
+        
+        vec3 ro = vec3(0.0, 0.5 * u_zoom_level, -camDist);
+        vec3 target = vec3(0.0, 0.0, 0.0);
         
         vec3 forward = normalize(target - ro);
         vec3 right = normalize(cross(vec3(0.0, 1.0, 0.0), forward));
         vec3 up = cross(forward, right);
         vec3 rd = normalize(forward * fov + uv.x * right + uv.y * up);
 
-        float mx = u_mouse.x * 0.5;
+        // --- NAVIGATION INERTIELLE (SCAPHANDRE) ---
+        // La souris fait tourner la caméra avec une sensation de poids
+        float mx = u_mouse.x * 0.4; // Amplitude limitée
         float my = u_mouse.y * 0.2;
         mat2 rotY = rot(mx);
         mat2 rotX = rot(my);
@@ -109,14 +124,15 @@ const FragmentShader = `
         float alpha = 1.0; 
         
         float stepSize = 0.1;
-        float maxDist = 40.0;
+        float maxDist = 80.0;
         
         for(int i=0; i<150; i++) {
             float r = length(p);
             
-            // Gravité intense
-            vec3 gravity = -normalize(p) * (4.0 / (r*r + 0.1));
-            rd += gravity * stepSize * 0.08 * (1.0 + u_warp * 2.0);
+            // Lensing renforcé par le focus
+            float lensPower = 4.0 + u_focus * 2.0; 
+            vec3 gravity = -normalize(p) * (lensPower / (r*r + 0.1));
+            rd += gravity * stepSize * 0.08;
             rd = normalize(rd);
             
             if(r < rs) {
@@ -131,7 +147,9 @@ const FragmentShader = `
                 float angle = atan(p.z, p.x);
                 float rad = length(p.xz);
                 float speed = 8.0 / sqrt(rad);
-                float rotAngle = angle + u_time * speed * 0.2 + u_warp * 10.0; 
+                // Le temps semble ralentir quand on focus
+                float timeScale = 1.0 - u_focus * 0.8; 
+                float rotAngle = angle + u_time * speed * 0.2 * timeScale; 
                 
                 float rings = 0.5 + 0.5 * sin(rad * 15.0);
                 float dust = fbm(vec3(rad * 4.0, rotAngle, p.y * 10.0));
@@ -140,17 +158,19 @@ const FragmentShader = `
                 density *= smoothstep(isco, isco+1.0, rad) * smoothstep(diskRad, diskRad-4.0, rad);
                 density *= smoothstep(diskHeight, 0.0, distToPlane);
                 
-                // Doppler Beaming (Noir & Blanc)
+                // Doppler Beaming
                 vec3 tangent = normalize(vec3(-p.z, 0.0, p.x));
                 float doppler = dot(rd, tangent);
                 
                 float beam = 1.0 + doppler * 0.7;
                 beam = pow(beam, 2.0);
                 
-                // Couleur Blanche intense
                 vec3 finalDiskCol = vec3(1.0);
                 
-                float intensity = density * beam * 2.0 * (1.0 + u_warp * 5.0);
+                float intensity = density * beam * 2.0;
+                // Focus augmente la brillance perçue
+                intensity *= (1.0 + u_focus * 0.5); 
+                
                 float stepDens = density * stepSize * 0.8;
                 col += finalDiskCol * intensity * stepDens * alpha;
                 alpha *= (1.0 - stepDens);
@@ -161,31 +181,36 @@ const FragmentShader = `
             float nextStep = max(0.05, r * 0.08);
             p += rd * nextStep;
             
-            if(r > maxDist) break;
+            if(length(p - ro) > maxDist) break;
         }
         
         if(alpha > 0.01) {
-            vec3 stars = getStars(rd);
-            if(u_warp > 0.01) {
-                vec3 rdWarp = normalize(rd + vec3(0.0, 0.0, u_warp * 0.2));
-                stars += getStars(rdWarp) * 0.5;
-            }
-            col += stars * alpha;
+            col += getStars(rd) * alpha;
         }
 
+        // --- POST PROCESS : FOCUS & VIGNETTE ---
+        
         // Glow monochrome
         float centerGlow = 1.0 / (length(uv) + 0.2);
         col += vec3(0.2) * centerGlow * 0.05;
 
-        // Tone Mapping "Noir et Blanc" dur
+        // Tone Mapping
         col = vec3(1.0) - exp(-col * 1.5); 
-        col = pow(col, vec3(0.9)); // Gamma un peu plus bas pour des noirs profonds
-        
-        // Force le N&B final
+        col = pow(col, vec3(0.9)); 
         float gray = dot(col, vec3(0.299, 0.587, 0.114));
         col = vec3(gray);
 
-        col *= 1.0 - smoothstep(0.5, 1.8, length(vUv - 0.5) * 2.0);
+        // VIGNETTE DYNAMIQUE (Effet Casque/Focus)
+        // Normalement douce, elle devient très forte sur les bords en mode Focus
+        float vignetteStrength = 1.8 + u_focus * 1.5;
+        col *= 1.0 - smoothstep(0.5, vignetteStrength, length(vUv - 0.5) * 2.0);
+        
+        // BLUR RADIAL SUR LES BORDS (Simulation de concentration)
+        if (u_focus > 0.01) {
+             float blurAmount = smoothstep(0.2, 0.8, length(vUv - 0.5)) * u_focus * 0.5;
+             // Simulation cheap de blur : on assombrit simplement plus
+             col *= (1.0 - blurAmount);
+        }
 
         gl_FragColor = vec4(col, 1.0);
     }
@@ -202,13 +227,30 @@ const CornerBrackets = () => (
     </>
 );
 
-const CrosshairHUD = ({ isWarping }: { isWarping: boolean }) => (
+const CrosshairHUD = ({ focusLevel }: { focusLevel: number }) => (
     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center mix-blend-difference">
-        <div className={`w-1 h-1 bg-white rounded-full transition-all duration-300 ${isWarping ? 'scale-150 shadow-[0_0_10px_white]' : ''}`} />
-        <div className={`absolute w-12 h-12 border border-white/30 rounded-full transition-all duration-700 ${isWarping ? 'scale-150 border-white/50 animate-spin' : ''}`} />
-        <div className={`absolute w-32 h-32 border-x border-white/20 rounded-full transition-all duration-500 ${isWarping ? 'scale-90 opacity-0' : 'scale-100 opacity-100'}`} />
-        <div className="absolute w-[200px] h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-        <div className="absolute h-[200px] w-[1px] bg-gradient-to-b from-transparent via-white/20 to-transparent" />
+        {/* Point central qui palpite si focus */}
+        <div className={`w-1 h-1 bg-white rounded-full transition-all duration-300 ${focusLevel > 0.1 ? 'scale-150 shadow-[0_0_15px_white]' : ''}`} />
+
+        {/* Cercle de focus qui se resserre */}
+        <div
+            className="absolute border border-white/30 rounded-full transition-all duration-300 ease-out"
+            style={{
+                width: `${48 - focusLevel * 20}px`,
+                height: `${48 - focusLevel * 20}px`,
+                borderColor: `rgba(255, 255, 255, ${0.3 + focusLevel * 0.7})`
+            }}
+        />
+
+        {/* Lignes latérales qui s'écartent */}
+        <div
+            className="absolute h-[1px] bg-white/20 transition-all duration-500"
+            style={{ width: `${200 + focusLevel * 300}px`, opacity: 1 - focusLevel }}
+        />
+        <div
+            className="absolute w-[1px] bg-white/20 transition-all duration-500"
+            style={{ height: `${200 + focusLevel * 100}px`, opacity: 1 - focusLevel }}
+        />
     </div>
 );
 
@@ -224,7 +266,7 @@ const DataPanel = ({ label, value, icon: Icon }: { label: string, value: string,
 
 // --- HUD PRINCIPAL ---
 
-const ComplexHUD = ({ warpLevel, mousePos }: { warpLevel: number, mousePos: { x: number, y: number } }) => {
+const ComplexHUD = ({ zoomLevel, focusLevel }: { zoomLevel: number, focusLevel: number }) => {
     const [time, setTime] = useState(new Date());
 
     useEffect(() => {
@@ -251,7 +293,7 @@ const ComplexHUD = ({ warpLevel, mousePos }: { warpLevel: number, mousePos: { x:
                         SINGULARITÉ
                     </h1>
                     <div className="flex gap-4">
-                        <DataPanel label="TEMPS MISSION" value={time.toLocaleTimeString()} icon={Activity} />
+                        <DataPanel label="TEMPS LOCAL" value={time.toLocaleTimeString()} icon={Clock} />
                     </div>
                 </div>
 
@@ -264,22 +306,46 @@ const ComplexHUD = ({ warpLevel, mousePos }: { warpLevel: number, mousePos: { x:
             </div>
 
             {/* Center Area */}
-            <CrosshairHUD isWarping={warpLevel > 0.1} />
+            <CrosshairHUD focusLevel={focusLevel} />
 
-            {/* Warp Gauge (Bottom Center) */}
+            {/* Mode Indicator (Right) */}
+            <div className="absolute right-8 top-1/2 -translate-y-1/2 flex flex-col gap-4 text-right">
+                <div className="flex flex-col gap-1 transition-opacity duration-300" style={{ opacity: focusLevel > 0.1 ? 1 : 0.4 }}>
+                    <div className="flex items-center justify-end gap-2 text-white/90">
+                        <span className="text-[10px] tracking-widest uppercase font-bold">Dilatation Temporelle</span>
+                        <Clock size={14} className={focusLevel > 0.1 ? "animate-spin-slow" : ""} />
+                    </div>
+                    <div className="text-[9px] font-mono text-white/60">
+                        {focusLevel > 0.1 ? "ACTIVE" : "INACTIVE"}
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-1 transition-opacity duration-300" style={{ opacity: 0.8 }}>
+                    <div className="flex items-center justify-end gap-2 text-white/90">
+                        <span className="text-[10px] tracking-widest uppercase font-bold">Optique</span>
+                        <Aperture size={14} />
+                    </div>
+                    <div className="text-[9px] font-mono text-white/60">
+                        {zoomLevel < 0.3 ? "TÉLÉOBJECTIF" : (zoomLevel > 0.7 ? "GRAND ANGLE" : "STANDARD")}
+                    </div>
+                </div>
+            </div>
+
+            {/* Zoom Slider (Bottom Center) - Purely Visual Representation */}
             <div className="absolute bottom-12 left-1/2 -translate-x-1/2 w-64 flex flex-col gap-1 items-center pointer-events-none mix-blend-difference">
                 <div className="w-full flex justify-between text-[9px] text-white/60 font-mono tracking-[0.2em] uppercase">
-                    <span>Standby</span>
-                    <span>Hyper</span>
+                    <span>Tele</span>
+                    <span>Wide</span>
                 </div>
-                <div className="w-full h-1.5 bg-white/10 border border-white/30 rounded-full overflow-hidden">
+                <div className="w-full h-1 bg-white/10 border border-white/30 rounded-full overflow-hidden relative">
+                    {/* Marker */}
                     <div
-                        className="h-full bg-white shadow-[0_0_10px_white] transition-all duration-75 ease-out"
-                        style={{ width: `${warpLevel * 100}%` }}
+                        className="absolute top-0 bottom-0 w-2 bg-white shadow-[0_0_10px_white] transition-all duration-75 ease-out"
+                        style={{ left: `${zoomLevel * 100}%` }}
                     />
                 </div>
-                <span className={`text-[10px] font-mono mt-1 tracking-widest uppercase transition-colors duration-300 ${warpLevel > 0.8 ? 'text-white animate-pulse' : 'text-white/50'}`}>
-                    {warpLevel > 0.01 ? (warpLevel > 0.9 ? 'WARP CRITIQUE' : 'ACCÉLÉRATION') : 'SYSTÈME PRET'}
+                <span className="text-[10px] font-mono mt-1 tracking-widest uppercase text-white/50">
+                    DOLLY ZOOM (VERTIGO)
                 </span>
             </div>
 
@@ -287,22 +353,14 @@ const ComplexHUD = ({ warpLevel, mousePos }: { warpLevel: number, mousePos: { x:
             <div className="flex justify-between items-end pb-2">
                 <div className="flex flex-col gap-1">
                     <div className="flex gap-1 text-[10px] text-white/40 font-mono mix-blend-difference">
-                        <span>X: {mousePos.x.toFixed(4)}</span>
-                        <span>Y: {mousePos.y.toFixed(4)}</span>
-                        <span>Z: -10.000</span>
+                        <span>FOV: {(30 + zoomLevel * 90).toFixed(1)}°</span>
+                        <span>DIST: {(25.0 - zoomLevel * 20.0).toFixed(1)} UA</span>
                     </div>
-                    <DataPanel label="COORDONNÉES" value="REL. HORIZON" icon={Target} />
+                    <DataPanel label="OPTICS" value="VARIABLE GEOMETRY" icon={Eye} />
                 </div>
 
                 <div className="flex gap-6 items-end">
-                    <div className="text-right mix-blend-difference">
-                        <div className="flex items-center justify-end gap-2 text-white/80 font-mono text-xs mb-1">
-                            <span className="font-bold tracking-wider">{warpLevel > 0 ? "ENGAGÉ" : "PRET"}</span>
-                            <BatteryCharging size={14} className={warpLevel > 0 ? "animate-pulse" : ""} />
-                        </div>
-                        <span className="text-[9px] uppercase tracking-widest opacity-50 text-white">WARP DRIVE</span>
-                    </div>
-                    <div className="text-right border-l border-white/20 pl-4 mr-12 md:mr-0 mix-blend-difference">
+                    <div className="text-right border-l border-white/20 pl-4 mix-blend-difference">
                         <Wifi size={16} className="text-white/60 mb-1 ml-auto" />
                         <span className="text-[9px] uppercase tracking-widest opacity-50 text-white">TÉLÉMÉTRIE</span>
                     </div>
@@ -320,10 +378,15 @@ const ComplexHUD = ({ warpLevel, mousePos }: { warpLevel: number, mousePos: { x:
 
 // --- MOTEUR THREE.JS ---
 
-const InterstellarBlackHole = ({ setWarpLevel, setMousePos }: { setWarpLevel: (l: number) => void, setMousePos: (p: { x: number, y: number }) => void }) => {
+const InterstellarBlackHole = ({ setZoomLevel, setFocusLevel }: { setZoomLevel: (l: number) => void, setFocusLevel: (l: number) => void }) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const mouseRef = useRef({ x: 0, y: 0 });
-    const warpRef = useRef(0);
+    const mouseRef = useRef({ x: 0, y: 0 }); // Mouse position relative to center (-1 to 1)
+
+    // Etats de la simulation
+    const zoomRef = useRef(0.5); // 0.5 = milieu (vue normale)
+    const targetZoomRef = useRef(0.5);
+
+    const focusRef = useRef(0.0);
     const isMouseDown = useRef(false);
 
     useEffect(() => {
@@ -349,7 +412,8 @@ const InterstellarBlackHole = ({ setWarpLevel, setMousePos }: { setWarpLevel: (l
                 u_time: { value: 0 },
                 u_resolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) },
                 u_mouse: { value: new THREE.Vector2(0, 0) },
-                u_warp: { value: 0 }
+                u_zoom_level: { value: 0.5 },
+                u_focus: { value: 0.0 }
             },
             vertexShader: VertexShader,
             fragmentShader: FragmentShader,
@@ -363,26 +427,35 @@ const InterstellarBlackHole = ({ setWarpLevel, setMousePos }: { setWarpLevel: (l
         let animationId: number;
         const animate = () => {
             animationId = requestAnimationFrame(animate);
-            const dt = clock.getDelta();
-            material.uniforms.u_time.value += dt;
+            // Si Focus actif, le temps ralentit (dt plus petit)
+            const rawDt = clock.getDelta();
+            const timeDilation = 1.0 - (focusRef.current * 0.8); // Ralentit jusqu'à 20%
+            material.uniforms.u_time.value += rawDt * timeDilation;
 
-            // Warp Physics
-            const targetWarp = isMouseDown.current ? 1.0 : 0.0;
-            const ease = isMouseDown.current ? 0.5 : 2.0;
-            warpRef.current += (targetWarp - warpRef.current) * dt * ease;
-            material.uniforms.u_warp.value = warpRef.current;
+            // --- GESTION DU ZOOM (VERTIGO) ---
+            // Interpolation fluide vers la cible
+            zoomRef.current += (targetZoomRef.current - zoomRef.current) * 0.05;
+            material.uniforms.u_zoom_level.value = zoomRef.current;
+            setZoomLevel(zoomRef.current);
 
-            setWarpLevel(warpRef.current);
+            // --- GESTION DU FOCUS (TEMPS) ---
+            const targetFocus = isMouseDown.current ? 1.0 : 0.0;
+            focusRef.current += (targetFocus - focusRef.current) * 0.1;
+            material.uniforms.u_focus.value = focusRef.current;
+            setFocusLevel(focusRef.current);
 
-            // Mouse Inertia
-            material.uniforms.u_mouse.value.x += (mouseRef.current.x - material.uniforms.u_mouse.value.x) * 0.1;
-            material.uniforms.u_mouse.value.y += (mouseRef.current.y - material.uniforms.u_mouse.value.y) * 0.1;
-
-            setMousePos({ x: material.uniforms.u_mouse.value.x, y: material.uniforms.u_mouse.value.y });
+            // --- GESTION DU REGARD (INERTIE) ---
+            // La souris ne donne pas une position absolue, mais une "intention" de regard
+            // Plus on s'éloigne du centre, plus l'uniform u_mouse change, mais avec du lag
+            // Ici on garde simple : u_mouse suit la souris physique avec beaucoup d'inertie
+            material.uniforms.u_mouse.value.x += (mouseRef.current.x - material.uniforms.u_mouse.value.x) * 0.05;
+            material.uniforms.u_mouse.value.y += (mouseRef.current.y - material.uniforms.u_mouse.value.y) * 0.05;
 
             renderer.render(scene, camera);
         };
         animate();
+
+        // --- EVENT LISTENERS ---
 
         const handleResize = () => {
             if (!container) return;
@@ -391,8 +464,20 @@ const InterstellarBlackHole = ({ setWarpLevel, setMousePos }: { setWarpLevel: (l
         };
 
         const handleMouseMove = (e: MouseEvent) => {
+            // Normalisation (-1 à 1)
             mouseRef.current.x = (e.clientX / window.innerWidth) * 2 - 1;
             mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        };
+
+        // Zoom sur la molette
+        const handleWheel = (e: WheelEvent) => {
+            // e.deltaY > 0 : Scroll Down (Recul) -> Zoom level diminue
+            // e.deltaY < 0 : Scroll Up (Avance) -> Zoom level augmente
+            const sensitivity = 0.001;
+            targetZoomRef.current -= e.deltaY * sensitivity;
+            // Clamp entre 0 et 1
+            targetZoomRef.current = Math.max(0.0, Math.min(1.0, targetZoomRef.current));
+            e.preventDefault(); // Empêche le scroll de page si nécessaire
         };
 
         const handleMouseDown = () => { isMouseDown.current = true; };
@@ -402,6 +487,7 @@ const InterstellarBlackHole = ({ setWarpLevel, setMousePos }: { setWarpLevel: (l
 
         window.addEventListener('resize', handleResize);
         window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('wheel', handleWheel, { passive: false });
         window.addEventListener('mousedown', handleMouseDown);
         window.addEventListener('mouseup', handleMouseUp);
         window.addEventListener('touchstart', handleTouchStart);
@@ -410,6 +496,7 @@ const InterstellarBlackHole = ({ setWarpLevel, setMousePos }: { setWarpLevel: (l
         return () => {
             window.removeEventListener('resize', handleResize);
             window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('wheel', handleWheel);
             window.removeEventListener('mousedown', handleMouseDown);
             window.removeEventListener('mouseup', handleMouseUp);
             window.removeEventListener('touchstart', handleTouchStart);
@@ -423,21 +510,28 @@ const InterstellarBlackHole = ({ setWarpLevel, setMousePos }: { setWarpLevel: (l
         };
     }, []);
 
-    return <div ref={containerRef} className="fixed inset-0 w-full h-full bg-black cursor-pointer" />;
+    return <div ref={containerRef} className="fixed inset-0 w-full h-full bg-black cursor-crosshair" />;
 };
 
 const BlackHoleSection: React.FC = () => {
-    const [warpLevel, setWarpLevel] = useState(0);
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const [zoomLevel, setZoomLevel] = useState(0.5);
+    const [focusLevel, setFocusLevel] = useState(0.0);
 
     return (
         <main className="w-full h-screen bg-black overflow-hidden font-sans relative">
-            <InterstellarBlackHole setWarpLevel={setWarpLevel} setMousePos={setMousePos} />
-            <ComplexHUD warpLevel={warpLevel} mousePos={mousePos} />
+            <InterstellarBlackHole setZoomLevel={setZoomLevel} setFocusLevel={setFocusLevel} />
+            <ComplexHUD zoomLevel={zoomLevel} focusLevel={focusLevel} />
 
             {/* Grain Film Overlay */}
             <div className="absolute inset-0 pointer-events-none opacity-[0.05] bg-white mix-blend-overlay"
                 style={{ filter: 'url(#noise)' }}></div>
+
+            {/* UI Hints (Bottom Left) */}
+            <div className="absolute bottom-12 left-8 text-white/30 text-[9px] font-mono flex flex-col gap-1 pointer-events-none mix-blend-difference">
+                <span>SCROLL: VERTIGO ZOOM</span>
+                <span>CLIC MAINTENU: DILATATION TEMP.</span>
+                <span>SOURIS: REGARD INERTIEL</span>
+            </div>
         </main>
     );
 };
