@@ -94,6 +94,7 @@ export class BlackHoleSim {
             fragmentShader: BlackHoleFragmentShader,
             side: THREE.BackSide, // Important pour être "dans" la boîte si besoin, ou voir le fond
             transparent: true,
+            depthWrite: false,
             blending: THREE.NormalBlending,
         });
 
