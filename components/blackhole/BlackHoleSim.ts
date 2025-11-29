@@ -24,32 +24,34 @@ export class BlackHoleSim {
 
     disposables: any[] = [];
 
-    constructor(container: HTMLElement) {
+    constructor(canvas: HTMLCanvasElement) {
         // 1. Scene Setup
         this.scene = new THREE.Scene();
 
         // 2. Camera Setup
         // Positioned at z=55, looking at 0,0,0
-        this.camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+        this.camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
         this.camera.position.set(0, 8, 55);
 
         // 3. Renderer Setup
         this.renderer = new THREE.WebGLRenderer({
+            canvas: canvas, // USE EXISTING CANVAS
             antialias: true,
             alpha: true,
             powerPreference: "high-performance"
         });
+
+        // DEBUG: Force canvas styles to ensure visibility
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.border = '4px solid blue'; // Blue border on canvas
+        canvas.style.display = 'block';
+
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         // DEBUG: Set clear color to GREEN to verify renderer is working
         this.renderer.setClearColor(0x00ff00, 1.0);
 
-        // DEBUG: Force canvas styles to ensure visibility
-        this.renderer.domElement.style.width = '100%';
-        this.renderer.domElement.style.height = '100%';
-        this.renderer.domElement.style.border = '4px solid blue'; // Blue border on canvas
-        this.renderer.domElement.style.display = 'block';
-
-        container.appendChild(this.renderer.domElement);
+        // NO appendChild needed anymore!
 
         this.clock = new THREE.Clock();
 
@@ -77,7 +79,7 @@ export class BlackHoleSim {
         this.composer.addPass(renderPass);
 
         // 7. Initial Resize
-        this.resize(container.clientWidth, container.clientHeight);
+        this.resize(canvas.clientWidth, canvas.clientHeight);
 
         console.log("BlackHoleSim: Initialized (Rewrite Step 1)");
     }

@@ -102,6 +102,7 @@ const ControlSlider = React.memo<ControlSliderProps>(({ label, value, min, max, 
 
 const BlackHoleSection: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null); // New Canvas Ref
     const simRef = useRef<BlackHoleSim | null>(null);
     const { t, theme } = useThemeLanguage();
     const isInView = useInView(containerRef);
@@ -152,26 +153,18 @@ const BlackHoleSection: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        const container = containerRef.current;
-        if (!container) return;
-
-        console.log("BlackHoleSection: Container found", {
-            width: container.clientWidth,
-            height: container.clientHeight,
-            offsetWidth: container.offsetWidth,
-            offsetHeight: container.offsetHeight
-        });
+        const canvas = canvasRef.current;
+        if (!canvas) return;
 
         let sim: BlackHoleSim;
         try {
-            sim = new BlackHoleSim(container);
+            sim = new BlackHoleSim(canvas); // Pass canvas!
             simRef.current = sim;
 
-            // DEBUG: Force resize after a short delay to ensure container has dimensions
+            // DEBUG: Force resize after a short delay
             setTimeout(() => {
-                if (container && sim) {
-                    console.log("BlackHoleSection: Delayed resize", container.clientWidth, container.clientHeight);
-                    sim.resize(container.clientWidth, container.clientHeight);
+                if (canvas && sim) {
+                    sim.resize(canvas.clientWidth, canvas.clientHeight);
                 }
             }, 100);
 
@@ -204,25 +197,18 @@ const BlackHoleSection: React.FC = () => {
         animate();
 
         const handleResize = () => {
-            if (containerRef.current && simRef.current) {
-                console.log("BlackHoleSection: Resizing", containerRef.current.clientWidth, containerRef.current.clientHeight);
-                simRef.current.resize(containerRef.current.clientWidth, containerRef.current.clientHeight);
+            if (canvasRef.current && simRef.current) {
+                simRef.current.resize(canvasRef.current.clientWidth, canvasRef.current.clientHeight);
             }
         };
 
         window.addEventListener('resize', handleResize);
 
-        if (containerRef.current) {
-            containerRef.current.innerHTML = '';
-        }
-
         return () => {
             window.removeEventListener('resize', handleResize);
             cancelAnimationFrame(animationId);
             sim.dispose();
-            if (containerRef.current) {
-                containerRef.current.innerHTML = '';
-            }
+            // No need to clear innerHTML anymore
         };
     }, [simKey]);
 
@@ -230,7 +216,9 @@ const BlackHoleSection: React.FC = () => {
 
     return (
         // ...
-        <div ref={containerRef} className="absolute inset-0 w-full h-full z-10 border-4 border-red-500 bg-yellow-500/20" />
+        <div ref={containerRef} className="absolute inset-0 w-full h-full z-10 border-4 border-red-500">
+            <canvas ref={canvasRef} className="w-full h-full block border-4 border-blue-500 bg-white" />
+        </div>
         // ...
     );
 
