@@ -41,7 +41,7 @@ export class BlackHoleSim {
             powerPreference: "high-performance"
         });
 
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Reduce resolution slightly for performance
         this.renderer.setClearColor(0x000000, 0.0); // Transparent/Black background
 
         // NO appendChild needed anymore!
@@ -52,6 +52,8 @@ export class BlackHoleSim {
         this.controls = new OrbitControls(this.camera, canvas);
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.05;
+        this.controls.enableZoom = false; // CRITICAL: Disable zoom to prevent scroll hijacking
+        this.controls.enablePan = false;  // Disable pan to keep black hole centered
         this.controls.minDistance = 10;
         this.controls.maxDistance = 200;
 
