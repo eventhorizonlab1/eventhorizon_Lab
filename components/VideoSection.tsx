@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { Play, X, Clock, ChevronRight, ExternalLink, Hash, Tag, Radio, ArrowUpRight } from 'lucide-react';
+import { Play, X, Clock, ExternalLink, Hash, Tag, Radio, ArrowUpRight } from 'lucide-react';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 import { VIDEOS, FEATURED_VIDEO } from '../constants';
 import { Video } from '../types';
