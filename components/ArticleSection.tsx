@@ -1,110 +1,105 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ARTICLES } from '../constants';
-import { Article } from '../types';
-import { useThemeLanguage } from '../context/ThemeLanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, ArrowLeft, X, Calendar } from 'lucide-react';
+import { X, ArrowRight, Calendar, BookOpen, ArrowUpRight } from 'lucide-react';
+import { useThemeLanguage } from '../context/ThemeLanguageContext';
+import { fetchAPI } from '../src/lib/api';
+import { Article } from '../types';
+import { createPortal } from 'react-dom';
 
-// --- MODAL COMPONENT (Basé sur le modèle Ecosystem) ---
 const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> = ({ article, onClose }) => {
     const { t } = useThemeLanguage();
+    const modalRef = useRef<HTMLDivElement>(null);
 
-    // Bloquer le scroll d'arrière-plan
     useEffect(() => {
         document.body.style.overflow = 'hidden';
-        return () => { document.body.style.overflow = 'unset'; };
-    }, []);
-
-    const translatedTitle = t(`article_${article.id}_title`);
-    const title = translatedTitle === `article_${article.id}_title` ? article.title : translatedTitle;
-
-    // Logique de contenu par défaut si la traduction manque
-    let contentText = t(`article_${article.id}_content`);
-    if (contentText === `article_${article.id}_content`) {
-        contentText = t('article_placeholder_content');
-    }
-    const paragraphs = contentText.split('\n\n');
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        modalRef.current?.focus();
+        return () => {
+            document.body.style.overflow = 'unset';
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [onClose]);
 
     return (
         <motion.div
-            initial={{ scale: 0.95, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.95, opacity: 0, y: 20 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="bg-white dark:bg-[#0a0a0a] w-full max-w-5xl h-[90vh] md:h-[85vh] rounded-3xl overflow-hidden shadow-2xl relative border border-gray-100 dark:border-white/10 flex flex-col md:flex-row"
-            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 bg-black/90 backdrop-blur-xl"
+            onClick={onClose}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="article-modal-title"
         >
-            <button
-                onClick={onClose}
-                className="absolute top-4 right-4 md:top-6 md:right-6 z-50 p-3 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full text-white transition-colors border border-white/20 shadow-lg"
-                aria-label={t('common_close')}
+            <div
+                ref={modalRef}
+                className="relative w-full max-w-4xl bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
+                onClick={(e) => e.stopPropagation()}
+                tabIndex={-1}
             >
-                <X size={24} />
-            </button>
+                <button
+                    onClick={onClose}
+                    className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-white/10 rounded-full text-white/70 hover:text-white transition-colors"
+                    aria-label={t('common_close')}
+                >
+                    <X size={24} />
+                </button>
 
-            {/* Gauche: Image */}
-            <div className="w-full md:w-5/12 h-1/3 md:h-full relative shrink-0">
-                <img
-                    src={article.imageUrl}
-                    alt={title}
-                    className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent md:bg-gradient-to-r" />
-                <div className="absolute bottom-6 left-6 text-white md:hidden">
-                    <div className="flex items-center gap-2 mb-2 text-xs font-bold uppercase tracking-widest opacity-80">
-                        <Calendar size={12} />
-                        <span>{article.date}</span>
+                {/* Hero Image */}
+                <div className="relative h-64 md:h-80 shrink-0">
+                    <img
+                        src={article.imageUrl}
+                        alt={article.title}
+                        className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
+                    <div className="absolute bottom-0 left-0 p-6 md:p-10">
+                        <div className="flex items-center gap-4 text-sm text-blue-400 font-mono mb-3">
+                            <span className="flex items-center gap-2">
+                                <Calendar size={14} />
+                                {article.date}
+                            </span>
+                        </div>
+                        <h2 id="article-modal-title" className="text-3xl md:text-5xl font-bold text-white leading-tight">
+                            {article.title}
+                        </h2>
                     </div>
-                    <h2 className="text-2xl font-black leading-tight">{title}</h2>
-                </div>
-            </div>
-
-            {/* Droite: Contenu */}
-            <div className="flex-1 p-6 md:p-10 overflow-y-auto custom-scrollbar bg-white dark:bg-[#0a0a0a]">
-                <div className="hidden md:block mb-8">
-                    <div className="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">
-                        <Calendar size={14} />
-                        <span>{article.date}</span>
-                    </div>
-                    <h2 className="text-4xl lg:text-5xl font-black text-black dark:text-white leading-none tracking-tight">
-                        {title}
-                    </h2>
                 </div>
 
-                <div className="prose prose-lg dark:prose-invert max-w-none">
-                    {paragraphs.map((para, idx) => (
-                        <p key={idx} className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed font-serif text-justify">
-                            {para}
+                {/* Content */}
+                <div className="p-6 md:p-10 overflow-y-auto">
+                    <div className="prose prose-invert prose-lg max-w-none text-white/80 leading-relaxed">
+                        <p className="lead text-xl text-white/90 font-medium mb-8">
+                            {article.summary}
                         </p>
-                    ))}
-                </div>
-
-                <div className="mt-12 pt-8 border-t border-gray-100 dark:border-white/10 flex justify-center">
-                    <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Event Horizon Lab</p>
+                        {/* Render Rich Text or Content here. For now just summary or placeholder if content missing */}
+                        {article.content ? (
+                            <div dangerouslySetInnerHTML={{ __html: article.content }} />
+                        ) : (
+                            <p>Full content loading...</p>
+                        )}
+                    </div>
                 </div>
             </div>
         </motion.div>
     );
 };
 
-// --- COMPOSANT CARTE (Structure identique à PartnerCard) ---
-const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Article) => void }> = React.memo(({ article, index, onClick }) => {
+const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Article) => void }> = ({ article, index, onClick }) => {
     const { t } = useThemeLanguage();
-    const translatedTitle = t(`article_${article.id}_title`);
-    const title = translatedTitle === `article_${article.id}_title` ? article.title : translatedTitle;
-
-    const translatedSummary = t(`article_${article.id}_summary`);
-    const summary = translatedSummary === `article_${article.id}_summary` ? article.summary : translatedSummary;
 
     return (
         <motion.button
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="snap-start shrink-0 w-[80vw] md:w-[400px] cursor-pointer group text-left focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 rounded-[2rem]"
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1 }}
+            className="group relative flex flex-col text-left w-full bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:border-white/20 transition-colors"
             onClick={() => onClick(article)}
             onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -112,172 +107,163 @@ const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Arti
                     onClick(article);
                 }
             }}
-            aria-label={`${t('article_read_more')} ${title}`}
         >
-            {/* Conteneur Visuel */}
-            <div className="relative overflow-hidden rounded-[2rem] bg-gray-900 aspect-[4/5] mb-4 border border-white/10 shadow-lg transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
-
-                {/* Image */}
+            <div className="relative aspect-[4/3] overflow-hidden">
                 <img
                     src={article.imageUrl}
-                    alt=""
-                    loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                    alt={article.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-
-                {/* Overlay Dégradé */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-
-                {/* Overlay Interaction (Le "Bouton Fantôme") */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30 backdrop-blur-[2px] z-20">
-                    <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                        <span className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black rounded-full text-xs font-bold uppercase tracking-widest shadow-xl">
-                            {t('article_read_more')}
-                            <ArrowRight size={14} />
-                        </span>
-                    </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-md p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
+                    <ArrowUpRight size={20} className="text-white" />
                 </div>
+            </div>
 
-                {/* Contenu Texte (Toujours visible, pointer-events-none pour laisser passer le clic au parent) */}
-                <div className="absolute inset-0 p-8 flex flex-col justify-end z-10 pointer-events-none">
-                    <div className="flex items-center gap-2 mb-3">
-                        <span className="px-2 py-1 bg-blue-600 text-white text-xs font-bold uppercase tracking-widest rounded-md shadow-sm">
-                            Article
-                        </span>
-                        <span className="text-white/80 text-xs font-bold uppercase tracking-widest border-l border-white/20 pl-2">
-                            {article.date}
-                        </span>
-                    </div>
-
-                    <h3 className="text-2xl font-bold text-white leading-tight mb-2 group-hover:text-blue-300 transition-colors">
-                        {title}
-                    </h3>
-
-                    <p className="text-gray-300 text-sm line-clamp-2 leading-relaxed">
-                        {summary}
-                    </p>
+            <div className="p-6 flex flex-col grow">
+                <div className="flex items-center gap-3 text-xs font-mono text-blue-400 mb-3">
+                    <Calendar size={12} />
+                    <span>{article.date}</span>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
+                    {article.title}
+                </h3>
+                <p className="text-sm text-white/60 line-clamp-3 mb-6 grow">
+                    {article.summary}
+                </p>
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40 group-hover:text-white transition-colors mt-auto">
+                    {t('article_read_more')}
+                    <ArrowRight size={14} className="transform group-hover:translate-x-1 transition-transform" />
                 </div>
             </div>
         </motion.button>
     );
-});
+};
 
-// --- SECTION PRINCIPALE ---
 const ArticleSection: React.FC = () => {
-    const { t } = useThemeLanguage();
     const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [articles, setArticles] = useState<Article[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const { t } = useThemeLanguage();
     const [searchParams, setSearchParams] = useSearchParams();
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    // Fetch Articles
+    useEffect(() => {
+        const getArticles = async () => {
+            try {
+                const res = await fetchAPI('/articles', { populate: '*' });
+                if (res && res.data) {
+                    const fetchedArticles = res.data.map((item: any) => ({
+                        id: item.id,
+                        ...item.attributes
+                    }));
+                    setArticles(fetchedArticles);
+                }
+            } catch (error) {
+                console.error("Error fetching articles:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        getArticles();
+    }, []);
 
     // Sync URL -> State
     useEffect(() => {
         const articleId = searchParams.get('article');
-        if (articleId) {
-            const article = ARTICLES.find(a => a.id === articleId);
-            if (article) {
-                setSelectedArticle(article);
-            }
-        } else {
+        if (articleId && articles.length > 0) {
+            // Match by title as slug/ID for now
+            const found = articles.find(a => a.title === articleId);
+            if (found) setSelectedArticle(found);
+        } else if (!articleId) {
             setSelectedArticle(null);
         }
-    }, [searchParams]);
+    }, [searchParams, articles]);
 
     // Sync State -> URL
     const handleArticleSelect = (article: Article | null) => {
         if (article) {
-            setSearchParams(prev => {
-                const newParams = new URLSearchParams(prev);
-                newParams.set('article', article.id);
-                newParams.delete('video');
-                newParams.delete('partner');
-                return newParams;
-            }, { replace: false });
-        } else {
-            setSearchParams(prev => {
-                const newParams = new URLSearchParams(prev);
-                newParams.delete('article');
-                return newParams;
-            }, { replace: false });
-        }
-    };
+            setSelectedArticle(article);
+            setSearchParams({ article: article.title }, { replace: false });
 
-    const scroll = (direction: 'left' | 'right') => {
-        if (scrollContainerRef.current) {
-            const amount = direction === 'left' ? -400 : 400;
-            scrollContainerRef.current.scrollBy({ left: amount, behavior: 'smooth' });
+            const newParams = new URLSearchParams(searchParams);
+            newParams.set('article', article.title);
+            newParams.delete('video');
+            newParams.delete('partner');
+            setSearchParams(newParams, { replace: false });
+        } else {
+            setSelectedArticle(null);
+            const newParams = new URLSearchParams(searchParams);
+            newParams.delete('article');
+            setSearchParams(newParams, { replace: false });
         }
     };
 
     return (
         <>
-            <AnimatePresence>
-                {selectedArticle && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
-                        onClick={() => handleArticleSelect(null)}
-                    >
-                        {/* SEO Metadata for Modal */}
-                        <Helmet>
-                            <title>{selectedArticle.title} | Event Horizon</title>
-                            <meta name="description" content={selectedArticle.summary} />
-                            <meta property="og:title" content={selectedArticle.title} />
-                            <meta property="og:description" content={selectedArticle.summary} />
-                            <meta property="og:image" content={selectedArticle.imageUrl} />
-                        </Helmet>
+            {createPortal(
+                <AnimatePresence>
+                    {selectedArticle && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[100]"
+                        >
+                            <Helmet>
+                                <title>{`${selectedArticle.title} - Event Horizon`}</title>
+                                <meta name="description" content={selectedArticle.summary} />
+                                <meta property="og:title" content={selectedArticle.title} />
+                                <meta property="og:description" content={selectedArticle.summary} />
+                                <meta property="og:image" content={selectedArticle.imageUrl} />
+                            </Helmet>
+                            <ArticleModalContent article={selectedArticle} onClose={() => handleArticleSelect(null)} />
+                        </motion.div>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
 
-                        <ArticleModalContent
-                            article={selectedArticle}
-                            onClose={() => handleArticleSelect(null)}
-                        />
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            <section id="articles" className="py-16 md:py-24 bg-white dark:bg-eh-black border-t border-gray-100 dark:border-white/5 transition-colors duration-500">
-                <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-12 flex flex-col md:flex-row justify-between items-end gap-6">
-                    <div className="border-l-4 border-black dark:border-white pl-4 -ml-4 md:-ml-7">
-                        <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 text-black dark:text-white">
-                            {t('articles_title')}
-                        </h2>
-                        <p className="text-gray-500 dark:text-gray-400 text-lg max-w-xl">
-                            {t('articles_subtitle')}
-                        </p>
+            <section id="articles" ref={containerRef} className="relative py-32 bg-[#0a0a0a] border-t border-white/5">
+                <div className="container mx-auto px-4">
+                    <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+                        <div className="max-w-2xl">
+                            <div className="flex items-center gap-2 text-blue-500 mb-4">
+                                <BookOpen className="animate-pulse" size={16} />
+                                <span className="text-xs font-bold uppercase tracking-[0.2em]">{t('article_latest_news')}</span>
+                            </div>
+                            <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
+                                {t('article_title')}
+                            </h2>
+                            <p className="text-lg text-white/60 max-w-lg leading-relaxed">
+                                {t('article_subtitle')}
+                            </p>
+                        </div>
                     </div>
 
-                    <div className="hidden md:flex gap-4">
-                        <button onClick={() => scroll('left')} className="p-4 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all" aria-label="Scroll Left">
-                            <ArrowLeft size={20} />
-                        </button>
-                        <button onClick={() => scroll('right')} className="p-4 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all" aria-label="Scroll Right">
-                            <ArrowRight size={20} />
-                        </button>
-                    </div>
-                </div>
+                    {isLoading ? (
+                        <div className="flex items-center justify-center h-64">
+                            <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {articles.map((article, index) => (
+                                <ArticleCard
+                                    key={index}
+                                    article={article}
+                                    index={index}
+                                    onClick={handleArticleSelect}
+                                />
+                            ))}
+                        </div>
+                    )}
 
-                <div className="overflow-hidden">
-                    <div
-                        ref={scrollContainerRef}
-                        className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-12 gap-8 pb-12"
-                    >
-                        {ARTICLES.map((article, index) => (
-                            <ArticleCard
-                                key={article.id}
-                                article={article}
-                                index={index}
-                                onClick={handleArticleSelect}
-                            />
-                        ))}
-                    </div>
-                </div>
-
-                <div className="flex md:hidden justify-center gap-1.5 mt-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-black dark:bg-white opacity-60"></div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+                    {!isLoading && articles.length === 0 && (
+                        <div className="text-center text-white/40 py-20">
+                            <p>No articles found.</p>
+                        </div>
+                    )}
                 </div>
             </section>
         </>

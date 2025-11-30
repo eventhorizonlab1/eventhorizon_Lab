@@ -1,6 +1,21 @@
 
+export interface StrapiResponse<T> {
+  data: {
+    id: number;
+    attributes: T;
+  }[];
+  meta: {
+    pagination: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    };
+  };
+}
+
 export interface Video {
-  id: string;
+  id?: number;
   title: string;
   category: string;
   subcategory?: string;
@@ -11,17 +26,19 @@ export interface Video {
 }
 
 export interface Article {
-  id: string;
+  id?: number;
   title: string;
   summary: string;
+  content?: string;
   date: string;
   imageUrl: string;
 }
 
 export interface Partner {
-  id: string;
+  id?: number;
   name: string;
-  role: string;
-  imageUrl: string;
+  category?: string;
+  description: string;
+  logoUrl: string;
   websiteUrl: string;
 }
