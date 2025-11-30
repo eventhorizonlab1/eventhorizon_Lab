@@ -325,7 +325,7 @@ const VideoSection: React.FC = () => {
                                 <span className="text-xs font-bold uppercase tracking-[0.2em]">{t('video_live_feed')}</span>
                             </div>
                             <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
-                                {t('video_title')} <span className="text-white/20">ARCHIVE</span>
+                                {t('videos_title')}
                             </h2>
                             <p className="text-lg text-white/60 max-w-lg leading-relaxed">
                                 {t('video_subtitle')}
