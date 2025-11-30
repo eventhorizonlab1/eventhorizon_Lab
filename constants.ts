@@ -349,61 +349,100 @@ export const VIDEOS: Video[] = [
 ];
 
 export const ARTICLES: Article[] = [
+  // 🇪🇺 Décisions Stratégiques
   {
-    id: 'a_asterix',
-    title: 'Astérix : 60 ans en orbite pour le premier satellite français',
-    summary: "Retour sur l'histoire du premier satellite français lancé en 1965.",
-    date: '26 NOV 2025',
-    // Satellite/Space historic feel
-    imageUrl: '/assets/articles/asterix.jpg'
+    id: 'a_cm25',
+    title: "CM25 : Les États membres de l'ESA s'engagent sur un budget record",
+    summary: "À Brême, l'Europe spatiale a validé une enveloppe historique de 22 milliards d'euros pour la période 2026-2028, sécurisant les programmes d'exploration et de défense planétaire.",
+    date: '27 NOV 2025',
+    category: 'STRATÉGIE',
+    imageUrl: '/assets/videos/v_new_20.jpg', // ESA context
+    linkUrl: 'https://www.esa.int/'
   },
   {
-    id: 'a_adenot',
-    title: "L'astronaute Sophie Adenot sereine avant son départ pour l'ISS",
-    summary: "Interview exclusive avant la mission spatiale historique.",
-    date: '20 NOV 2025',
-    // Astronaut / Space suit
-    imageUrl: '/assets/articles/adenot.jpg'
+    id: 'a_uk_pnt',
+    title: "Le Royaume-Uni injecte 155M£ pour sécuriser les signaux PNT",
+    summary: "En marge du CM25, le Royaume-Uni renforce sa souveraineté sur la navigation par satellite (alternative/complément à Galileo), un enjeu critique pour la défense européenne.",
+    date: '22 NOV 2025',
+    category: 'STRATÉGIE',
+    imageUrl: '/assets/articles/asterix.jpg', // Generic historic/gov feel
+    linkUrl: 'https://www.gov.uk/'
   },
   {
-    id: 'a_exobio',
-    title: "De la vie ailleurs ? Le grand livre de l'exobiologie",
-    summary: "Exploration des possibilités de vie extraterrestre à travers un nouvel ouvrage de référence.",
-    date: '15 NOV 2025',
-    // DNA / Abstract Space / Biology
-    imageUrl: '/assets/articles/exobio.jpg'
+    id: 'a_space_safety',
+    title: "Sécurité Spatiale : L'ESA accélère sur le nettoyage orbital",
+    summary: "Suite au CM25, le programme \"Space Safety\" reçoit un coup de boost financier pour les missions de désorbitation active (ClearSpace-1) et la surveillance des débris.",
+    date: '28 NOV 2025',
+    category: 'STRATÉGIE',
+    imageUrl: '/assets/videos/v12.jpg', // ClearSpace context
+    linkUrl: 'https://www.esa.int/Safety_Security'
+  },
+
+  // 🚀 Lanceurs & Opérations
+  {
+    id: 'a_va265',
+    title: "Ariane 6 : Succès du lancement Sentinel-1D (Vol VA265)",
+    summary: "Arianespace confirme la montée en cadence avec ce lancement réussi pour le programme Copernicus. Le satellite radar est parfaitement en orbite.",
+    date: '04 NOV 2025',
+    category: 'LANCEURS',
+    imageUrl: '/assets/videos/feat_1.jpg', // Ariane 6 context
+    linkUrl: 'https://www.arianespace.com/'
   },
   {
-    id: 'a_nasa_moon',
-    title: "La NASA accélère son retour sur la Lune",
-    summary: "Le programme Artemis passe à la vitesse supérieure.",
-    date: '10 NOV 2025',
-    // Moon / Astronaut / Artemis
-    imageUrl: '/assets/articles/nasa_moon.jpg'
+    id: 'a_vv28',
+    title: "Vega C : Préparatifs finaux pour le vol VV28",
+    summary: "Après plusieurs reports, Arianespace confirme la fenêtre de tir fin novembre/début décembre pour le satellite KOMPSAT-7. Le retour en vol du petit lanceur italien est crucial.",
+    date: '21 NOV 2025',
+    category: 'LANCEURS',
+    imageUrl: '/assets/videos/v_new_13.jpg', // Rocket context
+    linkUrl: 'https://www.arianespace.com/news/'
   },
   {
-    id: 'a_galileo',
-    title: "Lancement de deux satellites Galileo le 17 décembre",
-    summary: "Arianespace prépare le déploiement de la constellation européenne.",
+    id: 'a_galileo_l14',
+    title: "Galileo : La campagne de lancement L14 a débuté en Guyane",
+    summary: "Les équipes sont à pied d'œuvre à Kourou pour le prochain tir d'Ariane 6 prévu en décembre, qui emportera deux nouveaux satellites Galileo FOC.",
+    date: '28 NOV 2025',
+    category: 'LANCEURS',
+    imageUrl: '/assets/articles/galileo.jpg', // Galileo context
+    linkUrl: 'https://www.esa.int/Applications/Navigation/Galileo'
+  },
+
+  // 🦄 New Space & Tech
+  {
+    id: 'a_nyx_wind',
+    title: "The Exploration Company : Nyx Earth validée en soufflerie hypersonique",
+    summary: "La startup franco-allemande vient de conclure une campagne de tests décisive au DLR (Cologne) validant le comportement aérodynamique de sa capsule cargo pour la rentrée atmosphérique.",
+    date: 'OCT 2025',
+    category: 'NEW SPACE',
+    imageUrl: '/assets/videos/v_new_8.jpg', // Nyx context
+    linkUrl: 'https://www.exploration.company/'
+  },
+  {
+    id: 'a_maia_fit',
+    title: "MaiaSpace : Succès du 'Fit-Check' sur le pas de tir",
+    summary: "Étape symbolique mais technique : le prototype du lanceur Maia a été érigé pour la première fois sur son pas de tir (l'ancien diamant/Themis) pour vérifier les interfaces sol.",
+    date: '18 OCT 2025',
+    category: 'NEW SPACE',
+    imageUrl: '/assets/videos/v_new_9.jpg', // Maia context
+    linkUrl: 'https://maiaspace.com/'
+  },
+  {
+    id: 'a_euclid_dust',
+    title: "Euclid dévoile 'Le Voile Poussiéreux' : Une image spectaculaire",
+    summary: "Le télescope spatial européen continue de cartographier la matière noire avec une précision inédite.",
     date: '05 NOV 2025',
-    // Rocket Launch / Satellite
-    imageUrl: '/assets/articles/galileo.jpg'
+    category: 'SCIENCE',
+    imageUrl: '/assets/videos/v8.jpg', // Euclid context
+    linkUrl: 'https://www.esa.int/Science_Exploration/Space_Science/Euclid'
   },
   {
-    id: 'a_geminides',
-    title: "Carte du ciel : Le retour des Géminides",
-    summary: "Tout ce qu'il faut savoir pour observer la pluie d'étoiles filantes de décembre.",
-    date: '01 DEC 2025',
-    // Starry Sky / Meteors - Plus spectaculaire (Milky Way / Shooting stars vibe)
-    imageUrl: '/assets/articles/geminides.jpg'
-  },
-  {
-    id: 'a_exoplanet',
-    title: "Première carte 3D d'une atmosphère d'exoplanète",
-    summary: "Une percée scientifique majeure dans l'étude des mondes lointains.",
-    date: '28 OCT 2025',
-    // Exoplanet Atmosphere / Hot Surface - Plus scientifique (Abstract planet surface)
-    imageUrl: '/assets/articles/exoplanet.jpg'
+    id: 'a_thrustworks',
+    title: "Moteurs spatiaux : Thrustworks rachetée par The Exploration Company",
+    summary: "Consolidation dans le New Space. TEC acquiert le spécialiste allemand de l'impression 3D métal pour internaliser la production de ses moteurs.",
+    date: 'NOV 2025',
+    category: 'NEW SPACE',
+    imageUrl: '/assets/videos/v_new_11.jpg', // Startup context
+    linkUrl: 'https://www.exploration.company/'
   }
 ];
 

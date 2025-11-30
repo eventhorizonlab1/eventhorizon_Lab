@@ -1,6 +1,6 @@
 import qs from 'qs';
-import { Video } from '../../types';
-import { VIDEOS } from '../../constants';
+import { Video, Article } from '../../types';
+import { VIDEOS, ARTICLES } from '../../constants';
 
 // Dynamic URL resolution to support mobile (local IP) and desktop (localhost)
 const getBaseUrl = () => {
@@ -124,5 +124,39 @@ export async function fetchVideos(): Promise<Video[]> {
     } catch (error) {
         console.warn("⚠️ Impossible de joindre Strapi. Utilisation des données locales.", error);
         return VIDEOS;
+    }
+}
+
+export async function fetchArticles(): Promise<Article[]> {
+    try {
+        const res = await fetch(`${STRAPI_URL}/api/articles?populate=*`);
+
+        if (!res.ok) {
+            throw new Error(`Erreur API: ${res.statusText}`);
+        }
+
+        const json = await res.json();
+
+        const articles: Article[] = json.data.map((item: any) => {
+            const attr = item.attributes || item;
+            const imageData = attr.imageUrl?.data || attr.imageUrl;
+            const imageUrl = getImageUrl(imageData, 'medium') || '/assets/articles/asterix.jpg';
+
+            return {
+                id: item.id.toString(),
+                title: attr.title,
+                summary: attr.summary,
+                content: attr.content,
+                date: attr.date,
+                category: attr.category,
+                imageUrl: imageUrl,
+                linkUrl: attr.linkUrl
+            };
+        });
+
+        return articles;
+    } catch (error) {
+        console.warn("⚠️ Impossible de joindre Strapi (Articles). Utilisation des données locales.", error);
+        return ARTICLES;
     }
 }

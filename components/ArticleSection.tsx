@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowRight, Calendar, BookOpen, ArrowUpRight } from 'lucide-react';
+import { X, ArrowRight, Calendar, BookOpen, ArrowUpRight, ExternalLink } from 'lucide-react';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
-import { fetchAPI } from '../src/lib/api';
+import { fetchArticles } from '../src/lib/api';
 import { Article } from '../types';
 import { createPortal } from 'react-dom';
+import { useCinematicAudio } from '../src/hooks/useCinematicAudio';
 
 const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> = ({ article, onClose }) => {
     const { t } = useThemeLanguage();
@@ -64,6 +65,11 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
                                 <Calendar size={14} />
                                 {article.date}
                             </span>
+                            {article.category && (
+                                <span className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider bg-white/10 text-white/80 rounded border border-white/10">
+                                    {article.category}
+                                </span>
+                            )}
                         </div>
                         <h2 id="article-modal-title" className="text-3xl md:text-5xl font-bold text-white leading-tight">
                             {article.title}
@@ -77,11 +83,22 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
                         <p className="lead text-xl text-white/90 font-medium mb-8">
                             {article.summary}
                         </p>
-                        {/* Render Rich Text or Content here. For now just summary or placeholder if content missing */}
                         {article.content ? (
                             <div dangerouslySetInnerHTML={{ __html: article.content }} />
                         ) : (
-                            <p>Full content loading...</p>
+                            article.linkUrl && (
+                                <div className="mt-8">
+                                    <a
+                                        href={article.linkUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded transition-colors"
+                                    >
+                                        Lire l'article complet
+                                        <ExternalLink size={16} />
+                                    </a>
+                                </div>
+                            )
                         )}
                     </div>
                 </div>
@@ -92,6 +109,16 @@ const ArticleModalContent: React.FC<{ article: Article; onClose: () => void }> =
 
 const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Article) => void }> = ({ article, index, onClick }) => {
     const { t } = useThemeLanguage();
+    const { playHover, playClick } = useCinematicAudio();
+
+    const handleClick = () => {
+        playClick();
+        if (article.linkUrl) {
+            window.open(article.linkUrl, '_blank', 'noopener,noreferrer');
+        } else {
+            onClick(article);
+        }
+    };
 
     return (
         <motion.button
@@ -100,11 +127,12 @@ const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Arti
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
             className="group relative flex flex-col text-left w-full bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:border-white/20 transition-colors"
-            onClick={() => onClick(article)}
+            onClick={handleClick}
+            onMouseEnter={() => playHover()}
             onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    onClick(article);
+                    handleClick();
                 }
             }}
         >
@@ -116,8 +144,15 @@ const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Arti
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
                 <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-md p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
-                    <ArrowUpRight size={20} className="text-white" />
+                    {article.linkUrl ? <ExternalLink size={20} className="text-white" /> : <ArrowUpRight size={20} className="text-white" />}
                 </div>
+                {article.category && (
+                    <div className="absolute top-4 left-4">
+                        <span className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider bg-black/60 backdrop-blur text-white rounded border border-white/10">
+                            {article.category}
+                        </span>
+                    </div>
+                )}
             </div>
 
             <div className="p-6 flex flex-col grow">
@@ -132,7 +167,7 @@ const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Arti
                     {article.summary}
                 </p>
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40 group-hover:text-white transition-colors mt-auto">
-                    {t('article_read_more')}
+                    {article.linkUrl ? "LIRE LA SOURCE" : t('article_read_more')}
                     <ArrowRight size={14} className="transform group-hover:translate-x-1 transition-transform" />
                 </div>
             </div>
@@ -144,18 +179,18 @@ const ArticleSection: React.FC = () => {
     const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
     const [articles, setArticles] = useState<Article[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [filter, setFilter] = useState('All');
     const { t } = useThemeLanguage();
     const [searchParams, setSearchParams] = useSearchParams();
     const containerRef = useRef<HTMLDivElement>(null);
+    const { playClick } = useCinematicAudio();
 
     // Fetch Articles
     useEffect(() => {
         const getArticles = async () => {
             try {
-                const res = await fetchAPI('/articles', { populate: '*' });
-                if (res && res.data) {
-                    setArticles(res.data);
-                }
+                const fetchedArticles = await fetchArticles();
+                setArticles(fetchedArticles);
             } catch (error) {
                 console.error("Error fetching articles:", error);
             } finally {
@@ -169,7 +204,6 @@ const ArticleSection: React.FC = () => {
     useEffect(() => {
         const articleId = searchParams.get('article');
         if (articleId && articles.length > 0) {
-            // Match by title as slug/ID for now
             const found = articles.find(a => a.title === articleId);
             if (found) setSelectedArticle(found);
         } else if (!articleId) {
@@ -195,6 +229,9 @@ const ArticleSection: React.FC = () => {
             setSearchParams(newParams, { replace: false });
         }
     };
+
+    const categories = ['All', ...Array.from(new Set(articles.map(a => a.category).filter(Boolean) as string[]))];
+    const filteredArticles = filter === 'All' ? articles : articles.filter(a => a.category === filter);
 
     return (
         <>
@@ -236,6 +273,32 @@ const ArticleSection: React.FC = () => {
                                 {t('article_subtitle')}
                             </p>
                         </div>
+
+                        {/* Filter Tabs (YouTube Style) */}
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            className="w-full overflow-x-auto pb-4 no-scrollbar"
+                        >
+                            <div className="flex gap-3 min-w-max px-1">
+                                {categories.map((cat) => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => {
+                                            playClick();
+                                            setFilter(cat);
+                                        }}
+                                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${filter === cat
+                                            ? 'bg-white text-black'
+                                            : 'bg-white/10 text-white hover:bg-white/20'
+                                            }`}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+                        </motion.div>
                     </div>
 
                     {isLoading ? (
@@ -244,7 +307,7 @@ const ArticleSection: React.FC = () => {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {articles.map((article, index) => (
+                            {filteredArticles.map((article, index) => (
                                 <ArticleCard
                                     key={index}
                                     article={article}
@@ -255,7 +318,7 @@ const ArticleSection: React.FC = () => {
                         </div>
                     )}
 
-                    {!isLoading && articles.length === 0 && (
+                    {!isLoading && filteredArticles.length === 0 && (
                         <div className="text-center text-white/40 py-20">
                             <p>No articles found.</p>
                         </div>
