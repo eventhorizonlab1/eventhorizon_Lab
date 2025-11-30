@@ -98,13 +98,20 @@ const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Arti
     const summary = translatedSummary === `article_${article.id}_summary` ? article.summary : translatedSummary;
 
     return (
-        <motion.div
+        <motion.button
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="snap-start shrink-0 w-[80vw] md:w-[400px] cursor-pointer group"
+            className="snap-start shrink-0 w-[80vw] md:w-[400px] cursor-pointer group text-left focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 rounded-[2rem]"
             onClick={() => onClick(article)}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onClick(article);
+                }
+            }}
+            aria-label={`${t('article_read_more')} ${title}`}
         >
             {/* Conteneur Visuel */}
             <div className="relative overflow-hidden rounded-[2rem] bg-gray-900 aspect-[4/5] mb-4 border border-white/10 shadow-lg transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
@@ -112,7 +119,7 @@ const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Arti
                 {/* Image */}
                 <img
                     src={article.imageUrl}
-                    alt={title}
+                    alt=""
                     loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
                 />
@@ -150,7 +157,7 @@ const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Arti
                     </p>
                 </div>
             </div>
-        </motion.div>
+        </motion.button>
     );
 });
 

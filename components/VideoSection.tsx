@@ -202,14 +202,21 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
     const title = translatedTitle === `video_${video.id}_title` ? video.title : translatedTitle;
 
     return (
-        <motion.div
+        <motion.button
             layout
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.4 }}
-            className="group cursor-pointer snap-start shrink-0 w-[80vw] md:w-[40vw] lg:w-auto transform-gpu"
+            className="group cursor-pointer snap-start shrink-0 w-[80vw] md:w-[40vw] lg:w-auto transform-gpu text-left focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 rounded-xl"
             onClick={() => onPlay(video)}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onPlay(video);
+                }
+            }}
+            aria-label={`${t('common_play')} ${title}`}
         >
             <div className="block h-full">
                 <div>
@@ -217,7 +224,7 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
                     <div className="relative overflow-hidden rounded-xl bg-gray-200 dark:bg-gray-800 aspect-video mb-3 transition-colors duration-500 border border-black/5 dark:border-white/5 shadow-sm group-hover:shadow-lg">
                         <img
                             src={video.imageUrl}
-                            alt={title}
+                            alt=""
                             loading="lazy"
                             decoding="async"
                             referrerPolicy="no-referrer"
@@ -259,7 +266,7 @@ const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => v
                     </div>
                 </div>
             </div>
-        </motion.div>
+        </motion.button>
     );
 });
 
@@ -423,18 +430,25 @@ const VideoSection: React.FC = () => {
 
                 {/* FEATURED VIDEO */}
                 <div className="max-w-[1800px] mx-auto px-4 md:px-12 mb-12" ref={featuredRef}>
-                    <motion.div
+                    <motion.button
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
                         viewport={{ once: true }}
-                        className="group cursor-pointer relative"
+                        className="group cursor-pointer relative w-full text-left focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 rounded-2xl"
                         onClick={() => setSelectedVideo(FEATURED_VIDEO)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                setSelectedVideo(FEATURED_VIDEO);
+                            }
+                        }}
+                        aria-label={`${t('common_play')} ${featuredTitle}`}
                     >
                         <div className="relative overflow-hidden rounded-2xl bg-gray-200 dark:bg-gray-800 aspect-video md:aspect-[21/9] transition-colors duration-500 border border-black/5 dark:border-white/5 transform-gpu">
                             <motion.div style={{ y: imageY }} className="w-full h-[120%] -mt-[10%] will-change-transform">
                                 <img
                                     src={FEATURED_VIDEO.imageUrl}
-                                    alt={featuredTitle}
+                                    alt=""
                                     loading="lazy"
                                     decoding="async"
                                     referrerPolicy="no-referrer"
@@ -462,12 +476,12 @@ const VideoSection: React.FC = () => {
                                     </p>
                                 </div>
 
-                                <button className="w-14 h-14 md:w-16 md:h-16 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.3)] shrink-0">
+                                <div className="w-14 h-14 md:w-16 md:h-16 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.3)] shrink-0">
                                     <Play className="w-6 h-6 fill-current ml-1" />
-                                </button>
+                                </div>
                             </div>
                         </div>
-                    </motion.div>
+                    </motion.button>
                 </div>
 
                 {/* VIDEOS GRID/LIST */}

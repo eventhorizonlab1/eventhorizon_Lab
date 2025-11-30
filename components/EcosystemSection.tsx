@@ -145,14 +145,22 @@ const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Part
             ref={ref}
             style={{ y }}
             // Tablet Optimization: w-[35vw] for comfortable browsing
-            className="snap-start shrink-0 w-[70vw] md:w-[32vw] lg:w-[22vw] group relative cursor-pointer"
-            onClick={() => onClick(partner)}
+            className="snap-start shrink-0 w-[70vw] md:w-[32vw] lg:w-[22vw] group relative"
         >
-            <motion.div
+            <motion.button
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-30px" }}
                 transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.1 }}
+                className="w-full text-left focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 rounded-3xl"
+                onClick={() => onClick(partner)}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        onClick(partner);
+                    }
+                }}
+                aria-label={`${t('ecosystem_view')} ${partner.name}`}
             >
                 {/* Card Visual - Full Coverage Images */}
                 <div className="relative overflow-hidden rounded-3xl bg-gray-200 dark:bg-gray-900 aspect-[4/5] mb-6 transition-all duration-500 border border-gray-200 dark:border-white/5 shadow-sm group-hover:shadow-2xl">
@@ -161,7 +169,7 @@ const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Part
 
                     <img
                         src={partner.imageUrl}
-                        alt={partner.name}
+                        alt=""
                         loading="lazy"
                         referrerPolicy="no-referrer"
                         className="relative z-10 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
@@ -188,7 +196,7 @@ const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Part
                         {role}
                     </span>
                 </div>
-            </motion.div>
+            </motion.button>
         </motion.div>
     );
 });
