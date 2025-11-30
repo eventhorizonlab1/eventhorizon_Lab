@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { Play, X, Clock, ExternalLink, Radio, ArrowUpRight } from 'lucide-react';
+import { X, Clock, ExternalLink, Radio } from 'lucide-react';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
-import { fetchAPI } from '../src/lib/api';
+import { fetchVideos } from '../src/lib/api';
 import { Video } from '../types';
 import { createPortal } from 'react-dom';
+import VideoCard3D from './VideoCard3D';
 
 // --- UTILS ---
 const getYouTubeId = (url: string) => {
@@ -148,70 +149,6 @@ const VideoModalContent: React.FC<{ video: Video; onClose: () => void }> = ({ vi
     );
 };
 
-const VideoCard: React.FC<{ video: Video; index: number; onPlay: (v: Video) => void }> = React.memo(({ video, index, onPlay }) => {
-    const { t } = useThemeLanguage();
-
-    // Fallback image if imageUrl is empty or invalid
-    const bgImage = video.imageUrl || 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=800&q=80';
-
-    return (
-        <motion.button
-            layoutId={`video-${video.title}`}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1 }}
-            className="group relative aspect-video rounded-xl overflow-hidden bg-white/5 border border-white/10 text-left w-full"
-            onClick={() => onPlay(video)}
-            onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    onPlay(video);
-                }
-            }}
-            aria-label={`${t('common_play')} ${video.title}`}
-        >
-            {/* Background Image */}
-            <div className="absolute inset-0">
-                <img
-                    src={bgImage}
-                    alt={video.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    loading="lazy"
-                />
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500" />
-            </div>
-
-            {/* Content Overlay */}
-            <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                {/* Play Button Overlay */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform scale-90 group-hover:scale-100">
-                    <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-2xl">
-                        <Play className="fill-white text-white ml-1" size={32} />
-                    </div>
-                </div>
-
-                <div className="relative z-10 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                    <div className="flex items-center gap-2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                        <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-blue-500 text-white rounded shadow-lg shadow-blue-500/20">
-                            {video.category}
-                        </span>
-                        <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-white/70 bg-black/50 px-2 py-0.5 rounded backdrop-blur-sm">
-                            <Clock size={10} />
-                            {video.duration}
-                        </span>
-                    </div>
-
-                    <h3 className="text-lg font-bold text-white leading-tight group-hover:text-blue-400 transition-colors duration-300">
-                        {video.title}
-                    </h3>
-                </div>
-            </div>
-        </motion.button>
-    );
-});
-
 const VideoSection: React.FC = () => {
     const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
     const [videos, setVideos] = useState<Video[]>([]);
@@ -226,18 +163,12 @@ const VideoSection: React.FC = () => {
         offset: ["start end", "end start"]
     });
 
-    const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
-
-    // Fetch Videos from Strapi
+    // Fetch Videos from Strapi (or fallback)
     useEffect(() => {
         const getVideos = async () => {
             try {
-                // Note: Ensure your Strapi API permissions are set to Public for 'find'
-                const res = await fetchAPI('/videos', { populate: '*' });
-                if (res && res.data) {
-                    const fetchedVideos = res.data;
-                    setVideos(fetchedVideos);
-                }
+                const fetchedVideos = await fetchVideos();
+                setVideos(fetchedVideos);
             } catch (error) {
                 console.error("Error fetching videos:", error);
             } finally {
@@ -362,10 +293,9 @@ const VideoSection: React.FC = () => {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                             {filteredVideos.map((video, index) => (
-                                <VideoCard
+                                <VideoCard3D
                                     key={index}
                                     video={video}
-                                    index={index}
                                     onPlay={handleVideoSelect}
                                 />
                             ))}
