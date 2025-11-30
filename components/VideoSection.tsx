@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { X, Clock, ExternalLink, Radio } from 'lucide-react';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 import { fetchVideos } from '../src/lib/api';
 import { Video } from '../types';
 import { createPortal } from 'react-dom';
 import VideoCard3D from './VideoCard3D';
+import { useCinematicAudio } from '../src/hooks/useCinematicAudio';
 
 // --- UTILS ---
 const getYouTubeId = (url: string) => {
@@ -157,11 +158,7 @@ const VideoSection: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const { t } = useThemeLanguage();
     const [searchParams, setSearchParams] = useSearchParams();
-
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start end", "end start"]
-    });
+    const { playClick } = useCinematicAudio();
 
     // Fetch Videos from Strapi (or fallback)
     useEffect(() => {
@@ -263,25 +260,30 @@ const VideoSection: React.FC = () => {
                             </p>
                         </motion.div>
 
-                        {/* Filter Tabs */}
+                        {/* Filter Tabs (YouTube Style) */}
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            className="flex flex-wrap gap-2"
+                            className="w-full overflow-x-auto pb-4 no-scrollbar"
                         >
-                            {categories.map((cat) => (
-                                <button
-                                    key={cat}
-                                    onClick={() => setFilter(cat)}
-                                    className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border ${filter === cat
-                                        ? 'bg-white text-black border-white shadow-[0_0_20px_rgba(255,255,255,0.3)]'
-                                        : 'bg-transparent text-white/40 border-white/10 hover:border-white/30 hover:text-white'
-                                        }`}
-                                >
-                                    {cat}
-                                </button>
-                            ))}
+                            <div className="flex gap-3 min-w-max px-1">
+                                {categories.map((cat) => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => {
+                                            playClick();
+                                            setFilter(cat);
+                                        }}
+                                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${filter === cat
+                                            ? 'bg-white text-black'
+                                            : 'bg-white/10 text-white hover:bg-white/20'
+                                            }`}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
                         </motion.div>
                     </div>
 

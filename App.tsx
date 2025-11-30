@@ -11,7 +11,6 @@ import EcosystemSection from './components/EcosystemSection';
 import Footer from './components/Footer';
 import ReloadPrompt from './components/ReloadPrompt';
 import SimulationPage from './components/pages/SimulationPage';
-import CustomCursor from './components/CustomCursor';
 import SmoothScroll from './components/SmoothScroll';
 
 import { useThemeLanguage } from './context/ThemeLanguageContext';
@@ -56,7 +55,6 @@ const App: React.FC = () => {
     <HelmetProvider>
       <SmoothScroll>
         <GlobalLoader isLoaded={isLoaded} />
-        <CustomCursor />
         <ReloadPrompt />
 
         <main id="main-content" className="relative w-full overflow-hidden bg-white dark:bg-eh-black transition-colors duration-500 cursor-none">

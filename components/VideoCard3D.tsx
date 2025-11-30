@@ -69,7 +69,7 @@ const VideoCard3D: React.FC<VideoCard3DProps> = ({ video, onPlay }) => {
                 rotateX,
                 transformStyle: "preserve-3d",
             }}
-            className="group relative cursor-pointer w-[80vw] md:w-[40vw] lg:w-auto flex-shrink-0 snap-start"
+            className="group relative cursor-pointer w-full flex-shrink-0"
             onClick={() => {
                 playClick();
                 onPlay(video);
