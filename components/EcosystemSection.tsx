@@ -129,11 +129,7 @@ const EcosystemSection: React.FC = () => {
             try {
                 const res = await fetchAPI('/partners', { populate: '*' });
                 if (res && res.data) {
-                    const fetchedPartners = res.data.map((item: any) => ({
-                        id: item.id,
-                        ...item.attributes
-                    }));
-                    setPartners(fetchedPartners);
+                    setPartners(res.data);
                 }
             } catch (error) {
                 console.error("Error fetching partners:", error);

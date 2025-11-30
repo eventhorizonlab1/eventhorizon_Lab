@@ -1,9 +1,6 @@
 
 export interface StrapiResponse<T> {
-  data: {
-    id: number;
-    attributes: T;
-  }[];
+  data: T[];
   meta: {
     pagination: {
       page: number;

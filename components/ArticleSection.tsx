@@ -154,11 +154,7 @@ const ArticleSection: React.FC = () => {
             try {
                 const res = await fetchAPI('/articles', { populate: '*' });
                 if (res && res.data) {
-                    const fetchedArticles = res.data.map((item: any) => ({
-                        id: item.id,
-                        ...item.attributes
-                    }));
-                    setArticles(fetchedArticles);
+                    setArticles(res.data);
                 }
             } catch (error) {
                 console.error("Error fetching articles:", error);

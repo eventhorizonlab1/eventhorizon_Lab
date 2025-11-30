@@ -235,10 +235,7 @@ const VideoSection: React.FC = () => {
                 // Note: Ensure your Strapi API permissions are set to Public for 'find'
                 const res = await fetchAPI('/videos', { populate: '*' });
                 if (res && res.data) {
-                    const fetchedVideos = res.data.map((item: any) => ({
-                        id: item.id,
-                        ...item.attributes
-                    }));
+                    const fetchedVideos = res.data;
                     setVideos(fetchedVideos);
                 }
             } catch (error) {
@@ -347,8 +344,8 @@ const VideoSection: React.FC = () => {
                                     key={cat}
                                     onClick={() => setFilter(cat)}
                                     className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border ${filter === cat
-                                            ? 'bg-white text-black border-white shadow-[0_0_20px_rgba(255,255,255,0.3)]'
-                                            : 'bg-transparent text-white/40 border-white/10 hover:border-white/30 hover:text-white'
+                                        ? 'bg-white text-black border-white shadow-[0_0_20px_rgba(255,255,255,0.3)]'
+                                        : 'bg-transparent text-white/40 border-white/10 hover:border-white/30 hover:text-white'
                                         }`}
                                 >
                                     {cat}
