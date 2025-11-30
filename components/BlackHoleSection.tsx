@@ -361,10 +361,18 @@ const ComplexHUD = ({ orbitalData, focusLevel }: { orbitalData: { az: number, el
     );
 };
 
+import { useInView } from 'framer-motion';
+
 // --- MOTEUR THREE.JS ---
 
 const InterstellarBlackHole = ({ setOrbitalData, setFocusLevel }: { setOrbitalData: (d: any) => void, setFocusLevel: (l: number) => void }) => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const isInView = useInView(containerRef); // Track visibility
+    const isInViewRef = useRef(isInView); // Ref to pass current visibility into animation loop
+
+    useEffect(() => {
+        isInViewRef.current = isInView;
+    }, [isInView]);
 
     // ÉTAT ORBITAL
     const orbitState = useRef({
@@ -422,6 +430,7 @@ const InterstellarBlackHole = ({ setOrbitalData, setFocusLevel }: { setOrbitalDa
         let animationId: number;
         const animate = () => {
             animationId = requestAnimationFrame(animate);
+
             const rawDt = clock.getDelta();
 
             // --- LOGIQUE ORBITALE (INTERPOLATION) ---
@@ -451,6 +460,10 @@ const InterstellarBlackHole = ({ setOrbitalData, setFocusLevel }: { setOrbitalDa
                 dist: orbitState.current.distance
             });
             setFocusLevel(focusRef.current);
+
+            // PERFORMANCE OPTIMIZATION: Skip rendering if not visible
+            // We keep the loop running to maintain state but skip heavy GPU work
+            if (!isInViewRef.current) return;
 
             renderer.render(scene, camera);
         };
@@ -485,7 +498,7 @@ const InterstellarBlackHole = ({ setOrbitalData, setFocusLevel }: { setOrbitalDa
                     orbitState.current.targetElevation += dy * sensitivity;
 
                     // Clamp Elevation pour éviter le retournement aux pôles (Gimbal lock visual)
-                    // On garde une marge de sécurité (89 degrés)
+                    // On garde une marge de sécurité (89 degrees)
                     const limit = Math.PI / 2 - 0.05;
                     orbitState.current.targetElevation = Math.max(-limit, Math.min(limit, orbitState.current.targetElevation));
 
