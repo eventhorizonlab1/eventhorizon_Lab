@@ -1,11 +1,12 @@
-
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { FEATURED_VIDEO, VIDEOS } from '../constants';
-import { Play, Radio, ArrowUpRight, X, ExternalLink, Clock, Hash, Tag } from 'lucide-react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { Video } from '../types';
+import { useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { Play, X, Clock, ChevronRight, ExternalLink, Hash, Tag, Radio, ArrowUpRight } from 'lucide-react';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
+import { VIDEOS, FEATURED_VIDEO } from '../constants';
+import { Video } from '../types';
 
 const getYouTubeId = (url: string) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/|live\/)([^#&?]*).*/;
@@ -57,7 +58,6 @@ const VideoModalContent: React.FC<{ video: Video; onClose: () => void }> = ({ vi
         document.addEventListener('keydown', handleKeyDown);
 
         // Focus the first focusable element on mount
-        // Small timeout to ensure render
         setTimeout(() => {
             if (modalRef.current) {
                 const focusableElements = modalRef.current.querySelectorAll(
@@ -83,11 +83,8 @@ const VideoModalContent: React.FC<{ video: Video; onClose: () => void }> = ({ vi
     }, [video]);
 
     const videoId = getYouTubeId(video.videoUrl);
-
     const translatedTitle = t(`video_${video.id}_title`);
     const title = translatedTitle.startsWith('video_') ? video.title : translatedTitle;
-
-    // Fallback for description if not in constants yet (though we added it)
     const description = video.description || t(`video_${video.id}_desc`) || "Aucune description disponible pour cette vidéo.";
 
     return (
@@ -275,7 +272,39 @@ const VideoSection: React.FC = () => {
     const { t } = useThemeLanguage();
     const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
     const [activeCategory, setActiveCategory] = useState<string>('ALL');
+    const [searchParams, setSearchParams] = useSearchParams();
 
+    // Sync URL -> State
+    useEffect(() => {
+        const videoId = searchParams.get('video');
+        if (videoId) {
+            const video = VIDEOS.find(v => v.id === videoId);
+            if (video) {
+                setSelectedVideo(video);
+            }
+        } else {
+            setSelectedVideo(null);
+        }
+    }, [searchParams]);
+
+    // Sync State -> URL
+    const handleVideoSelect = (video: Video | null) => {
+        if (video) {
+            setSearchParams(prev => {
+                const newParams = new URLSearchParams(prev);
+                newParams.set('video', video.id);
+                newParams.delete('article');
+                newParams.delete('partner');
+                return newParams;
+            }, { replace: false }); // Push to history so back button works
+        } else {
+            setSearchParams(prev => {
+                const newParams = new URLSearchParams(prev);
+                newParams.delete('video');
+                return newParams;
+            }, { replace: false });
+        }
+    };
 
     const { scrollYProgress } = useScroll({
         target: featuredRef,
@@ -292,9 +321,6 @@ const VideoSection: React.FC = () => {
         return ['ALL', ...Array.from(cats)];
     }, []);
 
-
-
-    // Filter videos based on selection
     // Filter videos based on selection
     const filteredVideos = useMemo(() => {
         return VIDEOS.filter(v => {
@@ -314,12 +340,21 @@ const VideoSection: React.FC = () => {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.3 }}
                             className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-xl p-0 md:p-12"
-                            onClick={() => setSelectedVideo(null)}
+                            onClick={() => handleVideoSelect(null)}
                         >
+                            {/* SEO Metadata for Modal */}
+                            <Helmet>
+                                <title>{selectedVideo.title} | Event Horizon</title>
+                                <meta name="description" content={selectedVideo.description} />
+                                <meta property="og:title" content={selectedVideo.title} />
+                                <meta property="og:description" content={selectedVideo.description} />
+                                <meta property="og:image" content={selectedVideo.imageUrl} />
+                            </Helmet>
+
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    setSelectedVideo(null);
+                                    handleVideoSelect(null);
                                 }}
                                 className="absolute top-4 right-4 md:top-6 md:right-6 p-2 md:p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-50 backdrop-blur-md"
                                 aria-label={t('common_close')}
@@ -327,7 +362,7 @@ const VideoSection: React.FC = () => {
                                 <X size={24} />
                             </button>
 
-                            <VideoModalContent video={selectedVideo} onClose={() => setSelectedVideo(null)} />
+                            <VideoModalContent video={selectedVideo} onClose={() => handleVideoSelect(null)} />
                         </motion.div>
                     )}
                 </AnimatePresence>,
@@ -422,8 +457,6 @@ const VideoSection: React.FC = () => {
                                     </button>
                                 ))}
                             </div>
-
-
                         </div>
                     </div>
                 </div>
@@ -435,11 +468,11 @@ const VideoSection: React.FC = () => {
                         whileInView={{ opacity: 1 }}
                         viewport={{ once: true }}
                         className="group cursor-pointer relative w-full text-left focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 rounded-2xl"
-                        onClick={() => setSelectedVideo(FEATURED_VIDEO)}
+                        onClick={() => handleVideoSelect(FEATURED_VIDEO)}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter' || e.key === ' ') {
                                 e.preventDefault();
-                                setSelectedVideo(FEATURED_VIDEO);
+                                handleVideoSelect(FEATURED_VIDEO);
                             }
                         }}
                         aria-label={`${t('common_play')} ${featuredTitle}`}
@@ -488,7 +521,7 @@ const VideoSection: React.FC = () => {
                 <div className="max-w-[1800px] mx-auto px-4 md:px-12 flex overflow-x-auto lg:grid lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-x-6 md:gap-y-12 snap-x snap-mandatory lg:snap-none no-scrollbar pb-8 md:pb-0 touch-pan-x min-h-[300px]" style={{ WebkitOverflowScrolling: 'touch' }}>
                     <AnimatePresence mode="popLayout">
                         {filteredVideos.map((video, index) => (
-                            <VideoCard key={video.id} video={video} index={index} onPlay={setSelectedVideo} />
+                            <VideoCard key={video.id} video={video} index={index} onPlay={handleVideoSelect} />
                         ))}
                     </AnimatePresence>
 

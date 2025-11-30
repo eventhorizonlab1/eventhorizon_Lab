@@ -1,5 +1,6 @@
-
 import React, { useRef, useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { ARTICLES } from '../constants';
 import { Article } from '../types';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
@@ -166,6 +167,39 @@ const ArticleSection: React.FC = () => {
     const { t } = useThemeLanguage();
     const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    // Sync URL -> State
+    useEffect(() => {
+        const articleId = searchParams.get('article');
+        if (articleId) {
+            const article = ARTICLES.find(a => a.id === articleId);
+            if (article) {
+                setSelectedArticle(article);
+            }
+        } else {
+            setSelectedArticle(null);
+        }
+    }, [searchParams]);
+
+    // Sync State -> URL
+    const handleArticleSelect = (article: Article | null) => {
+        if (article) {
+            setSearchParams(prev => {
+                const newParams = new URLSearchParams(prev);
+                newParams.set('article', article.id);
+                newParams.delete('video');
+                newParams.delete('partner');
+                return newParams;
+            }, { replace: false });
+        } else {
+            setSearchParams(prev => {
+                const newParams = new URLSearchParams(prev);
+                newParams.delete('article');
+                return newParams;
+            }, { replace: false });
+        }
+    };
 
     const scroll = (direction: 'left' | 'right') => {
         if (scrollContainerRef.current) {
@@ -184,11 +218,20 @@ const ArticleSection: React.FC = () => {
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
                         className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
-                        onClick={() => setSelectedArticle(null)}
+                        onClick={() => handleArticleSelect(null)}
                     >
+                        {/* SEO Metadata for Modal */}
+                        <Helmet>
+                            <title>{selectedArticle.title} | Event Horizon</title>
+                            <meta name="description" content={selectedArticle.summary} />
+                            <meta property="og:title" content={selectedArticle.title} />
+                            <meta property="og:description" content={selectedArticle.summary} />
+                            <meta property="og:image" content={selectedArticle.imageUrl} />
+                        </Helmet>
+
                         <ArticleModalContent
                             article={selectedArticle}
-                            onClose={() => setSelectedArticle(null)}
+                            onClose={() => handleArticleSelect(null)}
                         />
                     </motion.div>
                 )}
@@ -225,7 +268,7 @@ const ArticleSection: React.FC = () => {
                                 key={article.id}
                                 article={article}
                                 index={index}
-                                onClick={setSelectedArticle}
+                                onClick={handleArticleSelect}
                             />
                         ))}
                     </div>

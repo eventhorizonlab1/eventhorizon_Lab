@@ -1,5 +1,6 @@
-
 import React, { useRef, useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { PARTNERS } from '../constants';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Partner } from '../types';
@@ -204,6 +205,39 @@ const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Part
 const EcosystemSection: React.FC = () => {
     const { t } = useThemeLanguage();
     const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    // Sync URL -> State
+    useEffect(() => {
+        const partnerId = searchParams.get('partner');
+        if (partnerId) {
+            const partner = PARTNERS.find(p => p.id === partnerId);
+            if (partner) {
+                setSelectedPartner(partner);
+            }
+        } else {
+            setSelectedPartner(null);
+        }
+    }, [searchParams]);
+
+    // Sync State -> URL
+    const handlePartnerSelect = (partner: Partner | null) => {
+        if (partner) {
+            setSearchParams(prev => {
+                const newParams = new URLSearchParams(prev);
+                newParams.set('partner', partner.id);
+                newParams.delete('video');
+                newParams.delete('article');
+                return newParams;
+            }, { replace: false });
+        } else {
+            setSearchParams(prev => {
+                const newParams = new URLSearchParams(prev);
+                newParams.delete('partner');
+                return newParams;
+            }, { replace: false });
+        }
+    };
 
     return (
         <>
@@ -216,11 +250,20 @@ const EcosystemSection: React.FC = () => {
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
                         className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-md p-4"
-                        onClick={() => setSelectedPartner(null)}
+                        onClick={() => handlePartnerSelect(null)}
                     >
+                        {/* SEO Metadata for Modal */}
+                        <Helmet>
+                            <title>{selectedPartner.name} | Event Horizon</title>
+                            <meta name="description" content={t(`partner_${selectedPartner.id}_desc`)} />
+                            <meta property="og:title" content={selectedPartner.name} />
+                            <meta property="og:description" content={t(`partner_${selectedPartner.id}_desc`)} />
+                            <meta property="og:image" content={selectedPartner.imageUrl} />
+                        </Helmet>
+
                         <PartnerModalContent
                             partner={selectedPartner}
-                            onClose={() => setSelectedPartner(null)}
+                            onClose={() => handlePartnerSelect(null)}
                         />
                     </motion.div>
                 )}
@@ -253,7 +296,7 @@ const EcosystemSection: React.FC = () => {
                                 key={partner.id}
                                 partner={partner}
                                 index={index}
-                                onClick={setSelectedPartner}
+                                onClick={handlePartnerSelect}
                             />
                         ))}
                     </div>
