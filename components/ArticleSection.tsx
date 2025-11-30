@@ -183,7 +183,7 @@ const ArticleSection: React.FC = () => {
     const { t } = useThemeLanguage();
     const [searchParams, setSearchParams] = useSearchParams();
     const containerRef = useRef<HTMLDivElement>(null);
-    const { playClick } = useCinematicAudio();
+    const { playClick, playHover } = useCinematicAudio();
 
     // Fetch Articles
     useEffect(() => {
@@ -306,15 +306,72 @@ const ArticleSection: React.FC = () => {
                             <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {filteredArticles.map((article, index) => (
-                                <ArticleCard
-                                    key={index}
-                                    article={article}
-                                    index={index}
-                                    onClick={handleArticleSelect}
-                                />
-                            ))}
+                        <div className="space-y-12">
+                            {/* Featured Article */}
+                            {filteredArticles.length > 0 && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="relative w-full aspect-[4/3] md:aspect-[21/9] rounded-2xl overflow-hidden group cursor-pointer border border-white/10"
+                                    onClick={() => {
+                                        playClick();
+                                        if (filteredArticles[0].linkUrl) {
+                                            window.open(filteredArticles[0].linkUrl, '_blank', 'noopener,noreferrer');
+                                        } else {
+                                            handleArticleSelect(filteredArticles[0]);
+                                        }
+                                    }}
+                                    onMouseEnter={() => playHover()}
+                                >
+                                    <img
+                                        src={filteredArticles[0].imageUrl}
+                                        alt={filteredArticles[0].title}
+                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90" />
+
+                                    <div className="absolute bottom-0 left-0 p-6 md:p-12 w-full md:w-2/3">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-purple-600 text-white rounded-full">
+                                                Featured
+                                            </span>
+                                            {filteredArticles[0].category && (
+                                                <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-white/10 text-white/80 rounded-full backdrop-blur-md border border-white/10">
+                                                    {filteredArticles[0].category}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <h3 className="text-2xl md:text-5xl font-black text-white mb-4 leading-tight">
+                                            {filteredArticles[0].title}
+                                        </h3>
+                                        <p className="text-white/70 line-clamp-2 md:text-lg mb-6 max-w-2xl">
+                                            {filteredArticles[0].summary}
+                                        </p>
+                                        <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-purple-400 group-hover:text-white transition-colors">
+                                            <span>{filteredArticles[0].linkUrl ? "LIRE LA SOURCE" : t('article_read_more')}</span>
+                                            <ArrowRight size={16} />
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* Horizontal Scroll List */}
+                            {filteredArticles.length > 1 && (
+                                <div>
+                                    <h4 className="text-xl font-bold text-white mb-6 px-1">More Articles</h4>
+                                    <div className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+                                        {filteredArticles.slice(1).map((article, index) => (
+                                            <div key={index} className="min-w-[85vw] md:min-w-[400px] snap-start">
+                                                <ArticleCard
+                                                    article={article}
+                                                    index={index}
+                                                    onClick={handleArticleSelect}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
 

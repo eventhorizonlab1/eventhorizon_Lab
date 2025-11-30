@@ -158,7 +158,7 @@ const VideoSection: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const { t } = useThemeLanguage();
     const [searchParams, setSearchParams] = useSearchParams();
-    const { playClick } = useCinematicAudio();
+    const { playClick, playHover } = useCinematicAudio();
 
     // Fetch Videos from Strapi (or fallback)
     useEffect(() => {
@@ -287,20 +287,71 @@ const VideoSection: React.FC = () => {
                         </motion.div>
                     </div>
 
-                    {/* Video Grid */}
+                    {/* Video Content */}
                     {isLoading ? (
                         <div className="flex items-center justify-center h-64">
                             <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                            {filteredVideos.map((video, index) => (
-                                <VideoCard3D
-                                    key={index}
-                                    video={video}
-                                    onPlay={handleVideoSelect}
-                                />
-                            ))}
+                        <div className="space-y-12">
+                            {/* Featured Video */}
+                            {filteredVideos.length > 0 && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="relative w-full aspect-video md:aspect-[21/9] rounded-2xl overflow-hidden group cursor-pointer border border-white/10"
+                                    onClick={() => {
+                                        playClick();
+                                        handleVideoSelect(filteredVideos[0]);
+                                    }}
+                                    onMouseEnter={() => playHover()}
+                                >
+                                    <img
+                                        src={filteredVideos[0].imageUrl}
+                                        alt={filteredVideos[0].title}
+                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-90" />
+
+                                    <div className="absolute bottom-0 left-0 p-6 md:p-12 w-full md:w-2/3">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-blue-600 text-white rounded-full">
+                                                Featured
+                                            </span>
+                                            <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-white/10 text-white/80 rounded-full backdrop-blur-md border border-white/10">
+                                                {filteredVideos[0].category}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-2xl md:text-5xl font-black text-white mb-4 leading-tight">
+                                            {filteredVideos[0].title}
+                                        </h3>
+                                        <p className="text-white/70 line-clamp-2 md:text-lg mb-6 max-w-2xl">
+                                            {filteredVideos[0].description}
+                                        </p>
+                                        <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-blue-400 group-hover:text-white transition-colors">
+                                            <span>{t('video_watch_now') || 'Watch Now'}</span>
+                                            <ExternalLink size={16} />
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* Horizontal Scroll List */}
+                            {filteredVideos.length > 1 && (
+                                <div>
+                                    <h4 className="text-xl font-bold text-white mb-6 px-1">More Videos</h4>
+                                    <div className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+                                        {filteredVideos.slice(1).map((video, index) => (
+                                            <div key={index} className="min-w-[85vw] md:min-w-[400px] snap-start">
+                                                <VideoCard3D
+                                                    video={video}
+                                                    onPlay={handleVideoSelect}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
 
