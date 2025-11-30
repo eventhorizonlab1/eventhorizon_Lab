@@ -53,7 +53,7 @@ const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> =
                 {/* Left: Image */}
                 <div className="w-full md:w-5/12 h-64 md:h-auto relative shrink-0 bg-white/5">
                     <img
-                        src={partner.logoUrl}
+                        src={partner.imageUrl}
                         alt={partner.name}
                         className="w-full h-full object-contain p-12"
                     />
@@ -102,11 +102,11 @@ const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Part
             className="group relative flex flex-col items-center justify-center p-8 bg-white/5 border border-white/10 rounded-xl hover:border-white/20 transition-all hover:-translate-y-1"
             onClick={() => onClick(partner)}
         >
-            <div className="w-32 h-32 mb-6 relative grayscale group-hover:grayscale-0 transition-all duration-500">
+            <div className="relative h-48 p-8 bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
                 <img
-                    src={partner.logoUrl}
+                    src={partner.imageUrl}
                     alt={partner.name}
-                    className="w-full h-full object-contain"
+                    className="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-500"
                 />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">{partner.name}</h3>
@@ -199,9 +199,9 @@ const EcosystemSection: React.FC = () => {
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
                         <div className="max-w-2xl">
-                            <div className="flex items-center gap-2 text-blue-500 mb-4">
+                            <div className="flex items-center gap-2 text-emerald-500 mb-4">
                                 <Users className="animate-pulse" size={16} />
-                                <span className="text-xs font-bold uppercase tracking-[0.2em]">{t('ecosystem_partners')}</span>
+                                <span className="text-xs font-bold uppercase tracking-[0.2em]">{t('ecosystem_tagline')}</span>
                             </div>
                             <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
                                 {t('ecosystem_title')}

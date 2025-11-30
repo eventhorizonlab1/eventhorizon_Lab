@@ -262,15 +262,15 @@ const ArticleSection: React.FC = () => {
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
                         <div className="max-w-2xl">
-                            <div className="flex items-center gap-2 text-blue-500 mb-4">
+                            <div className="flex items-center gap-2 text-purple-500 mb-4">
                                 <BookOpen className="animate-pulse" size={16} />
                                 <span className="text-xs font-bold uppercase tracking-[0.2em]">{t('article_latest_news')}</span>
                             </div>
                             <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
-                                {t('article_title')}
+                                {t('articles_title')}
                             </h2>
                             <p className="text-lg text-white/60 max-w-lg leading-relaxed">
-                                {t('article_subtitle')}
+                                {t('articles_subtitle')}
                             </p>
                         </div>
 
