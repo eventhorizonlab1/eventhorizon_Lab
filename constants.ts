@@ -26,7 +26,9 @@ export const FEATURED_VIDEO: Video = {
   // Image depuis votre dépôt GitHub (Branche main)
   imageUrl: '/assets/videos/feat_1.jpg',
   videoUrl: 'https://www.youtube.com/watch?v=ukoMgE_8heo',
-  description: "Revivez le moment historique du retour de l'Europe spatiale avec le décollage inaugural d'Ariane 6 depuis Kourou. Une étape cruciale pour l'autonomie stratégique du continent."
+  description: "Revivez le moment historique du retour de l'Europe spatiale avec le décollage inaugural d'Ariane 6 depuis Kourou. Une étape cruciale pour l'autonomie stratégique du continent.",
+  channel: "ESA",
+  views: "1.2M views"
 };
 
 export const VIDEOS: Video[] = [
@@ -39,7 +41,9 @@ export const VIDEOS: Video[] = [
     duration: '03:45:00',
     imageUrl: '/assets/videos/v_new_1.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=B5mDezzc74M',
-    description: "Le replay intégral du vol inaugural VA262 d'Ariane 6. Un moment d'histoire pour l'Agence Spatiale Européenne."
+    description: "Le replay intégral du vol inaugural VA262 d'Ariane 6. Un moment d'histoire pour l'Agence Spatiale Européenne.",
+    channel: "ESA",
+    views: "850k views"
   },
   {
     id: 'v_new_2',
@@ -49,7 +53,9 @@ export const VIDEOS: Video[] = [
     duration: '18:20',
     imageUrl: '/assets/videos/v_new_2.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=Tiqfj7QhKyI',
-    description: "Hugo Lisoir décrypte le premier vol d'Ariane 6 : ce qui a marché, et le problème technique survenu en fin de mission avec l'APU."
+    description: "Hugo Lisoir décrypte le premier vol d'Ariane 6 : ce qui a marché, et le problème technique survenu en fin de mission avec l'APU.",
+    channel: "Hugo Lisoir",
+    views: "420k views"
   },
   {
     id: 'v_new_3',
@@ -59,7 +65,9 @@ export const VIDEOS: Video[] = [
     duration: '04:12:00',
     imageUrl: '/assets/videos/v_new_3.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=MRGid8lylLc',
-    description: "Revivez l'ambiance du lancement avec les commentaires passionnés de Stardust (Astronogeek)."
+    description: "Revivez l'ambiance du lancement avec les commentaires passionnés de Stardust (Astronogeek).",
+    channel: "Stardust",
+    views: "310k views"
   },
   {
     id: 'v_new_4',
@@ -69,7 +77,9 @@ export const VIDEOS: Video[] = [
     duration: '02:30',
     imageUrl: '/assets/videos/v_new_4.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=FDKbEavYCVk',
-    description: "Prévisualisation et simulation du futur vol VA265 qui emportera le satellite Sentinel-1D du programme Copernicus."
+    description: "Prévisualisation et simulation du futur vol VA265 qui emportera le satellite Sentinel-1D du programme Copernicus.",
+    channel: "Arianespace",
+    views: "45k views"
   },
   {
     id: 'v_new_5',
@@ -79,7 +89,9 @@ export const VIDEOS: Video[] = [
     duration: '15:10',
     imageUrl: '/assets/videos/v_new_5.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=ELTmiLg7gLw',
-    description: "Reportage en immersion sur la préparation du prochain vol commercial d'Ariane 6."
+    description: "Reportage en immersion sur la préparation du prochain vol commercial d'Ariane 6.",
+    channel: "CNES",
+    views: "28k views"
   },
   {
     id: 'v_new_6',
@@ -89,7 +101,9 @@ export const VIDEOS: Video[] = [
     duration: '05:45',
     imageUrl: '/assets/videos/v_new_6.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=LsX01klFlpU',
-    description: "Découvrez les coulisses de l'ESRIN, le centre de l'ESA pour l'observation de la Terre, lors des journées portes ouvertes 2025."
+    description: "Découvrez les coulisses de l'ESRIN, le centre de l'ESA pour l'observation de la Terre, lors des journées portes ouvertes 2025.",
+    channel: "ESA",
+    views: "12k views"
   },
   {
     id: 'v_new_7',
@@ -99,7 +113,9 @@ export const VIDEOS: Video[] = [
     duration: '25:30',
     imageUrl: '/assets/videos/v_new_7.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=jUQ3qZNLXNg',
-    description: "Intervention inspirante d'Hélène Huby, CEO de The Exploration Company, sur l'avenir du transport spatial cargo européen."
+    description: "Intervention inspirante d'Hélène Huby, CEO de The Exploration Company, sur l'avenir du transport spatial cargo européen.",
+    channel: "Bpifrance",
+    views: "15k views"
   },
   {
     id: 'v_new_8',
@@ -109,7 +125,9 @@ export const VIDEOS: Video[] = [
     duration: '03:15',
     imageUrl: '/assets/videos/v_new_8.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=tqRHR6u2MpQ',
-    description: "Découverte technique de la capsule Nyx, le futur vaisseau cargo réutilisable européen capable de revenir de l'espace."
+    description: "Découverte technique de la capsule Nyx, le futur vaisseau cargo réutilisable européen capable de revenir de l'espace.",
+    channel: "ISS National Lab",
+    views: "8k views"
   },
   {
     id: 'v_new_9',
@@ -119,7 +137,9 @@ export const VIDEOS: Video[] = [
     duration: '12:45',
     imageUrl: '/assets/videos/v_new_9.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=C4BdQ5n34Wo',
-    description: "Conférence de presse de MaiaSpace détaillant la feuille de route vers le premier vol de leur mini-lanceur réutilisable."
+    description: "Conférence de presse de MaiaSpace détaillant la feuille de route vers le premier vol de leur mini-lanceur réutilisable.",
+    channel: "MaiaSpace",
+    views: "22k views"
   },
   {
     id: 'v_new_10',
@@ -129,7 +149,9 @@ export const VIDEOS: Video[] = [
     duration: '10:20',
     imageUrl: '/assets/videos/v_new_10.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=GvL919qYTSY',
-    description: "Entretien exclusif avec le dirigeant de MaiaSpace sur les défis de la réutilisabilité en Europe."
+    description: "Entretien exclusif avec le dirigeant de MaiaSpace sur les défis de la réutilisabilité en Europe.",
+    channel: "Bpifrance",
+    views: "18k views"
   },
   {
     id: 'v_new_11',
@@ -139,7 +161,9 @@ export const VIDEOS: Video[] = [
     duration: '14:10',
     imageUrl: '/assets/videos/v_new_11.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=E0eVosJGnjA',
-    description: "Le parcours et la vision de Stanislas Maximin, fondateur de Latitude, la startup française qui développe le lanceur Zephyr."
+    description: "Le parcours et la vision de Stanislas Maximin, fondateur de Latitude, la startup française qui développe le lanceur Zephyr.",
+    channel: "Hugo Lisoir",
+    views: "150k views"
   },
   {
     id: 'v_new_12',
@@ -149,7 +173,9 @@ export const VIDEOS: Video[] = [
     duration: '00:59',
     imageUrl: '/assets/videos/v_new_12.jpg',
     videoUrl: 'https://www.youtube.com/shorts/5ImuM68aN5c',
-    description: "Aperçu rapide du moteur Navier de Latitude présenté au salon VivaTech."
+    description: "Aperçu rapide du moteur Navier de Latitude présenté au salon VivaTech.",
+    channel: "Latitude",
+    views: "5k views"
   },
   {
     id: 'v_new_13',
@@ -159,7 +185,9 @@ export const VIDEOS: Video[] = [
     duration: '04:50',
     imageUrl: '/assets/videos/v_new_13.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=yAxzKhxqdWg',
-    description: "Tentative de vol orbital du lanceur Spectrum depuis la Norvège. Une étape clé pour le NewSpace allemand."
+    description: "Tentative de vol orbital du lanceur Spectrum depuis la Norvège. Une étape clé pour le NewSpace allemand.",
+    channel: "Isar Aerospace",
+    views: "60k views"
   },
   {
     id: 'v_new_14',
@@ -169,7 +197,9 @@ export const VIDEOS: Video[] = [
     duration: '08:30',
     imageUrl: '/assets/videos/v_new_14.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=LxC-BvAW5G4',
-    description: "Retour technique sur les anomalies rencontrées lors du premier vol d'essai d'Isar Aerospace."
+    description: "Retour technique sur les anomalies rencontrées lors du premier vol d'essai d'Isar Aerospace.",
+    channel: "Scott Manley",
+    views: "350k views"
   },
   {
     id: 'v_new_15',
@@ -179,7 +209,9 @@ export const VIDEOS: Video[] = [
     duration: '02:15',
     imageUrl: '/assets/videos/v_new_15.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=IaxMjVpdAsY',
-    description: "Succès pour le tir suborbital de la fusée SR75 de HyImpulse, propulsée à la cire de paraffine."
+    description: "Succès pour le tir suborbital de la fusée SR75 de HyImpulse, propulsée à la cire de paraffine.",
+    channel: "HyImpulse",
+    views: "15k views"
   },
   {
     id: 'v_new_16',
@@ -189,7 +221,9 @@ export const VIDEOS: Video[] = [
     duration: '00:45',
     imageUrl: '/assets/videos/v_new_16.jpg',
     videoUrl: 'https://www.youtube.com/shorts/7-r6yEgORes',
-    description: "Mise à jour rapide sur le desarrollo del lanzador español Miura 5."
+    description: "Mise à jour rapide sur le desarrollo del lanzador español Miura 5.",
+    channel: "PLD Space",
+    views: "10k views"
   },
   {
     id: 'v_new_17',
@@ -199,7 +233,9 @@ export const VIDEOS: Video[] = [
     duration: '22:00',
     imageUrl: '/assets/videos/v_new_17.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=86ufZvtsj8M',
-    description: "Bilan complet et prospective de l'année spatiale : Starship, Ariane 6, retour sur la Lune et NewSpace."
+    description: "Bilan complet et prospective de l'année spatiale : Starship, Ariane 6, retour sur la Lune et NewSpace.",
+    channel: "Stardust",
+    views: "180k views"
   },
   {
     id: 'v_new_18',
@@ -209,7 +245,9 @@ export const VIDEOS: Video[] = [
     duration: '11:45',
     imageUrl: '/assets/videos/v_new_18.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=1jA1c7PyBDk',
-    description: "Un documentaire sur l'histoire et les ambitions de Latitude (ex-Venture Orbital Systems)."
+    description: "Un documentaire sur l'histoire et les ambitions de Latitude (ex-Venture Orbital Systems).",
+    channel: "Tim Dodd",
+    views: "550k views"
   },
   {
     id: 'v_new_19',
@@ -219,7 +257,9 @@ export const VIDEOS: Video[] = [
     duration: '00:30',
     imageUrl: '/assets/videos/v_new_19.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=7tyJPJkFvM8',
-    description: "Vidéo courte et pédagogique pour comprendre le positionnement de MaiaSpace."
+    description: "Vidéo courte et pédagogique pour comprendre le positionnement de MaiaSpace.",
+    channel: "MaiaSpace",
+    views: "5k views"
   },
   {
     id: 'v_new_20',
@@ -229,7 +269,9 @@ export const VIDEOS: Video[] = [
     duration: '01:30:00',
     imageUrl: '/assets/videos/v_new_20.jpg',
     videoUrl: 'https://www.youtube.com/watch?v=qhOfIy6PpH8',
-    description: "Les grands enjeux de l'observation de la Terre discutés lors du symposium majeur de l'ESA."
+    description: "Les grands enjeux de l'observation de la Terre discutés lors du symposium majeur de l'ESA.",
+    channel: "ESA",
+    views: "3k views"
   },
 
   // --- ANCIENNES VIDÉOS (Restaurées) ---
@@ -497,7 +539,7 @@ export const PARTNERS: Partner[] = [
     name: "The Exploration Company",
     role: "Cargo Spatial Réutilisable",
     description: "Startup franco-allemande ambitieuse développant 'Nyx', une capsule cargo réutilisable pour desservir les futures stations spatiales, avec une forte présence et des tests clés menés dans l'écosystème toulousain et européen.",
-    imageUrl: "/assets/ecosystem/tec.jpg",
+    imageUrl: "/assets/ecosystem/tec.png",
     websiteUrl: "https://www.exploration.space",
     category: "NEWSPACE"
   },
@@ -506,7 +548,7 @@ export const PARTNERS: Partner[] = [
     name: "MaiaSpace",
     role: "Mini-Lanceur Réutilisable",
     description: "Filiale d'ArianeGroup, MaiaSpace développe 'Maia', un mini-lanceur partiellement réutilisable, visant le marché en plein essor des petits satellites, avec des synergies toulousaines.",
-    imageUrl: "/assets/ecosystem/maiaspace.jpg",
+    imageUrl: "/assets/ecosystem/maiaspace.png",
     websiteUrl: "https://www.maiaspace.com",
     category: "NEWSPACE"
   },
@@ -515,7 +557,7 @@ export const PARTNERS: Partner[] = [
     name: "Latitude",
     role: "Micro-Lanceur Innovant",
     description: "Startup rémoise développant 'Zéphyr', un micro-lanceur pour les nanosatellites, avec une approche agile et rapide.",
-    imageUrl: "/assets/ecosystem/latitude.jpg",
+    imageUrl: "/assets/ecosystem/latitude.png",
     websiteUrl: "https://www.latitude.eu",
     category: "NEWSPACE"
   }
