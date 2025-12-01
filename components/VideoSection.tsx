@@ -234,10 +234,10 @@ const VideoSection: React.FC = () => {
                 document.body
             )}
 
-            <section id="videos" ref={containerRef} className="relative py-32 bg-[#0a0a0a] overflow-hidden">
+            <section id="videos" ref={containerRef} className="relative py-32 bg-gray-50 dark:bg-[#0a0a0a] overflow-hidden transition-colors duration-500">
                 {/* Background Elements */}
-                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-black/10 dark:via-white/10 to-transparent" />
+                <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-black/10 dark:via-white/10 to-transparent" />
 
                 <div className="container mx-auto px-4 relative z-10">
                     {/* Header */}
@@ -252,10 +252,10 @@ const VideoSection: React.FC = () => {
                                 <Radio className="animate-pulse" size={16} />
                                 <span className="text-xs font-bold uppercase tracking-[0.2em]">{t('video_live_feed')}</span>
                             </div>
-                            <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
+                            <h2 className="text-4xl md:text-6xl font-black text-black dark:text-white mb-6 tracking-tight transition-colors">
                                 {t('videos_title')}
                             </h2>
-                            <p className="text-lg text-white/60 max-w-lg leading-relaxed">
+                            <p className="text-lg text-gray-600 dark:text-white/60 max-w-lg leading-relaxed transition-colors">
                                 {t('video_subtitle')}
                             </p>
                         </motion.div>
@@ -276,8 +276,8 @@ const VideoSection: React.FC = () => {
                                             setFilter(cat);
                                         }}
                                         className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${filter === cat
-                                            ? 'bg-white text-black'
-                                            : 'bg-white/10 text-white hover:bg-white/20'
+                                            ? 'bg-black text-white dark:bg-white dark:text-black'
+                                            : 'bg-black/5 text-black hover:bg-black/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20'
                                             }`}
                                     >
                                         {cat}
@@ -290,7 +290,7 @@ const VideoSection: React.FC = () => {
                     {/* Video Content */}
                     {isLoading ? (
                         <div className="flex items-center justify-center h-64">
-                            <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                            <div className="w-8 h-8 border-2 border-black/20 dark:border-white/20 border-t-black dark:border-t-white rounded-full animate-spin" />
                         </div>
                     ) : (
                         <div className="space-y-12">
@@ -299,7 +299,7 @@ const VideoSection: React.FC = () => {
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="relative w-full aspect-video md:aspect-[21/9] rounded-2xl overflow-hidden group cursor-pointer border border-white/10"
+                                    className="relative w-full aspect-video md:aspect-[21/9] rounded-2xl overflow-hidden group cursor-pointer border border-black/10 dark:border-white/10 shadow-xl"
                                     onClick={() => {
                                         playClick();
                                         handleVideoSelect(filteredVideos[0]);
@@ -339,7 +339,7 @@ const VideoSection: React.FC = () => {
                             {/* Horizontal Scroll List */}
                             {filteredVideos.length > 1 && (
                                 <div>
-                                    <h4 className="text-xl font-bold text-white mb-6 px-1">More Videos</h4>
+                                    <h4 className="text-xl font-bold text-black dark:text-white mb-6 px-1 transition-colors">More Videos</h4>
                                     <div className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
                                         {filteredVideos.slice(1).map((video, index) => (
                                             <div key={index} className="min-w-[85vw] md:min-w-[400px] snap-start">
@@ -356,7 +356,7 @@ const VideoSection: React.FC = () => {
                     )}
 
                     {!isLoading && filteredVideos.length === 0 && (
-                        <div className="text-center text-white/40 py-20">
+                        <div className="text-center text-gray-500 dark:text-white/40 py-20">
                             <p>No videos found.</p>
                         </div>
                     )}

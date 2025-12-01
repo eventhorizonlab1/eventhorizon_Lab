@@ -77,13 +77,13 @@ const App: React.FC = () => {
                     <Header />
                     <Hero />
                     <main>
-                      <section id="videos" className="py-20 bg-zinc-900">
+                      <section id="videos" className="py-20 bg-gray-50 dark:bg-zinc-900 transition-colors duration-500">
                         <VideoSection />
                       </section>
-                      <section id="articles" className="py-20 bg-black">
+                      <section id="articles" className="py-20 bg-white dark:bg-black transition-colors duration-500">
                         <ArticleSection />
                       </section>
-                      <section id="ecosystem" className="py-20 bg-zinc-900">
+                      <section id="ecosystem" className="py-20 bg-gray-50 dark:bg-zinc-900 transition-colors duration-500">
                         <EcosystemSection />
                       </section>
                     </main>

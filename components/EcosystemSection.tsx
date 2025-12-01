@@ -105,34 +105,34 @@ const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Part
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
-            className="group relative flex flex-col items-start justify-end p-8 h-80 w-full overflow-hidden rounded-2xl border border-white/10 hover:border-emerald-500/50 transition-all hover:-translate-y-1"
+            className="group relative flex flex-col items-start justify-end p-8 h-80 w-full overflow-hidden rounded-2xl border border-black/10 dark:border-white/10 hover:border-emerald-500/50 transition-all hover:-translate-y-1 shadow-lg dark:shadow-none"
             onClick={() => onClick(partner)}
         >
             {/* Background Image */}
-            <div className="absolute inset-0 bg-white/5">
+            <div className="absolute inset-0 bg-white dark:bg-white/5">
                 <img
                     src={partner.imageUrl}
                     alt={partner.name}
-                    className="w-full h-full object-cover opacity-60 group-hover:opacity-40 group-hover:scale-105 transition-all duration-700"
+                    className="w-full h-full object-cover opacity-20 dark:opacity-60 group-hover:opacity-30 dark:group-hover:opacity-40 group-hover:scale-105 transition-all duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/60 to-transparent dark:from-black dark:via-black/60 dark:to-transparent" />
             </div>
 
             {/* Content */}
             <div className="relative z-10 w-full text-left">
                 <div className="flex items-center gap-2 mb-2">
-                    <span className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider bg-emerald-600/20 text-emerald-400 border border-emerald-500/20 rounded-full backdrop-blur-sm">
+                    <span className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider bg-emerald-600/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full backdrop-blur-sm">
                         {partner.category}
                     </span>
                 </div>
-                <h3 className="text-2xl font-black text-white mb-1 leading-tight">{partner.name}</h3>
+                <h3 className="text-2xl font-black text-black dark:text-white mb-1 leading-tight">{partner.name}</h3>
                 {partner.role && (
-                    <p className="text-sm font-bold text-emerald-400 uppercase tracking-wider mb-3">
+                    <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-3">
                         {partner.role}
                     </p>
                 )}
                 <div className="h-0 group-hover:h-auto overflow-hidden transition-all duration-300">
-                    <p className="text-sm text-white/70 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                    <p className="text-sm text-gray-700 dark:text-white/70 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
                         {partner.description}
                     </p>
                 </div>
@@ -224,7 +224,7 @@ const EcosystemSection: React.FC = () => {
                 document.body
             )}
 
-            <section id="ecosystem" ref={containerRef} className="relative py-32 bg-[#0a0a0a] border-t border-white/5">
+            <section id="ecosystem" ref={containerRef} className="relative py-32 bg-gray-50 dark:bg-[#0a0a0a] border-t border-black/5 dark:border-white/5 transition-colors duration-500">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
                         <div className="max-w-2xl">
@@ -232,10 +232,10 @@ const EcosystemSection: React.FC = () => {
                                 <Users className="animate-pulse" size={16} />
                                 <span className="text-xs font-bold uppercase tracking-[0.2em]">{t('ecosystem_tagline')}</span>
                             </div>
-                            <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
+                            <h2 className="text-4xl md:text-6xl font-black text-black dark:text-white mb-6 tracking-tight transition-colors">
                                 {t('ecosystem_title')}
                             </h2>
-                            <p className="text-lg text-white/60 max-w-lg leading-relaxed">
+                            <p className="text-lg text-gray-600 dark:text-white/60 max-w-lg leading-relaxed transition-colors">
                                 {t('ecosystem_subtitle')}
                             </p>
                         </div>
@@ -243,7 +243,7 @@ const EcosystemSection: React.FC = () => {
 
                     {isLoading ? (
                         <div className="flex items-center justify-center h-64">
-                            <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                            <div className="w-8 h-8 border-2 border-black/20 dark:border-white/20 border-t-black dark:border-t-white rounded-full animate-spin" />
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -259,7 +259,7 @@ const EcosystemSection: React.FC = () => {
                     )}
 
                     {!isLoading && partners.length === 0 && (
-                        <div className="text-center text-white/40 py-20">
+                        <div className="text-center text-gray-500 dark:text-white/40 py-20">
                             <p>No partners found.</p>
                         </div>
                     )}

@@ -126,7 +126,7 @@ const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Arti
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
-            className="group relative flex flex-col text-left w-full bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:border-white/20 transition-colors"
+            className="group relative flex flex-col text-left w-full bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl overflow-hidden hover:border-black/20 dark:hover:border-white/20 transition-colors shadow-lg dark:shadow-none"
             onClick={handleClick}
             onMouseEnter={() => playHover()}
             onKeyDown={(e) => {
@@ -156,14 +156,14 @@ const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Arti
             </div>
 
             <div className="p-6 flex flex-col grow">
-                <div className="flex items-center gap-3 text-xs font-mono text-blue-400 mb-3">
+                <div className="flex items-center gap-3 text-xs font-mono text-blue-500 dark:text-blue-400 mb-3">
                     <Calendar size={12} />
                     <span>{article.date}</span>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
+                <h3 className="text-xl font-bold text-black dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {article.title}
                 </h3>
-                <p className="text-sm text-white/60 line-clamp-3 mb-6 grow">
+                <p className="text-sm text-gray-600 dark:text-white/60 line-clamp-3 mb-6 grow">
                     {article.summary}
                 </p>
                 <div className="flex items-center justify-between gap-4 mt-auto">
@@ -172,13 +172,13 @@ const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Arti
                             e.stopPropagation();
                             onClick(article);
                         }}
-                        className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-purple-400 transition-colors"
+                        className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-purple-600 dark:text-white/50 dark:hover:text-purple-400 transition-colors"
                     >
                         <FileText size={14} />
                         <span>{t('article_read_summary') || 'Lire le résumé'}</span>
                     </button>
 
-                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-purple-400 group-hover:text-white transition-colors">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-purple-600 dark:text-purple-400 group-hover:text-black dark:group-hover:text-white transition-colors">
                         <span>{article.linkUrl ? "LIRE LA SOURCE" : t('article_read_more')}</span>
                         <ArrowRight size={14} className="transform group-hover:translate-x-1 transition-transform" />
                     </div>
@@ -271,7 +271,7 @@ const ArticleSection: React.FC = () => {
                 document.body
             )}
 
-            <section id="articles" ref={containerRef} className="relative py-32 bg-[#0a0a0a] border-t border-white/5">
+            <section id="articles" ref={containerRef} className="relative py-32 bg-white dark:bg-[#0a0a0a] border-t border-black/5 dark:border-white/5 transition-colors duration-500">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
                         <div className="max-w-2xl">
@@ -279,10 +279,10 @@ const ArticleSection: React.FC = () => {
                                 <BookOpen className="animate-pulse" size={16} />
                                 <span className="text-xs font-bold uppercase tracking-[0.2em]">{t('article_latest_news')}</span>
                             </div>
-                            <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
+                            <h2 className="text-4xl md:text-6xl font-black text-black dark:text-white mb-6 tracking-tight transition-colors">
                                 {t('articles_title')}
                             </h2>
-                            <p className="text-lg text-white/60 max-w-lg leading-relaxed">
+                            <p className="text-lg text-gray-600 dark:text-white/60 max-w-lg leading-relaxed transition-colors">
                                 {t('articles_subtitle')}
                             </p>
                         </div>
@@ -302,9 +302,9 @@ const ArticleSection: React.FC = () => {
                                             playClick();
                                             setFilter(cat);
                                         }}
-                                        className={`px - 4 py - 2 rounded - lg text - sm font - semibold transition - all duration - 200 ${filter === cat
-                                                ? 'bg-white text-black'
-                                                : 'bg-white/10 text-white hover:bg-white/20'
+                                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${filter === cat
+                                            ? 'bg-black text-white dark:bg-white dark:text-black'
+                                            : 'bg-black/5 text-black hover:bg-black/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20'
                                             } `}
                                     >
                                         {cat}
@@ -316,7 +316,7 @@ const ArticleSection: React.FC = () => {
 
                     {isLoading ? (
                         <div className="flex items-center justify-center h-64">
-                            <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                            <div className="w-8 h-8 border-2 border-black/20 dark:border-white/20 border-t-black dark:border-t-white rounded-full animate-spin" />
                         </div>
                     ) : (
                         <div className="space-y-12">
@@ -325,7 +325,7 @@ const ArticleSection: React.FC = () => {
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="relative w-full aspect-[4/3] md:aspect-[21/9] rounded-2xl overflow-hidden group cursor-pointer border border-white/10"
+                                    className="relative w-full aspect-[4/3] md:aspect-[21/9] rounded-2xl overflow-hidden group cursor-pointer border border-black/10 dark:border-white/10 shadow-xl"
                                     onClick={() => {
                                         playClick();
                                         if (filteredArticles[0].linkUrl) {
@@ -371,7 +371,7 @@ const ArticleSection: React.FC = () => {
                             {/* Horizontal Scroll List */}
                             {filteredArticles.length > 1 && (
                                 <div>
-                                    <h4 className="text-xl font-bold text-white mb-6 px-1">More Articles</h4>
+                                    <h4 className="text-xl font-bold text-black dark:text-white mb-6 px-1 transition-colors">More Articles</h4>
                                     <div className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
                                         {filteredArticles.slice(1).map((article, index) => (
                                             <div key={index} className="min-w-[85vw] md:min-w-[400px] snap-start">
@@ -389,7 +389,7 @@ const ArticleSection: React.FC = () => {
                     )}
 
                     {!isLoading && filteredArticles.length === 0 && (
-                        <div className="text-center text-white/40 py-20">
+                        <div className="text-center text-gray-500 dark:text-white/40 py-20">
                             <p>No articles found.</p>
                         </div>
                     )}
