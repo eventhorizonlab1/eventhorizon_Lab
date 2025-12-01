@@ -60,7 +60,7 @@ const App: React.FC = () => {
           <GlobalLoader isLoaded={isLoaded} />
           <ReloadPrompt />
 
-          <main id="main-content" className="relative w-full overflow-hidden bg-white dark:bg-eh-black transition-colors duration-500 cursor-none">
+          <main id="main-content" className="relative w-full overflow-hidden bg-white dark:bg-eh-black transition-colors duration-500">
             <Helmet htmlAttributes={{ lang: language }}>
               <title>{t('meta_title')}</title>
               <meta name="description" content={t('meta_description')} />
