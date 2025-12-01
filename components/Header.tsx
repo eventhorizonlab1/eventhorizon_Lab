@@ -77,7 +77,7 @@ const Header: React.FC = () => {
             <div className="w-8 h-8 bg-black dark:bg-white rounded-full flex items-center justify-center">
               <div className="w-3 h-3 bg-white dark:bg-black rounded-full animate-pulse"></div>
             </div>
-            <span className="text-lg font-bold tracking-widest uppercase text-black dark:text-white mix-blend-difference">
+            <span className="text-lg font-bold tracking-widest uppercase text-black dark:text-white">
               Event Horizon
             </span>
           </div>

@@ -383,7 +383,7 @@ const Hero: React.FC = () => {
   const yCTA = useTransform(scrollYProgress, [0, 1], [0, 350]);
 
   return (
-    <section ref={ref} className="relative h-[90vh] w-full bg-eh-black transition-colors duration-500 overflow-hidden">
+    <section ref={ref} className="relative h-[90vh] w-full bg-white dark:bg-eh-black transition-colors duration-500 overflow-hidden">
       <div className="sticky top-0 h-screen w-full overflow-hidden z-0">
 
         <BlackHoleBackground theme={theme} scrollYProgress={scrollYProgress} />
@@ -392,7 +392,7 @@ const Hero: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-white/90 dark:from-black/30 dark:via-transparent dark:to-black/80 z-10 pointer-events-none transition-colors duration-500"></div>
 
         <div className="absolute inset-0 flex flex-col items-center justify-start pt-32 md:justify-center md:pt-0 px-4 z-20 pointer-events-none">
-          <div className="text-center max-w-[95vw] md:max-w-7xl flex flex-col items-center pointer-events-auto mix-blend-difference">
+          <div className="text-center max-w-[95vw] md:max-w-7xl flex flex-col items-center pointer-events-auto">
             <motion.div
               style={{ opacity, scale, filter: blur, y: yTitle }}
               className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.0] md:leading-[0.9] mb-8 md:mb-12 flex flex-col items-center w-full drop-shadow-lg text-black dark:text-white"

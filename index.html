@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" class="dark scroll-smooth">
+<html lang="fr" class="scroll-smooth">
 
 <head>
   <meta charset="UTF-8" />
@@ -70,11 +70,6 @@
       background: rgba(255, 255, 255, 0.4);
     }
 
-    /* Force dark background immediately */
-    body {
-      background-color: #0a0a0a;
-    }
-
     /* Lenis Smooth Scroll */
     html.lenis,
     html.lenis body {
@@ -118,7 +113,7 @@
 </head>
 
 <body
-  class="bg-eh-black text-white antialiased selection:bg-white selection:text-black dark:selection:bg-white dark:selection:text-black transition-colors duration-300">
+  class="bg-white dark:bg-eh-black text-black dark:text-white antialiased selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-300">
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>
