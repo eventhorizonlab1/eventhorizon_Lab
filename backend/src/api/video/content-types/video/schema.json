@@ -27,8 +27,15 @@
             "type": "string"
         },
         "imageUrl": {
-            "type": "string",
-            "required": true
+            "type": "media",
+            "multiple": false,
+            "required": true,
+            "allowedTypes": [
+                "images",
+                "files",
+                "videos",
+                "audios"
+            ]
         },
         "videoUrl": {
             "type": "string",
