@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Menu, X, Globe, Volume2, VolumeX } from 'lucide-react';
@@ -8,75 +7,20 @@ import { useCinematicAudio } from '../src/hooks/useCinematicAudio';
 
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
-  const langMenuRef = useRef<HTMLDivElement>(null);
-
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, toggleTheme, language, setLanguage, t } = useThemeLanguage();
-  const { isCinematic } = useCinematic();
+  const { isMuted, toggleMute } = useCinematic();
+  const { playClick, playHover } = useCinematicAudio();
 
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
+  const { scrollY } = useScroll();
+  const headerOpacity = useTransform(scrollY, [0, 50], [0, 1]);
+  const headerY = useTransform(scrollY, [0, 50], [-20, 0]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
-        setIsLangMenuOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-  }, [isMenuOpen]);
-
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-
-    if (href === '#') {
-      animate(window.scrollY, 0, {
-        duration: 1.5,
-        ease: [0.22, 1, 0.36, 1],
-        onUpdate: (latest) => window.scrollTo(0, latest)
-      });
-      setIsMenuOpen(false);
-      return;
-    }
-
-    const targetId = href.replace('#', '');
-    const element = document.getElementById(targetId);
-
-    if (element) {
-      const headerOffset = 0;
-      const targetPosition = element.getBoundingClientRect().top + window.scrollY - headerOffset;
-
-      animate(window.scrollY, targetPosition, {
-        duration: 1.5,
-        ease: [0.22, 1, 0.36, 1],
-        onUpdate: (latest) => window.scrollTo(0, latest)
-      });
-    }
-
-    setIsMenuOpen(false);
-  };
 
   // Reusable Audio Toggle Component
   const AudioToggle = () => (
@@ -191,16 +135,16 @@ const Header: React.FC = () => {
           {/* MOBILE MENU BUTTON */}
           <button
             className="md:hidden z-50 text-black dark:text-white"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </motion.header>
 
       {/* MOBILE MENU OVERLAY */}
       <AnimatePresence>
-        {isMenuOpen && (
+        {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -212,7 +156,7 @@ const Header: React.FC = () => {
                 <a
                   key={item}
                   href={`#${item}`}
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={() => setIsMobileMenuOpen(false)}
                   className="text-2xl font-black uppercase tracking-tighter text-black dark:text-white"
                 >
                   {t(`nav_${item}`)}
