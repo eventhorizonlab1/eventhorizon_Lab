@@ -328,11 +328,7 @@ const ArticleSection: React.FC = () => {
                                     className="relative w-full aspect-[4/3] md:aspect-[21/9] rounded-2xl overflow-hidden group cursor-pointer border border-black/10 dark:border-white/10 shadow-xl"
                                     onClick={() => {
                                         playClick();
-                                        if (filteredArticles[0].linkUrl) {
-                                            window.open(filteredArticles[0].linkUrl, '_blank', 'noopener,noreferrer');
-                                        } else {
-                                            handleArticleSelect(filteredArticles[0]);
-                                        }
+                                        handleArticleSelect(filteredArticles[0]);
                                     }}
                                     onMouseEnter={() => playHover()}
                                 >
@@ -341,18 +337,16 @@ const ArticleSection: React.FC = () => {
                                         alt={filteredArticles[0].title}
                                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-90" />
 
                                     <div className="absolute bottom-0 left-0 p-6 md:p-12 w-full md:w-2/3">
                                         <div className="flex items-center gap-3 mb-4">
-                                            <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-purple-600 text-white rounded-full">
+                                            <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-blue-600 text-white rounded-full">
                                                 Featured
                                             </span>
-                                            {filteredArticles[0].category && (
-                                                <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-white/10 text-white/80 rounded-full backdrop-blur-md border border-white/10">
-                                                    {filteredArticles[0].category}
-                                                </span>
-                                            )}
+                                            <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-white/10 text-white/80 rounded-full backdrop-blur-md border border-white/10">
+                                                {filteredArticles[0].category}
+                                            </span>
                                         </div>
                                         <h3 className="text-2xl md:text-5xl font-black text-white mb-4 leading-tight">
                                             {filteredArticles[0].title}
@@ -360,9 +354,9 @@ const ArticleSection: React.FC = () => {
                                         <p className="text-white/70 line-clamp-2 md:text-lg mb-6 max-w-2xl">
                                             {filteredArticles[0].summary}
                                         </p>
-                                        <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-purple-400 group-hover:text-white transition-colors">
-                                            <span>{filteredArticles[0].linkUrl ? "LIRE LA SOURCE" : t('article_read_more')}</span>
-                                            <ArrowRight size={16} />
+                                        <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-blue-400 group-hover:text-white transition-colors">
+                                            <span>{t('article_read_summary') || 'Lire le résumé'}</span>
+                                            <ExternalLink size={16} />
                                         </div>
                                     </div>
                                 </motion.div>
@@ -371,7 +365,9 @@ const ArticleSection: React.FC = () => {
                             {/* Horizontal Scroll List */}
                             {filteredArticles.length > 1 && (
                                 <div>
-                                    <h4 className="text-xl font-bold text-black dark:text-white mb-6 px-1 transition-colors">More Articles</h4>
+                                    <h4 className="text-xl font-bold text-black dark:text-white mb-6 px-1 transition-colors">
+                                        {t('articles_more') || "Plus d'articles"}
+                                    </h4>
                                     <div className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
                                         {filteredArticles.slice(1).map((article, index) => (
                                             <div key={index} className="min-w-[85vw] md:min-w-[400px] snap-start">
@@ -394,7 +390,7 @@ const ArticleSection: React.FC = () => {
                         </div>
                     )}
                 </div>
-            </section>
+            </section >
         </>
     );
 };
