@@ -51,11 +51,11 @@ const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> =
                 </button>
 
                 {/* Left: Image */}
-                <div className="w-full md:w-5/12 h-64 md:h-auto relative shrink-0 bg-white/5">
+                <div className="w-full md:w-5/12 h-64 md:h-auto relative shrink-0 bg-black">
                     <img
                         src={partner.imageUrl}
                         alt={partner.name}
-                        className="w-full h-full object-contain p-12"
+                        className="w-full h-full object-cover opacity-80"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent md:bg-gradient-to-r" />
                 </div>
@@ -67,9 +67,14 @@ const PartnerModalContent: React.FC<{ partner: Partner; onClose: () => void }> =
                         <span>{partner.category || 'Partner'}</span>
                     </div>
 
-                    <h2 id="partner-modal-title" className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                    <h2 id="partner-modal-title" className="text-3xl md:text-5xl font-bold text-white mb-2 leading-tight">
                         {partner.name}
                     </h2>
+                    {partner.role && (
+                        <p className="text-xl text-emerald-400 font-bold uppercase tracking-wider mb-6">
+                            {partner.role}
+                        </p>
+                    )}
 
                     <div className="prose prose-invert prose-lg max-w-none text-white/80 leading-relaxed mb-8">
                         <p>{partner.description}</p>
@@ -99,18 +104,38 @@ const PartnerCard: React.FC<{ partner: Partner; index: number; onClick: (p: Part
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
-            className="group relative flex flex-col items-center justify-center p-8 bg-white/5 border border-white/10 rounded-xl hover:border-white/20 transition-all hover:-translate-y-1"
+            className="group relative flex flex-col items-start justify-end p-8 h-80 w-full overflow-hidden rounded-2xl border border-white/10 hover:border-emerald-500/50 transition-all hover:-translate-y-1"
             onClick={() => onClick(partner)}
         >
-            <div className="relative h-48 p-8 bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+            {/* Background Image */}
+            <div className="absolute inset-0 bg-white/5">
                 <img
                     src={partner.imageUrl}
                     alt={partner.name}
-                    className="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-500"
+                    className="w-full h-full object-cover opacity-60 group-hover:opacity-40 group-hover:scale-105 transition-all duration-700"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">{partner.name}</h3>
-            <p className="text-sm text-white/40 text-center line-clamp-2">{partner.description}</p>
+
+            {/* Content */}
+            <div className="relative z-10 w-full text-left">
+                <div className="flex items-center gap-2 mb-2">
+                    <span className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider bg-emerald-600/20 text-emerald-400 border border-emerald-500/20 rounded-full backdrop-blur-sm">
+                        {partner.category}
+                    </span>
+                </div>
+                <h3 className="text-2xl font-black text-white mb-1 leading-tight">{partner.name}</h3>
+                {partner.role && (
+                    <p className="text-sm font-bold text-emerald-400 uppercase tracking-wider mb-3">
+                        {partner.role}
+                    </p>
+                )}
+                <div className="h-0 group-hover:h-auto overflow-hidden transition-all duration-300">
+                    <p className="text-sm text-white/70 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                        {partner.description}
+                    </p>
+                </div>
+            </div>
         </motion.button>
     );
 };

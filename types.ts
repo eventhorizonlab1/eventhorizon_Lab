@@ -34,11 +34,11 @@ export interface Article {
 }
 
 export interface Partner {
-  id?: number | string;
+  id: string | number;
   name: string;
-  role?: string;
-  category?: string;
-  description?: string;
+  description: string;
   imageUrl: string;
   websiteUrl: string;
+  category?: string;
+  role?: string;
 }

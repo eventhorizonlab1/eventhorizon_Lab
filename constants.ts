@@ -449,42 +449,74 @@ export const ARTICLES: Article[] = [
 export const PARTNERS: Partner[] = [
   {
     id: 'p1',
-    name: 'CNES',
-    role: 'Agence Spatiale',
-    // Mission Control / Antennas - High Tech
-    imageUrl: '/assets/ecosystem/cnes.jpg',
-    websiteUrl: 'https://cnes.fr/fr'
+    name: "CNES",
+    role: "Agence Spatiale Française",
+    description: "Le CNES est le cœur de la politique spatiale française. À Toulouse, son centre technique (CST) conçoit et opère des satellites d'observation, d'océanographie et des missions scientifiques majeures, pilotant même des instruments sur Mars.",
+    imageUrl: "/assets/ecosystem/cnes.jpg",
+    websiteUrl: "https://cnes.fr",
+    category: "INSTITUTION"
   },
   {
     id: 'p2',
-    name: 'Airbus',
-    role: 'Constructeur',
-    // Clean Room / Satellite - Industrial
-    imageUrl: '/assets/ecosystem/airbus.jpg',
-    websiteUrl: 'https://www.airbus.com/en/products-services/space'
+    name: "Airbus Defence and Space",
+    role: "Géant de la Construction Spatiale",
+    description: "Leader européen, Airbus assemble à Toulouse des satellites de télécommunications, d'observation (Copernicus) et des sondes interplanétaires (JUICE). Ils sont aussi clés dans le vol habité avec le module de service européen (ESM) d'Orion.",
+    imageUrl: "/assets/ecosystem/airbus.jpg",
+    websiteUrl: "https://www.airbus.com/en/products-services/defence-and-space",
+    category: "INDUSTRIE"
   },
   {
     id: 'p3',
-    name: 'Thales Alenia',
-    role: 'Satellites',
-    // Satellite / Orbit (Unsplash Stable)
-    imageUrl: '/assets/ecosystem/thales.jpg',
-    websiteUrl: 'https://www.thalesgroup.com/en/global/activities/space'
+    name: "Thales Alenia Space",
+    role: "Expert en Satellites & Systèmes",
+    description: "Acteur majeur franco-italien, Thales Alenia Space à Toulouse est spécialisé en altimétrie, météo et constellations (Galileo). Ils fournissent aussi des modules pressurisés pour les stations spatiales (ISS, Gateway).",
+    imageUrl: "/assets/ecosystem/thales.jpg",
+    websiteUrl: "https://www.thalesgroup.com/en/global/activities/space",
+    category: "INDUSTRIE"
   },
   {
     id: 'p4',
-    name: 'ISAE-SUPAERO',
-    role: 'Excellence',
-    // Engineering / Laboratory (Unsplash Stable)
-    imageUrl: '/assets/ecosystem/isae.jpg',
-    websiteUrl: 'https://www.isae-supaero.fr/fr/'
+    name: "ISAE-SUPAERO",
+    role: "Excellence en Formation & Recherche",
+    description: "L'école d'ingénieurs de référence mondiale pour l'aérospatial. Elle forme l'élite du secteur et mène des recherches de pointe, disposant de moyens uniques (souffleries, station sol CubeSats). Thomas Pesquet en est diplômé.",
+    imageUrl: "/assets/ecosystem/isae.jpg",
+    websiteUrl: "https://www.isae-supaero.fr",
+    category: "ÉDUCATION"
   },
   {
     id: 'p5',
-    name: 'Cité de l\'Espace',
-    role: 'Culture',
-    // Rocket Model / Museum - Public
-    imageUrl: '/assets/ecosystem/cite_espace.jpg',
-    websiteUrl: 'https://www.cite-espace.com/'
+    name: "Cité de l'Espace",
+    role: "La Culture Spatiale pour Tous",
+    description: "Le parc à thème scientifique incontournable en Europe. Avec ses répliques taille réelle (Ariane 5, Mir), son planétarium et ses expos interactives, elle inspire les futures générations et diffuse la passion de l'espace.",
+    imageUrl: "/assets/ecosystem/cite_espace.jpg",
+    websiteUrl: "https://www.cite-espace.com",
+    category: "CULTURE"
   },
+  {
+    id: 'p6',
+    name: "The Exploration Company",
+    role: "Cargo Spatial Réutilisable",
+    description: "Startup franco-allemande ambitieuse développant 'Nyx', une capsule cargo réutilisable pour desservir les futures stations spatiales, avec une forte présence et des tests clés menés dans l'écosystème toulousain et européen.",
+    imageUrl: "/assets/ecosystem/tec.jpg",
+    websiteUrl: "https://www.exploration.space",
+    category: "NEWSPACE"
+  },
+  {
+    id: 'p7',
+    name: "MaiaSpace",
+    role: "Mini-Lanceur Réutilisable",
+    description: "Filiale d'ArianeGroup, MaiaSpace développe 'Maia', un mini-lanceur partiellement réutilisable, visant le marché en plein essor des petits satellites, avec des synergies toulousaines.",
+    imageUrl: "/assets/ecosystem/maiaspace.jpg",
+    websiteUrl: "https://www.maiaspace.com",
+    category: "NEWSPACE"
+  },
+  {
+    id: 'p8',
+    name: "Latitude",
+    role: "Micro-Lanceur Innovant",
+    description: "Startup rémoise développant 'Zéphyr', un micro-lanceur pour les nanosatellites, avec une approche agile et rapide.",
+    imageUrl: "/assets/ecosystem/latitude.jpg",
+    websiteUrl: "https://www.latitude.eu",
+    category: "NEWSPACE"
+  }
 ];

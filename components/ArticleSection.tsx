@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowRight, Calendar, BookOpen, ArrowUpRight, ExternalLink } from 'lucide-react';
+import { X, ArrowRight, Calendar, BookOpen, ArrowUpRight, ExternalLink, FileText } from 'lucide-react';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 import { fetchArticles } from '../src/lib/api';
 import { Article } from '../types';
@@ -166,9 +166,22 @@ const ArticleCard: React.FC<{ article: Article; index: number; onClick: (a: Arti
                 <p className="text-sm text-white/60 line-clamp-3 mb-6 grow">
                     {article.summary}
                 </p>
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40 group-hover:text-white transition-colors mt-auto">
-                    {article.linkUrl ? "LIRE LA SOURCE" : t('article_read_more')}
-                    <ArrowRight size={14} className="transform group-hover:translate-x-1 transition-transform" />
+                <div className="flex items-center justify-between gap-4 mt-auto">
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onClick(article);
+                        }}
+                        className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-purple-400 transition-colors"
+                    >
+                        <FileText size={14} />
+                        <span>{t('article_read_summary') || 'Lire le résumé'}</span>
+                    </button>
+
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-purple-400 group-hover:text-white transition-colors">
+                        <span>{article.linkUrl ? "LIRE LA SOURCE" : t('article_read_more')}</span>
+                        <ArrowRight size={14} className="transform group-hover:translate-x-1 transition-transform" />
+                    </div>
                 </div>
             </div>
         </motion.button>
@@ -289,10 +302,10 @@ const ArticleSection: React.FC = () => {
                                             playClick();
                                             setFilter(cat);
                                         }}
-                                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${filter === cat
-                                            ? 'bg-white text-black'
-                                            : 'bg-white/10 text-white hover:bg-white/20'
-                                            }`}
+                                        className={`px - 4 py - 2 rounded - lg text - sm font - semibold transition - all duration - 200 ${filter === cat
+                                                ? 'bg-white text-black'
+                                                : 'bg-white/10 text-white hover:bg-white/20'
+                                            } `}
                                     >
                                         {cat}
                                     </button>
