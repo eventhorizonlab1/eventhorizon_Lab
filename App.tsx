@@ -70,32 +70,29 @@ const App: React.FC = () => {
             <Route path="/simulation" element={<SimulationPage />} />
             <Route path="/" element={
               <>
-                <ThemeLanguageProvider>
-                  <CinematicProvider>
-                    <Router>
-                      <div className="min-h-screen bg-white dark:bg-black transition-colors duration-500">
-                        <SmoothScroll>
-                          <Header />
-                          <Hero />
-                          <main>
-                            <section id="videos" className="py-20 bg-zinc-900">
-                              <VideoSection />
-                            </section>
-                            <section id="articles" className="py-20 bg-black">
-                              <ArticleSection />
-                            </section>
-                            <section id="ecosystem" className="py-20 bg-zinc-900">
-                              <EcosystemSection />
-                            </section>
-                          </main>
-                          <Footer />
-                        </SmoothScroll>
-                      </div>
-                    </Router>
-                  </CinematicProvider>
-                </ThemeLanguageProvider>
-              </HelmetProvider>
-              );
+                <div className="min-h-screen bg-white dark:bg-black transition-colors duration-500">
+                  <Header />
+                  <Hero />
+                  <main>
+                    <section id="videos" className="py-20 bg-zinc-900">
+                      <VideoSection />
+                    </section>
+                    <section id="articles" className="py-20 bg-black">
+                      <ArticleSection />
+                    </section>
+                    <section id="ecosystem" className="py-20 bg-zinc-900">
+                      <EcosystemSection />
+                    </section>
+                  </main>
+                  <Footer />
+                </div>
+              </>
+            } />
+          </Routes>
+        </main>
+      </SmoothScroll>
+    </HelmetProvider>
+  );
 };
 
-              export default App;
+export default App;

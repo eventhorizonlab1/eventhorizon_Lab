@@ -1,11 +1,10 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { NAV_LINKS } from '../constants';
-import { motion, AnimatePresence, useScroll, useSpring, animate } from 'framer-motion';
-import { X, Moon, Sun, ChevronDown } from 'lucide-react';
-import { useThemeLanguage, SUPPORTED_LANGUAGES } from '../context/ThemeLanguageContext';
+import React, { useState, useEffect } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { Menu, X, Globe, Volume2, VolumeX } from 'lucide-react';
+import { useThemeLanguage } from '../context/ThemeLanguageContext';
 import { useCinematic } from '../context/CinematicContext';
+import { useCinematicAudio } from '../src/hooks/useCinematicAudio';
 
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -169,123 +168,81 @@ const Header: React.FC = () => {
               <div className="absolute top-full right-0 mt-2 w-24 bg-white dark:bg-zinc-900 rounded-lg shadow-xl border border-black/5 dark:border-white/10 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform translate-y-2 group-hover:translate-y-0">
                 {['fr', 'en', 'de', 'es', 'it'].map((lang) => (
                   <button
-                    aria-label={isMenuOpen ? t('common_close') : t('common_menu')}
-                    aria-expanded={isMenuOpen}
-                    type="button"
+                    key={lang}
+                    onClick={() => { setLanguage(lang as any); playClick(); }}
+                    className={`w-full text-left px-4 py-2 text-xs font-bold uppercase hover:bg-black/5 dark:hover:bg-white/10 ${language === lang ? 'text-blue-500' : 'text-black dark:text-white'}`}
                   >
-                    {isMenuOpen ? (
-                      <X size={32} className={`${textColorClass}`} />
-                    ) : (
-                      <>
-                        <span className={`w-8 h-0.5 bg-current transition-colors ${textColorClass}`}></span>
-                        <span className={`w-5 h-0.5 bg-current group-hover:w-8 transition-all ${textColorClass}`}></span>
-                      </>
-                    )}
+                    {lang}
                   </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Theme Toggle */}
+            <button
+              onClick={() => { toggleTheme(); playClick(); }}
+              className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center hover:scale-110 transition-transform"
+              aria-label="Toggle Theme"
+            >
+              <div className={`w-4 h-4 rounded-full transition-colors ${theme === 'dark' ? 'bg-white shadow-[0_0_10px_white]' : 'bg-black'}`}></div>
+            </button>
+          </div>
+
+          {/* MOBILE MENU BUTTON */}
+          <button
+            className="md:hidden z-50 text-black dark:text-white"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
+      </motion.header>
 
-              <motion.div
-                className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-purple-500 to-blue-400 origin-left"
-                style={{ scaleX }}
-              />
-            </header>
-
-            {/* Fullscreen Menu (Mobile & Tablet) */}
-            <AnimatePresence>
-              {isMenuOpen && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "100dvh" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
-                  className="fixed top-0 left-0 w-full z-40 bg-white dark:bg-eh-black flex flex-col lg:hidden overflow-hidden"
+      {/* MOBILE MENU OVERLAY */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-0 z-40 bg-white dark:bg-black pt-24 px-6 md:hidden flex flex-col gap-8"
+          >
+            <nav className="flex flex-col gap-6">
+              {['videos', 'articles', 'ecosystem'].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item}`}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-2xl font-black uppercase tracking-tighter text-black dark:text-white"
                 >
-                  {/* Scrollable Container */}
-                  <div className="flex-1 overflow-y-auto flex flex-col px-6 pt-28 pb-10 scrollbar-hide items-center justify-center md:justify-start">
-                    <nav className="flex flex-col gap-6 md:gap-8 items-center mb-auto md:mt-20">
-                      {NAV_LINKS.map((link, index) => (
-                        <motion.a
-                          key={link.href}
-                          href={link.href}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.1 + index * 0.1 }}
-                          onClick={(e) => handleLinkClick(e, link.href)}
-                          className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-tighter hover:text-gray-500 transition-colors text-black dark:text-white"
-                        >
-                          {t(link.key)}
-                        </motion.a>
-                      ))}
+                  {t(`nav_${item}`)}
+                </a>
+              ))}
+            </nav>
 
-                      {/* Mobile Simulation Link */}
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 + NAV_LINKS.length * 0.1 }}
-                      >
-                        <Link
-                          to="/simulation"
-                          onClick={() => setIsMenuOpen(false)}
-                          className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-tighter hover:text-gray-500 transition-colors text-black dark:text-white"
-                        >
-                          Simulation
-                        </Link>
-                      </motion.div>
-                    </nav>
+            <div className="h-px w-full bg-black/10 dark:bg-white/10"></div>
 
-                    {/* Mobile Controls */}
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.4 }}
-                      className="flex flex-col items-center gap-8 mt-8 w-full"
-                    >
-                      {/* Theme Toggle - Large Touch Target */}
-                      <button
-                        onClick={toggleTheme}
-                        className="w-full max-w-xs md:max-w-sm p-4 rounded-xl bg-gray-100 dark:bg-white/10 text-black dark:text-white flex items-center justify-center gap-3 font-bold uppercase text-sm tracking-widest transition-all active:scale-95"
-                      >
-                        {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-                        <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
-                      </button>
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-bold uppercase text-gray-500">Audio</span>
+              <AudioToggle />
+            </div>
 
-                      {/* Language Grid */}
-                      <div className="w-full max-w-xs md:max-w-sm">
-                        <p className="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Language</p>
-                        <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 md:gap-4">
-                          {SUPPORTED_LANGUAGES.map(lang => (
-                            <button
-                              key={lang.code}
-                              onClick={() => setLanguage(lang.code)}
-                              className={`flex flex-col items-center justify-center p-3 rounded-xl aspect-square transition-all active:scale-95 ${language === lang.code
-                                ? 'bg-black text-white dark:bg-white dark:text-black shadow-lg ring-2 ring-offset-2 ring-black dark:ring-white scale-105'
-                                : 'bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10'
-                                }`}
-                            >
-                              <span className="text-2xl leading-none mb-1">{lang.flag}</span>
-                              <span className="text-[10px] font-bold uppercase">{lang.code}</span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </motion.div>
-
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.5 }}
-                      className="mt-8 text-center"
-                    >
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                        © 2026 Event Horizon
-                      </p>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </>
-          );
+            <div className="flex gap-4">
+              {['fr', 'en'].map(lang => (
+                <button
+                  key={lang}
+                  onClick={() => setLanguage(lang as any)}
+                  className={`px-4 py-2 rounded border ${language === lang ? 'bg-black text-white dark:bg-white dark:text-black' : 'border-black/20 dark:border-white/20'}`}
+                >
+                  {lang.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
 };
 
-          export default Header;
+export default Header;
