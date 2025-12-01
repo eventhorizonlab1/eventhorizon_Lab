@@ -2,29 +2,31 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface CinematicContextType {
     isCinematic: boolean;
-    setIsCinematic: (value: boolean) => void;
     toggleCinematic: () => void;
+    isMuted: boolean;
+    toggleMute: () => void;
 }
 
 const CinematicContext = createContext<CinematicContextType | undefined>(undefined);
 
-export const CinematicProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const CinematicProvider = ({ children }: { children: ReactNode }) => {
     const [isCinematic, setIsCinematic] = useState(false);
+    // Default to unmuted, but can be changed to true if preferred
+    const [isMuted, setIsMuted] = useState(false);
 
-    const toggleCinematic = () => {
-        setIsCinematic(prev => !prev);
-    };
+    const toggleCinematic = () => setIsCinematic(prev => !prev);
+    const toggleMute = () => setIsMuted(prev => !prev);
 
     return (
-        <CinematicContext.Provider value={{ isCinematic, setIsCinematic, toggleCinematic }}>
+        <CinematicContext.Provider value={{ isCinematic, toggleCinematic, isMuted, toggleMute }}>
             {children}
         </CinematicContext.Provider>
     );
 };
 
-export const useCinematic = (): CinematicContextType => {
+export const useCinematic = () => {
     const context = useContext(CinematicContext);
-    if (context === undefined) {
+    if (!context) {
         throw new Error('useCinematic must be used within a CinematicProvider');
     }
     return context;

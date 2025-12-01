@@ -60,20 +60,33 @@ const VideoCard3D: React.FC<VideoCard3DProps> = ({ video, onPlay }) => {
 
     return (
         <motion.div
-            ref={ref}
+            ref={cardRef}
+            className="relative w-full aspect-video rounded-xl overflow-hidden cursor-pointer group perspective-1000 touch-none"
             onMouseMove={handleMouseMove}
-            onMouseEnter={() => playHover()}
             onMouseLeave={handleMouseLeave}
-            style={{
-                rotateY,
-                rotateX,
-                transformStyle: "preserve-3d",
-            }}
-            className="group relative cursor-pointer w-full flex-shrink-0"
+            onMouseEnter={() => playHover()}
             onClick={() => {
                 playClick();
                 onPlay(video);
             }}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    playClick();
+                    onPlay(video);
+                }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label={`Play video: ${video.title}`}
+            style={{
+                rotateY,
+                rotateX,
+                transformStyle: "preserve-3d",
+                transform: "perspective(1000px)"
+            }}
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
         >
             <div
                 style={{ transform: "translateZ(50px)", transformStyle: "preserve-3d" }}

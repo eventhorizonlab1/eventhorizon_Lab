@@ -70,33 +70,32 @@ const App: React.FC = () => {
             <Route path="/simulation" element={<SimulationPage />} />
             <Route path="/" element={
               <>
-                {/* Cinematic Noise Overlay */}
-                <div className="fixed inset-0 z-30 pointer-events-none opacity-[0.05] mix-blend-overlay">
-                  <div
-                    className="absolute inset-0 w-full h-full"
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-                      backgroundRepeat: 'repeat',
-                    }}
-                  ></div>
-                </div>
-
-                <Header />
-                <Hero />
-
-                <div className={`relative ${isCinematic ? 'z-[100]' : 'z-10'} bg-white dark:bg-eh-black rounded-t-[3rem] -mt-20 shadow-[0_-20px_40px_rgba(0,0,0,0.05)] transition-colors duration-500`}>
-                  <VideoSection />
-                  <ArticleSection />
-                  <EcosystemSection />
-                  <Footer />
-                </div>
-              </>
-            } />
-          </Routes>
-        </main>
-      </SmoothScroll>
-    </HelmetProvider>
-  );
+                <ThemeLanguageProvider>
+                  <CinematicProvider>
+                    <Router>
+                      <div className="min-h-screen bg-white dark:bg-black transition-colors duration-500">
+                        <SmoothScroll>
+                          <Header />
+                          <Hero />
+                          <main>
+                            <section id="videos" className="py-20 bg-zinc-900">
+                              <VideoSection />
+                            </section>
+                            <section id="articles" className="py-20 bg-black">
+                              <ArticleSection />
+                            </section>
+                            <section id="ecosystem" className="py-20 bg-zinc-900">
+                              <EcosystemSection />
+                            </section>
+                          </main>
+                          <Footer />
+                        </SmoothScroll>
+                      </div>
+                    </Router>
+                  </CinematicProvider>
+                </ThemeLanguageProvider>
+              </HelmetProvider>
+              );
 };
 
-export default App;
+              export default App;
