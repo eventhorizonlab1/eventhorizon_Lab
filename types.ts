@@ -20,6 +20,8 @@ export interface Video {
   imageUrl: string;
   videoUrl: string;
   description: string;
+  channel?: string;
+  views?: string;
 }
 
 export interface Article {

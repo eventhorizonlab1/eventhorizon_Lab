@@ -255,9 +255,6 @@ const VideoSection: React.FC = () => {
                             <h2 className="text-4xl md:text-6xl font-black text-black dark:text-white mb-6 tracking-tight transition-colors">
                                 {t('videos_title')}
                             </h2>
-                            <p className="text-lg text-gray-600 dark:text-white/60 max-w-lg leading-relaxed transition-colors">
-                                {t('video_subtitle')}
-                            </p>
                         </motion.div>
 
                         {/* Filter Tabs (YouTube Style) */}
@@ -339,7 +336,9 @@ const VideoSection: React.FC = () => {
                             {/* Horizontal Scroll List */}
                             {filteredVideos.length > 1 && (
                                 <div>
-                                    <h4 className="text-xl font-bold text-black dark:text-white mb-6 px-1 transition-colors">More Videos</h4>
+                                    <h4 className="text-xl font-bold text-black dark:text-white mb-6 px-1 transition-colors">
+                                        {t('videos_more') || 'Plus de vidéos'}
+                                    </h4>
                                     <div className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
                                         {filteredVideos.slice(1).map((video, index) => (
                                             <div key={index} className="min-w-[85vw] md:min-w-[400px] snap-start">

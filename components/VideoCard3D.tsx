@@ -119,16 +119,15 @@ const VideoCard3D: React.FC<VideoCard3DProps> = ({ video, onPlay }) => {
                 <h4 className="text-base md:text-lg font-bold leading-tight transition-colors duration-300 text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 line-clamp-2 mb-1">
                     {title}
                 </h4>
-                <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        {category}
+                <div className="flex flex-col gap-0.5">
+                    <span className="text-sm text-gray-600 dark:text-gray-400 font-medium hover:text-black dark:hover:text-white transition-colors">
+                        {video.channel || "Event Horizon Lab"}
                     </span>
-                    {video.subcategory && (
-                        <>
-                            <span className="w-0.5 h-0.5 bg-gray-400 rounded-full"></span>
-                            <span className="text-xs font-bold text-blue-500 dark:text-blue-400 uppercase tracking-wider">{video.subcategory}</span>
-                        </>
-                    )}
+                    <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-500">
+                        <span>{video.views || "1.2k views"}</span>
+                        <span>•</span>
+                        <span>{video.category}</span>
+                    </div>
                 </div>
             </div>
         </motion.div>
