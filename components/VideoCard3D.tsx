@@ -60,7 +60,7 @@ const VideoCard3D: React.FC<VideoCard3DProps> = ({ video, onPlay }) => {
 
     return (
         <motion.div
-            ref={cardRef}
+            ref={ref}
             className="relative w-full aspect-video rounded-xl overflow-hidden cursor-pointer group perspective-1000 touch-none"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}

@@ -17,12 +17,26 @@ interface ThemeLanguageContextType {
 
 const ThemeLanguageContext = createContext<ThemeLanguageContextType | undefined>(undefined);
 
+import fr from '../locales/fr.json';
+import en from '../locales/en.json';
+import de from '../locales/de.json';
+import es from '../locales/es.json';
+import it from '../locales/it.json';
+
+const TRANSLATIONS: Record<string, any> = {
+  fr,
+  en,
+  de,
+  es,
+  it
+};
+
 export const ThemeLanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   // Always default to 'dark' strictly
   const [theme, setTheme] = useState<Theme>('dark');
   const [language, setLanguage] = useState<Language>('fr');
-  const [translations, setTranslations] = useState<Record<string, string>>({});
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [translations, setTranslations] = useState<Record<string, string>>(fr);
+  const [isLoaded, setIsLoaded] = useState(true);
 
   // Enforce dark mode class on mount
   useEffect(() => {
@@ -42,30 +56,9 @@ export const ThemeLanguageProvider: React.FC<{ children: ReactNode }> = ({ child
     }
   }, [theme]);
 
-  // Load translations asynchronously
+  // Load translations synchronously
   useEffect(() => {
-    const loadTranslations = async () => {
-      // Don't set isLoaded to false here to avoid flashing loading state on language switch if possible,
-      // or do it if we want to show a spinner. Let's keep it smooth.
-      try {
-        const module = await import(`../locales/${language}.json`);
-        setTranslations(module.default);
-        setIsLoaded(true);
-      } catch (error) {
-        console.error(`Failed to load translations for ${language}`, error);
-        // Fallback to French
-        if (language !== 'fr') {
-          try {
-            const module = await import(`../locales/fr.json`);
-            setTranslations(module.default);
-          } catch (e) {
-            console.error("Failed to load fallback translations", e);
-          }
-        }
-      }
-    };
-
-    loadTranslations();
+    setTranslations(TRANSLATIONS[language] || fr);
   }, [language]);
 
   const toggleTheme = () => {

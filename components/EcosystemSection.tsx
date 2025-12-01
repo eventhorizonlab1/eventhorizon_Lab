@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, Globe, Users } from 'lucide-react';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 import { fetchAPI } from '../src/lib/api';
+import { PARTNERS } from '../constants';
 import { Partner } from '../types';
 import { createPortal } from 'react-dom';
 
@@ -153,11 +154,14 @@ const EcosystemSection: React.FC = () => {
         const getPartners = async () => {
             try {
                 const res = await fetchAPI('/partners', { populate: '*' });
-                if (res && res.data) {
+                if (res && res.data && res.data.length > 0) {
                     setPartners(res.data);
+                } else {
+                    setPartners(PARTNERS);
                 }
             } catch (error) {
-                console.error("Error fetching partners:", error);
+                console.warn("Error fetching partners, using fallback:", error);
+                setPartners(PARTNERS);
             } finally {
                 setIsLoading(false);
             }
@@ -211,7 +215,7 @@ const EcosystemSection: React.FC = () => {
                                 <meta name="description" content={selectedPartner.description} />
                                 <meta property="og:title" content={selectedPartner.name} />
                                 <meta property="og:description" content={selectedPartner.description} />
-                                <meta property="og:image" content={selectedPartner.logoUrl} />
+                                <meta property="og:image" content={selectedPartner.imageUrl} />
                             </Helmet>
                             <PartnerModalContent partner={selectedPartner} onClose={() => handlePartnerSelect(null)} />
                         </motion.div>

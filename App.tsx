@@ -47,51 +47,55 @@ const GlobalLoader = ({ isLoaded }: { isLoaded: boolean }) => (
   </AnimatePresence>
 );
 
+import ErrorBoundary from './components/ErrorBoundary';
+
 const App: React.FC = () => {
   const { t, language, isLoaded } = useThemeLanguage();
   const { isCinematic } = useCinematic();
 
   return (
-    <HelmetProvider>
-      <SmoothScroll>
-        <GlobalLoader isLoaded={isLoaded} />
-        <ReloadPrompt />
+    <ErrorBoundary>
+      <HelmetProvider>
+        <SmoothScroll>
+          <GlobalLoader isLoaded={isLoaded} />
+          <ReloadPrompt />
 
-        <main id="main-content" className="relative w-full overflow-hidden bg-white dark:bg-eh-black transition-colors duration-500 cursor-none">
-          <Helmet htmlAttributes={{ lang: language }}>
-            <title>{t('meta_title')}</title>
-            <meta name="description" content={t('meta_description')} />
-            <meta property="og:title" content={t('meta_og_title')} />
-            <meta property="og:description" content={t('meta_description')} />
-            <meta name="theme-color" content="#0a0a0a" />
-          </Helmet>
+          <main id="main-content" className="relative w-full overflow-hidden bg-white dark:bg-eh-black transition-colors duration-500 cursor-none">
+            <Helmet htmlAttributes={{ lang: language }}>
+              <title>{t('meta_title')}</title>
+              <meta name="description" content={t('meta_description')} />
+              <meta property="og:title" content={t('meta_og_title')} />
+              <meta property="og:description" content={t('meta_description')} />
+              <meta name="theme-color" content="#0a0a0a" />
+            </Helmet>
 
-          <Routes>
-            <Route path="/simulation" element={<SimulationPage />} />
-            <Route path="/" element={
-              <>
-                <div className="min-h-screen bg-white dark:bg-black transition-colors duration-500">
-                  <Header />
-                  <Hero />
-                  <main>
-                    <section id="videos" className="py-20 bg-zinc-900">
-                      <VideoSection />
-                    </section>
-                    <section id="articles" className="py-20 bg-black">
-                      <ArticleSection />
-                    </section>
-                    <section id="ecosystem" className="py-20 bg-zinc-900">
-                      <EcosystemSection />
-                    </section>
-                  </main>
-                  <Footer />
-                </div>
-              </>
-            } />
-          </Routes>
-        </main>
-      </SmoothScroll>
-    </HelmetProvider>
+            <Routes>
+              <Route path="/simulation" element={<SimulationPage />} />
+              <Route path="/" element={
+                <>
+                  <div className="min-h-screen bg-white dark:bg-black transition-colors duration-500">
+                    <Header />
+                    <Hero />
+                    <main>
+                      <section id="videos" className="py-20 bg-zinc-900">
+                        <VideoSection />
+                      </section>
+                      <section id="articles" className="py-20 bg-black">
+                        <ArticleSection />
+                      </section>
+                      <section id="ecosystem" className="py-20 bg-zinc-900">
+                        <EcosystemSection />
+                      </section>
+                    </main>
+                    <Footer />
+                  </div>
+                </>
+              } />
+            </Routes>
+          </main>
+        </SmoothScroll>
+      </HelmetProvider>
+    </ErrorBoundary>
   );
 };
 
