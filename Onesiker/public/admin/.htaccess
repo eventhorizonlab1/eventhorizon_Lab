@@ -1,0 +1,48 @@
+# ============================================================
+#  ONESIKER BACK OFFICE — Protection des fichiers sensibles
+# ============================================================
+
+# Bloquer l'accès direct aux fichiers de configuration et logs
+<FilesMatch "^(config\.php|config\.example\.php|rate_limits\.json|translate_rate_limits\.json|setup_password\.php|admin_error\.log)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Bloquer l'accès au cache des traductions (lu/écrit uniquement par api.php).
+RedirectMatch 403 ^/admin/cache/.*$
+
+# Bloquer l'accès à tout script de build ou utilitaire (défense en profondeur)
+<FilesMatch "\.(py|sh|rb|pl|cgi|log|lock|json)$">
+    # On autorise rate_limits.json spécifiquement si nécessaire, mais ici on bloque TOUT .json 
+    # Sauf si l'admin en a besoin en lecture directe (ici l'admin lit via api.php, donc on peut bloquer)
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Désactiver le directory listing
+Options -Indexes
+
+# En-têtes de sécurité pour l'admin
+<IfModule mod_headers.c>
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    # CSP locked to first-party + Google Fonts only.
+    # We dropped: cdn.tailwindcss.com (the local tailwind-v2.css is the only stylesheet)
+    # and translate.googleapis.com / translate.google.com (translate is server-side via api.php).
+    # 'unsafe-inline' in style-src is kept because Tailwind v4 emits a few inline styles.
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; img-src 'self' data:; font-src 'self' fonts.gstatic.com; connect-src 'self'; frame-ancestors 'none';"
+    Header always set X-Frame-Options "DENY"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>

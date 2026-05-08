@@ -1,0 +1,1 @@
+const http = require('http'); http.get('http://localhost:5173/Boutique/01_OneSiker_Vibes.webp', (res) => { console.log('STATUS:', res.statusCode); console.log('HEADERS:', res.headers); }).on('error', (e) => { console.error('ERROR:', e.message); });

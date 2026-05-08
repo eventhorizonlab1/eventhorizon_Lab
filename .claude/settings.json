@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git tag *)",
+      "Bash(rm \"/Users/olivierlavergne/Documents/CODE_SITE/eventhorizon_Lab/.git/refs/remotes/origin/main 2\")",
+      "Bash(git add *)",
+      "Bash(echo \"=== Re-run dry-run with updated .gitignore ===\" *)",
+      "Read(//tmp/**)"
+    ]
+  }
+}

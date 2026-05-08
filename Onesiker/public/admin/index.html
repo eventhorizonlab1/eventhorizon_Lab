@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onesiker — Back Office</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/tailwind-v2.css?v=15">
+    <link rel="stylesheet" href="css/admin.css?v=27">
+    <link rel="stylesheet" href="css/backoffice-design-system.css?v=27">
+    <link rel="stylesheet" href="css/backoffice-components.css?v=27">
+    <link rel="stylesheet" href="css/backoffice-animations.css?v=27">
+    <style>
+        /* Force topbars display - overrides cache */
+        .admin-topbar { display: flex !important; }
+        .desktop-topbar { display: none !important; }
+        @media (min-width: 1024px) {
+            .admin-topbar { display: none !important; }
+            .desktop-topbar { display: flex !important; justify-content: space-between; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="login-container">
+    <div class="login-card">
+        <img src="/TAG_ONESIKER.png" alt="Onesiker">
+        <h1>Administration</h1>
+        <form id="login-form">
+            <div style="margin-bottom:1rem">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" autocomplete="current-password" required>
+            </div>
+            <button type="submit">Connexion</button>
+            <p id="login-error" class="hidden"></p>
+        </form>
+    </div>
+</div>
+
+<div id="app-container" class="hidden">
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-logo">
+            <img src="/TAG_ONESIKER.png" alt="Onesiker">
+            <div class="sidebar-logo-text">
+                <span>Onesiker</span>
+                <span>Back Office</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <p class="sidebar-section-label">Vue d'ensemble</p>
+            <button class="sidebar-nav-item" data-tab="dashboard">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span>Dashboard</span>
+            </button>
+            <p class="sidebar-section-label">Contenu</p>
+            <button class="sidebar-nav-item" data-tab="layout">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                <span>Menu &amp; Navigation</span>
+            </button>
+            <button class="sidebar-nav-item" data-tab="hero">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="8.5" r="1.5"/></svg>
+                <span>Hero</span>
+            </button>
+            <button class="sidebar-nav-item" data-tab="news">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 10h8M8 14h5"/></svg>
+                <span>Actualités</span>
+            </button>
+            <button class="sidebar-nav-item" data-tab="boutique">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                <span>Boutique</span>
+            </button>
+            <button class="sidebar-nav-item" data-tab="bio">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Bio Onesiker</span>
+            </button>
+            <button class="sidebar-nav-item" data-tab="artworks">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><circle cx="11" cy="11" r="2"/></svg>
+                <span>Atelier (Œuvres)</span>
+            </button>
+            <button class="sidebar-nav-item" data-tab="contact">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <span>Contact</span>
+            </button>
+            <p class="sidebar-section-label">Gestion</p>
+            <button class="sidebar-nav-item" data-tab="media">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+                <span>Médias</span>
+            </button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="/" target="_blank">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                <span>Voir le site</span>
+            </a>
+            <button data-action="logout" id="logout-btn">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                <span>Déconnexion</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- ── MAIN ── -->
+    <div class="admin-main">
+        <!-- Topbar mobile -->
+        <header class="admin-topbar justify-between items-center w-full">
+            <a href="/" target="_blank" aria-label="Voir le site" class="text-gray-500 hover:text-white shrink-0 p-2 -ml-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
+            <h2 id="topbar-title" class="flex-1 text-center truncate font-bold text-white mx-2 text-[1.05rem]">Menu &amp; Navigation</h2>
+            <button data-action="logout" aria-label="Déconnexion" class="text-gray-500 hover:text-red-500 shrink-0 p-2 -mr-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            </button>
+        </header>
+
+        <!-- Topbar desktop -->
+        <div class="desktop-topbar">
+            <div style="display:flex;align-items:center;">
+                <span class="desktop-topbar__title">Onesiker Admin</span>
+                <span class="desktop-topbar__breadcrumb" id="desktop-breadcrumb">Menu &amp; Navigation</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span style="font-size:0.75rem;color:#6b7280;">Connecté</span>
+                <div style="width:8px;height:8px;border-radius:50%;background:#10b981;"></div>
+            </div>
+        </div>
+
+        <main class="admin-content">
+
+        <!-- DASHBOARD TAB -->
+        <div id="dashboard-tab" class="tab-content" data-title="Dashboard">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8">
+                <h2 class="text-xl font-bold uppercase tracking-widest text-white">Vue d'ensemble</h2>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10" id="dashboard-kpis">
+                <!-- Injected via JS -->
+            </div>
+            
+            <h3 class="text-lg font-bold mb-4 uppercase tracking-widest text-gray-500">Actions Rapides</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <button data-tab="news" class="btn btn-secondary w-full justify-start h-12 uppercase">📝 Rédiger Actu</button>
+                <button data-tab="artworks" class="btn btn-secondary w-full justify-start h-12 uppercase">🎨 Ajouter Œuvre</button>
+                <button data-tab="media" class="btn btn-secondary w-full justify-start h-12 uppercase">📁 Gérer Médias</button>
+            </div>
+        </div>
+
+        <div id="layout-tab" class="tab-content hidden" data-title="Menu &amp; Navigation">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
+                <h2 class="text-xl font-bold">Menu & Sections</h2>
+                <div class="flex flex-wrap sm:flex-row gap-2 w-full sm:w-auto">
+                    <button data-action="save" data-type="layout" class="btn btn-primary w-full sm:w-auto justify-center">Enregistrer</button>
+                    <button data-action="add-custom-page" class="btn btn-secondary w-full sm:w-auto justify-center">+ Nouvelle Section Personnalisée</button>
+                </div>
+            </div>
+            <p class="text-sm text-gray-500 mb-4">Glissez-déposez pour réordonner les sections. Cochez "Visible" pour les afficher sur le site. Renommez les titres pour le menu de navigation.</p>
+            <div id="layout-list" class="space-y-4"></div>
+        </div>
+
+        <div id="news-tab" class="tab-content hidden" data-title="Actualités">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
+                <h2 class="text-xl font-bold">Liste des Actualités</h2>
+                <div class="flex flex-wrap sm:flex-row gap-2 w-full sm:w-auto">
+                    <button data-action="save" data-type="news" class="btn btn-primary w-full sm:w-auto justify-center">Enregistrer l'ordre</button>
+                    <button data-action="add-news" class="btn btn-secondary w-full sm:w-auto justify-center">+ Nouvelle actualité</button>
+                </div>
+            </div>
+            <div id="news-list" class="space-y-4"></div>
+        </div>
+
+        <div id="artworks-tab" class="tab-content hidden" data-title="Atelier (Œuvres)">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
+                <h2 class="text-xl font-bold">Catégories d'Œuvres</h2>
+                <div class="flex flex-wrap sm:flex-row gap-2 w-full sm:w-auto">
+                    <button data-action="save" data-type="artworks" class="btn btn-primary w-full sm:w-auto justify-center">Enregistrer</button>
+                    <button data-action="add-category" class="btn btn-secondary w-full sm:w-auto justify-center">+ Ajouter une catégorie</button>
+                </div>
+            </div>
+            
+            <!-- Portfolio PDF section -->
+            <div class="card p-6 mb-8">
+                <h3 class="font-bold text-lg mb-2 text-white">Portfolio PDF</h3>
+                <p class="text-sm text-gray-500 mb-4">Gérez le catalogue ou portfolio PDF téléchargeable par les visiteurs sur la page Atelier.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- PDF Actuel -->
+                    <div class="p-4 bg-hover border border-gray-800 rounded-lg flex flex-col justify-between min-h-[120px]">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">PDF Actuel</span>
+                            <span id="pdf-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-hover text-white font-bold transition-all">Par défaut</span>
+                        </div>
+                        <div id="pdf-current" class="flex items-center justify-between mt-2">
+                            <a id="pdf-link" href="/PDF/Portfolio_Artistique_Onesiker.pdf" target="_blank" class="flex items-center gap-2 text-white hover:text-white text-sm font-bold">
+                                <svg class="w-5 h-5 text-red-500 flex-shrink-0" width="20" height="20" style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                                <span>Visualiser le PDF</span>
+                            </a>
+                            <button data-action="delete-pdf" class="hidden text-red-500 hover:text-red-700 font-bold hover:bg-red-500 hover:text-white px-2.5 py-1.5 rounded-md text-sm transition-colors">
+                                Supprimer
+                            </button>
+                        </div>
+                        <div id="pdf-none" class="hidden text-sm italic text-gray-500 mt-2 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-gray-500 flex-shrink-0" width="20" height="20" style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <span>Aucun PDF configuré (le site utilisera le fichier par défaut)</span>
+                        </div>
+                    </div>
+
+                    <!-- Remplacer / Ajouter -->
+                    <div class="relative">
+                        <input type="file" id="pdf_upload" data-upload-type="pdf" class="hidden" accept="application/pdf">
+                        <label for="pdf_upload" class="flex flex-col items-center justify-center border-2 border-dashed border-gray-700 hover:border-gray-600 p-4 text-center cursor-pointer hover:bg-hover/30 rounded-lg text-gray-500 hover:text-white transition-all h-full min-h-[120px]">
+                            <svg class="w-6 h-6 mb-2 text-gray-500" width="24" height="24" style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                            </svg>
+                            <span class="text-sm font-bold">Remplacer ou ajouter un PDF</span>
+                            <span class="text-xs text-gray-500 mt-1">Format PDF uniquement</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="artworks-list" class="space-y-4"></div>
+        </div>
+
+        <div id="hero-tab" class="tab-content hidden" data-title="Images Héro">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
+                <h2 class="text-xl font-bold">Images Héro</h2>
+                <button data-action="save" data-type="hero" class="btn btn-primary w-full sm:w-auto justify-center">Enregistrer</button>
+            </div>
+            <div class="card p-6">
+                <div class="relative mb-6">
+                    <input type="file" id="hero_upload" class="hidden" accept="image/*" data-upload-type="hero">
+                    <label for="hero_upload" class="block w-full border-2 border-dashed border-gray-700 p-4 text-center cursor-pointer hover:bg-hover rounded text-gray-500 font-bold">
+                        + Ajouter une image Héro (Sera compressée automatiquement)
+                    </label>
+                </div>
+                <div id="hero-images-container" class="space-y-2"></div>
+            </div>
+        </div>
+
+        <div id="boutique-tab" class="tab-content hidden" data-title="Boutique">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
+                <h2 class="text-xl font-bold">Images Boutique</h2>
+                <button data-action="save" data-type="boutique" class="btn btn-primary w-full sm:w-auto justify-center">Enregistrer</button>
+            </div>
+            <div class="card p-6">
+                <div class="relative mb-6">
+                    <input type="file" id="boutique_upload" class="hidden" accept="image/*" data-upload-type="boutique">
+                    <label for="boutique_upload" class="block w-full border-2 border-dashed border-gray-700 p-4 text-center cursor-pointer hover:bg-hover rounded text-gray-500 font-bold">
+                        + Ajouter une image Boutique (Sera compressée automatiquement)
+                    </label>
+                </div>
+                <div id="boutique-images-container" class="space-y-2"></div>
+            </div>
+        </div>
+
+        <div id="bio-tab" class="tab-content hidden" data-title="Biographie">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
+                <h2 class="text-xl font-bold">Biographie (Onesiker)</h2>
+                <button data-action="save" data-type="bio" class="btn btn-primary w-full sm:w-auto justify-center">Enregistrer</button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Text Form -->
+                <div class="card p-6 space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-2">
+                        <h3 class="font-bold text-lg">Textes</h3>
+                        <button data-action="translate" data-type="bio" class="btn btn-secondary text-sm px-3 py-1 w-full sm:w-auto justify-center" title="Traduire le texte Français vers l'Anglais Automatiquement">Traduire FR &rarr; EN</button>
+                    </div>
+                    
+                    <div class="p-4 bg-hover border rounded space-y-3">
+                        <h4 class="font-bold text-gray-500 text-sm">Français</h4>
+                        <input type="text" id="bio_title_fr" class="w-full border p-2 text-sm" placeholder="Titre (ex: Onesiker)">
+                        <input type="text" id="bio_baseline_fr" class="w-full border p-2 text-sm" placeholder="Baseline (ex: Biographie)">
+                        <textarea id="bio_subtitle_fr" class="w-full border p-2 text-sm h-16" placeholder="Sous-titre (italique)"></textarea>
+                        <textarea id="bio_paragraphs_fr" class="w-full border p-2 text-sm h-48" placeholder="Paragraphes (Séparez chaque paragraphe par un saut de ligne)"></textarea>
+                    </div>
+
+                    <div class="p-4 bg-hover border rounded space-y-3">
+                        <h4 class="font-bold text-gray-500 text-sm">Anglais</h4>
+                        <input type="text" id="bio_title_en" class="w-full border p-2 text-sm" placeholder="Title (ex: Onesiker)">
+                        <input type="text" id="bio_baseline_en" class="w-full border p-2 text-sm" placeholder="Baseline (ex: Biography)">
+                        <textarea id="bio_subtitle_en" class="w-full border p-2 text-sm h-16" placeholder="Subtitle"></textarea>
+                        <textarea id="bio_paragraphs_en" class="w-full border p-2 text-sm h-48" placeholder="Paragraphs"></textarea>
+                    </div>
+                </div>
+
+                <!-- Images Bio -->
+                <div class="card p-6 h-fit">
+                    <h3 class="font-bold text-lg mb-4">Images Diaporama</h3>
+                    <div class="relative mb-6">
+                        <input type="file" id="bio_upload" class="hidden" accept="image/*" data-upload-type="bio_images">
+                        <label for="bio_upload" class="block w-full border-2 border-dashed border-gray-700 p-4 text-center cursor-pointer hover:bg-hover rounded text-gray-500 text-sm font-bold">
+                            + Ajouter une image Bio (Sera compressée automatiquement)
+                        </label>
+                    </div>
+                    <div id="bio-images-container" class="space-y-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="contact-tab" class="tab-content hidden" data-title="Contact &amp; Galeries">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
+                <h2 class="text-xl font-bold">Contact &amp; Galeries</h2>
+                <button data-action="save" data-type="contact" class="btn btn-primary w-full sm:w-auto justify-center">Enregistrer</button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Text Form -->
+                <div class="card p-6 space-y-4">
+                   <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-2">
+                        <h3 class="font-bold text-lg">Informations Fixes</h3>
+                        <button data-action="translate" data-type="contact" class="btn btn-secondary text-sm px-3 py-1 w-full sm:w-auto justify-center">Traduire FR &rarr; EN</button>
+                    </div>
+                    
+                    <label for="contact_email" class="block text-sm font-bold mt-2">Email Général</label>
+                    <input type="email" id="contact_email" class="w-full border p-2 text-sm">
+
+                    <div class="p-4 bg-hover border rounded space-y-3">
+                        <h4 class="font-bold text-gray-500 text-sm">Français</h4>
+                        <input type="text" id="contact_title_fr" class="w-full border p-2 text-sm" placeholder="Titre (ex: Contactez-nous)">
+                        <textarea id="contact_desc_fr" class="w-full border p-2 text-sm" placeholder="Description courte courte"></textarea>
+                        <textarea id="contact_intro_fr" class="w-full border p-2 text-sm" placeholder="Intro formulaire"></textarea>
+                        
+                        <label for="contact_addr_title" class="block text-xs font-bold mt-2">Adresse</label>
+                        <input type="text" id="contact_addr_title" class="w-full border p-2 text-sm" placeholder="Titre Adresse (ex: Onesiker)">
+                        <textarea id="contact_addr_fr" class="w-full border p-2 text-sm" placeholder="Adresse Lignes (Sauts de lignes)"></textarea>
+                        
+                        <input type="text" id="contact_gal_title_fr" class="w-full border p-2 text-sm" placeholder="Titre Galeries (ex: Galeries)">
+                    </div>
+
+                    <div class="p-4 bg-hover border rounded space-y-3">
+                        <h4 class="font-bold text-gray-500 text-sm">Anglais</h4>
+                        <input type="text" id="contact_title_en" class="w-full border p-2 text-sm" placeholder="Title (ex: Get in touch)">
+                        <textarea id="contact_desc_en" class="w-full border p-2 text-sm" placeholder="Short description"></textarea>
+                        <textarea id="contact_intro_en" class="w-full border p-2 text-sm" placeholder="Form intro"></textarea>
+                        
+                        <label for="contact_addr_en" class="block text-xs font-bold mt-2">Adresse</label>
+                        <textarea id="contact_addr_en" class="w-full border p-2 text-sm" placeholder="Address Lines"></textarea>
+                        
+                        <input type="text" id="contact_gal_title_en" class="w-full border p-2 text-sm" placeholder="Gallery Title (ex: Galleries)">
+                    </div>
+                </div>
+
+                <!-- Galleries List -->
+                <div class="card p-6">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4">
+                        <h3 class="font-bold text-lg">Liste des Galeries</h3>
+                        <button data-action="add-gallery" class="btn btn-secondary text-sm px-3 py-1 w-full sm:w-auto justify-center">+ Ajouter</button>
+                    </div>
+                    <div id="galleries-list" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- Contact URLs List -->
+            <div class="card p-6 mt-8">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4">
+                    <h3 class="font-bold text-lg">URLs de Contacts (Réseaux Sociaux)</h3>
+                    <button data-action="add-contact-url" class="btn btn-secondary text-sm px-3 py-1 w-full sm:w-auto justify-center">+ Ajouter une URL</button>
+                </div>
+                <div id="contact-urls-list" class="space-y-4"></div>
+            </div>
+        </div>
+
+        <!-- -- ONGLET MEDIAS ------------------------------------------- -->
+        <div id="media-tab" class="tab-content hidden" data-title="Gestionnaire de Médias">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <div>
+                    <h2 class="text-xl font-bold">Gestionnaire de Médias</h2>
+                    <p class="text-sm text-gray-500 mt-1">Tous les fichiers uploadés dans <code class="bg-hover px-1 py-0.5 rounded text-xs">/data/uploads/</code></p>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+                    <button data-action="load-media" class="btn btn-secondary w-full sm:w-auto justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        Actualiser
+                    </button>
+                    <button id="media-purge-btn" class="hidden btn btn-danger w-full sm:w-auto justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        Purger les orphelins
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bandeau de stats -->
+            <div id="media-stats" class="card px-5 py-3 mb-6"></div>
+
+            <!-- Grille des fichiers -->
+            <div id="media-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                <div class="col-span-full text-center py-12 text-gray-500">
+                    <p>Cliquez sur l'onglet pour charger les médias.</p>
+                </div>
+            </div>
+        </div>
+
+        </main>
+    </div><!-- /.admin-main -->
+</div><!-- /#app-container -->
+
+<!-- Dynamic Modal Form -->
+<div id="modal" class="hidden">
+    <div>
+        <div class="modal-header">
+            <h3 id="modal-title">Édition</h3>
+            <button data-action="close-modal" aria-label="Fermer">&times;</button>
+        </div>
+        <form id="edit-form">
+            <div id="form-fields" class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" data-action="close-modal" class="btn btn-secondary">Annuler</button>
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <!-- Scripts chargés séquentiellement sans document.write -->
+    <script src="js/globals.js?v=27"></script>
+    <script src="js/api.js?v=27"></script>
+    <script src="js/ui.js?v=27"></script>
+    <script src="js/modules/layout.js?v=27"></script>
+    <script src="js/modules/news.js?v=27"></script>
+    <script src="js/modules/artworks.js?v=27"></script>
+    <script src="js/modules/pages.js?v=27"></script>
+    <script src="js/modules/media.js?v=27"></script>
+    <script src="js/main.js?v=27"></script>
+<!-- -- BOTTOM NAVIGATION (mobile only) ------------------------------ -->
+<nav class="mobile-bottom-nav nav-hidden" id="bottom-nav" aria-label="Navigation principale">
+    <button data-tab="dashboard">
+        <span class="nav-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        </span>
+        <span class="nav-dot"></span>
+        <span>Dashboard</span>
+    </button>
+    <button data-tab="layout">
+        <span class="nav-icon">
+            <!-- Menu & Navigation / Boussole -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        </span>
+        <span class="nav-dot"></span>
+        <span>Menu</span>
+    </button>
+    <button data-tab="hero">
+        <span class="nav-icon">
+            <!-- Image / Hero -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="8.5" r="1.5"/></svg>
+        </span>
+        <span class="nav-dot"></span>
+        <span>Hero</span>
+    </button>
+    <button data-tab="news">
+        <span class="nav-icon">
+            <!-- Actualités -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v2H4z"/><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 10h8M8 14h5"/></svg>
+        </span>
+        <span class="nav-dot"></span>
+        <span>Actu</span>
+    </button>
+    <button data-tab="boutique">
+        <span class="nav-icon">
+            <!-- Boutique / Sac -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        </span>
+        <span class="nav-dot"></span>
+        <span>Boutique</span>
+    </button>
+    <button data-tab="bio">
+        <span class="nav-icon">
+            <!-- Bio / Utilisateur -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </span>
+        <span class="nav-dot"></span>
+        <span>Bio</span>
+    </button>
+    <button data-tab="artworks">
+        <span class="nav-icon">
+            <!-- Atelier / Pinceau -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+        </span>
+        <span class="nav-dot"></span>
+        <span>Atelier</span>
+    </button>
+    <button data-tab="contact">
+        <span class="nav-icon">
+            <!-- Contact / Enveloppe -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </span>
+        <span class="nav-dot"></span>
+        <span>Contact</span>
+    </button>
+    <button data-tab="media">
+        <span class="nav-icon">
+            <!-- Médias / Dossier -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+        </span>
+        <span class="nav-dot"></span>
+        <span>Médias</span>
+    </button>
+</nav>
+</body>
+</html>

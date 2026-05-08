@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Mobile Cards</title>
+<link rel="stylesheet" href="css/admin.css">
+<link rel="stylesheet" href="css/tailwind-v2.css">
+<style>
+  body { background: #f5f5f7; font-family: Inter, sans-serif; padding: 1rem; margin: 0; }
+  .admin-main { margin-left: 0 !important; }
+</style>
+</head>
+<body>
+<div class="admin-main">
+  <h2 style="font-size:1.2rem;font-weight:bold;margin-bottom:1rem;">Test Cards Mobile</h2>
+
+  <div class="responsive-card" style="margin-bottom:1rem;">
+    <div class="news-card-wrapper bg-white border border-gray-200 rounded-xl shadow-sm">
+      <div class="news-card-inner">
+        <div class="drag-handle cursor-move text-gray-300">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+        </div>
+        <div class="news-card-img bg-gray-100 rounded-lg overflow-hidden border border-gray-100" style="display:flex;align-items:center;justify-content:center;">
+          <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        </div>
+        <div class="news-card-content">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.5rem;margin-bottom:0.25rem;">
+            <span style="font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:0.05em;color:#2563eb;background:#eff6ff;padding:2px 8px;border-radius:4px;">12 MAI 2025</span>
+            <span style="font-size:10px;font-weight:bold;color:#9ca3af;text-transform:uppercase;background:#f9fafb;padding:2px 8px;border-radius:4px;">+ 2 photo(s)</span>
+          </div>
+          <h4 style="font-weight:bold;color:#111;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">New drop - Caps Collection Été</h4>
+          <p style="font-size:0.875rem;color:#6b7280;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px;">Découvrez notre nouvelle collection de casquettes brodées</p>
+        </div>
+        <div class="news-card-actions">
+          <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;flex-shrink:0;">
+            <input type="checkbox" checked style="width:1rem;height:1rem;">
+            <span style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;color:#111;">Visible</span>
+          </label>
+          <div class="news-card-buttons">
+            <button class="btn-action" style="background:#eff6ff;color:#2563eb;">
+              <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              <span>Modifier</span>
+            </button>
+            <button class="btn-action" style="background:#fef2f2;color:#dc2626;">
+              <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              <span>Supprimer</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="news-mobile-order">
+        <button>↑ Monter</button>
+        <button>↓ Descendre</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="responsive-card" style="margin-bottom:1rem;">
+    <div class="news-card-wrapper bg-white border border-gray-200 rounded-xl shadow-sm opacity-60">
+      <div class="news-card-inner">
+        <div class="drag-handle cursor-move text-gray-300">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+        </div>
+        <div class="news-card-img bg-gray-100 rounded-lg overflow-hidden border border-gray-100" style="display:flex;align-items:center;justify-content:center;">
+          <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        </div>
+        <div class="news-card-content">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.5rem;margin-bottom:0.25rem;">
+            <span style="font-size:10px;font-weight:bold;text-transform:uppercase;color:#2563eb;background:#eff6ff;padding:2px 8px;border-radius:4px;">PAS DE DATE</span>
+          </div>
+          <h4 style="font-weight:bold;color:#111;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">New Drop - T-shirt Capitole</h4>
+          <p style="font-size:0.875rem;color:#6b7280;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px;">Sortie du T-shirt "Capitole" sérigraphié à 20 exemplaires</p>
+        </div>
+        <div class="news-card-actions">
+          <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;flex-shrink:0;">
+            <input type="checkbox" style="width:1rem;height:1rem;">
+            <span style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;color:#9ca3af;">Visible</span>
+          </label>
+          <div class="news-card-buttons">
+            <button class="btn-action" style="background:#eff6ff;color:#2563eb;">
+              <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              <span>Modifier</span>
+            </button>
+            <button class="btn-action" style="background:#fef2f2;color:#dc2626;">
+              <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              <span>Supprimer</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="news-mobile-order">
+        <button>↑ Monter</button>
+        <button>↓ Descendre</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

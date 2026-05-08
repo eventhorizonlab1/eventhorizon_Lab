@@ -1,0 +1,99 @@
+[
+    {
+        "id": 8,
+        "images": [
+            "\/data\/uploads\/Onesiker_Actualite3.webp"
+        ],
+        "title_fr": "New drop - Caps",
+        "title_en": "New drop - Caps",
+        "date_fr": "5 mai 2026",
+        "date_en": "May 5, 2026",
+        "excerpt_fr": "Découvrez notre nouvelle collection de casquettes brodées, disponibles dès maintenant.",
+        "excerpt_en": "Discover our new collection of embroidered caps, available now.",
+        "date": "",
+        "link": "https:\/\/onesiker.sumupstore.com",
+        "visible": true
+    },
+    {
+        "id": 7,
+        "images": [
+            "\/News\/1_Onesiker_Tshirt_Capitole.webp"
+        ],
+        "title_fr": "New Drop - T-shirt Capitole",
+        "title_en": "New Drop - T-shirt Capitole",
+        "date_fr": "20 avril 2026",
+        "date_en": "April 20, 2026",
+        "excerpt_fr": "Sortie du T-shirt \"Capitole\" sérigraphié à 20 exemplaires en hommage à sa ville rose.",
+        "excerpt_en": "Release of the \"Capitole\" screen-printed T-shirt, limited to 20 copies in tribute to his pink city.",
+        "link": "https:\/\/onesiker.sumupstore.com"
+    },
+    {
+        "id": 6,
+        "images": [
+            "\/News\/1_Onesiker_New_Drop.webp",
+            "\/News\/2_Onesiker_New_Drop.webp"
+        ],
+        "title_fr": "New drop - Dessins",
+        "title_en": "New drop - Drawings",
+        "date_fr": "13 avril 2026",
+        "date_en": "April 13, 2026",
+        "excerpt_fr": "Une série de nouveaux dessins ajoutés dans la boutique",
+        "excerpt_en": "A series of new designs added to the store",
+        "date": "",
+        "link": "https:\/\/onesiker.sumupstore.com",
+        "visible": true
+    },
+    {
+        "id": 5,
+        "images": [
+            "\/News\/1_Onesiker_Boards.webp"
+        ],
+        "title_fr": "3 nouveaux Skates en édition limités",
+        "title_en": "3 new limited edition Skates",
+        "date_fr": "6 avril 2026",
+        "date_en": "April 6, 2026",
+        "excerpt_fr": "Edition de 3 nouveaux skates pour l'ouverture de la boutique, l'occasion de profiter du code promo WELCOME 20",
+        "excerpt_en": "Edition of 3 new skates for the opening of the shop, the opportunity to enjoy the promo code WELCOME 20",
+        "date": "",
+        "link": "https:\/\/onesiker.sumupstore.com",
+        "visible": true
+    },
+    {
+        "id": 3,
+        "images": [
+            "\/News\/1_Onesiker_Urban_Art_Fair.webp",
+            "\/News\/2_Onesiker_Urban_Art_Fair.webp",
+            "\/News\/3_Onesiker_Urban_Art_Fair.webp"
+        ],
+        "title_fr": "Urban Art Fair 2026",
+        "title_en": "Urban Art Fair 2026",
+        "date_fr": "Du 19 au 22 mars 2026",
+        "date_en": "March 19-22, 2026",
+        "excerpt_fr": "A l'occasion des 10 ans de l'Urban Art Fair 2026, Oli (@oli_real) endosse de nouveau son rôle de commissaire d’exposition et présente sur son stand trois toiles de Onesiker(@onesiker). (@bigfloetoli)",
+        "excerpt_en": "For the 10th anniversary of the Urban Art Fair 2026, Oli (@oli_real) takes on the role of exhibition curator once again and presents three paintings by Onesiker(@onesiker) on his stand. (@bigfloetoli)"
+    },
+    {
+        "id": 1,
+        "images": [
+            "\/News\/1_Onesiker_Le_Timbre_Sike.webp"
+        ],
+        "title_fr": "Le Timbre",
+        "title_en": "Le Timbre",
+        "date_fr": "16 février 2026",
+        "date_en": "February 16, 2026",
+        "excerpt_fr": "Réalisation en une semaine de ce mur courant février 2026 en collaboration avec les artistes Onesiker x Xerou x Diaz, le collectif Salade Suprême et l'agence Intercalaire sur le site du Timbre pour la Poste Immobilier. @onesiker @e_xers_ @mistr_d @saladesupreme @agenceintercalaire",
+        "excerpt_en": "One-week realization of this mural in February 2026 in collaboration with artists Onesiker x Xerou x Diaz, the Salade Suprême collective, and the Intercalaire agency at the Le Timbre site for La Poste Immobilier. @onesiker @e_xers_ @mistr_d @saladesupreme @agenceintercalaire"
+    },
+    {
+        "id": 2,
+        "images": [
+            "\/News\/1_Onesiker_Fluop_Sike.webp"
+        ],
+        "title_fr": "Onesiker x Maison Fifteen",
+        "title_en": "Onesiker x Maison Fifteen",
+        "date_fr": "20 février 2026",
+        "date_en": "February 20, 2026",
+        "excerpt_fr": "Maison Fifteen a donné une nouvelle dimension au flop de Onesiker, entre sculpture sur bois et esthétique ultra moderne. Mille mercis @maison_fifteen",
+        "excerpt_en": "Maison Fifteen has given a new dimension to Onesiker's throw-up, between wood sculpture and ultra-modern aesthetics. A thousand thanks @maison_fifteen"
+    }
+]

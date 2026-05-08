@@ -1,0 +1,12 @@
+{
+  "css.lint.unknownProperties": "warning",
+  "css.lint.compatibleVendorPrefixes": "warning",
+  "workbench.colorCustomizations": {
+    "list.errorForeground": "#ff9800",
+    "editorError.foreground": "#ff9800",
+    "minimap.errorHighlight": "#ff9800",
+    "problemsErrorIcon.foreground": "#ff9800",
+    "statusBarItem.errorBackground": "#ff9800",
+    "statusBarItem.errorForeground": "#ffffff"
+  }
+}

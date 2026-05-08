@@ -1,0 +1,9 @@
+dist/
+node_modules/
+public/admin/
+public/data/
+public/PDF/
+.tmp_sharp/
+sharp_tmp/
+*.min.js
+*.min.css

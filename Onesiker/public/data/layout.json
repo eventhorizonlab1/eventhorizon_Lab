@@ -1,0 +1,9 @@
+{
+  "sections": [
+    { "id": "news", "type": "news", "title": { "fr": "Actualités", "en": "News" }, "visible": true },
+    { "id": "shop", "type": "shop", "title": { "fr": "Boutique", "en": "Shop" }, "visible": true },
+    { "id": "bio", "type": "bio", "title": { "fr": "Onesiker", "en": "Onesiker" }, "visible": true },
+    { "id": "artworks", "type": "artworks", "title": { "fr": "Atelier", "en": "Artworks" }, "visible": true },
+    { "id": "contacts", "type": "contact", "title": { "fr": "Contact", "en": "Contact" }, "visible": true }
+  ]
+}

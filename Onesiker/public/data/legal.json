@@ -1,0 +1,179 @@
+{
+  "site": "www.onesiker.org",
+  "fr": {
+    "title": "Conditions Générales d'Utilisation (CGU)",
+    "sections": [
+      {
+        "heading": "1. Présentation du site",
+        "blocks": [
+          { "type": "p", "text": "Le site onesiker.org est un espace dédié à la présentation des œuvres artistiques de Onesiker et à leur commercialisation." },
+          { "type": "p", "text": "En accédant au Site, l'utilisateur accepte sans réserve les présentes Conditions Générales d'Utilisation." }
+        ]
+      },
+      {
+        "heading": "2. Mentions Légales",
+        "blocks": [
+          { "type": "p", "text": "Conformément à la loi n° 2004-575 du 21 juin 2004 (LCEN) :" },
+          { "type": "ul", "items": [
+            { "label": "Éditeur / Artiste", "text": "Bernard BAUDRON (aka ONESIKER)" },
+            { "label": "Statut", "text": "EIRL — Code APE 9003A" },
+            { "label": "SIRET", "text": "42278522000043" },
+            { "label": "N° MDA", "text": "BA32203" },
+            { "label": "Siège social", "text": "Toulouse, France" },
+            { "label": "Hébergeur", "text": "OVH SAS est une filiale de la société OVH Groupe SA, société immatriculée au RCS de Lille sous le numéro 537 407 926 sise 2, rue Kellermann, 59100 Roubaix." }
+          ]}
+        ]
+      },
+      {
+        "heading": "3. Accès au site",
+        "blocks": [
+          { "type": "p", "text": "Le Site est accessible gratuitement à tout Utilisateur disposant d'un accès à internet. Tous les frais supportés par l'Utilisateur pour accéder au service (matériel informatique, logiciels, connexion internet, etc.) sont à sa charge." },
+          { "type": "p", "text": "L'Éditeur s'efforce de permettre l'accès au Site 24 heures sur 24, 7 jours sur 7, sauf en cas de force majeure ou d'un événement hors de son contrôle, et sous réserve des éventuelles pannes et interventions de maintenance nécessaires au bon fonctionnement du Site." }
+        ]
+      },
+      {
+        "heading": "4. Propriété Intellectuelle (Protection des Œuvres)",
+        "blocks": [
+          { "type": "p", "text": "Le contenu du Site (textes, logos, photographies, vidéos, et surtout les œuvres originales de ONESIKER) est protégé par le droit d'auteur et le Code de la propriété littéraire et artistique." },
+          { "type": "ul", "items": [
+            { "label": "Interdiction de reproduction", "text": "Toute reproduction, copie, publication, adaptation ou exploitation des contenus du Site, par quelque procédé que ce soit, est strictement interdite sans l'autorisation écrite préalable de ONESIKER." },
+            { "label": "Droit d'auteur", "text": "L'acquisition d'un produit (original ou dérivé) sur le site ne transfère aucun droit de propriété littéraire et artistique à l'Acheteur. ONESIKER reste titulaire exclusif des droits d'auteur sur ses créations." }
+          ]}
+        ]
+      },
+      {
+        "heading": "5. Responsabilité",
+        "blocks": [
+          { "type": "ul", "items": [
+            {
+              "label": "Responsabilité de l'Éditeur",
+              "text": "Les informations diffusées sur le Site sont réputées fiables. Toutefois, l'Éditeur ne garantit pas que le Site soit exempt de défauts, d'erreurs ou d'omissions. L'Éditeur ne pourra être tenu responsable :",
+              "sublist": [
+                "Des dommages résultant d'une intrusion frauduleuse d'un tiers (virus, piratage).",
+                "Des interruptions de service liées à la maintenance ou aux défaillances du réseau internet."
+              ]
+            },
+            {
+              "label": "Responsabilité de l'Utilisateur",
+              "text": "L'Utilisateur est responsable des risques liés à l'utilisation de son identifiant de connexion et de son mot de passe (si applicable). Il s'engage à ne pas perturber le bon fonctionnement du Site par des actes malveillants."
+            }
+          ]}
+        ]
+      },
+      {
+        "heading": "6. Données Personnelles et Cookies",
+        "blocks": [
+          { "type": "p", "text": "L'utilisation du Site peut donner lieu à la collecte de données personnelles pour la gestion des commandes et de la newsletter." },
+          { "type": "p", "text": "Conformément à la loi \"Informatique et Libertés\" et au RGPD, l'Utilisateur dispose d'un droit d'accès, de rectification et de suppression de ses données en contactant l'Éditeur à : contact.onesiker@gmail.com." },
+          { "type": "p", "text": "Le Site utilise des cookies pour améliorer l'expérience de navigation et réaliser des statistiques de visites. L'Utilisateur peut configurer son navigateur pour refuser les cookies." }
+        ]
+      },
+      {
+        "heading": "7. Liens Hypertextes",
+        "blocks": [
+          { "type": "p", "text": "Le Site peut contenir des liens vers des sites tiers (partenaires, réseaux sociaux). L'Éditeur n'exerçant aucun contrôle sur ces sites, il décline toute responsabilité quant à leur contenu ou leurs pratiques en matière de protection des données." }
+        ]
+      },
+      {
+        "heading": "8. Modification des CGU",
+        "blocks": [
+          { "type": "p", "text": "L'Éditeur se réserve le droit de modifier les termes des présentes CGU à tout moment afin de les adapter aux évolutions du Site et/ou de son exploitation. L'Utilisateur est invité à les consulter régulièrement." }
+        ]
+      },
+      {
+        "heading": "9. Droit Applicable et Juridiction Compétente",
+        "blocks": [
+          { "type": "p", "text": "Les présentes CGU sont soumises au droit français. En cas de litige relatif à l'utilisation du Site et à défaut d'accord amiable, compétence exclusive est attribuée aux tribunaux de Toulouse." }
+        ]
+      }
+    ]
+  },
+  "en": {
+    "title": "Terms of Use (GCU)",
+    "sections": [
+      {
+        "heading": "1. Presentation of the site",
+        "blocks": [
+          { "type": "p", "text": "The site onesiker.org is a space dedicated to the presentation of artistic works by Onesiker and their commercialization." },
+          { "type": "p", "text": "By accessing the Site, the user unreservedly accepts these General Conditions of Use." }
+        ]
+      },
+      {
+        "heading": "2. Legal Information",
+        "blocks": [
+          { "type": "p", "text": "In accordance with law n° 2004-575 of June 21, 2004 (LCEN):" },
+          { "type": "ul", "items": [
+            { "label": "Publisher / Artist", "text": "Bernard BAUDRON (aka ONESIKER)" },
+            { "label": "Status", "text": "EIRL — APE Code 9003A" },
+            { "label": "SIRET", "text": "42278522000043" },
+            { "label": "MDA No.", "text": "BA32203" },
+            { "label": "Head Office", "text": "Toulouse, France" },
+            { "label": "Hosting", "text": "OVH SAS is a subsidiary of OVH Groupe SA, a company registered with the Lille RCS under number 537 407 926 located at 2, rue Kellermann, 59100 Roubaix." }
+          ]}
+        ]
+      },
+      {
+        "heading": "3. Access to the site",
+        "blocks": [
+          { "type": "p", "text": "The Site is accessible free of charge to any User with internet access. All costs incurred by the User to access the service (hardware, software, internet connection, etc.) are at their expense." },
+          { "type": "p", "text": "The Publisher endeavors to provide access to the Site 24 hours a day, 7 days a week, except in the event of force majeure or an event beyond its control, and subject to any breakdowns and maintenance interventions necessary for the proper functioning of the Site." }
+        ]
+      },
+      {
+        "heading": "4. Intellectual Property (Protection of Works)",
+        "blocks": [
+          { "type": "p", "text": "The content of the Site (texts, logos, photographs, videos, and especially the original works of ONESIKER) is protected by copyright and the Code of Literary and Artistic Property." },
+          { "type": "ul", "items": [
+            { "label": "Prohibition of reproduction", "text": "Any reproduction, copying, publication, adaptation, or exploitation of the Site's content, by any means whatsoever, is strictly prohibited without the prior written consent of ONESIKER." },
+            { "label": "Copyright", "text": "The acquisition of a product (original or derived) on the site does not transfer any literary and artistic property rights to the Buyer. ONESIKER remains the exclusive holder of the copyrights on his creations." }
+          ]}
+        ]
+      },
+      {
+        "heading": "5. Liability",
+        "blocks": [
+          { "type": "ul", "items": [
+            {
+              "label": "Publisher's liability",
+              "text": "The information broadcast on the Site is deemed reliable. However, the Publisher does not guarantee that the Site is free of defects, errors, or omissions. The Publisher cannot be held liable for:",
+              "sublist": [
+                "Damages resulting from a fraudulent intrusion by a third party (virus, hacking).",
+                "Service interruptions related to maintenance or internet network failures."
+              ]
+            },
+            {
+              "label": "User's liability",
+              "text": "The User is responsible for the risks related to the use of their login ID and password (if applicable). They agree not to disrupt the proper functioning of the Site through malicious acts."
+            }
+          ]}
+        ]
+      },
+      {
+        "heading": "6. Personal Data and Cookies",
+        "blocks": [
+          { "type": "p", "text": "The use of the Site may lead to the collection of personal data for the management of orders and the newsletter." },
+          { "type": "p", "text": "In accordance with the \"Informatique et Libertés\" law and the GDPR, the User has the right to access, rectify, and delete their data by contacting the Publisher at: contact.onesiker@gmail.com." },
+          { "type": "p", "text": "The Site uses cookies to improve the browsing experience and to collect visitor statistics. The User can configure their browser to refuse cookies." }
+        ]
+      },
+      {
+        "heading": "7. Hypertext Links",
+        "blocks": [
+          { "type": "p", "text": "The Site may contain links to third-party sites (partners, social networks). As the Publisher has no control over these sites, it declines any responsibility for their content or data protection practices." }
+        ]
+      },
+      {
+        "heading": "8. Modification of the Terms of Use",
+        "blocks": [
+          { "type": "p", "text": "The Publisher reserves the right to modify the terms of these General Conditions of Use (GCU) at any time to adapt them to the developments of the Site and/or its operation. The User is advised to consult them regularly." }
+        ]
+      },
+      {
+        "heading": "9. Applicable Law and Competent Jurisdiction",
+        "blocks": [
+          { "type": "p", "text": "These General Conditions of Use are subject to French law. In the event of a dispute relating to the use of the Site and in the absence of an amicable agreement, exclusive jurisdiction is granted to the courts of Toulouse." }
+        ]
+      }
+    ]
+  }
+}

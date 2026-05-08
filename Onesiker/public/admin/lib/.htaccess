@@ -1,0 +1,9 @@
+# Internal modules — only loaded via require_once from api.php.
+# No reason for the public web to ever request /admin/lib/<anything>.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

@@ -1,28 +1,42 @@
-# Logs
-logs
+node_modules/
+build/
+dist/
+coverage/
+
+**/.DS_Store
+**/._*
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+.env
+.env.*
+!.env.example
 
-# Editor directories and files
+.tmp_sharp/
+sharp_tmp/
+**/.tmp/
+
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+!.vscode/settings.json
+.idea/
 
-# Playwright
-playwright-report/
-test-results/
+.cache/
+*.swp
+*.swo
+
+# Back-office runtime state (must never be committed)
+**/admin/cache/
+**/admin/admin_error.log
+**/admin/rate_limits.json
+**/admin/translate_rate_limits.json
+**/admin/config.php
+
+# Personal Claude Code state (project settings.json is shared, but settings.local.json is per-user)
+.claude/settings.local.json
+
+# Archived Event_Horizon project — kept on disk for reference, not in git
+# (history is preserved in the tag `archive/event-horizon`)
+/Event_Horizon/
+
+# Old artifact, empty/unused
+/favicon_b64.txt
