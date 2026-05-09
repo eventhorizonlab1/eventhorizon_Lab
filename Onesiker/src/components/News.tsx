@@ -39,7 +39,7 @@ const Carousel = ({ images, title }: { images: string[], title: string }) => {
     <div className="relative w-full h-full overflow-hidden">
       <img 
         src={images[index]} 
-        alt={`${title} - image ${index + 1}`} 
+        alt={`${title} ${index + 1}`}
         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         referrerPolicy="no-referrer"
         loading="lazy"

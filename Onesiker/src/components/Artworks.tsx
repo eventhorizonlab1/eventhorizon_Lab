@@ -163,7 +163,7 @@ const ArtworkCard = React.memo(function ArtworkCard({
             <div className="absolute inset-0 border border-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
             {/* Zoom Button */}
-            <button
+            <button type="button"
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsZoomed(true); }}
               className="absolute top-4 right-4 p-3 bg-black/20 text-white rounded-full hover:bg-black/40 transition-colors backdrop-blur-md opacity-100 md:opacity-0 md:group-hover:opacity-100 z-20"
               aria-label="Zoom image"
@@ -174,16 +174,16 @@ const ArtworkCard = React.memo(function ArtworkCard({
             {isCarousel && (
               <>
                 <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 flex justify-between px-4 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 z-20">
-                  <button onClick={prevImage} className="p-2 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] hover:opacity-70 transition-opacity" aria-label="Image précédente">
+                  <button type="button" onClick={prevImage} className="p-2 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] hover:opacity-70 transition-opacity" aria-label="Image précédente">
                     <ChevronLeft size={22} strokeWidth={2.5} />
                   </button>
-                  <button onClick={nextImage} className="p-2 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] hover:opacity-70 transition-opacity" aria-label="Image suivante">
+                  <button type="button" onClick={nextImage} className="p-2 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] hover:opacity-70 transition-opacity" aria-label="Image suivante">
                     <ChevronRight size={22} strokeWidth={2.5} />
                   </button>
                 </div>
                 <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 z-20">
                   {art.images.map((_: ArtworkImage, i: number) => (
-                    <button
+                    <button type="button"
                       key={i}
                       onClick={(e) => goToImage(e, i)}
                       className={`w-2 h-2 rounded-full transition-colors ${i === currentImageIndex ? 'bg-white' : 'bg-white/40 hover:bg-white/60'}`}
@@ -213,7 +213,7 @@ const ArtworkCard = React.memo(function ArtworkCard({
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          <button
+          <button type="button"
             className="absolute top-6 right-6 p-2 text-black/70 hover:text-black bg-black/5 hover:bg-black/10 rounded-full transition-colors z-50"
             onClick={(e) => { e.stopPropagation(); setIsZoomed(false); }}
             aria-label="Close zoom"
@@ -252,14 +252,14 @@ const ArtworkCard = React.memo(function ArtworkCard({
 
             {isCarousel && (
               <>
-                <button
+                <button type="button"
                   onClick={(e) => { e.stopPropagation(); prevImage(e); }}
                   className="absolute left-4 top-1/2 -translate-y-1/2 p-2 text-black hover:opacity-50 transition-opacity"
                   aria-label="Image précédente"
                 >
                   <ChevronLeft size={28} strokeWidth={2.5} className="md:w-9 md:h-9" />
                 </button>
-                <button
+                <button type="button"
                   onClick={(e) => { e.stopPropagation(); nextImage(e); }}
                   className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-black hover:opacity-50 transition-opacity"
                   aria-label="Image suivante"

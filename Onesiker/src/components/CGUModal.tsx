@@ -128,7 +128,7 @@ export default function CGUModal({ isOpen, onClose }: CGUModalProps) {
         className="bg-white text-black w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col relative overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <button
+        <button type="button"
           onClick={onClose}
           className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 rounded-full hover:bg-gray-100 transition-colors z-10"
           aria-label={language === 'en' ? 'Close' : 'Fermer'}

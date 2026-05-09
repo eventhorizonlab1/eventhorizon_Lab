@@ -49,8 +49,15 @@ export default function Header({ layout }: { layout?: any }) {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
-        <a href="#" className="flex items-center">
-          <img src="/TAG_ONESIKER.png?v=2" alt="Onesiker" className="h-20 md:h-24" referrerPolicy="no-referrer" />
+        <a href="/" className="flex items-center" aria-label="Onesiker - retour à l'accueil">
+          <img
+            src="/TAG_ONESIKER.png?v=2"
+            alt="Onesiker"
+            width={1181}
+            height={590}
+            className="h-20 md:h-24 w-auto"
+            referrerPolicy="no-referrer"
+          />
         </a>
 
         {/* Desktop Nav */}
@@ -91,7 +98,7 @@ export default function Header({ layout }: { layout?: any }) {
           className="md:hidden text-black"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label={isMobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-          aria-expanded={isMobileMenuOpen ? "true" : "false"}
+          aria-expanded={isMobileMenuOpen}
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>

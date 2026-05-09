@@ -48,12 +48,20 @@ export default function Footer() {
     <footer className="bg-white text-black py-12 border-t border-black/10">
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-8">
         <div className="flex-1 flex justify-center md:justify-start">
-          <img src="/TAG_ONESIKER.png?v=2" alt="Onesiker" className="h-16" loading="lazy" referrerPolicy="no-referrer" />
+          <img
+            src="/TAG_ONESIKER.png?v=2"
+            alt="Onesiker"
+            width={1181}
+            height={590}
+            className="h-16 w-auto"
+            loading="lazy"
+            referrerPolicy="no-referrer"
+          />
         </div>
         
         <div className="flex-1 flex justify-center space-x-6 flex-wrap gap-y-4">
           {urls.map((item, i: number) => (
-            <a key={i} href={item.url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-black transition-colors" title={item.name}>
+            <a key={i} href={item.url} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-black transition-colors" title={item.name}>
               {getIconForName(item.name)}
             </a>
           ))}
@@ -63,9 +71,9 @@ export default function Footer() {
           <p className="text-gray-500 text-sm font-light text-center md:text-right">
             &copy; {new Date().getFullYear()} Onesiker. {t.footer.rights}
           </p>
-          <button 
+          <button type="button" 
             onClick={() => setIsCguOpen(true)} 
-            className="text-gray-400 hover:text-black text-xs font-medium mt-3 tracking-widest transition-colors cursor-pointer"
+            className="text-gray-600 hover:text-black text-xs font-medium mt-3 tracking-widest transition-colors cursor-pointer"
           >
             CGU
           </button>

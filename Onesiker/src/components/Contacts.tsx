@@ -66,14 +66,14 @@ export default function Contacts() {
               <div className="flex items-start space-x-4">
                 <MapPin className="text-gray-400 mt-1" size={20} />
                 <div>
-                  <h4 className="font-medium uppercase tracking-widest text-sm mb-1">{addressTitle}</h4>
+                  <h3 className="font-medium uppercase tracking-widest text-sm mb-1">{addressTitle}</h3>
                   <p className="text-gray-500 font-light whitespace-pre-line">{addressLines}</p>
                 </div>
               </div>
               <div className="flex items-start space-x-4">
                 <Mail className="text-gray-400 mt-1" size={20} />
                 <div>
-                  <h4 className="font-medium uppercase tracking-widest text-sm mb-1">Email</h4>
+                  <h3 className="font-medium uppercase tracking-widest text-sm mb-1">Email</h3>
                   <p className="text-gray-500 font-light">
                     <a href={`mailto:${email}`} className="hover:text-black transition-colors">
                       {email}
@@ -86,7 +86,7 @@ export default function Contacts() {
                 <div className="flex items-start space-x-4">
                   <Store className="text-gray-400 mt-1" size={20} />
                   <div className="space-y-4">
-                    <h4 className="font-medium uppercase tracking-widest text-sm mb-1">{content.galleriesTitle || (language === 'en' ? 'Galleries' : 'Galeries')}</h4>
+                    <h3 className="font-medium uppercase tracking-widest text-sm mb-1">{content.galleriesTitle || (language === 'en' ? 'Galleries' : 'Galeries')}</h3>
                     {galleries.map((gal: any, i: number) => {
                       const detailsHtml = language === 'en' ? gal.details_en : gal.details_fr;
                       return (

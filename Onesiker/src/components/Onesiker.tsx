@@ -74,7 +74,7 @@ export default function Onesiker() {
               </AnimatePresence>
             </div>
 
-            <button 
+            <button type="button" 
               onClick={() => setIsExpanded(!isExpanded)}
               className="text-sm font-medium uppercase tracking-widest border-b border-black pb-1 hover:text-gray-500 hover:border-gray-500 transition-colors"
             >

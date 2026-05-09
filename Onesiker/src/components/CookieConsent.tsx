@@ -60,13 +60,13 @@ export default function CookieConsent() {
               </p>
             </div>
             <div className="flex items-center gap-3 shrink-0 w-full md:w-auto">
-              <button
+              <button type="button"
                 onClick={handleRefuse}
                 className="flex-1 md:flex-none text-sm font-medium uppercase tracking-widest px-5 py-2.5 border border-black/20 rounded-full text-gray-600 hover:text-black hover:border-black transition-colors"
               >
                 {isEn ? 'Refuse' : 'Refuser'}
               </button>
-              <button
+              <button type="button"
                 onClick={handleAccept}
                 className="flex-1 md:flex-none text-sm font-medium uppercase tracking-widest px-5 py-2.5 bg-black text-white rounded-full hover:bg-gray-800 transition-colors"
               >
