@@ -74,19 +74,25 @@ RewriteRule . /index.html [L]
     # Politique de référent
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
 
+    # Politique de permissions navigateur (caméra, micro, géoloc)
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+
     # Cache immuable pour assets hachés Vite (JS/CSS avec hash)
     <FilesMatch "\.[0-9a-f]{8,}\.(js|css)$">
         Header set Cache-Control "public, max-age=31536000, immutable"
     </FilesMatch>
 
-    # Pas de cache pour le point d'entrée HTML
+    # Revalidation systématique mais cache autorisé. `no-cache` (≠ `no-store`)
+    # force le navigateur à revalider à chaque requête, tout en restant éligible
+    # au back/forward cache (instant restore lors d'un retour arrière).
     <FilesMatch "index\.html$">
-        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Cache-Control "no-cache, must-revalidate"
     </FilesMatch>
 
-    # Pas de cache pour les JSON de données
+    # Idem pour les JSON de données (édités via le back-office) :
+    # toujours frais, mais bf-cache friendly.
     <FilesMatch "\.json$">
-        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Cache-Control "no-cache, must-revalidate"
     </FilesMatch>
 
     # ── CONTENT SECURITY POLICY — MODE BLOQUANT ───────────────────────────────
