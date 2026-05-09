@@ -24,6 +24,11 @@ sharp_tmp/
 *.swp
 *.swo
 
+# Test runner output
+**/test-results/
+**/playwright-report/
+**/playwright/.cache/
+
 # Back-office runtime state (must never be committed)
 **/admin/cache/
 **/admin/admin_error.log
