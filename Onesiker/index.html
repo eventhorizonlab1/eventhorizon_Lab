@@ -97,9 +97,21 @@
 
 
     <title>Onesiker - Artiste Contemporain</title>
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
-    <link rel="preload" as="image" type="image/webp" href="/Hero/1_Onesiker_Maison_Fifteen.webp" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- Preload the LCP image with a responsive srcset so mobile pulls the 800px variant. -->
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      href="/Hero/1_Onesiker_Maison_Fifteen.webp"
+      imagesrcset="/Hero/1_Onesiker_Maison_Fifteen_mobile.webp 800w, /Hero/1_Onesiker_Maison_Fifteen.webp 1920w"
+      imagesizes="100vw"
+      fetchpriority="high"
+    />
   </head>
   <body>
     <!-- Google Tag Manager (noscript) — conditionnel RGPD -->
