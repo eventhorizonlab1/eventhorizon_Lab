@@ -62,6 +62,16 @@ function handleSaveData(): void {
 function validateAndSanitize(string $type, &$decoded) {
     if ($type === 'hero' || $type === 'boutique') {
         if (!is_array($decoded)) return 'Doit etre un tableau.';
+        // Each entry can be a legacy string (URL only) or {src, alt_fr, alt_en, visible}.
+        // Sanitize alt fields and coerce visible to a strict boolean when present.
+        foreach ($decoded as &$entry) {
+            if (is_array($entry)) {
+                if (isset($entry['alt_fr'])) $entry['alt_fr'] = sanitizeAltText($entry['alt_fr']);
+                if (isset($entry['alt_en'])) $entry['alt_en'] = sanitizeAltText($entry['alt_en']);
+                if (isset($entry['visible'])) $entry['visible'] = (bool) $entry['visible'];
+            }
+        }
+        unset($entry);
     } elseif ($type === 'news') {
         if (!is_array($decoded)) return 'Doit etre un tableau.';
         foreach ($decoded as &$item) {
@@ -76,8 +86,11 @@ function validateAndSanitize(string $type, &$decoded) {
             }
             if (isset($cat['images']) && is_array($cat['images'])) {
                 foreach ($cat['images'] as &$img) {
-                    if (isset($img['title'])) $img['title'] = sanitizeHtml($img['title']);
+                    if (isset($img['title']))  $img['title']  = sanitizeHtml($img['title']);
+                    if (isset($img['alt_fr'])) $img['alt_fr'] = sanitizeAltText($img['alt_fr']);
+                    if (isset($img['alt_en'])) $img['alt_en'] = sanitizeAltText($img['alt_en']);
                 }
+                unset($img);
             }
         }
     } elseif ($type === 'bio') {

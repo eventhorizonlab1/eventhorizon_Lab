@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 import { useLanguage } from '../context/LanguageContext';
 import { useJsonData } from '../hooks/useJsonData';
+import { getAlt, getSrc, isVisible, type ImageEntry } from '../lib/imageAlt';
 
 // Convention: each Hero image has a paired <name>_mobile.webp at ≤800px wide.
 // scripts/convert_hero_mobile.mjs regenerates them. If a freshly uploaded image
@@ -9,10 +10,10 @@ import { useJsonData } from '../hooks/useJsonData';
 const mobileVariantOf = (src: string) => src.replace(/(\.[a-z0-9]+)(\?.*)?$/i, '_mobile$1$2');
 
 export default function Hero() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const ref = useRef(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const images = useJsonData<string[]>('hero') ?? [];
+  const images = (useJsonData<ImageEntry[]>('hero') ?? []).filter(isVisible);
 
   useEffect(() => {
     if (images.length === 0) return;
@@ -30,20 +31,23 @@ export default function Hero() {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
 
+  const currentEntry = images[currentImageIndex];
+  const currentSrc = currentEntry ? getSrc(currentEntry) : '';
+
   return (
-    <section ref={ref} className="relative h-screen flex items-center justify-center overflow-hidden bg-white">
-      <motion.div 
+    <section ref={ref} aria-label={t.hero.subtitle} className="relative h-screen flex items-center justify-center overflow-hidden bg-white">
+      <motion.div
         style={{ y, opacity }}
         className="absolute inset-0 z-0 bg-white"
       >
         <AnimatePresence>
-          {images.length > 0 && images[currentImageIndex] && (
+          {images.length > 0 && currentEntry && (
             <motion.img
               key={currentImageIndex}
-              src={images[currentImageIndex]}
-              srcSet={`${mobileVariantOf(images[currentImageIndex]!)} 800w, ${images[currentImageIndex]} 1920w`}
+              src={currentSrc}
+              srcSet={`${mobileVariantOf(currentSrc)} 800w, ${currentSrc} 1920w`}
               sizes="100vw"
-              alt=""
+              alt={getAlt(currentEntry, language, '')}
               initial={{ opacity: 0, scale: 1.05 }}
               animate={{ opacity: 0.2, scale: 1 }}
               exit={{ opacity: 0 }}

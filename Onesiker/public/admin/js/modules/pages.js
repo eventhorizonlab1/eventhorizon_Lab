@@ -17,17 +17,31 @@ window.PagesModule = (function() {
     function renderSimpleImages(type) {
         const list = document.getElementById(`${type}-images-container`);
         if (!list) return;
-        
+
         const arr = currentData[type] || [];
+
+        // Backward-compat : convertit les anciennes entrées chaîne en {src, alt_fr, alt_en}
+        // pour que les nouveaux champs alt soient édités à plat.
+        for (let i = 0; i < arr.length; i++) {
+            if (typeof arr[i] === 'string') {
+                arr[i] = { src: arr[i], alt_fr: '', alt_en: '' };
+                isDirty = true;
+            }
+        }
+
         if (arr.length === 0) {
             list.innerHTML = `<div class="py-12 text-center text-gray-500 italic text-sm">Aucune image dans cette section.</div>`;
             return;
         }
 
-        list.innerHTML = arr.map((url, idx) => {
+        list.innerHTML = arr.map((entry, idx) => {
+            const url = entry.src || '';
             const filename = url.split('/').pop();
+            const altFr = entry.alt_fr || '';
+            const altEn = entry.alt_en || '';
+            const visible = entry.visible !== false;
             return `
-                <div class="responsive-card card border border-gray-800 rounded-xl shadow-sm hover:shadow-md hover:border-gray-700 transition-all draggable-item" draggable="true" data-drag-type="${type}" data-index="${idx}">
+                <div class="responsive-card card border border-gray-800 rounded-xl shadow-sm hover:shadow-md hover:border-gray-700 transition-all draggable-item${visible ? '' : ' opacity-60'}" draggable="true" data-drag-type="${type}" data-index="${idx}">
                     <div class="news-card-inner items-center">
                         <!-- Desktop Drag Handle -->
                         <div class="drag-handle cursor-move text-gray-500 hover:text-white">
@@ -39,14 +53,30 @@ window.PagesModule = (function() {
                         </div>
 
                         <div class="news-card-content">
-                            <p class="text-[10px] font-mono text-gray-500 truncate">${filename}</p>
+                            <p class="text-[10px] font-mono text-gray-500 truncate mb-2">${filename}</p>
+                            <div class="grid grid-cols-1 gap-1">
+                                <input type="text"
+                                    class="w-full px-2 py-1 text-xs rounded border border-gray-700 bg-hover text-white outline-none focus:border-blue-500 transition-colors"
+                                    placeholder="Alt FR (description lecteur d'écran)"
+                                    value="${escHtml(altFr)}"
+                                    maxlength="200"
+                                    data-action="alt-input" data-type="${type}" data-index="${idx}" data-field="alt_fr">
+                                <input type="text"
+                                    class="w-full px-2 py-1 text-xs rounded border border-gray-700 bg-hover text-white outline-none focus:border-blue-500 transition-colors"
+                                    placeholder="Alt EN (screen-reader description)"
+                                    value="${escHtml(altEn)}"
+                                    maxlength="200"
+                                    data-action="alt-input" data-type="${type}" data-index="${idx}" data-field="alt_en">
+                            </div>
                         </div>
 
                         <div class="news-card-actions">
+                            <label class="flex items-center gap-1.5 cursor-pointer select-none">
+                                <input type="checkbox" data-action="toggle-general-image-visibility" data-type="${type}" data-index="${idx}" class="w-4 h-4 text-white rounded border-gray-700 focus:ring-red-500" ${visible ? 'checked' : ''}>
+                                <span class="text-[10px] font-black uppercase tracking-widest ${visible ? 'text-white' : 'text-gray-500'}">Visible</span>
+                            </label>
                             <div class="news-card-buttons">
-                                <button data-action="delete-general-image" data-type="${type}" data-index="${idx}" class="p-2 text-gray-500 hover:text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-all" title="Supprimer">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                </button>
+                                <button data-action="delete-general-image" data-type="${type}" data-index="${idx}" class="btn-action border border-red-500 text-red-500 hover:bg-red-500 hover:text-white" title="Supprimer"><span>Supprimer</span></button>
                             </div>
                         </div>
                     </div>
@@ -57,6 +87,14 @@ window.PagesModule = (function() {
                     </div>
                 </div>`;
         }).join('');
+
+        UI.makeDraggable(list, (dragIdx, dropIdx) => {
+            const arr = currentData[type];
+            const item = arr.splice(dragIdx, 1)[0];
+            arr.splice(dropIdx, 0, item);
+            isDirty = true;
+            renderSimpleImages(type);
+        });
     }
 
     async function deleteGeneralImage(type, idx) {
@@ -76,12 +114,27 @@ window.PagesModule = (function() {
     function moveGeneralImage(type, idx, dir) {
         let arr = type === 'bio_images' ? currentData.bio.images : currentData[type];
         if (idx + dir < 0 || idx + dir >= arr.length) return;
-        
+
         isDirty = true;
         [arr[idx], arr[idx + dir]] = [arr[idx + dir], arr[idx]];
-        
+
         if (type === 'bio_images') renderBio();
         else renderSimpleImages(type);
+    }
+
+    function toggleGeneralVisibility(type, idx, visible) {
+        const arr = currentData[type];
+        if (!Array.isArray(arr) || arr[idx] === undefined) return;
+        // Promote legacy string entries to {src, alt_fr, alt_en, visible} so the new field has somewhere to live.
+        if (typeof arr[idx] === 'string') {
+            arr[idx] = { src: arr[idx], alt_fr: '', alt_en: '', visible };
+        } else {
+            arr[idx].visible = visible;
+        }
+        renderSimpleImages(type);
+        isDirty = true;
+        APIModule.saveData(type);
+        UI.showToast(visible ? '✓ Image rendue visible sur le site.' : '✓ Image masquée sur le site.');
     }
 
     async function uploadGenericImage(input, type) {
@@ -93,7 +146,7 @@ window.PagesModule = (function() {
         if (url) {
             if (type === 'hero' || type === 'boutique') {
                 if (!currentData[type]) currentData[type] = [];
-                currentData[type].unshift(url);
+                currentData[type].unshift({ src: url, alt_fr: '', alt_en: '' });
                 renderSimpleImages(type);
             } else if (type === 'bio_images') {
                 if (!currentData.bio) currentData.bio = {};
@@ -153,6 +206,13 @@ window.PagesModule = (function() {
                             <button data-action="move-general-image" data-type="bio_images" data-index="${idx}" data-dir="1">↓ Descendre</button>
                         </div>
                     </div>`;
+            });
+            UI.makeDraggable(list, (dragIdx, dropIdx) => {
+                const arr = currentData.bio.images;
+                const item = arr.splice(dragIdx, 1)[0];
+                arr.splice(dropIdx, 0, item);
+                isDirty = true;
+                renderBio();
             });
         }
     }
@@ -384,6 +444,14 @@ window.PagesModule = (function() {
                     </div>
                 </div>`;
         });
+
+        UI.makeDraggable(list, (dragIdx, dropIdx) => {
+            const arr = currentData.contact.urls;
+            const item = arr.splice(dragIdx, 1)[0];
+            arr.splice(dropIdx, 0, item);
+            isDirty = true;
+            renderContactUrls();
+        });
     }
 
     function addContactUrl() { editContactUrl(null); }
@@ -520,6 +588,7 @@ window.PagesModule = (function() {
         render: render,
         deleteGeneralImage: deleteGeneralImage,
         moveGeneralImage: moveGeneralImage,
+        toggleGeneralVisibility: toggleGeneralVisibility,
         uploadGenericImage: uploadGenericImage,
         autoTranslateBio: autoTranslateBio,
         autoTranslateContact: autoTranslateContact,

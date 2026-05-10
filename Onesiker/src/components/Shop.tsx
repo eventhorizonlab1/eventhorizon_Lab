@@ -3,11 +3,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ExternalLink } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useJsonData } from '../hooks/useJsonData';
+import { getAlt, getSrc, isVisible, type ImageEntry } from '../lib/imageAlt';
 
 export default function Shop() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [currentSlide, setCurrentSlide] = useState(0);
-  const slides = useJsonData<string[]>('boutique') ?? [];
+  const slides = (useJsonData<ImageEntry[]>('boutique') ?? []).filter(isVisible);
 
   useEffect(() => {
     if (slides.length === 0) return;
@@ -45,12 +46,12 @@ export default function Shop() {
             className="w-full aspect-[4/3] md:aspect-[21/9] relative bg-gray-100 flex items-center justify-center rounded-2xl overflow-hidden shadow-2xl mb-8 group cursor-pointer"
           >
             <AnimatePresence>
-              {slides.map((src, i) =>
+              {slides.map((entry, i) =>
                 i === currentSlide ? (
                   <motion.img
-                    key={src}
-                    src={src}
-                    alt={`Shop Slider ${i + 1}`}
+                    key={getSrc(entry)}
+                    src={getSrc(entry)}
+                    alt={getAlt(entry, language, t.shop.title)}
                     initial={{ opacity: 0, scale: 1.06 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 1.02 }}

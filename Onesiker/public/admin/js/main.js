@@ -180,7 +180,16 @@ document.addEventListener('change', async (e) => {
         return;
     }
 
-    // 4. Layout visibility checkbox
+    // 4. Visibilité Hero/Boutique (checkbox via data-action)
+    const heroBoutiqueToggle = e.target.closest('[data-action="toggle-general-image-visibility"]');
+    if (heroBoutiqueToggle) {
+        const type = heroBoutiqueToggle.dataset.type;
+        const idx = parseInt(heroBoutiqueToggle.dataset.index);
+        PagesModule.toggleGeneralVisibility(type, idx, heroBoutiqueToggle.checked);
+        return;
+    }
+
+    // 5. Layout visibility checkbox
     if (e.target.matches('.layout-visible-cb')) {
         isDirty = true;
         return;
@@ -201,6 +210,20 @@ document.addEventListener('input', (e) => {
         const idx = parseInt(e.target.dataset.imgIndex);
         if (window.currentCustomImages && window.currentCustomImages[idx]) {
             window.currentCustomImages[idx].title = e.target.value;
+        }
+        return;
+    }
+    // Alt FR / Alt EN inputs (hero, boutique)
+    const altInput = e.target.closest('[data-action="alt-input"]');
+    if (altInput) {
+        const type = altInput.dataset.type;
+        const idx = parseInt(altInput.dataset.index);
+        const field = altInput.dataset.field;
+        const arr = currentData[type];
+        if (Array.isArray(arr) && arr[idx] && (field === 'alt_fr' || field === 'alt_en')) {
+            if (typeof arr[idx] === 'string') arr[idx] = { src: arr[idx], alt_fr: '', alt_en: '' };
+            arr[idx][field] = altInput.value;
+            isDirty = true;
         }
         return;
     }
