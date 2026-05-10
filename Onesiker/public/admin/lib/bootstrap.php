@@ -24,7 +24,10 @@ ini_set('error_log', defined('ADMIN_LOG_FILE')
     ? constant('ADMIN_LOG_FILE')
     : dirname(__DIR__) . '/admin_error.log');
 
-// Session
+// Session — gc_maxlifetime must be set BEFORE session_start; otherwise PHP
+// emits "Session ini settings cannot be changed when a session is active"
+// on every single request (~30k entries observed in admin_error.log).
+ini_set('session.gc_maxlifetime', 7200);
 session_set_cookie_params([
     'lifetime' => 7200,
     'path'     => '/admin/',
@@ -35,8 +38,7 @@ session_set_cookie_params([
 ]);
 session_start();
 
-// 2-hour idle timeout
-ini_set('session.gc_maxlifetime', 7200);
+// 2-hour idle timeout (enforced manually below, complements the ini_set above).
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > 7200) {
     session_destroy();
     session_start();
