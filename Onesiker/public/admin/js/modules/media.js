@@ -56,9 +56,9 @@ window.MediaModule = (function() {
                         <span class="text-[10px] font-black uppercase tracking-widest text-red-400">Orphelins</span>
                         <span class="text-sm font-bold text-red-500">${data.orphans}</span>
                     </div>` : `
-                    <div class="flex items-center gap-2 bg-green-50 px-3 py-1.5 rounded-lg border border-green-200 shadow-sm">
-                        <svg class="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                        <span class="text-[10px] font-black uppercase tracking-widest text-green-400">Nettoyé</span>
+                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg shadow-sm" style="background:color-mix(in srgb, var(--success) 10%, transparent);border:1px solid color-mix(in srgb, var(--success) 45%, transparent);color:var(--success)">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                        <span class="text-[10px] font-black uppercase tracking-widest">Nettoyé</span>
                     </div>`}
                 </div>`;
         }
@@ -126,7 +126,7 @@ window.MediaModule = (function() {
                     <div class="flex items-center justify-between">
                         <span class="font-bold text-gray-500 uppercase tracking-tighter">${formatSize(file.size)}</span>
                         ${used ? `
-                            <span class="text-green-400 font-bold uppercase tracking-widest text-[8px] bg-green-50 px-1 rounded">Utilisé</span>
+                            <span class="font-bold uppercase tracking-widest text-[8px] px-1 rounded" style="background:color-mix(in srgb, var(--success) 15%, transparent);color:var(--success)">Utilisé</span>
                         ` : `
                             <span class="text-red-500 font-bold uppercase tracking-widest text-[8px] bg-red-50 px-1 rounded animate-pulse">Orphelin</span>
                         `}
