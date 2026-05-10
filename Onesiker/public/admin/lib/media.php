@@ -236,6 +236,7 @@ function handleListMedia(): void {
  */
 function scanReferencedUploads(): array {
     // Decode first (raw JSON has `\/` escapes); stop capture at `?` so cache-busted URLs match scandir output.
+    // Delimiter `~` not `#` — PCRE2 (PHP 8.x) silently fails to compile when the delimiter also lives in the char class.
     $referenced = [];
     $dataDir = getDataDir();
     foreach (ALLOWED_DATA_TYPES as $type) {
@@ -245,7 +246,7 @@ function scanReferencedUploads(): array {
         if ($decoded === null) continue;
 
         array_walk_recursive($decoded, function ($value) use (&$referenced) {
-            if (is_string($value) && preg_match_all('#/data/uploads/([^"\'\s>?#]+)#', $value, $m)) {
+            if (is_string($value) && preg_match_all('~/data/uploads/([^"\'\s>?#]+)~', $value, $m)) {
                 foreach ($m[1] as $name) $referenced[] = rawurldecode(trim($name));
             }
         });
