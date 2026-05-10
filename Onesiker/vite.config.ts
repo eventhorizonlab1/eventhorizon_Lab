@@ -15,16 +15,24 @@ function cleanMacArtifactsPlugin(): Plugin {
       const distDir = path.resolve(__dirname, 'dist');
       if (!fs.existsSync(distDir)) return;
 
+      // Finder dups end in " 2"/" 3"/… on folders ("admin 2") and on files,
+      // either before the extension ("index 2.html") or at the very end
+      // (".htaccess 2"). Cover both forms.
+      const dupPattern = / \d+(\.[^.]+)?$/;
       const walk = (dir: string) => {
         for (const entry of fs.readdirSync(dir, {withFileTypes: true})) {
           const full = path.join(dir, entry.name);
           if (entry.isDirectory()) {
-            if (/ 2$/.test(entry.name)) {
+            if (dupPattern.test(entry.name)) {
               fs.rmSync(full, {recursive: true, force: true});
               continue;
             }
             walk(full);
-          } else if (entry.name === '.DS_Store' || entry.name.startsWith('._')) {
+          } else if (
+            entry.name === '.DS_Store' ||
+            entry.name.startsWith('._') ||
+            dupPattern.test(entry.name)
+          ) {
             fs.rmSync(full, {force: true});
           }
         }
