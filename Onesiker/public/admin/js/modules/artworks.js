@@ -161,11 +161,10 @@ window.ArtworksModule = (function() {
 
             if (!currentData.artworks[catIdx].images) currentData.artworks[catIdx].images = [];
             currentData.artworks[catIdx].images.unshift(newImg);
-            
+
             isDirty = true;
             render();
             UI.closeModal();
-            APIModule.saveData('artworks');
         });
     }
 
@@ -223,7 +222,6 @@ window.ArtworksModule = (function() {
             isDirty = true;
             render();
             UI.closeModal();
-            APIModule.saveData('artworks');
         });
     }
 
@@ -233,7 +231,6 @@ window.ArtworksModule = (function() {
         currentData.artworks[catIdx].images.splice(imgIdx, 1);
         isDirty = true;
         render();
-        APIModule.saveData('artworks');
     }
 
     function toggleImageVisibility(catIdx, imgIdx, visible) {
@@ -264,7 +261,6 @@ window.ArtworksModule = (function() {
             render();
             UI.closeModal();
             UI.showToast('✓ Œuvre renommée.');
-            APIModule.saveData('artworks');
         });
     }
 
@@ -276,7 +272,6 @@ window.ArtworksModule = (function() {
         isDirty = true;
         [arr[imgIdx], arr[newIdx]] = [arr[newIdx], arr[imgIdx]];
         render();
-        APIModule.saveData('artworks');
     }
 
     // ── Catégories ────────────────────────────────────────────────────────────
@@ -301,7 +296,6 @@ window.ArtworksModule = (function() {
             render();
             UI.closeModal();
             UI.showToast('✓ Catégorie ajoutée.');
-            APIModule.saveData('artworks');
         });
     }
 
@@ -326,7 +320,6 @@ window.ArtworksModule = (function() {
             render();
             UI.closeModal();
             UI.showToast('✓ Catégorie renommée.');
-            APIModule.saveData('artworks');
         });
     }
 
@@ -343,7 +336,6 @@ window.ArtworksModule = (function() {
         isDirty = true;
         render();
         UI.showToast('Catégorie supprimée.');
-        APIModule.saveData('artworks');
     }
 
     function moveCategory(catIdx, dir) {
@@ -354,7 +346,6 @@ window.ArtworksModule = (function() {
         isDirty = true;
         [arr[catIdx], arr[newIdx]] = [arr[newIdx], arr[catIdx]];
         render();
-        APIModule.saveData('artworks');
     }
 
     // ── PDF Portfolio ─────────────────────────────────────────────────────────

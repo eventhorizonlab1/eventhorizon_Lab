@@ -338,7 +338,6 @@ window.PagesModule = (function() {
             isDirty = true;
             renderGalleries();
             UI.closeModal();
-            APIModule.saveData('contact');
         });
     }
 
@@ -348,7 +347,6 @@ window.PagesModule = (function() {
         currentData.contact.galleries.splice(idx, 1);
         isDirty = true;
         renderGalleries();
-        APIModule.saveData('contact');
     }
 
     // ── URLs Réseaux Sociaux ──────────────────────────────────────────────────
@@ -419,7 +417,6 @@ window.PagesModule = (function() {
             isDirty = true;
             renderContactUrls();
             UI.closeModal();
-            APIModule.saveData('contact');
         });
     }
 
@@ -429,7 +426,6 @@ window.PagesModule = (function() {
         currentData.contact.urls.splice(idx, 1);
         isDirty = true;
         renderContactUrls();
-        APIModule.saveData('contact');
     }
 
     // ── Internal Helpers ──────────────────────────────────────────────────────
