@@ -235,16 +235,20 @@ function handleListMedia(): void {
  * @return string[]
  */
 function scanReferencedUploads(): array {
+    // Decode first (raw JSON has `\/` escapes); stop capture at `?` so cache-busted URLs match scandir output.
     $referenced = [];
     $dataDir = getDataDir();
     foreach (ALLOWED_DATA_TYPES as $type) {
-        $jsonFile = $dataDir . '/' . $type . '.json';
-        $content = readWithLock($jsonFile);
+        $content = readWithLock($dataDir . '/' . $type . '.json');
         if ($content === '') continue;
-        preg_match_all('/\/data\/uploads\/([^"\'\s>]+)/', $content, $matches);
-        foreach ($matches[1] as $m) {
-            $referenced[] = rawurldecode(trim($m));
-        }
+        $decoded = json_decode($content, true);
+        if ($decoded === null) continue;
+
+        array_walk_recursive($decoded, function ($value) use (&$referenced) {
+            if (is_string($value) && preg_match_all('#/data/uploads/([^"\'\s>?#]+)#', $value, $m)) {
+                foreach ($m[1] as $name) $referenced[] = rawurldecode(trim($name));
+            }
+        });
     }
     return array_unique($referenced);
 }
