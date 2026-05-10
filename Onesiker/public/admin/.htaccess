@@ -2,8 +2,8 @@
 #  ONESIKER BACK OFFICE — Protection des fichiers sensibles
 # ============================================================
 
-# Bloquer l'accès direct aux fichiers de configuration et logs
-<FilesMatch "^(config\.php|config\.example\.php|rate_limits\.json|translate_rate_limits\.json|setup_password\.php|admin_error\.log)$">
+# Bloquer l'accès direct aux fichiers de configuration, logs et HTML de test.
+<FilesMatch "^(config\.php|config\.example\.php|rate_limits\.json|translate_rate_limits\.json|setup_password\.php|admin_error\.log|test-mobile\.html|debug-orphans\.php|opcache-reset\.php)$">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>
@@ -16,8 +16,8 @@
 # Bloquer l'accès au cache des traductions (lu/écrit uniquement par api.php).
 RedirectMatch 403 ^/admin/cache/.*$
 
-# Bloquer l'accès à tout script de build ou utilitaire (défense en profondeur)
-<FilesMatch "\.(py|sh|rb|pl|cgi|log|lock|json)$">
+# Bloquer l'accès à tout script de build, log, doc Markdown ou backup (défense en profondeur).
+<FilesMatch "\.(py|sh|rb|pl|cgi|log|lock|json|md|bak)$">
     # On autorise rate_limits.json spécifiquement si nécessaire, mais ici on bloque TOUT .json 
     # Sauf si l'admin en a besoin en lecture directe (ici l'admin lit via api.php, donc on peut bloquer)
     <IfModule mod_authz_core.c>
