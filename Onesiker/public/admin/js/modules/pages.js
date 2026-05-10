@@ -101,7 +101,8 @@ window.PagesModule = (function() {
                 currentData.bio.images.unshift(url);
                 renderBio();
             }
-            UI.showToast('✓ Image ajoutée au début de la liste.');
+            isDirty = true;
+            UI.showToast('✓ Image ajoutée. N\'oubliez pas d\'enregistrer.');
         }
         input.value = '';
     }
