@@ -1059,3 +1059,24 @@ input:focus, textarea:focus, select:focus {
     flex: 1;
   }
 }
+
+/* "Enregistrer" buttons: dim+inert when nothing to save (default), highlighted with a status dot when dirty. */
+button[data-action="save"]:not(.btn-dirty) {
+    opacity: 0.4;
+    pointer-events: none;
+    filter: grayscale(0.4);
+}
+button[data-action="save"].btn-dirty {
+    position: relative;
+}
+button[data-action="save"].btn-dirty::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--success) 70%, transparent);
+}

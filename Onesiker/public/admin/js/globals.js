@@ -8,7 +8,23 @@ let activeTab = localStorage.getItem('adminActiveTab') || 'dashboard';
 let editingItemIndex = null;
 let editingCategoryIndex = null;
 let csrfToken = ''; // Token CSRF reçu du serveur à la connexion
-let isDirty = false; // Suivi des modifications non sauvegardées
+
+// isDirty exposé via globalThis (pas `let`) pour intercepter chaque écriture et refléter l'état sur les boutons "Enregistrer".
+let _isDirtyValue = false;
+function refreshDirtyUI() {
+    document.querySelectorAll('button[data-action="save"]').forEach(btn => {
+        btn.classList.toggle('btn-dirty', _isDirtyValue);
+    });
+}
+Object.defineProperty(globalThis, 'isDirty', {
+    get() { return _isDirtyValue; },
+    set(v) {
+        const changed = _isDirtyValue !== v;
+        _isDirtyValue = v;
+        if (changed) refreshDirtyUI();
+    },
+    configurable: true,
+});
 
 // ── Cache busting par session ───────────────────────────────────────────────
 // Un seul timestamp par session — les images sont correctement cachées
