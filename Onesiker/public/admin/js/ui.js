@@ -150,6 +150,8 @@ window.UI = (function() {
     }
 
     // ── Modals ──────────────────────────────────────────────────────────────
+    let lockedScrollY = 0;
+
     function openModal(title, html, onSubmit) {
         const modal = document.getElementById('modal');
         const titleEl = document.getElementById('modal-title');
@@ -163,21 +165,38 @@ window.UI = (function() {
         form.onsubmit = onSubmit;
         
         modal.classList.remove('hidden');
+        
+        // iOS Body Scroll Lock
+        lockedScrollY = window.scrollY;
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${lockedScrollY}px`;
+        document.body.style.width = '100%';
         document.body.style.overflow = 'hidden';
     }
 
     function closeModal() {
         const modal = document.getElementById('modal');
         if (modal) modal.classList.add('hidden');
+        
+        // Restore iOS Body Scroll
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
         document.body.style.overflow = '';
+        window.scrollTo(0, lockedScrollY);
+        
         editingItemIndex = null;
         editingCategoryIndex = null;
     }
 
     // ── Cropper (Cropper.js) ────────────────────────────────────────────────
-    // Pre-upload image cropping. Opens the standard modal with the source image
-    // wrapped by Cropper.js, locked to the requested aspectRatio. Resolves with
-    // the cropped Blob, or rejects with Error('canceled') if the user dismisses.
+    // Pre-upload image cropping. Uses a dedicated overlay (NOT the main #modal),
+    // because reusing #modal collides with anything else open behind it: the
+    // calling form's onsubmit gets overwritten and never restored, breaking
+    // every subsequent submit. This overlay is self-contained, stacks on top
+    // of whatever else is open (e.g. the news edit modal), and tears itself
+    // down on resolve/reject. Resolves with the cropped Blob, or rejects with
+    // Error('canceled') if the user dismisses.
     function openCropper(file, opts = {}) {
         const aspectRatio = opts.aspectRatio;
         const title = opts.title || 'Recadrer l\'image';
@@ -191,45 +210,72 @@ window.UI = (function() {
             reader.onerror = () => reject(new Error('FileReader error'));
             reader.onload = (e) => {
                 const dataUrl = e.target.result;
-                const html = `
-                    <p class="text-xs text-gray-500 mb-3">Glisse pour repositionner, molette ou pinch pour zoomer. Le cadre est verrouillé au ratio cible.</p>
-                    <div style="max-height: 60vh; background: #000; overflow: hidden;">
-                        <img id="cropper-target" src="${dataUrl}" style="max-width: 100%; display: block;">
+                let cropper = null;
+                let settled = false;
+
+                const overlay = document.createElement('div');
+                overlay.className = 'cropper-overlay';
+                overlay.setAttribute('role', 'dialog');
+                overlay.setAttribute('aria-modal', 'true');
+                overlay.style.cssText = 'position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:1rem;';
+
+                const dialog = document.createElement('div');
+                dialog.style.cssText = 'background:#0f0f0f;color:#fff;border:1px solid #222;border-radius:12px;max-width:min(900px,95vw);max-height:90vh;width:100%;display:flex;flex-direction:column;overflow:hidden;';
+
+                dialog.innerHTML = `
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid #222;">
+                        <h3 style="font-size:0.95rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin:0;">${title.replace(/[<>"]/g, '')}</h3>
+                        <button type="button" data-cropper-action="cancel" aria-label="Fermer" style="background:none;border:none;color:#aaa;font-size:1.5rem;cursor:pointer;line-height:1;">&times;</button>
+                    </div>
+                    <div style="padding:0.75rem 1rem;background:#000;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                        <img class="cropper-target" alt="" style="max-width:100%;max-height:60vh;display:block;">
+                    </div>
+                    <div style="display:flex;justify-content:flex-end;gap:0.5rem;padding:0.75rem 1.25rem;border-top:1px solid #222;">
+                        <button type="button" data-cropper-action="cancel" class="btn btn-secondary">Annuler</button>
+                        <button type="button" data-cropper-action="confirm" class="btn btn-primary">Recadrer</button>
                     </div>
                 `;
-                let cropper = null;
-                const modal = document.getElementById('modal');
-                // Detect cancellation via class toggle (close-modal action sets .hidden).
-                // Disconnected before resolve() so onSubmit's closeModal() doesn't trip it.
-                const closeWatcher = new MutationObserver(() => {
-                    if (modal.classList.contains('hidden') && cropper) {
-                        cropper.destroy();
-                        cropper = null;
-                        closeWatcher.disconnect();
-                        reject(new Error('canceled'));
-                    }
-                });
 
-                openModal(title, html, (event) => {
-                    event.preventDefault();
-                    if (!cropper) return;
-                    const canvas = cropper.getCroppedCanvas({
-                        maxWidth,
-                        maxHeight,
-                        imageSmoothingQuality: 'high',
-                    });
+                overlay.appendChild(dialog);
+                document.body.appendChild(overlay);
+                const prevBodyOverflow = document.body.style.overflow;
+                document.body.style.overflow = 'hidden';
+
+                const teardown = () => {
+                    if (cropper) { cropper.destroy(); cropper = null; }
+                    overlay.remove();
+                    document.body.style.overflow = prevBodyOverflow;
+                    window.removeEventListener('keydown', onKey);
+                };
+                const cancel = () => {
+                    if (settled) return;
+                    settled = true;
+                    teardown();
+                    reject(new Error('canceled'));
+                };
+                const confirm = () => {
+                    if (settled || !cropper) return;
+                    const canvas = cropper.getCroppedCanvas({ maxWidth, maxHeight, imageSmoothingQuality: 'high' });
                     canvas.toBlob((blob) => {
-                        closeWatcher.disconnect();
-                        cropper.destroy();
-                        cropper = null;
-                        closeModal();
+                        if (settled) return;
+                        settled = true;
+                        teardown();
                         if (!blob) return reject(new Error('toBlob failed'));
                         resolve(blob);
                     }, outputType, quality);
-                });
+                };
+                const onKey = (ev) => { if (ev.key === 'Escape') cancel(); };
 
-                // Cropper.js needs the <img> to be in the DOM (openModal just did that).
-                const img = document.getElementById('cropper-target');
+                overlay.addEventListener('click', (ev) => {
+                    const btn = ev.target.closest('[data-cropper-action]');
+                    if (!btn) return;
+                    if (btn.dataset.cropperAction === 'cancel') cancel();
+                    else if (btn.dataset.cropperAction === 'confirm') confirm();
+                });
+                window.addEventListener('keydown', onKey);
+
+                const img = dialog.querySelector('img.cropper-target');
+                img.src = dataUrl;
                 cropper = new Cropper(img, {
                     aspectRatio,
                     viewMode: 1,
@@ -241,7 +287,6 @@ window.UI = (function() {
                     zoomable: true,
                     rotatable: false,
                 });
-                closeWatcher.observe(modal, { attributes: true, attributeFilter: ['class'] });
             };
             reader.readAsDataURL(file);
         });
@@ -304,6 +349,10 @@ window.UI = (function() {
         activeBtns.forEach(btn => {
             btn.classList.add(btn.closest('#bottom-nav') ? 'bnav-active' : 'tab-active', 'text-black');
             btn.classList.remove('text-gray-500');
+            // Auto-scroll pour la navigation mobile
+            if (btn.closest('#bottom-nav')) {
+                btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }
         });
 
         // Mise à jour titre topbar
@@ -368,6 +417,105 @@ window.UI = (function() {
         switchTab(activeTab, true);
     }
 
+    // ── Drag & Drop Universel (Desktop + Touch/iOS) ───────────────────────────
+    function makeDraggable(container, onReorder) {
+        let dragSrcIndex = null;
+        let touchIdx = null, touchClone = null, touchEl = null;
+
+        function _placeClone(clone, touch) {
+            clone.style.left = (touch.clientX - clone.offsetWidth  / 2) + 'px';
+            clone.style.top  = (touch.clientY - clone.offsetHeight / 2) + 'px';
+        }
+
+        container.querySelectorAll('.draggable-item').forEach(row => {
+            const handle = row.querySelector('.drag-handle') || row; // Fallback to row itself if no handle
+            
+            // ── Desktop drag (HTML5) ──────────────────────────────────────────
+            if (handle !== row) {
+                handle.addEventListener('mousedown', () => { row.setAttribute('draggable', 'true'); });
+            }
+            row.addEventListener('dragstart', e => {
+                dragSrcIndex = parseInt(row.dataset.index);
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', String(dragSrcIndex));
+                row.classList.add('opacity-40', 'scale-[0.98]', 'transition-transform');
+            });
+            row.addEventListener('dragend', () => {
+                if (handle !== row) row.setAttribute('draggable', 'false');
+                container.querySelectorAll('.draggable-item').forEach(el =>
+                    el.classList.remove('border-gray-600', 'border-2', 'bg-hover', 'opacity-40', 'scale-[0.98]')
+                );
+                dragSrcIndex = null;
+            });
+            row.addEventListener('dragover', e => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                row.classList.add('border-gray-600', 'border-2', 'bg-hover');
+            });
+            row.addEventListener('dragleave', e => {
+                if (!row.contains(e.relatedTarget))
+                    row.classList.remove('border-gray-600', 'border-2', 'bg-hover');
+            });
+            row.addEventListener('drop', e => {
+                e.preventDefault();
+                e.stopPropagation();
+                container.querySelectorAll('.draggable-item').forEach(el =>
+                    el.classList.remove('border-gray-600', 'border-2', 'bg-hover', 'opacity-40', 'scale-[0.98]')
+                );
+                const dropIdx = parseInt(row.dataset.index);
+                if (dragSrcIndex !== null && !isNaN(dropIdx) && dragSrcIndex !== dropIdx) {
+                    onReorder(dragSrcIndex, dropIdx, row);
+                }
+                dragSrcIndex = null;
+            });
+
+            // ── Touch drag (iOS/Safari) ───────────────────────────────────────
+            handle.addEventListener('touchstart', e => {
+                if (e.touches.length !== 1) return;
+                touchEl  = row;
+                touchIdx = parseInt(row.dataset.index);
+                row.classList.add('opacity-40', 'scale-[0.98]', 'transition-transform');
+                touchClone = row.cloneNode(true);
+                Object.assign(touchClone.style, {
+                    position: 'fixed', pointerEvents: 'none', zIndex: '9999',
+                    width: row.offsetWidth + 'px', opacity: '0.85',
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.2)', borderRadius: '12px',
+                    transition: 'none', margin: '0'
+                });
+                document.body.appendChild(touchClone);
+                _placeClone(touchClone, e.touches[0]);
+            }, { passive: true });
+
+            handle.addEventListener('touchmove', e => {
+                e.preventDefault();
+                if (!touchClone) return;
+                _placeClone(touchClone, e.touches[0]);
+                touchClone.style.display = 'none';
+                const under = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+                touchClone.style.display = '';
+                container.querySelectorAll('.draggable-item').forEach(el => el.classList.remove('border-gray-600', 'border-2', 'bg-hover'));
+                const target = under && under.closest('.draggable-item');
+                if (target && target !== touchEl) target.classList.add('border-gray-600', 'border-2', 'bg-hover');
+            }, { passive: false });
+
+            handle.addEventListener('touchend', e => {
+                if (touchClone) { touchClone.remove(); touchClone = null; }
+                if (touchEl) touchEl.classList.remove('opacity-40', 'scale-[0.98]');
+                const t = e.changedTouches[0];
+                const under  = document.elementFromPoint(t.clientX, t.clientY);
+                const target = under && under.closest('.draggable-item');
+                container.querySelectorAll('.draggable-item').forEach(el => el.classList.remove('border-gray-600', 'border-2', 'bg-hover'));
+                if (target && target !== touchEl) {
+                    const dropIdx = parseInt(target.dataset.index);
+                    if (!isNaN(dropIdx) && touchIdx !== dropIdx) {
+                        onReorder(touchIdx, dropIdx, target);
+                    }
+                }
+                touchEl = null; touchIdx = null;
+            }, { passive: true });
+        });
+    }
+
     return {
         showToast,
         showLoadingOverlay,
@@ -379,6 +527,7 @@ window.UI = (function() {
         openCropper,
         translateText,
         switchTab,
-        renderAll
+        renderAll,
+        makeDraggable
     };
 })();
