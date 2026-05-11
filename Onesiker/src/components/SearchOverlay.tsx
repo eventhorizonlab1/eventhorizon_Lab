@@ -61,18 +61,23 @@ export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; on
       });
     });
 
-    // Artworks — one item per category (name); image titles get folded into the haystack so the category surfaces on a deep-image match.
-    artworks.forEach((cat) => {
-      if (!cat || !cat.name) return;
+    // Artworks — one item per category. cat.name is usually empty in artworks.json
+    // (legacy), so resolve a usable display name from t.artworks.items[index].category
+    // the same way Artworks.tsx does. Image titles fold into the haystack so a deep
+    // image match still surfaces the right category.
+    artworks.forEach((cat, index) => {
+      if (!cat) return;
       const imageTitles = (cat.images || []).map((img: any) => img?.title || '').filter(Boolean);
+      if (imageTitles.length === 0 && !cat.name) return;
+      const displayName = cat.name || t.artworks.items[index]?.category || `Catégorie ${cat.id ?? index + 1}`;
       out.push({
-        id: `artworks-${cat.id}`,
+        id: `artworks-${cat.id ?? index}`,
         section: 'artworks',
         sectionLabel: sectionLabel('artworks'),
         anchor: '#artworks',
-        title: cat.name,
+        title: displayName,
         snippet: imageTitles.slice(0, 3).join(' · '),
-        haystack: [cat.name, ...imageTitles].join(' '),
+        haystack: [displayName, cat.name, ...imageTitles].filter(Boolean).join(' '),
       });
     });
 
