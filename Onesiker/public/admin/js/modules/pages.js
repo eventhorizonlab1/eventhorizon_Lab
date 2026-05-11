@@ -144,7 +144,7 @@ window.PagesModule = (function() {
         let cropperTitle = null;
         if (type === 'hero')            { section = 'Hero';     aspectRatio = 16/9; cropperTitle = 'Recadrer Hero (16:9)'; }
         else if (type === 'boutique')   { section = 'Boutique'; aspectRatio = 21/9; cropperTitle = 'Recadrer Boutique (21:9)'; }
-        else if (type === 'bio_images') { section = 'Bio'; /* no cropping in scope */ }
+        else if (type === 'bio_images') { section = 'Bio';      aspectRatio = 4/5;  cropperTitle = 'Recadrer Bio (4:5 portrait)'; }
 
         const sourceFile = input.files[0];
         let uploadSource = input;

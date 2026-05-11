@@ -319,8 +319,16 @@ window.LayoutModule = (function() {
 
     async function handleCustomUpload(input) {
         if (!input.files.length) return;
+        const sourceFile = input.files[0];
+        let blob;
         try {
-            const url = await APIModule.handleFileUpload(input, 'CustomPage');
+            blob = await UI.openCropper(sourceFile, { aspectRatio: 1, title: 'Recadrer (carré 1:1)' });
+        } catch (err) {
+            if (err && err.message === 'canceled') { input.value = ''; return; }
+            throw err;
+        }
+        try {
+            const url = await APIModule.handleFileUpload(blob, 'CustomPage', { filename: sourceFile.name });
             if (url) {
                 window.currentCustomImages.unshift({ url, title: '' });
                 renderCustomImages();
