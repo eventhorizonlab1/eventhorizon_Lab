@@ -7,6 +7,14 @@
 export const translations = {
   en: {
     nav: { artworks: "Artworks", news: "News", shop: "Shop", contact: "Contact", wip: "Coming soon" },
+    search: {
+      open: "Search",
+      title: "Search",
+      placeholder: "Search news, artworks, bio…",
+      hint: "Type at least 2 characters to start searching.",
+      noResults: "No results found.",
+      close: "Close",
+    },
     hero: { subtitle: "Premium Graffiti Art since 1990" },
     about: {
       title: "Onesiker",
@@ -70,6 +78,14 @@ export const translations = {
   },
   fr: {
     nav: { artworks: "Atelier", news: "Actualités", shop: "Boutique", contact: "Contact", wip: "En cours" },
+    search: {
+      open: "Rechercher",
+      title: "Rechercher",
+      placeholder: "Rechercher actualités, œuvres, bio…",
+      hint: "Tapez au moins 2 caractères pour lancer la recherche.",
+      noResults: "Aucun résultat.",
+      close: "Fermer",
+    },
     hero: { subtitle: "Graffiti Art Premium depuis 1990" },
     about: {
       title: "Onesiker",

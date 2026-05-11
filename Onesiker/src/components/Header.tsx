@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Search } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import SearchOverlay from './SearchOverlay';
 
 type NavLink = { name: string; href: string };
 
 export default function Header({ layout }: { layout?: any }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
 
   const navLinks: NavLink[] = layout?.sections
@@ -71,19 +73,28 @@ export default function Header({ layout }: { layout?: any }) {
               {link.name}
             </a>
           ))}
+          <button
+            type="button"
+            onClick={() => setIsSearchOpen(true)}
+            className="text-gray-800 hover:text-gray-500 transition-colors ml-2"
+            aria-label={t.search.open}
+            title={t.search.open}
+          >
+            <Search size={18} />
+          </button>
           <div className="flex items-center space-x-2 border-l border-gray-300 pl-6 ml-2">
-            <button 
+            <button
               type="button"
-              onClick={() => setLanguage('fr')} 
+              onClick={() => setLanguage('fr')}
               className={`text-xs font-medium uppercase tracking-widest transition-colors ${language === 'fr' ? 'text-black' : 'text-gray-400 hover:text-gray-600'}`}
               aria-label="Passer en français"
             >
               FR
             </button>
             <span className="text-gray-300 text-xs" aria-hidden="true">/</span>
-            <button 
+            <button
               type="button"
-              onClick={() => setLanguage('en')} 
+              onClick={() => setLanguage('en')}
               className={`text-xs font-medium uppercase tracking-widest transition-colors ${language === 'en' ? 'text-black' : 'text-gray-400 hover:text-gray-600'}`}
               aria-label="Switch to English"
             >
@@ -92,16 +103,26 @@ export default function Header({ layout }: { layout?: any }) {
           </div>
         </nav>
 
-        {/* Mobile Menu Toggle */}
-        <button
-          type="button"
-          className="md:hidden text-black"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label={isMobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-          aria-expanded={isMobileMenuOpen}
-        >
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {/* Mobile: Search + Menu Toggle */}
+        <div className="flex items-center gap-4 md:hidden">
+          <button
+            type="button"
+            className="text-black"
+            onClick={() => setIsSearchOpen(true)}
+            aria-label={t.search.open}
+          >
+            <Search size={22} />
+          </button>
+          <button
+            type="button"
+            className="text-black"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label={isMobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={isMobileMenuOpen ? 'true' : 'false'}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Nav */}
@@ -153,6 +174,8 @@ export default function Header({ layout }: { layout?: any }) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </header>
   );
 }
