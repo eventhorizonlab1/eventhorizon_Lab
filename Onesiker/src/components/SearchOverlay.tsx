@@ -13,6 +13,11 @@ type SearchItem = {
   title: string;
   snippet: string;
   haystack: string;
+  // Set only on image-level Atelier results: triggers the zoom modal on the
+  // matching ArtworkCard. Index refers to the visible-filtered image list, to
+  // stay aligned with the component's internal indexing.
+  catId?: number;
+  imgIndex?: number;
 };
 
 export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
@@ -61,23 +66,44 @@ export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; on
       });
     });
 
-    // Artworks — one item per category. cat.name is usually empty in artworks.json
-    // (legacy), so resolve a usable display name from t.artworks.items[index].category
-    // the same way Artworks.tsx does. Image titles fold into the haystack so a deep
-    // image match still surfaces the right category.
+    // Artworks — one entry per category (so "Miami Vibes" surfaces on its own)
+    // plus one entry per visible image (so "THE HEAT" surfaces and deep-links
+    // into the zoom modal). cat.name is usually empty in artworks.json, so the
+    // display name falls back through the same chain as Artworks.tsx.
     artworks.forEach((cat, index) => {
       if (!cat) return;
-      const imageTitles = (cat.images || []).map((img: any) => img?.title || '').filter(Boolean);
-      if (imageTitles.length === 0 && !cat.name) return;
+      const visibleImages = (cat.images || []).filter((img: any) => img && img.visible !== false);
+      if (visibleImages.length === 0 && !cat.name) return;
       const displayName = cat.name || t.artworks.items[index]?.category || `Catégorie ${cat.id ?? index + 1}`;
+      const anchor = cat.id != null ? `#atelier-cat-${cat.id}` : '#artworks';
+
+      // Category-level entry.
       out.push({
-        id: `artworks-${cat.id ?? index}`,
+        id: `artworks-cat-${cat.id ?? index}`,
         section: 'artworks',
         sectionLabel: sectionLabel('artworks'),
-        anchor: cat.id != null ? `#atelier-cat-${cat.id}` : '#artworks',
+        anchor,
         title: displayName,
-        snippet: imageTitles.slice(0, 3).join(' · '),
-        haystack: [displayName, cat.name, ...imageTitles].filter(Boolean).join(' '),
+        snippet: visibleImages.slice(0, 3).map((img: any) => img.title).filter(Boolean).join(' · '),
+        haystack: [displayName, cat.name].filter(Boolean).join(' '),
+      });
+
+      // One entry per image. imgIndex matches the visible-filtered array, which
+      // is what the runtime ArtworkCard exposes via currentImageIndex.
+      visibleImages.forEach((img: any, imgIndex: number) => {
+        const imgTitle = img?.title;
+        if (!imgTitle) return;
+        out.push({
+          id: `artworks-img-${cat.id ?? index}-${imgIndex}`,
+          section: 'artworks',
+          sectionLabel: sectionLabel('artworks'),
+          anchor,
+          title: imgTitle,
+          snippet: displayName,
+          haystack: [imgTitle, displayName, img.alt_fr, img.alt_en].filter(Boolean).join(' '),
+          catId: cat.id,
+          imgIndex,
+        });
       });
     });
 
@@ -160,13 +186,24 @@ export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; on
     if (!isOpen) setQuery('');
   }, [isOpen]);
 
-  const handleResultClick = (anchor: string) => {
+  const handleResultClick = (item: SearchItem) => {
     onClose();
     // Defer the scroll so the overlay's exit animation can release body overflow first.
     setTimeout(() => {
-      const el = document.querySelector(anchor);
+      const el = document.querySelector(item.anchor);
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      else window.location.hash = anchor;
+      else window.location.hash = item.anchor;
+
+      // Image-level Atelier result → ask the matching ArtworkCard to open its
+      // zoom modal on the chosen image. Small extra delay so the scroll has
+      // settled before the modal grabs body overflow.
+      if (item.catId != null && item.imgIndex != null) {
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('atelier-zoom', {
+            detail: { catId: item.catId, imgIndex: item.imgIndex },
+          }));
+        }, 120);
+      }
     }, 80);
   };
 
@@ -230,7 +267,7 @@ export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; on
                           <li key={item.id}>
                             <button
                               type="button"
-                              onClick={() => handleResultClick(item.anchor)}
+                              onClick={() => handleResultClick(item)}
                               className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors group"
                             >
                               <p className="text-sm font-medium text-gray-900 truncate">{item.title || '—'}</p>
