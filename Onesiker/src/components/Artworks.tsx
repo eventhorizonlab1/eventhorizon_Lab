@@ -5,6 +5,7 @@ import { useJsonData } from '../hooks/useJsonData';
 import { ChevronLeft, ChevronRight, ZoomIn, X, Download } from 'lucide-react';
 
 import { type ArtworkImage, type ArtworkData } from '../data/artworks';
+import { getAlt } from '../lib/imageAlt';
 
 interface ProcessedArtwork {
   id: number;
@@ -24,7 +25,7 @@ const ArtworkCard = React.memo(function ArtworkCard({
   activeCarouselId: number | null,
   setActiveCarouselId: (id: number) => void
 }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   const [lastInteraction, setLastInteraction] = useState(Date.now());
@@ -34,6 +35,9 @@ const ArtworkCard = React.memo(function ArtworkCard({
   const currentImage = isCarousel ? art.images[currentImageIndex] : art.images[0];
   const displayImage = currentImage?.src;
   const displayTitle = currentImage?.title || art.title;
+  const altText = currentImage
+    ? getAlt(currentImage, language, displayTitle || art.category)
+    : (displayTitle || art.category);
 
   React.useEffect(() => {
     if (activeCarouselId !== null && activeCarouselId !== art.id && isCarousel) {
@@ -124,11 +128,12 @@ const ArtworkCard = React.memo(function ArtworkCard({
   return (
     <>
       <motion.div
+        id={`atelier-cat-${art.id}`}
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
         transition={{ duration: 0.6, delay: index * 0.1 }}
-        className="group flex flex-col"
+        className="group flex flex-col scroll-mt-24"
       >
         <div 
           className="relative overflow-hidden bg-gray-100 w-full cursor-default md:cursor-pointer" 
@@ -144,7 +149,7 @@ const ArtworkCard = React.memo(function ArtworkCard({
         >
           <img
             src={displayImage}
-            alt={displayTitle || art.category}
+            alt={altText}
             className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ${currentImageIndex === 0 ? 'scale-[1.30]' : 'scale-[1.10]'}`}
             referrerPolicy="no-referrer"
             loading="lazy"
@@ -224,7 +229,7 @@ const ArtworkCard = React.memo(function ArtworkCard({
           <div className="relative max-w-full max-h-full flex flex-col items-center justify-center w-full">
             <img
               src={displayImage}
-              alt={displayTitle || art.category}
+              alt={altText}
               className="max-w-full max-h-[80vh] object-contain shadow-2xl"
               onClick={(e) => e.stopPropagation()}
               loading="lazy"

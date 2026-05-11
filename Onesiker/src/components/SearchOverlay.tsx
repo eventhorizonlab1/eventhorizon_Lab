@@ -74,7 +74,7 @@ export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; on
         id: `artworks-${cat.id ?? index}`,
         section: 'artworks',
         sectionLabel: sectionLabel('artworks'),
-        anchor: '#artworks',
+        anchor: cat.id != null ? `#atelier-cat-${cat.id}` : '#artworks',
         title: displayName,
         snippet: imageTitles.slice(0, 3).join(' · '),
         haystack: [displayName, cat.name, ...imageTitles].filter(Boolean).join(' '),
