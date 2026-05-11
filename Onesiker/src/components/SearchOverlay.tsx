@@ -14,10 +14,10 @@ type SearchItem = {
   snippet: string;
   haystack: string;
   // Set only on image-level Atelier results: triggers the zoom modal on the
-  // matching ArtworkCard. Index refers to the visible-filtered image list, to
-  // stay aligned with the component's internal indexing.
+  // matching ArtworkCard. imgSrc, not an index — the parent shuffles images on
+  // mount so positional indices drift, but src is stable.
   catId?: number;
-  imgIndex?: number;
+  imgSrc?: string;
 };
 
 export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
@@ -88,11 +88,12 @@ export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; on
         haystack: [displayName, cat.name].filter(Boolean).join(' '),
       });
 
-      // One entry per image. imgIndex matches the visible-filtered array, which
-      // is what the runtime ArtworkCard exposes via currentImageIndex.
+      // One entry per image. We send the src (not the index) because the parent
+      // shuffles the image array on mount — the runtime order doesn't match the
+      // JSON order, so a positional index would point to the wrong image.
       visibleImages.forEach((img: any, imgIndex: number) => {
         const imgTitle = img?.title;
-        if (!imgTitle) return;
+        if (!imgTitle || !img?.src) return;
         out.push({
           id: `artworks-img-${cat.id ?? index}-${imgIndex}`,
           section: 'artworks',
@@ -102,7 +103,7 @@ export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; on
           snippet: displayName,
           haystack: [imgTitle, displayName, img.alt_fr, img.alt_en].filter(Boolean).join(' '),
           catId: cat.id,
-          imgIndex,
+          imgSrc: img.src,
         });
       });
     });
@@ -197,10 +198,10 @@ export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; on
       // Image-level Atelier result → ask the matching ArtworkCard to open its
       // zoom modal on the chosen image. Small extra delay so the scroll has
       // settled before the modal grabs body overflow.
-      if (item.catId != null && item.imgIndex != null) {
+      if (item.catId != null && item.imgSrc) {
         setTimeout(() => {
           window.dispatchEvent(new CustomEvent('atelier-zoom', {
-            detail: { catId: item.catId, imgIndex: item.imgIndex },
+            detail: { catId: item.catId, imgSrc: item.imgSrc },
           }));
         }, 120);
       }

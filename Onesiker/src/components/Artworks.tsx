@@ -67,22 +67,23 @@ const ArtworkCard = React.memo(function ArtworkCard({
   }, [isZoomed]);
 
   // Deep-link from the search overlay. SearchOverlay dispatches `atelier-zoom`
-  // with { catId, imgIndex } once it has scrolled the matching tile into view.
-  // setActiveCarouselId fires before setCurrentImageIndex so the existing
-  // "reset to 0 when another carousel becomes active" effect (lines 42-46)
-  // doesn't clobber the index we just set.
+  // with { catId, imgSrc } once it has scrolled the matching tile into view.
+  // We resolve src → current shuffled index, then setActiveCarouselId BEFORE
+  // setCurrentImageIndex so the "reset to 0 when another carousel becomes
+  // active" effect (lines 42-46) doesn't clobber the index we just set.
   React.useEffect(() => {
     const onZoomRequest = (e: Event) => {
-      const detail = (e as CustomEvent<{ catId: number; imgIndex: number }>).detail;
+      const detail = (e as CustomEvent<{ catId: number; imgSrc: string }>).detail;
       if (!detail || detail.catId !== art.id) return;
-      const safeIndex = Math.max(0, Math.min(detail.imgIndex, art.images.length - 1));
+      const idx = art.images.findIndex((img) => img.src === detail.imgSrc);
+      if (idx < 0) return;
       setActiveCarouselId(art.id);
-      setCurrentImageIndex(safeIndex);
+      setCurrentImageIndex(idx);
       setIsZoomed(true);
     };
     window.addEventListener('atelier-zoom', onZoomRequest);
     return () => window.removeEventListener('atelier-zoom', onZoomRequest);
-  }, [art.id, art.images.length, setActiveCarouselId]);
+  }, [art.id, art.images, setActiveCarouselId]);
 
   const handleCarouselInteraction = () => {
     setLastInteraction(Date.now());
