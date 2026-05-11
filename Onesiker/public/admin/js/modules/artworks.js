@@ -170,20 +170,29 @@ window.ArtworksModule = (function() {
 
     async function handleLocalUpload(input) {
         if (!input.files || !input.files[0]) return;
-        
+
         const preview = document.getElementById('art_preview');
         const container = document.getElementById('art_preview_container');
-        
-        // Preview immédiate
-        const reader = new FileReader();
-        reader.onload = e => {
-            preview.src = e.target.result;
-            container.classList.remove('hidden');
-        };
-        reader.readAsDataURL(input.files[0]);
+        const sourceFile = input.files[0];
 
-        // Upload réel - on utilise le fichier directement pour éviter le crash
-        window.pendingArtworkUrl = APIModule.handleFileUpload(input.files[0], 'Atelier', { silent: true });
+        let blob;
+        try {
+            blob = await UI.openCropper(sourceFile, { aspectRatio: 3/4, title: 'Recadrer l\'œuvre (portrait 3:4)' });
+        } catch (err) {
+            if (err && err.message === 'canceled') {
+                input.value = '';
+                return;
+            }
+            throw err;
+        }
+
+        // Preview using the cropped blob so the form reflects what will be saved.
+        const objectUrl = URL.createObjectURL(blob);
+        preview.src = objectUrl;
+        container.classList.remove('hidden');
+
+        // Kick off the upload; the form's submit handler awaits this promise.
+        window.pendingArtworkUrl = APIModule.handleFileUpload(blob, 'Atelier', { silent: true, filename: sourceFile.name });
     }
 
     function editImage(catIdx, imgIdx) {

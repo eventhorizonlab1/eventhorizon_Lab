@@ -314,7 +314,14 @@ window.NewsModule = (function() {
                     <span class="text-[10px] font-bold uppercase">Préparation ${i+1}/${total}...</span>
                 </div>`;
                 
-                const url = await APIModule.handleFileUpload(input.files[i], 'Actualite', { silent: true });
+                let blob;
+                try {
+                    blob = await UI.openCropper(input.files[i], { aspectRatio: 4/3, title: 'Recadrer l\'actualité (4:3)' });
+                } catch (err) {
+                    if (err && err.message === 'canceled') continue;
+                    throw err;
+                }
+                const url = await APIModule.handleFileUpload(blob, 'Actualite', { silent: true, filename: input.files[i].name });
                 if (url) {
                     modalNewsImages.push(url);
                     renderModalImages();

@@ -174,6 +174,79 @@ window.UI = (function() {
         editingCategoryIndex = null;
     }
 
+    // ── Cropper (Cropper.js) ────────────────────────────────────────────────
+    // Pre-upload image cropping. Opens the standard modal with the source image
+    // wrapped by Cropper.js, locked to the requested aspectRatio. Resolves with
+    // the cropped Blob, or rejects with Error('canceled') if the user dismisses.
+    function openCropper(file, opts = {}) {
+        const aspectRatio = opts.aspectRatio;
+        const title = opts.title || 'Recadrer l\'image';
+        const outputType = opts.outputType || 'image/webp';
+        const quality = opts.quality ?? 0.9;
+        const maxWidth = opts.maxWidth || 2400;
+        const maxHeight = opts.maxHeight || 2400;
+
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onerror = () => reject(new Error('FileReader error'));
+            reader.onload = (e) => {
+                const dataUrl = e.target.result;
+                const html = `
+                    <p class="text-xs text-gray-500 mb-3">Glisse pour repositionner, molette ou pinch pour zoomer. Le cadre est verrouillé au ratio cible.</p>
+                    <div style="max-height: 60vh; background: #000; overflow: hidden;">
+                        <img id="cropper-target" src="${dataUrl}" style="max-width: 100%; display: block;">
+                    </div>
+                `;
+                let cropper = null;
+                const modal = document.getElementById('modal');
+                // Detect cancellation via class toggle (close-modal action sets .hidden).
+                // Disconnected before resolve() so onSubmit's closeModal() doesn't trip it.
+                const closeWatcher = new MutationObserver(() => {
+                    if (modal.classList.contains('hidden') && cropper) {
+                        cropper.destroy();
+                        cropper = null;
+                        closeWatcher.disconnect();
+                        reject(new Error('canceled'));
+                    }
+                });
+
+                openModal(title, html, (event) => {
+                    event.preventDefault();
+                    if (!cropper) return;
+                    const canvas = cropper.getCroppedCanvas({
+                        maxWidth,
+                        maxHeight,
+                        imageSmoothingQuality: 'high',
+                    });
+                    canvas.toBlob((blob) => {
+                        closeWatcher.disconnect();
+                        cropper.destroy();
+                        cropper = null;
+                        closeModal();
+                        if (!blob) return reject(new Error('toBlob failed'));
+                        resolve(blob);
+                    }, outputType, quality);
+                });
+
+                // Cropper.js needs the <img> to be in the DOM (openModal just did that).
+                const img = document.getElementById('cropper-target');
+                cropper = new Cropper(img, {
+                    aspectRatio,
+                    viewMode: 1,
+                    autoCropArea: 1,
+                    dragMode: 'move',
+                    background: false,
+                    responsive: true,
+                    movable: true,
+                    zoomable: true,
+                    rotatable: false,
+                });
+                closeWatcher.observe(modal, { attributes: true, attributeFilter: ['class'] });
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
     // ── Traduction ──────────────────────────────────────────────────────────
     async function translateText(text, sl='fr', tl='en') {
         if (!text || !text.trim()) return '';
@@ -303,6 +376,7 @@ window.UI = (function() {
         emptyState,
         openModal,
         closeModal,
+        openCropper,
         translateText,
         switchTab,
         renderAll

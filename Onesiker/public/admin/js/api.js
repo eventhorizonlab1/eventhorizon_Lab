@@ -105,27 +105,29 @@ window.APIModule = (function() {
     }
 
     async function handleFileUpload(inputElement, sectionName = '', options = {}) {
-        // Support direct File object or standard input element
-        const rawFile = (inputElement instanceof File) ? inputElement : (inputElement.files ? inputElement.files[options.index || 0] : null);
+        // Accepts a Blob (covers File and cropper-output blobs), or a standard <input type="file">.
+        const rawFile = (inputElement instanceof Blob) ? inputElement : (inputElement.files ? inputElement.files[options.index || 0] : null);
         if (!rawFile) return null;
-        
+
         const isDom = inputElement instanceof HTMLElement;
         const label = isDom ? (inputElement.closest('label') || inputElement.parentNode) : null;
         const textSpan = label ? (label.querySelector('span') || label) : null;
         const oldHtml = textSpan ? textSpan.innerHTML : '';
-        
+
         if (textSpan && !options.silent) {
             textSpan.innerHTML = '<span class="animate-pulse">Traitement...</span>';
         }
-        
+
         try {
             const compressedBlob = await compressImage(rawFile, 1600, 1600, 0.8);
             const fd = new FormData();
             fd.append('action', 'upload_image');
             fd.append('csrf_token', csrfToken);
             if (sectionName) fd.append('section', sectionName);
-            
-            const fileName = rawFile.name.replace(/\.[^/.]+$/, "") + ".webp";
+
+            // Blobs from the cropper have no .name — fall back to a generic one.
+            const baseName = (rawFile.name || options.filename || 'cropped.webp').replace(/\.[^/.]+$/, '');
+            const fileName = baseName + '.webp';
             fd.append('image', compressedBlob, fileName);
             
             const res = await fetch('api.php', { method: 'POST', body: fd });

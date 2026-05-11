@@ -138,11 +138,30 @@ window.PagesModule = (function() {
     }
 
     async function uploadGenericImage(input, type) {
+        if (!input || !input.files || !input.files[0]) return;
         let section = 'Hero';
-        if (type === 'boutique')   section = 'Boutique';
-        if (type === 'bio_images') section = 'Bio';
+        let aspectRatio = null;
+        let cropperTitle = null;
+        if (type === 'hero')            { section = 'Hero';     aspectRatio = 16/9; cropperTitle = 'Recadrer Hero (16:9)'; }
+        else if (type === 'boutique')   { section = 'Boutique'; aspectRatio = 21/9; cropperTitle = 'Recadrer Boutique (21:9)'; }
+        else if (type === 'bio_images') { section = 'Bio'; /* no cropping in scope */ }
 
-        const url = await APIModule.handleFileUpload(input, section);
+        const sourceFile = input.files[0];
+        let uploadSource = input;
+        let uploadOpts = {};
+        if (aspectRatio) {
+            let blob;
+            try {
+                blob = await UI.openCropper(sourceFile, { aspectRatio, title: cropperTitle });
+            } catch (err) {
+                if (err && err.message === 'canceled') { input.value = ''; return; }
+                throw err;
+            }
+            uploadSource = blob;
+            uploadOpts = { filename: sourceFile.name };
+        }
+
+        const url = await APIModule.handleFileUpload(uploadSource, section, uploadOpts);
         if (url) {
             if (type === 'hero' || type === 'boutique') {
                 if (!currentData[type]) currentData[type] = [];
