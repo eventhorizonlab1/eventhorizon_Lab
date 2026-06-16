@@ -27,6 +27,12 @@ async function deploy() {
     remotePath = 'www/admin/js/modules/pages.js';
     console.log(`Uploading ${localPath} to ${remotePath}`);
     await client.uploadFrom(localPath, remotePath);
+
+    // Upload admin.css
+    localPath = resolve(process.cwd(), 'public/admin/css/admin.css');
+    remotePath = 'www/admin/css/admin.css';
+    console.log(`Uploading ${localPath} to ${remotePath}`);
+    await client.uploadFrom(localPath, remotePath);
     
     console.log('Upload complete!');
     
