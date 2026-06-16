@@ -30,7 +30,7 @@ window.ArtworksModule = (function() {
             if (cat.images && cat.images.length > 0) {
                 cat.images.forEach((img, imgIdx) => {
                     imagesHtml += `
-                        <div class="group responsive-card"
+                        <div class="group responsive-card draggable-item"
                              draggable="true"
                              data-drag-type="artworks"
                              data-cat-index="${catIdx}"
@@ -93,13 +93,24 @@ window.ArtworksModule = (function() {
                     </div>
                 </div>
                 <div class="p-4 card">
-                    <div class="grid grid-cols-1 gap-3">
+                    <div class="grid grid-cols-1 gap-3" id="cat-images-${catIdx}">
                         ${imagesHtml || '<div class="py-6 text-center text-gray-500 text-sm italic">Aucune œuvre dans cette catégorie.</div>'}
                     </div>
                 </div>
             `;
             
             list.appendChild(catSection);
+
+            const grid = document.getElementById(`cat-images-${catIdx}`);
+            if (grid) {
+                UI.makeDraggable(grid, (dragIdx, dropIdx) => {
+                    const arr = currentData.artworks[catIdx].images;
+                    const item = arr.splice(dragIdx, 1)[0];
+                    arr.splice(dropIdx, 0, item);
+                    isDirty = true;
+                    render();
+                });
+            }
         });
         
         // Add "Add Category" button at the end
@@ -156,12 +167,14 @@ window.ArtworksModule = (function() {
             const newImg = {
                 src: url,
                 title: document.getElementById('art_title').value.trim(),
+                alt_fr: '',
+                alt_en: '',
                 visible: true
             };
 
             if (!currentData.artworks[catIdx].images) currentData.artworks[catIdx].images = [];
             currentData.artworks[catIdx].images.unshift(newImg);
-
+            
             isDirty = true;
             render();
             UI.closeModal();
@@ -205,6 +218,16 @@ window.ArtworksModule = (function() {
                     <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Titre de l'œuvre (et dimensions)</label>
                     <input type="text" id="edit_art_title" class="w-full px-4 py-2 rounded-lg border border-gray-700 focus:ring-2 focus:ring-red-500 outline-none transition-all" value="${escHtml(img.title || '')}" required>
                 </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Alt FR <span class="font-normal lowercase text-gray-600">(lecteur d'écran)</span></label>
+                        <input type="text" id="edit_art_alt_fr" class="w-full px-4 py-2 rounded-lg border border-gray-700 focus:ring-2 focus:ring-red-500 outline-none transition-all" value="${escHtml(img.alt_fr || '')}" maxlength="200" placeholder="ex: Œuvre abstraite bleu profond">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Alt EN <span class="font-normal lowercase text-gray-600">(screen reader)</span></label>
+                        <input type="text" id="edit_art_alt_en" class="w-full px-4 py-2 rounded-lg border border-gray-700 focus:ring-2 focus:ring-red-500 outline-none transition-all" value="${escHtml(img.alt_en || '')}" maxlength="200" placeholder="e.g. Deep blue abstract artwork">
+                    </div>
+                </div>
                 <div class="flex items-center gap-3 py-2">
                     <label class="relative flex items-center cursor-pointer select-none">
                         <input type="checkbox" id="edit_art_visible" class="peer sr-only" ${img.visible !== false ? 'checked' : ''}>
@@ -225,9 +248,13 @@ window.ArtworksModule = (function() {
             const newTitle = document.getElementById('edit_art_title').value.trim();
             if (!newTitle) return;
             const isVisible = document.getElementById('edit_art_visible').checked;
-            
+            const newAltFr = document.getElementById('edit_art_alt_fr').value.trim();
+            const newAltEn = document.getElementById('edit_art_alt_en').value.trim();
+
             currentData.artworks[catIdx].images[imgIdx].title = newTitle;
             currentData.artworks[catIdx].images[imgIdx].visible = isVisible;
+            currentData.artworks[catIdx].images[imgIdx].alt_fr = newAltFr;
+            currentData.artworks[catIdx].images[imgIdx].alt_en = newAltEn;
             isDirty = true;
             render();
             UI.closeModal();

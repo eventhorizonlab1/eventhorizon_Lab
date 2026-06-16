@@ -26,3 +26,15 @@ function sanitizeHtml(string $html, int $maxLen = 50000): string {
     $html = preg_replace('/(<[^>]+)\s+on\w+\s*=\s*(["\'])[^\2]*\2/i', '$1', $html);
     return $html;
 }
+
+/**
+ * Plain-text sanitizer for alt-text fields (alt_fr / alt_en on hero, boutique,
+ * artworks). Strips ALL HTML tags (alt should never contain markup) and caps
+ * the length so a runaway paste cannot bloat the JSON file.
+ */
+function sanitizeAltText($value, int $maxLen = 200): string {
+    if (!is_string($value)) return '';
+    $s = strip_tags($value);
+    $s = trim($s);
+    return mb_substr($s, 0, $maxLen);
+}

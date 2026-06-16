@@ -36,7 +36,7 @@ window.NewsModule = (function() {
             const card = document.createElement('div');
             card.className = 'responsive-card';
             card.innerHTML = `
-                <div class="news-card-wrapper card border ${item.visible !== false ? 'border-gray-800' : 'border-gray-800 opacity-60'} rounded-xl shadow-sm hover:shadow-md transition-shadow relative" draggable="true" data-index="${idx}">
+                <div class="news-card-wrapper card border ${item.visible !== false ? 'border-gray-800' : 'border-gray-800 opacity-60'} rounded-xl shadow-sm hover:shadow-md transition-shadow relative draggable-item" draggable="true" data-index="${idx}">
                     <div class="news-card-inner">
                         <!-- Handle Drag (Desktop only) -->
                         <div class="drag-handle cursor-move text-gray-500 hover:text-white transition-colors">
@@ -95,13 +95,16 @@ window.NewsModule = (function() {
 
             // Event delegation via data-action — no direct bindings needed
 
-            // Drag and drop handlers
-            card.addEventListener('dragstart', handleDragStart);
-            card.addEventListener('dragover', handleDragOver);
-            card.addEventListener('drop', handleDrop);
-            card.addEventListener('dragend', handleDragEnd);
-
             list.appendChild(card);
+        });
+
+        // Init Universal Drag & Drop
+        UI.makeDraggable(list, (dragIdx, dropIdx, target) => {
+            const arr = currentData.news;
+            const item = arr.splice(dragIdx, 1)[0];
+            arr.splice(dropIdx, 0, item);
+            isDirty = true;
+            render();
         });
     }
 
@@ -182,17 +185,15 @@ window.NewsModule = (function() {
                     </div>
                 </div>
 
-                <!-- Descriptions -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Description (FR)</label>
-                        <textarea id="edit_excerpt_fr" rows="4" required
-                                  class="w-full px-4 py-2 rounded-lg border border-gray-700 focus:ring-2 focus:ring-red-500 focus:border-blue-500 transition-all outline-none resize-none">${escHtml(item.excerpt_fr || '')}</textarea>
+                        <div id="edit_excerpt_fr_container" style="height: 150px; background: white; color: black; border-radius: 0.5rem; overflow: hidden;">${item.excerpt_fr || ''}</div>
+                        <input type="hidden" id="edit_excerpt_fr">
                     </div>
                     <div class="relative">
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Description (EN)</label>
-                        <textarea id="edit_excerpt_en" rows="4"
-                                  class="w-full px-4 py-2 rounded-lg border border-gray-700 focus:ring-2 focus:ring-red-500 focus:border-blue-500 transition-all outline-none resize-none">${escHtml(item.excerpt_en || '')}</textarea>
+                        <div id="edit_excerpt_en_container" style="height: 150px; background: white; color: black; border-radius: 0.5rem; overflow: hidden;">${item.excerpt_en || ''}</div>
+                        <input type="hidden" id="edit_excerpt_en">
                         <button type="button" data-action="translate-news-field" data-field="excerpt" class="absolute right-2 top-8 p-1 text-blue-500 hover:bg-hover rounded cursor-pointer z-10" title="Traduire via Google">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
                         </button>
@@ -219,13 +220,17 @@ window.NewsModule = (function() {
             UI.openModal(isNew ? 'Nouvelle Actualité' : 'Édition Actualité', html, async (e) => {
                 e.preventDefault();
                 
+                // Get content from Quill instances
+                const excerptFrHtml = window.quillNewsFr ? window.quillNewsFr.root.innerHTML : '';
+                const excerptEnHtml = window.quillNewsEn ? window.quillNewsEn.root.innerHTML : '';
+
                 const newItem = {
                     ...item,
                     date:       document.getElementById('edit_date').value,
                     title_fr:   document.getElementById('edit_title_fr').value,
                     title_en:   document.getElementById('edit_title_en').value,
-                    excerpt_fr: document.getElementById('edit_excerpt_fr').value,
-                    excerpt_en: document.getElementById('edit_excerpt_en').value,
+                    excerpt_fr: excerptFrHtml,
+                    excerpt_en: excerptEnHtml,
                     link:       document.getElementById('edit_link').value,
                     visible:    document.getElementById('edit_visible').checked,
                     images:     [...modalNewsImages]
@@ -255,6 +260,22 @@ window.NewsModule = (function() {
             UI.closeModal();
             APIModule.saveData('news');
         });
+
+        // Initialize Quill.js instances
+        if (typeof Quill !== 'undefined') {
+            const quillOptions = {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline'],
+                        [{ 'list': 'bullet' }],
+                        ['link']
+                    ]
+                }
+            };
+            window.quillNewsFr = new Quill('#edit_excerpt_fr_container', quillOptions);
+            window.quillNewsEn = new Quill('#edit_excerpt_en_container', quillOptions);
+        }
 
         renderModalImages();
     }
@@ -351,17 +372,29 @@ window.NewsModule = (function() {
 
     async function translateField(field) {
         console.log(`Translating field: ${field}`);
-        const frInput = document.getElementById(`edit_${field}_fr`);
-        const enInput = document.getElementById(`edit_${field}_en`);
-        if (!frInput || !enInput) {
-            console.error(`Inputs not found for ${field}`);
-            return false;
+        
+        let frValue = '';
+        let enInput = null;
+        
+        if (field === 'excerpt') {
+            frValue = window.quillNewsFr ? window.quillNewsFr.root.innerHTML : '';
+            if (frValue === '<p><br></p>') frValue = '';
+        } else {
+            const frInput = document.getElementById(`edit_${field}_fr`);
+            enInput = document.getElementById(`edit_${field}_en`);
+            if (frInput) frValue = frInput.value;
         }
-        if (!frInput.value.trim()) {
+
+        if (!frValue.trim()) {
             return false;
         }
 
-        const btn = enInput.nextElementSibling;
+        let btn = null;
+        if (field === 'excerpt') {
+            btn = document.querySelector('button[data-action="translate-news-field"][data-field="excerpt"]');
+        } else if (enInput) {
+            btn = enInput.nextElementSibling;
+        }
         const isButton = btn && (btn.tagName === 'BUTTON' || btn.querySelector('button'));
         
         if (isButton) {
@@ -369,9 +402,15 @@ window.NewsModule = (function() {
         }
         
         try {
-            const translated = await UI.translateText(frInput.value);
+            // Note: Our translate API uses translate() function which might not be perfect for HTML,
+            // but for basic Quill tags (p, b, i, a) Google Translate usually keeps them intact.
+            const translated = await UI.translateText(frValue);
             if (translated) {
-                enInput.value = translated;
+                if (field === 'excerpt' && window.quillNewsEn) {
+                    window.quillNewsEn.root.innerHTML = translated;
+                } else if (enInput) {
+                    enInput.value = translated;
+                }
                 console.log(`Translated ${field} successfully`);
                 return true;
             }
@@ -389,9 +428,11 @@ window.NewsModule = (function() {
         console.log("Translating all news fields...");
         
         const frTitle = document.getElementById('edit_title_fr');
-        const frExcerpt = document.getElementById('edit_excerpt_fr');
+        const frTitleVal = frTitle ? frTitle.value.trim() : '';
+        const frExcerptVal = window.quillNewsFr ? window.quillNewsFr.root.innerHTML : '';
+        const isEmptyExcerpt = !frExcerptVal || frExcerptVal === '<p><br></p>';
         
-        if ((!frTitle || !frTitle.value.trim()) && (!frExcerpt || !frExcerpt.value.trim())) {
+        if (!frTitleVal && isEmptyExcerpt) {
             UI.showToast("Veuillez d'abord remplir le Titre (FR) ou la Description (FR).", true);
             return;
         }
@@ -437,40 +478,7 @@ window.NewsModule = (function() {
         }
     }
 
-    // ── Drag & Drop ──────────────────────────────────────────────────────────
 
-    function handleDragStart(e) {
-        e.currentTarget.classList.add('opacity-40', 'scale-95');
-        e.dataTransfer.setData('text/plain', e.currentTarget.dataset.index);
-        e.dataTransfer.effectAllowed = 'move';
-    }
-
-    function handleDragOver(e) {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        const card = e.currentTarget;
-        if (card) card.classList.add('border-gray-600', 'bg-hover');
-    }
-
-    function handleDrop(e) {
-        e.preventDefault();
-        const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
-        const toIdx   = parseInt(e.currentTarget.dataset.index);
-        
-        if (fromIdx !== toIdx) {
-            const arr = currentData.news;
-            const item = arr.splice(fromIdx, 1)[0];
-            arr.splice(toIdx, 0, item);
-            isDirty = true;
-            render();
-        }
-    }
-
-    function handleDragEnd(e) {
-        document.querySelectorAll('#news-list > div').forEach(c => {
-            c.classList.remove('opacity-40', 'scale-95', 'border-gray-600', 'bg-hover');
-        });
-    }
 
     function triggerUpload() {
         const input = document.getElementById('news-upload-input');

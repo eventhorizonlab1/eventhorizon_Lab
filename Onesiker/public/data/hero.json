@@ -1,9 +1,64 @@
 [
-  "/Hero/1_Onesiker_Maison_Fifteen.webp",
-  "/Hero/2_Onesiker_MUCEM_Siege_TER.webp",
-  "/Hero/3_Onesiker_siker_bg.webp",
-  "/Hero/4_Onesiker_siker_big_Wall.webp",
-  "/Hero/5_Onesiker_siker_extincteur_dreams.webp",
-  "/Hero/6_Onesiker_siker_extincteur.webp",
-  "/Hero/7_Onesiker_siker_montreal.webp"
+    {
+        "src": "\/data\/uploads\/Onesiker_Hero7.webp",
+        "alt_fr": "",
+        "alt_en": "",
+        "visible": true
+    },
+    {
+        "src": "\/data\/uploads\/Onesiker_Hero8.webp",
+        "alt_fr": "",
+        "alt_en": ""
+    },
+    {
+        "src": "\/data\/uploads\/Onesiker_Hero6.webp",
+        "alt_fr": "",
+        "alt_en": "",
+        "visible": true
+    },
+    {
+        "src": "\/data\/uploads\/Onesiker_Hero5.webp",
+        "alt_fr": "",
+        "alt_en": ""
+    },
+    {
+        "src": "\/data\/uploads\/Onesiker_Hero1.webp",
+        "alt_fr": "",
+        "alt_en": ""
+    },
+    {
+        "src": "\/Hero\/1_Onesiker_Maison_Fifteen.webp",
+        "alt_fr": "Fresque Onesiker à la Maison Fifteen",
+        "alt_en": "Onesiker mural at Maison Fifteen"
+    },
+    {
+        "src": "\/Hero\/2_Onesiker_MUCEM_Siege_TER.webp",
+        "alt_fr": "Œuvre Onesiker au MUCEM, siège TER",
+        "alt_en": "Onesiker piece at MUCEM, TER headquarters"
+    },
+    {
+        "src": "\/Hero\/3_Onesiker_siker_bg.webp",
+        "alt_fr": "Tag Onesiker en arrière-plan",
+        "alt_en": "Onesiker tag, background"
+    },
+    {
+        "src": "\/Hero\/4_Onesiker_siker_big_Wall.webp",
+        "alt_fr": "Fresque grand format Onesiker",
+        "alt_en": "Onesiker large-scale wall piece"
+    },
+    {
+        "src": "\/Hero\/5_Onesiker_siker_extincteur_dreams.webp",
+        "alt_fr": "Onesiker — série Extincteur Dreams",
+        "alt_en": "Onesiker — Extincteur Dreams series"
+    },
+    {
+        "src": "\/Hero\/6_Onesiker_siker_extincteur.webp",
+        "alt_fr": "Onesiker — Extincteur",
+        "alt_en": "Onesiker — Extincteur"
+    },
+    {
+        "src": "\/Hero\/7_Onesiker_siker_montreal.webp",
+        "alt_fr": "Fresque Onesiker à Montréal",
+        "alt_en": "Onesiker mural in Montreal"
+    }
 ]

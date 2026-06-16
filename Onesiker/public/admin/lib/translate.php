@@ -174,6 +174,7 @@ function translateViaMyMemory(string $text, string $sl, string $tl): ?string {
 }
 
 function handleTranslate(): void {
+    verifyCsrfToken();
     $text = trim($_POST['text'] ?? '');
     $sl   = preg_replace('/[^a-z\-]/', '', strtolower($_POST['sl'] ?? 'fr'));
     $tl   = preg_replace('/[^a-z\-]/', '', strtolower($_POST['tl'] ?? 'en'));

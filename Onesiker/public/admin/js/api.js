@@ -136,7 +136,7 @@ window.APIModule = (function() {
             
             if (data.success) {
                 if (textSpan && !options.silent) textSpan.innerHTML = oldHtml;
-                return bustCacheFresh(data.url);
+                return data.url;
             } else {
                 UI.showToast(data.error, true);
                 if (textSpan && !options.silent) textSpan.innerHTML = oldHtml;
@@ -179,7 +179,7 @@ window.APIModule = (function() {
 
             if (data.success) {
                 if (textSpan) textSpan.innerHTML = oldHtml;
-                return bustCacheFresh(data.url);
+                return data.url;
             } else {
                 UI.showToast(data.error || 'Erreur upload PDF', true);
                 if (textSpan) textSpan.innerHTML = oldHtml;

@@ -1,46 +1,60 @@
 {
-  "fr": {
-    "title": "Contactez-nous",
-    "desc": "Retrouvez le travail de Onesiker à son atelier.",
-    "formIntro": "Vous avez un coup de cœur, un projet ? Laissez-nous vos coordonnées et l'objet de votre demande, nous vous recontacterons dans les meilleurs délais.",
-    "galleriesTitle": "Galeries"
-  },
-  "en": {
-    "title": "Get in Touch",
-    "desc": "Find Onesiker's work at his studio.",
-    "formIntro": "If you have a crush on a piece or a project, leave us your contact details and the subject of your request, and we will get back to you as soon as possible.",
-    "galleriesTitle": "Galleries"
-  },
-  "email": "contact.onesiker@gmail.com",
-  "address": {
-    "title": "Onesiker",
-    "lines_fr": "Centre-ville\n31000 Toulouse",
-    "lines_en": "Downtown\n31000 Toulouse"
-  },
-  "galleries": [
-    {
-      "name_fr": "Kufa Gallery",
-      "name_en": "Kufa Gallery",
-      "details_fr": "<strong class=\"font-medium text-gray-700\">Kufa Gallery</strong> (Miami Vibes)<br />6928 Biscayne Blvd, Miami (FL) 33138, USA<br />+1 954 907 3192<br /><a href=\"https://kufagallery.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">kufagallery.com</a>",
-      "details_en": "<strong class=\"font-medium text-gray-700\">Kufa Gallery</strong> (Miami Vibes)<br />6928 Biscayne Blvd, Miami (FL) 33138, USA<br />+1 954 907 3192<br /><a href=\"https://kufagallery.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">kufagallery.com</a>"
+    "fr": {
+        "title": "Contactez-nous",
+        "desc": "Retrouvez le travail de Onesiker à son atelier.",
+        "formIntro": "Vous avez un coup de cœur, un projet ? Laissez-nous vos coordonnées et l'objet de votre demande, nous vous recontacterons dans les meilleurs délais.",
+        "galleriesTitle": "Galeries"
     },
-    {
-      "name_fr": "Galerie Liminal",
-      "name_en": "Liminal Gallery",
-      "details_fr": "<strong class=\"font-medium text-gray-700\">Galerie Liminal</strong><br />91 rue Noisy-le-Sec 93260 Les Lilas<br /><a href=\"https://galerieliminal.art/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">galerieliminal.art</a>",
-      "details_en": "<strong class=\"font-medium text-gray-700\">Liminal Gallery</strong><br />91 rue Noisy-le-Sec 93260 Les Lilas<br /><a href=\"https://galerieliminal.art/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">galerieliminal.art</a>"
+    "en": {
+        "title": "Get in Touch",
+        "desc": "Find Onesiker's work at his studio.",
+        "formIntro": "If you have a crush on a piece or a project, leave us your contact details and the subject of your request, and we will get back to you as soon as possible.",
+        "galleriesTitle": "Galleries"
     },
-    {
-      "name_fr": "Artsper",
-      "name_en": "Artsper",
-      "details_fr": "<strong class=\"font-medium text-gray-700\">Artsper</strong><br /><a href=\"https://www.artsper.com/fr/artistes-contemporains/france/95271/onesiker\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">artsper.com/onesiker</a>",
-      "details_en": "<strong class=\"font-medium text-gray-700\">Artsper</strong><br /><a href=\"https://www.artsper.com/fr/artistes-contemporains/france/95271/onesiker\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">artsper.com/onesiker</a>"
+    "email": "contact.onesiker@gmail.com",
+    "address": {
+        "title": "Onesiker",
+        "lines_fr": "Centre-ville\n31000 Toulouse",
+        "lines_en": "Downtown\n31000 Toulouse"
     },
-    {
-      "name_fr": "Galerie Amanni",
-      "name_en": "Galerie Amanni",
-      "details_fr": "<strong class=\"font-medium text-gray-700\">Galerie Amanni</strong><br /><a href=\"https://amanni.fr/artistes/onesiker/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">amanni.fr</a>",
-      "details_en": "<strong class=\"font-medium text-gray-700\">Galerie Amanni</strong><br /><a href=\"https://amanni.fr/artistes/onesiker/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">amanni.fr</a>"
-    }
-  ]
+    "galleries": [
+        {
+            "name_fr": "Galerie Laurent Rigail",
+            "name_en": "Laurent Rigail Gallery",
+            "details_fr": "<strong class=\"font-medium text-gray-500\">Galerie Laurent Rigail<\/strong><br \/>40 rue Volta 75003 Paris<br \/>+33 1 42 77 09 00",
+            "details_en": "<strong class=\"font-medium text-gray-500\">Laurent Rigail Gallery<\/strong><br \/>40 rue Volta 75003 Paris<br \/>+33 1 42 77 09 00",
+            "url": "https:\/\/laurentrigail.com"
+        },
+        {
+            "name_fr": "LA STATION BRIVE",
+            "name_en": "LA STATION BRIVE",
+            "details_fr": "<strong class=\"font-medium text-gray-500\">LA STATION BRIVE<\/strong><br \/>7 rue de la République 19100 Brive-la-Gaillarde<br \/>07 82 73 61 44",
+            "details_en": "<strong class=\"font-medium text-gray-500\">LA STATION BRIVE<\/strong><br \/>7 rue de la République 19100 Brive-la-Gaillarde<br \/>07 82 73 61 44",
+            "url": ""
+        },
+        {
+            "name_fr": "Kufa Gallery",
+            "name_en": "Kufa Gallery",
+            "details_fr": "<strong class=\"font-medium text-gray-700\">Kufa Gallery<\/strong> (Miami Vibes)<br \/>6928 Biscayne Blvd, Miami (FL) 33138, USA<br \/>+1 954 907 3192<br \/><a href=\"https:\/\/kufagallery.com\/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">kufagallery.com<\/a>",
+            "details_en": "<strong class=\"font-medium text-gray-700\">Kufa Gallery<\/strong> (Miami Vibes)<br \/>6928 Biscayne Blvd, Miami (FL) 33138, USA<br \/>+1 954 907 3192<br \/><a href=\"https:\/\/kufagallery.com\/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">kufagallery.com<\/a>"
+        },
+        {
+            "name_fr": "Galerie Liminal",
+            "name_en": "Liminal Gallery",
+            "details_fr": "<strong class=\"font-medium text-gray-700\">Galerie Liminal<\/strong><br \/>91 rue Noisy-le-Sec 93260 Les Lilas<br \/><a href=\"https:\/\/galerieliminal.art\/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">galerieliminal.art<\/a>",
+            "details_en": "<strong class=\"font-medium text-gray-700\">Liminal Gallery<\/strong><br \/>91 rue Noisy-le-Sec 93260 Les Lilas<br \/><a href=\"https:\/\/galerieliminal.art\/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">galerieliminal.art<\/a>"
+        },
+        {
+            "name_fr": "Artsper",
+            "name_en": "Artsper",
+            "details_fr": "<strong class=\"font-medium text-gray-700\">Artsper<\/strong><br \/><a href=\"https:\/\/www.artsper.com\/fr\/artistes-contemporains\/france\/95271\/onesiker\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">artsper.com\/onesiker<\/a>",
+            "details_en": "<strong class=\"font-medium text-gray-700\">Artsper<\/strong><br \/><a href=\"https:\/\/www.artsper.com\/fr\/artistes-contemporains\/france\/95271\/onesiker\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">artsper.com\/onesiker<\/a>"
+        },
+        {
+            "name_fr": "Galerie Amanni",
+            "name_en": "Galerie Amanni",
+            "details_fr": "<strong class=\"font-medium text-gray-700\">Galerie Amanni<\/strong><br \/><a href=\"https:\/\/amanni.fr\/artistes\/onesiker\/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">amanni.fr<\/a>",
+            "details_en": "<strong class=\"font-medium text-gray-700\">Galerie Amanni<\/strong><br \/><a href=\"https:\/\/amanni.fr\/artistes\/onesiker\/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">amanni.fr<\/a>"
+        }
+    ]
 }

@@ -38,6 +38,7 @@ function handleLogin(): void {
 }
 
 function handleLogout(): void {
+    verifyCsrfToken();
     session_destroy();
     jsonResponse(['success' => true]);
 }

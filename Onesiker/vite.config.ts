@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import fs from 'node:fs';
 import path from 'node:path';
 import type {Plugin} from 'vite';
+import {transformWithEsbuild} from 'vite';
 import {defineConfig} from 'vitest/config';
 
 // Removes macOS metadata that sneaks into dist/ (.DS_Store, ._* AppleDouble files,
@@ -42,13 +43,47 @@ function cleanMacArtifactsPlugin(): Plugin {
   };
 }
 
+function minifyAdminAssetsPlugin(): Plugin {
+  return {
+    name: 'minify-admin-assets',
+    apply: 'build',
+    async closeBundle() {
+      const distAdminDir = path.resolve(__dirname, 'dist/admin');
+      if (!fs.existsSync(distAdminDir)) return;
+
+      const walk = async (dir: string) => {
+        for (const entry of fs.readdirSync(dir, {withFileTypes: true})) {
+          const full = path.join(dir, entry.name);
+          if (entry.isDirectory()) {
+            await walk(full);
+          } else if (full.endsWith('.js') || full.endsWith('.css')) {
+            // Minify CSS and JS files in the admin folder
+            const content = fs.readFileSync(full, 'utf-8');
+            try {
+              const loader = full.endsWith('.js') ? 'js' : 'css';
+              const result = await transformWithEsbuild(content, full, {
+                minify: true,
+                loader: loader,
+              });
+              fs.writeFileSync(full, result.code);
+            } catch (e) {
+              console.error(`Failed to minify ${full}`, e);
+            }
+          }
+        }
+      };
+      await walk(distAdminDir);
+    },
+  };
+}
+
 // One BUILD_ID per build, exposed via import.meta.env.VITE_BUILD_ID and used by
 // useJsonData() as a cache-busting query string. Browsers can cache /data/*.json
 // for the lifetime of the build instead of refetching every page load.
 const BUILD_ID = Date.now().toString(36);
 
 export default defineConfig({
-  plugins: [react(), tailwindcss(), cleanMacArtifactsPlugin()],
+  plugins: [react(), tailwindcss(), cleanMacArtifactsPlugin(), minifyAdminAssetsPlugin()],
   define: {
     'import.meta.env.VITE_BUILD_ID': JSON.stringify(BUILD_ID),
   },

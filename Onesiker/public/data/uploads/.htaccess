@@ -1,0 +1,28 @@
+# Defense-in-depth : neutralise toute exécution de script côté serveur
+# dans le dossier d'uploads, même si un fichier malveillant venait à y atterrir
+# (régression de validation, plugin tiers, mauvaise configuration future).
+
+<IfModule mod_php.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+  php_flag engine off
+</IfModule>
+
+# Refuse l'accès direct à toute extension exécutable
+<FilesMatch "\.(php|phtml|phar|ph[3457]?|pl|py|cgi|asp|aspx|jsp|sh|exe|bat)$">
+  Require all denied
+</FilesMatch>
+
+# Force le download (jamais d'inline) pour les types pouvant héberger
+# du JS/HTML, et rappelle nosniff au navigateur
+<FilesMatch "\.(html?|svg|xml)$">
+  Header set Content-Disposition "attachment"
+  Header set X-Content-Type-Options "nosniff"
+</FilesMatch>
+
+# Empêche le listing du dossier
+Options -Indexes

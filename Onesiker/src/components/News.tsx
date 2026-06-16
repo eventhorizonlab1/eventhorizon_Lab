@@ -4,25 +4,28 @@ import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useJsonData } from '../hooks/useJsonData';
 
-const renderTextWithLinks = (text: string) => {
-  const parts = text.split(/(@[\w_]+)/g);
-  return parts.map((part, i) => {
-    if (part.startsWith('@')) {
-      const handle = part.substring(1);
-      return (
-        <a 
-          key={i} 
-          href={`https://instagram.com/${handle}`} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="text-black font-medium hover:text-gray-500 transition-colors"
-        >
-          {part}
-        </a>
-      );
+const parseHtmlWithLinks = (htmlContent: string) => {
+  if (!htmlContent) return '';
+  if (typeof window === 'undefined') return htmlContent;
+  
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlContent, 'text/html');
+  
+  const walk = (node: Node) => {
+    if (node.nodeType === 3) { // Text node
+      const text = node.nodeValue;
+      if (text && text.includes('@')) {
+        const span = document.createElement('span');
+        span.innerHTML = text.replace(/@([\w_]+)/g, '<a href="https://instagram.com/$1" target="_blank" rel="noopener noreferrer" class="text-black font-medium hover:text-gray-500 transition-colors">@$1</a>');
+        node.parentNode?.replaceChild(span, node);
+      }
+    } else if (node.nodeType === 1 && node.nodeName !== 'A') {
+      Array.from(node.childNodes).forEach(walk);
     }
-    return part;
-  });
+  };
+  
+  Array.from(doc.body.childNodes).forEach(walk);
+  return doc.body.innerHTML;
 };
 
 const Carousel = ({ images, title }: { images: string[], title: string }) => {
@@ -84,7 +87,17 @@ export default function News() {
   const newsItems = useMemo(
     () =>
       (rawNews ?? [])
-        .filter((item: any) => item.visible !== false)
+        .filter((item: any) => {
+          if (item.visible === false) return false;
+          if (item.date) {
+            const itemDate = new Date(item.date);
+            const now = new Date();
+            itemDate.setHours(0, 0, 0, 0);
+            now.setHours(0, 0, 0, 0);
+            if (itemDate > now) return false;
+          }
+          return true;
+        })
         .map((item: any) => ({
           ...item,
           title: language === 'fr' ? item.title_fr : item.title_en,
@@ -110,7 +123,7 @@ export default function News() {
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold tracking-tighter mb-2 md:mb-4">{t.news.title}</h2>
             <div className="flex items-center gap-4 mt-2 md:mt-0">
               <p className="text-gray-500 uppercase tracking-widest text-xs sm:text-sm">{t.news.subtitle}</p>
-              <div className="flex items-center text-white bg-black md:hidden animate-pulse px-3 py-1.5 rounded-full shadow-sm ml-auto sm:ml-4">
+              <div className="flex items-center text-white bg-black animate-pulse px-3 py-1.5 rounded-full shadow-sm ml-auto sm:ml-4">
                 <span className="text-[10px] font-bold uppercase tracking-widest mr-2">Swipe</span>
                 <ArrowRight size={14} className="stroke-[3]" />
               </div>
@@ -170,12 +183,15 @@ export default function News() {
               <p className="text-xs text-gray-400 uppercase tracking-widest mb-2 md:mb-3">{item.date}</p>
               {item.link ? (
                 <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-block hover:opacity-80 transition-opacity">
-                  <h3 className="text-xl md:text-2xl font-display font-semibold mb-2 md:mb-3 group-hover:text-gray-600 transition-colors">{item.title}</h3>
+                  <h3 className="text-xl md:text-2xl font-display font-semibold mb-2 md:mb-3 group-hover:text-gray-600 transition-colors line-clamp-2 min-h-[3.5rem] md:min-h-[4rem]">{item.title}</h3>
                 </a>
               ) : (
-                <h3 className="text-xl md:text-2xl font-display font-semibold mb-2 md:mb-3 group-hover:text-gray-600 transition-colors">{item.title}</h3>
+                <h3 className="text-xl md:text-2xl font-display font-semibold mb-2 md:mb-3 group-hover:text-gray-600 transition-colors line-clamp-2 min-h-[3.5rem] md:min-h-[4rem]">{item.title}</h3>
               )}
-              <p className="text-gray-600 font-light leading-relaxed text-sm md:text-base">{renderTextWithLinks(item.excerpt)}</p>
+              <div 
+                className="text-gray-600 font-light leading-relaxed text-sm md:text-base line-clamp-3 min-h-[4.5rem] md:min-h-[5rem] prose-p:my-1 prose-a:text-black hover:prose-a:text-gray-500 prose-a:transition-colors"
+                dangerouslySetInnerHTML={{ __html: parseHtmlWithLinks(item.excerpt) }}
+              />
             </motion.article>
           ))}
         </div>

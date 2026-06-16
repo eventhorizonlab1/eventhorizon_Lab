@@ -1,6 +1,37 @@
 [
-  "/Boutique/02_OneSiker_Olympe.webp",
-  "/Boutique/03_OneSiker_Train.webp",
-  "/Boutique/01_OneSiker_Extincteur.webp",
-  "/Boutique/04_OneSiker_Vibes.webp"
+    {
+        "src": "\/data\/uploads\/Onesiker_Boutique4.webp",
+        "alt_fr": "",
+        "alt_en": ""
+    },
+    {
+        "src": "\/data\/uploads\/Onesiker_Boutique3.webp",
+        "alt_fr": "",
+        "alt_en": ""
+    },
+    {
+        "src": "\/data\/uploads\/Onesiker_Boutique1.webp",
+        "alt_fr": "",
+        "alt_en": ""
+    },
+    {
+        "src": "\/Boutique\/02_OneSiker_Olympe.webp",
+        "alt_fr": "Œuvre Olympe par Onesiker",
+        "alt_en": "Olympe artwork by Onesiker"
+    },
+    {
+        "src": "\/Boutique\/03_OneSiker_Train.webp",
+        "alt_fr": "Œuvre Train par Onesiker",
+        "alt_en": "Train artwork by Onesiker"
+    },
+    {
+        "src": "\/Boutique\/01_OneSiker_Extincteur.webp",
+        "alt_fr": "Œuvre Extincteur par Onesiker",
+        "alt_en": "Extincteur artwork by Onesiker"
+    },
+    {
+        "src": "\/Boutique\/04_OneSiker_Vibes.webp",
+        "alt_fr": "Œuvre Vibes par Onesiker",
+        "alt_en": "Vibes artwork by Onesiker"
+    }
 ]

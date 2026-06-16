@@ -342,114 +342,14 @@ window.LayoutModule = (function() {
         renderCustomImages();
     }
 
-    // ── Drag & Drop ───────────────────────────────────────────────────────────
-    // Les events sont attachés via JS (pas inline) pour contrôler passive:false
-    // et éviter les conflits avec les <input> enfants.
-    let dragSrcIndex = null;
-
     function attachDragListeners(container) {
-        container.querySelectorAll('.draggable-item').forEach(row => {
-            const handle = row.querySelector('.drag-handle');
-            if (!handle) return;
-
-            // ── Desktop drag (HTML5) ──────────────────────────────────────────
-            // On active draggable seulement via la poignée pour éviter
-            // que les <input> bloquent le drag
-            handle.addEventListener('mousedown', () => { row.setAttribute('draggable', 'true'); });
-            row.addEventListener('dragstart', e => {
-                dragSrcIndex = parseInt(row.dataset.index);
-                e.dataTransfer.effectAllowed = 'move';
-                e.dataTransfer.setData('text/plain', String(dragSrcIndex));
-                row.classList.add('opacity-40');
-            });
-            row.addEventListener('dragend', () => {
-                row.setAttribute('draggable', 'false');
-                container.querySelectorAll('.draggable-item').forEach(el =>
-                    el.classList.remove('border-gray-600', 'border-2', 'opacity-40')
-                );
-                dragSrcIndex = null;
-            });
-            row.addEventListener('dragover', e => {
-                e.preventDefault();
-                e.dataTransfer.dropEffect = 'move';
-                row.classList.add('border-gray-600', 'border-2');
-            });
-            row.addEventListener('dragleave', e => {
-                if (!row.contains(e.relatedTarget))
-                    row.classList.remove('border-gray-600', 'border-2');
-            });
-            row.addEventListener('drop', e => {
-                e.preventDefault();
-                e.stopPropagation();
-                container.querySelectorAll('.draggable-item').forEach(el =>
-                    el.classList.remove('border-gray-600', 'border-2', 'opacity-40')
-                );
-                const dropIdx = parseInt(row.dataset.index);
-                if (dragSrcIndex === null || isNaN(dropIdx) || dragSrcIndex === dropIdx) return;
-                syncInputs();
-                const [moved] = layoutData.sections.splice(dragSrcIndex, 1);
-                layoutData.sections.splice(dropIdx, 0, moved);
-                dragSrcIndex = null;
-                isDirty = true;
-                render();
-            });
-
-            // ── Touch drag (iOS/Safari) ───────────────────────────────────────
-            let touchIdx = null, touchClone = null, touchEl = null;
-
-            handle.addEventListener('touchstart', e => {
-                if (e.touches.length !== 1) return;
-                touchEl  = row;
-                touchIdx = parseInt(row.dataset.index);
-                row.classList.add('opacity-40');
-                touchClone = row.cloneNode(true);
-                Object.assign(touchClone.style, {
-                    position: 'fixed', pointerEvents: 'none', zIndex: '9999',
-                    width: row.offsetWidth + 'px', opacity: '0.85',
-                    boxShadow: '0 8px 30px rgba(0,0,0,0.2)', borderRadius: '12px',
-                    transition: 'none'
-                });
-                document.body.appendChild(touchClone);
-                _placeClone(touchClone, e.touches[0]);
-            }, { passive: true });
-
-            handle.addEventListener('touchmove', e => {
-                e.preventDefault();
-                if (!touchClone) return;
-                _placeClone(touchClone, e.touches[0]);
-                touchClone.style.display = 'none';
-                const under = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
-                touchClone.style.display = '';
-                container.querySelectorAll('.draggable-item').forEach(el => el.classList.remove('border-gray-600', 'border-2'));
-                const target = under && under.closest('.draggable-item');
-                if (target && target !== touchEl) target.classList.add('border-gray-600', 'border-2');
-            }, { passive: false });
-
-            handle.addEventListener('touchend', e => {
-                if (touchClone) { touchClone.remove(); touchClone = null; }
-                if (touchEl) touchEl.classList.remove('opacity-40');
-                const t = e.changedTouches[0];
-                const under  = document.elementFromPoint(t.clientX, t.clientY);
-                const target = under && under.closest('.draggable-item');
-                container.querySelectorAll('.draggable-item').forEach(el => el.classList.remove('border-gray-600', 'border-2'));
-                if (target && target !== touchEl) {
-                    const dropIdx = parseInt(target.dataset.index);
-                    if (!isNaN(dropIdx) && touchIdx !== dropIdx) {
-                        syncInputs();
-                        const [moved] = layoutData.sections.splice(touchIdx, 1);
-                        layoutData.sections.splice(dropIdx, 0, moved);
-                        isDirty = true;
-                        render();
-                    }
-                }
-                touchEl = null; touchIdx = null;
-            }, { passive: true });
+        UI.makeDraggable(container, (dragIdx, dropIdx, target) => {
+            syncInputs();
+            const [moved] = layoutData.sections.splice(dragIdx, 1);
+            layoutData.sections.splice(dropIdx, 0, moved);
+            isDirty = true;
+            render();
         });
-    }
-
-    function _placeClone(clone, touch) {
-        clone.style.left = (touch.clientX - clone.offsetWidth  / 2) + 'px';
-        clone.style.top  = (touch.clientY - clone.offsetHeight / 2) + 'px';
     }
 
     return {

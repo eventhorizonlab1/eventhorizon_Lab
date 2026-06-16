@@ -53,8 +53,16 @@ export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; on
     // News — one item per article, search FR+EN.
     news.forEach((n) => {
       if (!n || n.visible === false) return;
+      if (n.date) {
+        const nDate = new Date(n.date);
+        const now = new Date();
+        nDate.setHours(0, 0, 0, 0);
+        now.setHours(0, 0, 0, 0);
+        if (nDate > now) return;
+      }
       const title = (language === 'fr' ? n.title_fr : n.title_en) || n.title_fr || n.title_en || '';
-      const snippet = (language === 'fr' ? n.excerpt_fr : n.excerpt_en) || n.excerpt_fr || n.excerpt_en || '';
+      let snippet = (language === 'fr' ? n.excerpt_fr : n.excerpt_en) || n.excerpt_fr || n.excerpt_en || '';
+      snippet = snippet.replace(/<[^>]*>?/gm, ''); // Strip HTML
       out.push({
         id: `news-${n.id}`,
         section: 'news',
@@ -62,7 +70,12 @@ export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; on
         anchor: '#news',
         title,
         snippet,
-        haystack: [n.title_fr, n.title_en, n.excerpt_fr, n.excerpt_en].filter(Boolean).join(' '),
+        haystack: [
+          n.title_fr, 
+          n.title_en, 
+          n.excerpt_fr ? n.excerpt_fr.replace(/<[^>]*>?/gm, '') : '', 
+          n.excerpt_en ? n.excerpt_en.replace(/<[^>]*>?/gm, '') : ''
+        ].filter(Boolean).join(' '),
       });
     });
 

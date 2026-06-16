@@ -69,30 +69,49 @@ function handleUploadImage(): void {
     $destination    = $uploadsDir . '/' . $finalFilename;
     $conversionDone = false;
 
-    if ($mimeReal !== 'image/webp' && function_exists('imagewebp')) {
-        // GD emits warnings on corrupt input; keep them silent here but log the
-        // failure path so we can spot a broken upload pipeline.
-        $img = false;
-        if ($mimeReal === 'image/jpeg')      $img = @imagecreatefromjpeg($tempPath);
-        elseif ($mimeReal === 'image/png')   $img = @imagecreatefrompng($tempPath);
-
-        if ($img !== false) {
-            if ($mimeReal === 'image/png') {
-                imagepalettetotruecolor($img);
-                imagealphablending($img, true);
-                imagesavealpha($img, true);
-            }
-            $webpDestination = $uploadsDir . '/' . $baseFilename . '.webp';
-            if (@imagewebp($img, $webpDestination, 80)) {
+    if ($mimeReal !== 'image/webp') {
+        $webpDestination = $uploadsDir . '/' . $baseFilename . '.webp';
+        
+        // 1. Attempt Node.js + Sharp (High quality, lower CPU)
+        $nodeScript = realpath(__DIR__ . '/../../../scripts/optimize-single.cjs');
+        if ($nodeScript && file_exists($nodeScript)) {
+            $nodeCmd = "node " . escapeshellarg($nodeScript) . " " . escapeshellarg($tempPath) . " " . escapeshellarg($webpDestination);
+            $output = [];
+            $returnVar = -1;
+            @exec($nodeCmd, $output, $returnVar);
+            
+            if ($returnVar === 0 && file_exists($webpDestination)) {
                 $finalFilename  = $baseFilename . '.webp';
                 $destination    = $webpDestination;
                 $conversionDone = true;
             } else {
-                error_log("imagewebp failed for $baseFilename ($mimeReal)");
+                error_log("Sharp conversion failed for $baseFilename. Output: " . implode("\n", $output));
             }
-            unset($img); // imagedestroy is deprecated since PHP 8.5
-        } else {
-            error_log("GD image decode failed for $baseFilename ($mimeReal)");
+        }
+
+        // 2. Fallback to PHP GD if Sharp failed or Node is not available
+        if (!$conversionDone && function_exists('imagewebp')) {
+            $img = false;
+            if ($mimeReal === 'image/jpeg')      $img = @imagecreatefromjpeg($tempPath);
+            elseif ($mimeReal === 'image/png')   $img = @imagecreatefrompng($tempPath);
+
+            if ($img !== false) {
+                if ($mimeReal === 'image/png') {
+                    imagepalettetotruecolor($img);
+                    imagealphablending($img, true);
+                    imagesavealpha($img, true);
+                }
+                if (@imagewebp($img, $webpDestination, 80)) {
+                    $finalFilename  = $baseFilename . '.webp';
+                    $destination    = $webpDestination;
+                    $conversionDone = true;
+                } else {
+                    error_log("imagewebp failed for $baseFilename ($mimeReal)");
+                }
+                unset($img);
+            } else {
+                error_log("GD image decode failed for $baseFilename ($mimeReal)");
+            }
         }
     }
 
@@ -120,26 +139,49 @@ function handleUploadPdf(): void {
     }
 
     $file = $_FILES['pdf'];
+    if ($file['size'] > 26214400) {
+        jsonResponse(['error' => 'Le PDF depasse la taille maximale autorisee (25 Mo).'], 400);
+    }
+
     $finfo    = new finfo(FILEINFO_MIME_TYPE);
     $mimeReal = $finfo->file($file['tmp_name']);
     if ($mimeReal !== 'application/pdf') {
         jsonResponse(['error' => 'Format invalide. Seul le format PDF est accepte.'], 400);
     }
 
-    $highest = 0;
+    // Estimation initiale du prochain numero de portfolio.
+    $next = 1;
     $existingFiles = scandir($uploadsDir);
     if ($existingFiles !== false) {
         foreach ($existingFiles as $f) {
             if (preg_match('/^(\d+)_Onesiker_Portfolio\d+\.pdf$/i', $f, $m)) {
-                if ((int) $m[1] > $highest) $highest = (int) $m[1];
+                if ((int) $m[1] >= $next) $next = (int) $m[1] + 1;
             }
         }
     }
-    $next = $highest + 1;
-    $filename    = $next . '_Onesiker_Portfolio' . $next . '.pdf';
-    $destination = $uploadsDir . '/' . $filename;
+
+    // fopen('x') echoue atomiquement si le fichier existe deja, ce qui elimine
+    // la race condition entre deux uploads concurrents.
+    $reserved    = false;
+    $destination = '';
+    $filename    = '';
+    for ($attempt = 0; $attempt < 10; $attempt++) {
+        $filename    = $next . '_Onesiker_Portfolio' . $next . '.pdf';
+        $destination = $uploadsDir . '/' . $filename;
+        $fp = @fopen($destination, 'x');
+        if ($fp !== false) {
+            fclose($fp);
+            $reserved = true;
+            break;
+        }
+        $next++;
+    }
+    if (!$reserved) {
+        jsonResponse(['error' => 'Conflit de nommage du fichier. Reessayez.'], 503);
+    }
 
     if (!move_uploaded_file($file['tmp_name'], $destination)) {
+        @unlink($destination);
         jsonResponse(['error' => 'Erreur lors de la sauvegarde du fichier sur le serveur.'], 500);
     }
 
@@ -235,8 +277,8 @@ function handleListMedia(): void {
  * @return string[]
  */
 function scanReferencedUploads(): array {
-    // Decode first (raw JSON has `\/` escapes); stop capture at `?` so cache-busted URLs match scandir output.
-    // Delimiter `~` not `#` — PCRE2 (PHP 8.x) silently fails to compile when the delimiter also lives in the char class.
+    // json_decode strips JSON's `\/` escaping, so the regex below works whether
+    // data.php was saved with JSON_UNESCAPED_SLASHES or not.
     $referenced = [];
     $dataDir = getDataDir();
     foreach (ALLOWED_DATA_TYPES as $type) {
@@ -246,6 +288,8 @@ function scanReferencedUploads(): array {
         if ($decoded === null) continue;
 
         array_walk_recursive($decoded, function ($value) use (&$referenced) {
+            // Stop the capture before any query string (?t=…) so cache-busted
+            // URLs persisted in legacy JSON still resolve to a real filename.
             if (is_string($value) && preg_match_all('~/data/uploads/([^"\'\s>?#]+)~', $value, $m)) {
                 foreach ($m[1] as $name) $referenced[] = rawurldecode(trim($name));
             }

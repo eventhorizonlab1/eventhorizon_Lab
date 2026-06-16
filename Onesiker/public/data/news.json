@@ -1,11 +1,86 @@
 [
     {
+        "title_fr": "Onesiker x 75Shop & Gallery",
+        "title_en": "",
+        "excerpt_fr": "ONESIKER — « Insouciance » Onesiker investit la 75 Shop & Gallery avec Insouciance.\n📍 12 Bd Saint Martin, Paris 75010 · du 11 juin au 11 juillet 2026",
+        "excerpt_en": "",
+        "date": "2026-06-08",
+        "images": [
+            "\/data\/uploads\/Onesiker_Actualite19.webp"
+        ],
+        "link": "https:\/\/75shop.fr",
+        "visible": true,
+        "id": 14,
+        "date_fr": "8 juin 2026",
+        "date_en": "June 8, 2026"
+    },
+    {
+        "title_fr": "Onesiker × Mister Freeze ",
+        "title_en": "Onesiker × Mister Freeze",
+        "excerpt_fr": "« Ça Déborde » Onesiker rejoint l'édition 2026 de Mister Freeze, du 5 juin au 26 juillet à la Caserne Jacques Vion (17 allée Charles-de-Fitte, Toulouse),ouvert du jeudi au dimanche, 11h–21h.",
+        "excerpt_en": "“Ça déborde” Onesiker joins the 2026 edition of Mister Freeze, from June 5 to July 26 at the Caserne Jacques Vion (17 allée Charles-de-Fitte, Toulouse), open Thursday to Sunday, 11 a.m. – 9 p.m.",
+        "date": "2026-06-08",
+        "images": [
+            "\/data\/uploads\/Onesiker_Actualite18.webp"
+        ],
+        "link": "https:\/\/www.expomisterfreeze.fr",
+        "visible": true,
+        "id": 13,
+        "date_fr": "8 juin 2026",
+        "date_en": "June 8, 2026"
+    },
+    {
+        "title_fr": "Performance - Le tableau HUMAIN - Les Abattoirs",
+        "title_en": "Performance - The HUMAN table - Les Abattoirs",
+        "excerpt_fr": "Dans le cadre de la nuit des Musées, Les Abattoirs laissent carte blanche à Jean-Charles de Castelbajac pour une performance. Il sera accompagné de Reso, Mademoiselle Kat, Julia Forma et Onesiker.            \nSamedi 23 mai 2026, 18h30-19h30 - Les Abattoirs\n",
+        "excerpt_en": "As part of Museum Night, Les Abattoirs gives Jean-Charles de Castelbajac carte blanche for a performance. He will be accompanied by Reso, Mademoiselle Kat, Julia Forma and Onesiker.            \nSaturday May 23, 2026, 6:30 p.m.-7:30 p.m. - Les Abattoirs",
+        "date": "2026-05-20",
+        "images": [
+            "\/data\/uploads\/Onesiker_Actualite17.webp"
+        ],
+        "link": "",
+        "visible": true,
+        "id": 12,
+        "date_fr": "20 mai 2026",
+        "date_en": "May 20, 2026"
+    },
+    {
+        "title_fr": "Vernissage Expo La Quadrature du Cercle",
+        "title_en": "Opening of theExpo La Quadrature du Cercle",
+        "excerpt_fr": "",
+        "excerpt_en": "",
+        "date": "2026-05-19",
+        "images": [
+            "\/data\/uploads\/Onesiker_Actualite15.webp"
+        ],
+        "link": "",
+        "visible": false,
+        "id": 11,
+        "date_fr": "19 mai 2026",
+        "date_en": "May 19, 2026"
+    },
+    {
+        "title_fr": "Fise - Montpellier -14\/05\/2026",
+        "title_en": "Fise - Montpellier -05\/14\/2026",
+        "excerpt_fr": "Onesiker sera présent au Fise à Montpellier le jeudi 14 mai 2026 à partir de 14h. Au programme performance et présentation d'une nouvelle série de teeshirts sur son stand et bien plus...!!!!!",
+        "excerpt_en": "Onesiker will be present at Fise in Montpellier on Thursday May 14, 2026 from 2 p.m. On the program performance and presentation of a new series of t-shirts on its stand and much more...!!!!!",
+        "date": "2026-05-11",
+        "images": [
+            "\/data\/uploads\/Onesiker_Actualite9.webp"
+        ],
+        "link": "",
+        "visible": true,
+        "id": 9,
+        "date_fr": "11 mai 2026",
+        "date_en": "May 11, 2026"
+    },
+    {
         "id": 8,
         "images": [
-            "\/data\/uploads\/Onesiker_Actualite3.webp"
+            "\/data\/uploads\/Onesiker_Actualite1.webp?t=1778426278836"
         ],
-        "title_fr": "New drop - Caps",
-        "title_en": "New drop - Caps",
+        "title_fr": "Sortie de nouvelles caps",
+        "title_en": "Release of new caps",
         "date_fr": "5 mai 2026",
         "date_en": "May 5, 2026",
         "excerpt_fr": "Découvrez notre nouvelle collection de casquettes brodées, disponibles dès maintenant.",
@@ -19,13 +94,15 @@
         "images": [
             "\/News\/1_Onesiker_Tshirt_Capitole.webp"
         ],
-        "title_fr": "New Drop - T-shirt Capitole",
-        "title_en": "New Drop - T-shirt Capitole",
+        "title_fr": "Nouveau T-shirt Capitole",
+        "title_en": "New Capitol T-shirt",
         "date_fr": "20 avril 2026",
         "date_en": "April 20, 2026",
         "excerpt_fr": "Sortie du T-shirt \"Capitole\" sérigraphié à 20 exemplaires en hommage à sa ville rose.",
         "excerpt_en": "Release of the \"Capitole\" screen-printed T-shirt, limited to 20 copies in tribute to his pink city.",
-        "link": "https:\/\/onesiker.sumupstore.com"
+        "link": "https:\/\/onesiker.sumupstore.com",
+        "date": "",
+        "visible": true
     },
     {
         "id": 6,

@@ -1,5 +1,6 @@
 import { useLanguage } from '../context/LanguageContext';
 import { useJsonData } from '../hooks/useJsonData';
+import { getAlt } from '../lib/imageAlt';
 
 export default function CustomPage({ id }: { id: string }) {
   const allPages = useJsonData<Record<string, any>>('custom_pages');
@@ -30,9 +31,9 @@ export default function CustomPage({ id }: { id: string }) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {pageData.images.map((img: any, idx: number) => (
               <div key={idx} className="group relative aspect-square overflow-hidden bg-gray-100 rounded-lg">
-                <img 
-                  src={img.url} 
-                  alt={img.title || title || ''} 
+                <img
+                  src={img.url}
+                  alt={getAlt({ src: img.url, alt_fr: img.alt_fr, alt_en: img.alt_en }, language, img.title || title || 'Onesiker')}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"
                 />
