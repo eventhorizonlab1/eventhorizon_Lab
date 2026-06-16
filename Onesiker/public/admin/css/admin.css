@@ -7,6 +7,9 @@
 /* ── Reset & Variables ──────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
+.w-5 { width: 1.25rem; }
+.h-5 { height: 1.25rem; }
+
 :root {
   /* Dimensions de layout */
   --sidebar-w: 220px;
