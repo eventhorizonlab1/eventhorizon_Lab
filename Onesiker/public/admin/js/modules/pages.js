@@ -345,8 +345,8 @@ window.PagesModule = (function () {
         const arr = currentData.contact.galleries || [];
         arr.forEach((gal, idx) => {
             list.innerHTML += `
-                <div class="card border border-gray-800 p-4 rounded-xl shadow-sm grid grid-cols-[1fr_auto] gap-4 items-center group hover:border-gray-700 transition-all">
-                    <div class="min-w-0 pr-4">
+                <div class="card border border-gray-800 p-4 rounded-xl shadow-sm items-center group hover:border-gray-700 transition-all" style="display: grid; grid-template-columns: 1fr auto; gap: 1rem;">
+                    <div style="min-width: 0;">
                         <h4 class="font-black text-white text-sm uppercase tracking-wider">${escHtml(gal.name_fr || 'Galerie')}</h4>
                         <div class="text-[10px] text-gray-500 mt-1" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">${gal.details_fr || ''}</div>
                     </div>
@@ -443,6 +443,7 @@ window.PagesModule = (function () {
         urls.forEach((item, idx) => {
             list.innerHTML += `
                 <div class="card border border-gray-800 p-3 rounded-xl flex justify-between items-center shadow-sm group hover:border-gray-700 transition-all draggable-item"
+                     style="display: grid; grid-template-columns: 1fr auto; gap: 1rem;"
                      draggable="true"
                      data-drag-type="contact_urls"
                      data-index="${idx}">
