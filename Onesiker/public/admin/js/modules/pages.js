@@ -346,11 +346,11 @@ window.PagesModule = (function () {
         arr.forEach((gal, idx) => {
             list.innerHTML += `
                 <div class="card border border-gray-800 p-4 rounded-xl shadow-sm flex justify-between items-center group hover:border-gray-700 transition-all">
-                    <div>
+                    <div class="min-w-0 flex-1 pr-4">
                         <h4 class="font-black text-white text-sm uppercase tracking-wider">${escHtml(gal.name_fr || 'Galerie')}</h4>
-                        <div class="text-[10px] text-gray-500 mt-1 line-clamp-1">${gal.details_fr || ''}</div>
+                        <div class="text-[10px] text-gray-500 mt-1" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">${gal.details_fr || ''}</div>
                     </div>
-                    <div class="flex gap-2">
+                    <div class="flex gap-2 shrink-0">
                         <button type="button" data-action="edit-gallery" data-index="${idx}" class="p-2 text-gray-500 hover:text-white hover:bg-hover rounded-lg transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                         </button>
