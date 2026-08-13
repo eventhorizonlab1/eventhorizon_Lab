@@ -227,6 +227,13 @@ document.addEventListener('input', (e) => {
         }
         return;
     }
+    
+    // Bio & Contact form fields
+    if (e.target.closest('#bio-tab') || e.target.closest('#contact-tab')) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            isDirty = true;
+        }
+    }
 });
 
 // ══════════════════════════════════════════════════════════════════════════════

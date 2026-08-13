@@ -22,12 +22,10 @@ export default function Contacts() {
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    // Formspree ID pour south-painters@wanadoo.fr
-    const formspreeId = 'meerpeka';
-
     setFormStatus('sending');
     try {
-      const response = await fetch(`https://formspree.io/f/${formspreeId}`, {
+      // Use the new PHP backend instead of Formspree
+      const response = await fetch('/contact.php', {
         method: 'POST',
         headers: { 'Accept': 'application/json' },
         body: formData

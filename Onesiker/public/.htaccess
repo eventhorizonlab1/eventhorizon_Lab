@@ -63,7 +63,7 @@ RewriteRule . /index.html [L]
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 
     # Protection contre le clickjacking
-    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Frame-Options "DENY"
 
     # Protection contre le reniflage de type MIME
     Header always set X-Content-Type-Options "nosniff"
@@ -95,12 +95,20 @@ RewriteRule . /index.html [L]
         Header set Cache-Control "no-cache, must-revalidate"
     </FilesMatch>
 
+    # Bloquer l'accès au fichier de rate-limiting du formulaire de contact (contient des IPs = PII / RGPD)
+    <Files "contact_limits.json">
+        Require all denied
+    </Files>
+
     # ── CONTENT SECURITY POLICY — MODE BLOQUANT ───────────────────────────────
     # Validée sans violations en mode Report-Only. Active et bloquante.
     # Si une nouvelle ressource externe est ajoutée au site, la déclarer ici.
+    # Le hash sha256 correspond au script inline GTM conditionnel dans index.html.
+    # Si ce script est modifié, recalculer le hash :
+    #   node -e "const c=require('crypto'),f=require('fs'); const m=f.readFileSync('index.html','utf8').match(/<script>([\s\S]*?)<\/script>/); console.log(\"'sha256-\"+c.createHash('sha256').update(m[1]).digest('base64')+\"'\");"
     Header always set Content-Security-Policy "\
 default-src 'self'; \
-script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; \
+script-src 'self' 'sha256-lgMXQ5Dt5+xKjPzK3OWDIIlNuK7cMGiaoqEljIdY6YE=' https://www.googletagmanager.com https://www.google-analytics.com; \
 style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; \
 font-src 'self' https://fonts.gstatic.com; \
 img-src 'self' data: https:; \
