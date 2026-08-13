@@ -7,41 +7,26 @@ import { useJsonData } from '../hooks/useJsonData';
 const parseHtmlWithLinks = (htmlContent: string) => {
   if (!htmlContent) return '';
   if (typeof window === 'undefined') return htmlContent;
-
+  
   const parser = new DOMParser();
   const doc = parser.parseFromString(htmlContent, 'text/html');
-
+  
   const walk = (node: Node) => {
     if (node.nodeType === 3) { // Text node
       const text = node.nodeValue;
       if (text && text.includes('@')) {
-        // Build a safe <span> via DOM API — NO innerHTML, no injection possible
         const span = document.createElement('span');
-        const parts = text.split(/(@[\w_]+)/g);
-        parts.forEach(part => {
-          if (/^@[\w_]+$/.test(part)) {
-            const a = document.createElement('a');
-            a.href = `https://instagram.com/${part.slice(1)}`;
-            a.target = '_blank';
-            a.rel = 'noopener noreferrer';
-            a.className = 'text-black font-medium hover:text-gray-500 transition-colors';
-            a.textContent = part; // textContent is always safe — no HTML parsing
-            span.appendChild(a);
-          } else {
-            span.appendChild(document.createTextNode(part));
-          }
-        });
+        span.innerHTML = text.replace(/@([\w_]+)/g, '<a href="https://instagram.com/$1" target="_blank" rel="noopener noreferrer" class="text-black font-medium hover:text-gray-500 transition-colors">@$1</a>');
         node.parentNode?.replaceChild(span, node);
       }
     } else if (node.nodeType === 1 && node.nodeName !== 'A') {
       Array.from(node.childNodes).forEach(walk);
     }
   };
-
+  
   Array.from(doc.body.childNodes).forEach(walk);
   return doc.body.innerHTML;
 };
-
 
 const Carousel = ({ images, title }: { images: string[], title: string }) => {
   const [index, setIndex] = React.useState(0);

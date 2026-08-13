@@ -62,7 +62,11 @@ export default function Shop() {
                 ) : null
               )}
             </AnimatePresence>
-
+            {currentSlide === 2 && slides.length > 0 && (
+              <span className="absolute bottom-2 right-3 z-20 text-white/70 text-[10px] sm:text-xs font-medium tracking-wide drop-shadow-md select-none pointer-events-none">
+                ©LEVEL UP FILM
+              </span>
+            )}
           </a>
           
           {/* Content */}

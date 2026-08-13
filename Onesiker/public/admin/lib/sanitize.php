@@ -20,27 +20,10 @@ function sanitizeHtml(string $html, int $maxLen = 50000): string {
         $html = substr($html, 0, $maxLen);
     }
     $html = strip_tags($html, '<a><b><i><strong><em><br>');
-    
-    // on*="…" event handlers (do this first so we don't have to worry about them in href parsing)
+    // href="javascript:…"
+    $html = preg_replace('/(<a\s[^>]*)href\s*=\s*["\']?javascript:[^"\'\s>]*/i', '$1', $html);
+    // on*="…" event handlers
     $html = preg_replace('/(<[^>]+)\s+on\w+\s*=\s*(["\'])[^\2]*\2/i', '$1', $html);
-
-    // Filter dangerous href attributes (javascript:, vbscript:, data:)
-    // Accounts for HTML entities and whitespace bypasses.
-    $html = preg_replace_callback('/(<a\s+[^>]*?)(href\s*=\s*(?:(["\'])(.*?)\3|([^\s>]+)))([^>]*>)/is', function($matches) {
-        $prefix = $matches[1];
-        $hrefValue = !empty($matches[3]) ? $matches[4] : $matches[5];
-        $suffix = $matches[6];
-        
-        $decodedHref = html_entity_decode($hrefValue, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $cleanHref = strtolower(preg_replace('/[\x00-\x20\x7F]+/', '', $decodedHref));
-        
-        if (strpos($cleanHref, 'javascript:') === 0 || 
-            strpos($cleanHref, 'vbscript:') === 0 || 
-            strpos($cleanHref, 'data:') === 0) {
-            return $prefix . ltrim($suffix); // Strip the href
-        }
-        return $matches[0];
-    }, $html);
     return $html;
 }
 

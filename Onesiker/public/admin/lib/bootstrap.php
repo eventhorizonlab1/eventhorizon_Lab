@@ -34,7 +34,7 @@ session_set_cookie_params([
     'domain'   => '',
     'secure'   => (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on'),
     'httponly' => true,
-    'samesite' => 'Strict',
+    'samesite' => 'Lax',
 ]);
 session_start();
 

@@ -21,9 +21,9 @@
         {
             "name_fr": "Galerie Laurent Rigail",
             "name_en": "Laurent Rigail Gallery",
-            "details_fr": "<strong class=\"font-medium text-gray-500\">Galerie Laurent Rigail<\/strong><br \/>40 rue Volta 75003 Paris<br \/>+33 1 42 77 09 00<br \/><a href=\"https:\/\/laurentrigail.com\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">aurentrigail.com<\/a>",
-            "details_en": "<strong class=\"font-medium text-gray-500\">Laurent Rigail Gallery<\/strong><br \/>40 rue Volta 75003 Paris<br \/>+33 1 42 77 09 00<br \/><a href=\"https:\/\/laurentrigail.com\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">laurentrigail.com<\/a>",
-            "url": ""
+            "details_fr": "<strong class=\"font-medium text-gray-500\">Galerie Laurent Rigail<\/strong><br \/>40 rue Volta 75003 Paris<br \/>+33 1 42 77 09 00",
+            "details_en": "<strong class=\"font-medium text-gray-500\">Laurent Rigail Gallery<\/strong><br \/>40 rue Volta 75003 Paris<br \/>+33 1 42 77 09 00",
+            "url": "https:\/\/laurentrigail.com"
         },
         {
             "name_fr": "LA STATION BRIVE",
@@ -49,6 +49,12 @@
             "name_en": "Artsper",
             "details_fr": "<strong class=\"font-medium text-gray-700\">Artsper<\/strong><br \/><a href=\"https:\/\/www.artsper.com\/fr\/artistes-contemporains\/france\/95271\/onesiker\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">artsper.com\/onesiker<\/a>",
             "details_en": "<strong class=\"font-medium text-gray-700\">Artsper<\/strong><br \/><a href=\"https:\/\/www.artsper.com\/fr\/artistes-contemporains\/france\/95271\/onesiker\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">artsper.com\/onesiker<\/a>"
+        },
+        {
+            "name_fr": "Galerie Amanni",
+            "name_en": "Galerie Amanni",
+            "details_fr": "<strong class=\"font-medium text-gray-700\">Galerie Amanni<\/strong><br \/><a href=\"https:\/\/amanni.fr\/artistes\/onesiker\/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">amanni.fr<\/a>",
+            "details_en": "<strong class=\"font-medium text-gray-700\">Galerie Amanni<\/strong><br \/><a href=\"https:\/\/amanni.fr\/artistes\/onesiker\/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-black hover:underline\">amanni.fr<\/a>"
         }
     ]
 }
